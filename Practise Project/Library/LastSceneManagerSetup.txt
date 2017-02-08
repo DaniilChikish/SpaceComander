@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/MainPractiseScene.unity
+- path: Assets/Low_poly_styled_trees/Examples/Scenes/example_scene_c.unity
   isLoaded: 1
   isActive: 1
