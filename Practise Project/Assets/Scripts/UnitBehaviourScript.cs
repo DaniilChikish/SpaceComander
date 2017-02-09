@@ -5,21 +5,68 @@ using UnityEngine;
 namespace PracticeProject
 {
     public enum UnitType { InfintryVehikle, ReconVehicle, Tank };
-    public enum ImpactType { ForestImpact};
-    public enum TerrainType { Plain, Forest}
+    public enum UnitStateType { Move, Fire, MoveAndFire, Waiting, SkippingStep }
+    public enum ImpactType { ForestStaticImpact, StunningDynamicImpact, SmokescreenDynamicImpact };
+    public enum TerrainType { Plain, Forest }
 
-    public class UnitBehaviourScript : MonoBehaviour
+
+    public static class Controller
     {
-        // Use this for initialization
-        void Start()
+        public static void MoveTo(Unit walker, Terrain destination)
         {
 
         }
+    }
 
-        // Update is called once per frame
-        void Update()
+    public static class ObjectCreator
+    {
+        public static Unit CreateUnit(UnitType type, Object GraficUnitRef)
         {
-
+            string StatPath = type.ToString("F") + ".stat.dat";
+            string[] stats = System.IO.File.ReadAllLines(StatPath);
+            Unit newUnit = new Unit(
+                Convert.ToInt32(stats[1]),
+                Convert.ToInt32(stats[2]),
+                Convert.ToDouble(stats[3]),
+                Convert.ToDouble(stats[4]),
+                Convert.ToInt32(stats[5]),
+                Convert.ToInt32(stats[6]),
+                Convert.ToInt32(stats[7]),
+                Convert.ToInt32(stats[8]));
+            newUnit.type = type;
+            newUnit.graficUnitRef = GraficUnitRef;
+            return newUnit;
+        }
+        public static Impact CreateImpact(ImpactType type, bool isStatic)
+        {
+            if (isStatic)
+            {
+                string StatPath = type.ToString("F") + ".impact.dat";
+                string[] stats = System.IO.File.ReadAllLines(StatPath);
+                Impact newImpact = new Impact(
+                    Convert.ToInt32(stats[1]),
+                    Convert.ToInt32(stats[2]));
+                newImpact.type = type;
+                return newImpact;
+            }
+            else
+            {
+                switch (type)
+                {
+                    case ImpactType.StunningDynamicImpact:
+                        {
+                            return new StunningImpact(30);
+                        }
+                    case ImpactType.SmokescreenDynamicImpact:
+                        {
+                            return new SmokescreenImpact(45);
+                        }
+                    default:
+                        {
+                            return null;
+                        }
+                }
+            }
         }
     }
 
@@ -27,7 +74,10 @@ namespace PracticeProject
     {
         //base varibles
         public UnitType type;
-        public Object GraficUnitRef;
+        public UnitStateType state;
+        public Object graficUnitRef;
+        public Terrain location;
+        public string playerArmy;
 
         //depend varibles
         private int attack;
@@ -43,36 +93,89 @@ namespace PracticeProject
 
         public ImpactType impacts;
 
-        public Unit(UnitType type)
+        public Unit(int attack, int health, double accurancy, double stealthness, int ammo, int range, int brusts, int speed)
         {
-            this.type = type;
-            string StatPath = type.ToString("F") + ".stat.dat";
-            string[] stats = System.IO.File.ReadAllLines(StatPath);
-            this.attack = System.Convert.ToInt32(stats[1]);
-            this.health = System.Convert.ToInt32(stats[2]);
-            this.accurancy = System.Convert.ToDouble(stats[3]);
-            this.stealthness = System.Convert.ToDouble(stats[4]);
-            this.ammo = System.Convert.ToInt32(stats[5]);
-            this.range = System.Convert.ToInt32(stats[6]);
-            this.brusts = System.Convert.ToInt32(stats[7]);
-            this.speed = System.Convert.ToInt32(stats[8]);
+            this.attack = attack;
+            this.health = health;
+            this.accurancy = accurancy;
+            this.stealthness = stealthness;
+            this.ammo = ammo;
+            this.range = range;
+            this.brusts = brusts;
+            this.speed = speed;
+        }
+
+        internal void SkipStep()
+        {
+            throw new NotImplementedException();
+        }
+
+        private Terrain FindMoveTarget()
+        {
+            return null;
+        }
+        public void Move()
+        {
+            this.state = UnitStateType.Move;
+            Terrain destination = FindMoveTarget();
+            if (destination != null)
+                Controller.MoveTo(this, destination);
         }
     }
     public class Impact
     {
         public ImpactType type;
-        private double accurancy;
-        private double stealthness;
+        protected double accurancy;
+        protected double stealthness;
 
-        public Impact(ImpactType type)
+        public Impact(double accurancy, double stealthness)
         {
-            this.type = type;
-            string StatPath = type.ToString("F") + ".impact.dat";
-            string[] stats = System.IO.File.ReadAllLines(StatPath);
-            this.accurancy = System.Convert.ToDouble(stats[1]);
-            this.stealthness = System.Convert.ToDouble(stats[2]);
+            this.accurancy = accurancy;
+            this.stealthness = stealthness;
+        }
+        public virtual bool Operate(Unit owner) { return true; }
+    }
+    public class StaticImpact : Impact
+    {
+        public StaticImpact(double accurancy, double stealthness) : base(accurancy, stealthness) { }
+    }
+    public class StunningImpact : Impact
+    {
+        private int timeOfLife;
+        public StunningImpact(int timeOfLife) : base(0, 1.1)
+        {
+            this.timeOfLife = timeOfLife;
+        }
+        public override bool Operate(Unit owner)
+        {
+            if (timeOfLife > 0)
+            {
+                owner.SkipStep();
+                timeOfLife--;
+                return true;
+            }
+            else return false;
         }
     }
+    public class SmokescreenImpact : Impact
+    {
+        private int timeOfLife;
+        public SmokescreenImpact(int timeOfLife) : base(0.2, 2)
+        {
+            this.timeOfLife = timeOfLife;
+        }
+        public override bool Operate(Unit owner)
+        {
+            if (timeOfLife > 0)
+            {
+                owner.Move();
+                timeOfLife--;
+                return true;
+            }
+            else return false;
+        }
+    }
+
 
     public class Terrain
     {
@@ -82,6 +185,5 @@ namespace PracticeProject
         public bool Busy;
         public List<Terrain> Neighbors;
     }
-
 }
 
