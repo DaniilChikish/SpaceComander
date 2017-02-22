@@ -17,7 +17,12 @@ namespace PracticeProject
         public int backCount;
         public bool MoveTo(Unit walker, TerraCell destination)
         {
+		walker.state = UnitStateType.Move;
             return false;
+        }
+		void Update()
+        {
+		backCount--;
         }
     }
     public class ShootController
@@ -26,6 +31,10 @@ namespace PracticeProject
         public bool ShootHim(Unit shooter, Unit target)
         {
             return false;
+        }
+		void Update()
+        {
+		backCount--;
         }
     }
 
@@ -50,4 +59,3 @@ namespace PracticeProject
         }
     }
 }
-
