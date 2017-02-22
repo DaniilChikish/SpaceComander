@@ -41,8 +41,20 @@ namespace PracticeProject
             this.brusts = brusts;
             this.speed = speed;
         }
-
-        internal void SkipStep()
+		//AI logick
+        private ChoiseNextAction()
+		{
+		Unit[] = Scan();
+		}
+		private Unit[] Scan()
+		{
+		object[] units = GetComponent("Units").GetChild();
+		List<Unit> enemy = new List<Unit>();
+		...
+		return enemy.ToArray();
+		}
+		
+		internal void SkipStep()
         {
 
         }
@@ -53,10 +65,12 @@ namespace PracticeProject
         }
         public void Move()
         {
-            this.state = UnitStateType.Move;
+            //this.state = UnitStateType.Move;
             TerraCell destination = FindMoveTarget();
             if (destination != null)
+			{
                 Driver.MoveTo(this, destination);
+				}
         }
 
         // Use this for initialization
@@ -69,7 +83,7 @@ namespace PracticeProject
         // Update is called once per frame
         void Update()
         {
-
+		ChoiseNextAction();
         }
     }
 }
