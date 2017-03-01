@@ -1,9 +1,10 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace PracticeProject
 {
+    public const double ViewCoof = 1.5;
     public class Unit : MonoBehaviour
     {
         //base varibles
@@ -21,7 +22,7 @@ namespace PracticeProject
         //independ varibles
         private int ammo;
         //constants
-        private int range;
+        private double range;
         private int brusts;
         private int speed;
         //controllers
@@ -45,12 +46,20 @@ namespace PracticeProject
         private ChoiseNextAction()
 		{
 		Unit[] = Scan();
+		
 		}
-		private Unit[] Scan()
+		
+		
+		private Dictionary<Unit, double> Scan()
 		{
-		object[] units = GetComponent("Units").GetChild();
-		List<Unit> enemy = new List<Unit>();
-		...
+		Unit[] units = (Unit)GetComponent("Units").GetChild();
+		Dictionary<Unit, double> enemy = new Dictionary<Unit, double>();
+		
+		foreach(Unit x in units)
+		{
+		if ((TacticControler.Distance(this, x) < range*viewCoof)&&(random(0, 100)<x.stealthness))
+			enemy.Add(x, (TacticControler.Distance(this, x));
+		}
 		return enemy.ToArray();
 		}
 		
