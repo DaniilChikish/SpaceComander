@@ -4,9 +4,10 @@ using UnityEngine;
 
 namespace PracticeProject
 {
-    public const double ViewCoof = 1.5;
+
     public class Unit : MonoBehaviour
     {
+        public const double VIEWCoof = 1.5;
         //base varibles
         public UnitType type;
         public UnitStateType state;
@@ -42,28 +43,29 @@ namespace PracticeProject
             this.brusts = brusts;
             this.speed = speed;
         }
-		//AI logick
-        private ChoiseNextAction()
-		{
-		Unit[] = Scan();
-		
-		}
-		
-		
-		private Dictionary<Unit, double> Scan()
-		{
-		Unit[] units = (Unit)GetComponent("Units").GetChild();
-		Dictionary<Unit, double> enemy = new Dictionary<Unit, double>();
-		
-		foreach(Unit x in units)
-		{
-		if ((TacticControler.Distance(this, x) < range*viewCoof)&&(random(0, 100)<x.stealthness))
-			enemy.Add(x, (TacticControler.Distance(this, x));
-		}
-		return enemy.ToArray();
-		}
-		
-		internal void SkipStep()
+        //AI logick
+        private void ChoiseNextAction()
+        {
+            Dictionary<Unit, double> enemy = Scan();
+
+            //...
+        }
+
+
+        private Dictionary<Unit, double> Scan()
+        {
+            //Unit[] units = (Unit)GetComponent("Units");
+            Dictionary<Unit, double> enemy = new Dictionary<Unit, double>();
+
+            //foreach (Unit x in units)
+            //{
+            //    if ((TacticControler.Distance(this, x) < range * Unit.VIEWCoof) && (TacticControler.Random(0, 100) < x.stealthness))
+            //        enemy.Add(x, (TacticControler.Distance(this, x)));
+            //}
+            return enemy;
+        }
+
+        internal void SkipStep()
         {
 
         }
@@ -77,9 +79,9 @@ namespace PracticeProject
             //this.state = UnitStateType.Move;
             TerraCell destination = FindMoveTarget();
             if (destination != null)
-			{
+            {
                 Driver.MoveTo(this, destination);
-				}
+            }
         }
 
         // Use this for initialization
@@ -92,7 +94,7 @@ namespace PracticeProject
         // Update is called once per frame
         void Update()
         {
-		ChoiseNextAction();
+            ChoiseNextAction();
         }
     }
 }

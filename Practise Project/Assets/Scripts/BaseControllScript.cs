@@ -11,6 +11,21 @@ namespace PracticeProject
     public enum TerrainType { Plain, Forest };
     public enum Team { Green, Red, Blue};
 
+    public static class TacticControler
+    {
+        internal static int Distance(Unit unitX, Unit unitY)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static double Random(int min, int max)
+        {
+            System.Security.Cryptography.RNGCryptoServiceProvider random = new System.Security.Cryptography.RNGCryptoServiceProvider();
+            byte[] arr = new byte[1];
+            random.GetBytes(arr);
+            return min + ((arr[0] / 256.0) * (max - min));
+        }
+    }
 
     public class MovementController
     {
