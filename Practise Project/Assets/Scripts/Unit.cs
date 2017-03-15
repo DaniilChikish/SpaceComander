@@ -11,8 +11,6 @@ namespace PracticeProject
         //base varibles
         public UnitType type;
         public UnitStateType state;
-        public UnityEngine.Object graficUnitRef;
-        public UnityEngine.Object location;
         public Team playerArmy;
 
         //depend varibles
@@ -23,6 +21,7 @@ namespace PracticeProject
         //independ varibles
         private int ammo;
         //constants
+		private int maxHealth;
         private double range;
         private int brusts;
         private int speed;
@@ -30,11 +29,13 @@ namespace PracticeProject
         public List<ImpactType> impacts;
         private MovementController Driver;
         private ShootController Gunner;
+		private GlobalController Global;
 
         public Unit() { }
         public Unit(int attack, int health, double accurancy, double stealthness, int ammo, int range, int brusts, int speed)
         {
             this.attack = attack;
+			this.maxHealth = health;
             this.health = health;
             this.accurancy = accurancy;
             this.stealthness = stealthness;
@@ -43,6 +44,20 @@ namespace PracticeProject
             this.brusts = brusts;
             this.speed = speed;
         }
+
+        public void SelectUnit(bool isSelect)
+        {
+            if (isSelect)
+            {
+                gameObject.GetComponentInChildren<Camera>().enabled = true;
+                Global.selectedList.Add(gameObject);
+            }
+            else
+            {
+                gameObject.GetComponentInChildren<Camera>().enabled = false;
+            }
+        }
+
         //AI logick
         private void ChoiseNextAction()
         {
@@ -89,6 +104,8 @@ namespace PracticeProject
         {
             Driver = new MovementController();
             Gunner = new ShootController();
+			Global = FindObjectsOfType<GlobalController>()[0];
+			Global.alliesList.Add(gameObject);
         }
 
         // Update is called once per frame
