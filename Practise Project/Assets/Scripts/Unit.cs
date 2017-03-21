@@ -11,39 +11,39 @@ namespace PracticeProject
         //base varibles
         public UnitType type;
         public UnitStateType state;
-        public Team alliesArmy;
+        public Team playerArmy;
 
         //depend varibles
-        public int attack;
-        public int health;
-        public double accurancy;
-        public double stealthness;
+        private int attack;
+        private int health;
+        private double accurancy;
+        private double stealthness;
         //independ varibles
-        public int ammo;
+        private int ammo;
         //constants
-        public int maxHealth;
-        public double range;
-        public int brusts;
-        public int speed;
+		private int maxHealth;
+        private double range;
+        private int brusts;
+        private int speed;
         //controllers
         public List<ImpactType> impacts;
         private MovementController Driver;
         private ShootController Gunner;
 		private GlobalController Global;
 
-   //     public Unit() { }
-   //     public Unit(int attack, int health, double accurancy, double stealthness, int ammo, int range, int brusts, int speed)
-   //     {
-   //         this.attack = attack;
-			//this.maxHealth = health;
-   //         this.health = health;
-   //         this.accurancy = accurancy;
-   //         this.stealthness = stealthness;
-   //         this.ammo = ammo;
-   //         this.range = range;
-   //         this.brusts = brusts;
-   //         this.speed = speed;
-   //     }
+        public Unit() { }
+        public Unit(int attack, int health, double accurancy, double stealthness, int ammo, int range, int brusts, int speed)
+        {
+            this.attack = attack;
+			this.maxHealth = health;
+            this.health = health;
+            this.accurancy = accurancy;
+            this.stealthness = stealthness;
+            this.ammo = ammo;
+            this.range = range;
+            this.brusts = brusts;
+            this.speed = speed;
+        }
 
         public void SelectUnit(bool isSelect)
         {
@@ -61,25 +61,23 @@ namespace PracticeProject
         //AI logick
         private void ChoiseNextAction()
         {
-            List<GameObject> enemys = Scan();
+            Dictionary<Unit, double> enemy = Scan();
 
             //...
         }
 
 
-        private List<GameObject> Scan()
+        private Dictionary<Unit, double> Scan()
         {
-            List<GameObject> enemys = new List<GameObject>();
-            foreach (GameObject x in Global.unitList)
-            {
-                if (x.GetComponent<Unit>().alliesArmy != alliesArmy)
-                {
-                    if ((TacticControler.Distance(this.gameObject, x) < range * Unit.VIEWCoof))
-                        if (Randomizer.Uniform(0, 100, 1)[0] < x.GetComponent<Unit>().stealthness)
-                            enemys.Add(x);
-                }
-            }
-            return enemys;
+            //Unit[] units = (Unit)GetComponent("Units");
+            Dictionary<Unit, double> enemy = new Dictionary<Unit, double>();
+
+            //foreach (Unit x in units)
+            //{
+            //    if ((TacticControler.Distance(this, x) < range * Unit.VIEWCoof) && (TacticControler.Random(0, 100) < x.stealthness))
+            //        enemy.Add(x, (TacticControler.Distance(this, x)));
+            //}
+            return enemy;
         }
 
         internal void SkipStep()
@@ -87,28 +85,27 @@ namespace PracticeProject
 
         }
 
-        private Vector3 FindMoveTarget()
+        private TerraCell FindMoveTarget()
         {
-            return new Vector3(0, 0, 0);
+            return null;
         }
-        private void Move()
+        public void Move()
         {
-
-            Driver.MoveTo(FindMoveTarget());
-
-        }
-        public void SendTo(Vector3 destination)
-        {
-            Driver.MoveTo(destination);
+            //this.state = UnitStateType.Move;
+            TerraCell destination = FindMoveTarget();
+            if (destination != null)
+            {
+                Driver.MoveTo(this, destination);
+            }
         }
 
         // Use this for initialization
         void Start()
         {
-            Driver = new MovementController(this.gameObject);
+            Driver = new MovementController();
             Gunner = new ShootController();
-            Global = FindObjectsOfType<GlobalController>()[0];
-            Global.unitList.Add(gameObject);
+			Global = FindObjectsOfType<GlobalController>()[0];
+			Global.alliesList.Add(gameObject);
         }
 
         // Update is called once per frame

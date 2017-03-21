@@ -10,11 +10,11 @@ namespace PracticeProject
     {
         bool isSelecting = false;
         Vector3 mousePosition1;
-        public GameObject destanationMarkerPrefab;
+
+        public GameObject selectionCirclePrefab;
 
         void Update()
         {
-
             // If we press the left mouse button, begin selection and remember the location of the mouse
             if (Input.GetMouseButtonDown(0))
             {
@@ -39,8 +39,7 @@ namespace PracticeProject
                 var selectedObjects = new List<SelectableUnitComponent>();
                 foreach (var selectableObject in FindObjectsOfType<SelectableUnitComponent>())
                 {
-                    if ((FindObjectsOfType<GlobalController>()[0].playerArmy == selectableObject.GetComponent<Unit>().alliesArmy) &&
-                        (IsWithinSelectionBounds(selectableObject.gameObject)))
+                    if (IsWithinSelectionBounds(selectableObject.gameObject))
                     {
                         selectedObjects.Add(selectableObject);
                     }
@@ -61,14 +60,13 @@ namespace PracticeProject
 
                 foreach (var selectableObject in FindObjectsOfType<SelectableUnitComponent>())
                 {
-                    if ((FindObjectsOfType<GlobalController>()[0].playerArmy == selectableObject.GetComponent<Unit>().alliesArmy) && 
-                        IsWithinSelectionBounds(selectableObject.gameObject))
+                    if (IsWithinSelectionBounds(selectableObject.gameObject))
                     {
                         if (selectableObject.selectionCircle == null)
                         {
                             selectableObject.gameObject.GetComponent<Unit>().SelectUnit(true);
                             GameObject.Find("Gui").transform.FindChild("UnitPeviev").gameObject.SetActive(true);
-                            selectableObject.selectionCircle = Instantiate(selectableObject.selectionCirclePrefab);
+                            selectableObject.selectionCircle = Instantiate(selectionCirclePrefab);
                             selectableObject.selectionCircle.transform.SetParent(selectableObject.transform, false);
                             selectableObject.selectionCircle.transform.eulerAngles = new Vector3(90, 0, 0);
                         }
@@ -83,21 +81,6 @@ namespace PracticeProject
                     }
                 }
             }
-            if (Input.GetMouseButtonDown(1))
-            {
-                RaycastHit hit;
-                if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 10000))
-                    SendTo(hit.point);
-            }
-        }
-
-        private void SendTo(Vector3 destination)
-        {
-            if (FindObjectsOfType<GlobalController>()[0].selectedList.Count>0)
-                foreach (GameObject x in FindObjectsOfType<GlobalController>()[0].selectedList)
-                {
-                    x.GetComponent<Unit>().SendTo(destination);
-                }
         }
 
         public bool IsWithinSelectionBounds(GameObject gameObject)
