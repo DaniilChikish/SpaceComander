@@ -29,10 +29,10 @@ namespace PracticeProject
         }
     }
 
-    public class MovementController
+    public class MovementController : MonoBehaviour
     {
-        GameObject walker;
-        Vector3 moveDestination;
+        private GameObject walker;
+        private Vector3 moveDirection; //make private after debug
         public int backCount;
         public MovementController(GameObject walker)
         {
@@ -41,14 +41,31 @@ namespace PracticeProject
 
         public bool MoveTo(Vector3 destination)
         {
-            moveDestination = destination;
+
             walker.GetComponent<Unit>().state = UnitStateType.Move;
-            walker.GetComponent<UnityEngine.AI.NavMeshAgent>().SetDestination(destination);
+
+            moveDirection = destination - walker.transform.position;
+            moveDirection.y = 0;
+            Debug.Log("Set direction - " + moveDirection);
+            walker.GetComponent<Rigidbody>().AddForce(moveDirection * walker.GetComponent<Unit>().speed, ForceMode.VelocityChange);
+            backCount = 10;
             return false;
         }
         void Update()
         {
-            //backCount--;
+            Debug.Log("Update");
+            if (walker.GetComponent<Unit>().state == UnitStateType.Move)
+            {
+                //walker.GetComponent<CharacterController>().Move(moveDirection * walker.GetComponent<Unit>().speed);
+            }
+
+            backCount--;
+            if (backCount == 0)
+            {
+                Debug.Log("Bracking");
+               walker.GetComponent<Unit>().state = UnitStateType.Waiting;
+                walker.GetComponent<Rigidbody>().AddForce(-moveDirection, ForceMode.VelocityChange);
+            }
         }
     }
     public class ShootController

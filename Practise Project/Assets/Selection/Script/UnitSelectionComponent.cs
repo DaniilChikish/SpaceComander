@@ -85,6 +85,7 @@ namespace PracticeProject
             }
             if (Input.GetMouseButtonDown(1))
             {
+                Debug.Log("MouseButtonDown(1)");
                 RaycastHit hit;
                 if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 10000))
                     SendTo(hit.point);
@@ -93,6 +94,7 @@ namespace PracticeProject
 
         private void SendTo(Vector3 destination)
         {
+            Debug.Log("SendTo...");
             if (FindObjectsOfType<GlobalController>()[0].selectedList.Count>0)
                 foreach (GameObject x in FindObjectsOfType<GlobalController>()[0].selectedList)
                 {

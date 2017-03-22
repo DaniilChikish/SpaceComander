@@ -27,7 +27,7 @@ namespace PracticeProject
         public int speed;
         //controllers
         public List<ImpactType> impacts;
-        private MovementController Driver;
+        private MovementController Driver; //make private after debug
         private ShootController Gunner;
 		private GlobalController Global;
 
