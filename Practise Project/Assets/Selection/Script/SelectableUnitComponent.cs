@@ -9,5 +9,6 @@ namespace PracticeProject
     public class SelectableUnitComponent : MonoBehaviour
     {
         public GameObject selectionCircle;
+        public GameObject selectionCirclePrefab;
     }
 }
