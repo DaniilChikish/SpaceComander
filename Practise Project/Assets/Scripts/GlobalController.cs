@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace PracticeProject
 {
@@ -27,46 +28,132 @@ namespace PracticeProject
                 Math.Pow((unitX.transform.position.z - unitY.transform.position.z), 2)
                 );
         }
+        internal static double Distance(Vector3 A, Vector3 B)
+        {
+            return Math.Sqrt(
+                Math.Pow((A.x - B.x), 2) +
+                Math.Pow((A.y - B.y), 2) +
+                Math.Pow((A.z - B.z), 2)
+                );
+        }
     }
 
-    public class MovementController : MonoBehaviour
+    public class MovementController
     {
         private GameObject walker;
-        private Vector3 moveDirection; //make private after debug
+        private Vector3 moveDestination;
         public int backCount;
         public MovementController(GameObject walker)
         {
             this.walker = walker;
+            moveDestination = walker.transform.position;
+            walker.GetComponent<NavMeshAgent>().speed = walker.GetComponent<Unit>().speed;
+            walker.GetComponent<NavMeshAgent>().acceleration = walker.GetComponent<Unit>().speed * 1.6f;
+            walker.GetComponent<NavMeshAgent>().angularSpeed = walker.GetComponent<Unit>().speed * 5.3f;
         }
-
         public bool MoveTo(Vector3 destination)
         {
-
-            walker.GetComponent<Unit>().state = UnitStateType.Move;
-
-            moveDirection = destination - walker.transform.position;
-            moveDirection.y = 0;
-            Debug.Log("Set direction - " + moveDirection);
-            walker.GetComponent<Rigidbody>().AddForce(moveDirection * walker.GetComponent<Unit>().speed, ForceMode.VelocityChange);
-            backCount = 10;
+            moveDestination = destination;
+            walker.GetComponent<NavMeshAgent>().SetDestination(moveDestination);
+            backCount = 100;            
             return false;
         }
-        void Update()
+        public void Update()
         {
-            Debug.Log("Update");
-            if (walker.GetComponent<Unit>().state == UnitStateType.Move)
-            {
-                //walker.GetComponent<CharacterController>().Move(moveDirection * walker.GetComponent<Unit>().speed);
-            }
-
-            backCount--;
+            if (TacticControler.Distance(walker.transform.position, moveDestination) < 3)
+                {
+                    //Debug.Log("Distanse " + TacticControler.Distance(walker.transform.position, moveDestination)+" Stop.");
+                    //walker.GetComponent<NavMeshAgent>().Stop();
+                }
             if (backCount == 0)
             {
-                Debug.Log("Bracking");
-               walker.GetComponent<Unit>().state = UnitStateType.Waiting;
-                walker.GetComponent<Rigidbody>().AddForce(-moveDirection, ForceMode.VelocityChange);
+                walker.GetComponent<NavMeshAgent>().SetDestination(moveDestination);
+                backCount = 100;
             }
+            else backCount--;
         }
+        private double GetAngel(Vector3 A, Vector3 B)
+        {
+            return Math.Acos((A.x * B.x + A.y * B.y + A.z * B.z) / ((Math.Sqrt(A.x * A.x + A.y * A.y + A.z * A.z) * Math.Sqrt(B.x * B.x + B.y * B.y + B.z * B.z))));
+        }
+        //public bool MoveTo(Vector3 destination)
+        //{
+        //    State = MovementState.Stering;
+        //    destination.y = 0;
+        //    dirAngel = GetAngel(walker.transform.ro)
+        //    backCount = 1;
+        //    walker.GetComponent<Unit>().state = UnitStateType.Move;
+
+        //    return false;
+        //}
+        //public void Update()
+        //{
+        //    switch (State)
+        //    {
+        //        case MovementState.Acceleration:
+        //            {
+        //                if (backCount > 0)
+        //                {
+        //                    //Debug.Log("Breaking");
+        //                    //walker.GetComponent<Unit>().state = UnitStateType.Waiting;
+        //                    //walker.GetComponent<Rigidbody>().AddForce(-moveDirection, ForceMode.VelocityChange);
+        //                    backCount--;
+        //                }
+        //                else
+        //                {
+        //                    walker.GetComponent<Rigidbody>().AddForce(-Vector3.forward * walker.GetComponent<Unit>().speed, ForceMode.Acceleration);
+        //                    State = MovementState.Breaking;
+        //                    backCount = 100;
+        //                }
+        //                break;
+        //            }
+        //        case MovementState.Breaking:
+        //            {
+        //                if (backCount > 0)
+        //                {
+        //                    backCount--;
+        //                }
+        //                else
+        //                {
+        //                    State = MovementState.Rest;
+        //                }
+        //                break;
+        //            }
+        //        case MovementState.Stering:
+        //            {
+        //                if (backCount > 0)
+        //                {
+        //                    var target = walker.transform.position - rotDirection;
+        //                    target.y = 0;
+        //                    walker.transform.rotation = Quaternion.LookRotation(target, Vector3.up);
+        //                    backCount--;
+        //                }
+        //                else
+        //                {
+        //                    walker.GetComponent<Rigidbody>().AddForce(Vector3.forward * walker.GetComponent<Unit>().speed, ForceMode.Acceleration);
+        //                    State = MovementState.Acceleration;
+        //                    backCount = 100;
+        //                }
+        //                break;
+        //            }
+        //        case MovementState.Rest:
+        //            {
+        //                if (backCount > 0)
+        //                {
+        //                    backCount--;
+        //                }
+        //                else
+        //                {
+
+        //                }
+        //                break;
+        //            }
+        //    }
+        //}
+        //private double GetAngel(Vector3 A, Vector3 B)
+        //{
+        //    return Math.Acos((A.x * B.x + A.y * B.y + A.z * B.z) / ((Math.Sqrt(A.x * A.x + A.y * A.y + A.z * A.z) * Math.Sqrt(B.x * B.x + B.y * B.y + B.z * B.z))));
+        //}
     }
     public class ShootController
     {
@@ -75,7 +162,7 @@ namespace PracticeProject
         {
             return false;
         }
-        void Update()
+        public void Update()
         {
             backCount--;
         }

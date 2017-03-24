@@ -114,7 +114,13 @@ namespace PracticeProject
         // Update is called once per frame
         void Update()
         {
+            Driver.Update();
+            Gunner.Update();
             ChoiseNextAction();
+        }
+        private void FixedUpdate()
+        {
+
         }
     }
 }
