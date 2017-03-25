@@ -6,11 +6,12 @@ using UnityEngine.AI;
 
 namespace PracticeProject
 {
-    public enum UnitType { InfintryVehikle, ReconVehicle, Tank };
+    public enum UnitClass { Figther, Bomber, Corvette };
     public enum UnitStateType { Move, Fire, MoveAndFire, Waiting, SkippingStep };
-    public enum ImpactType { ForestStaticImpact };
-    public enum TerrainType { Plain, Forest };
+    //public enum ImpactType { ForestStaticImpact };
+    //public enum TerrainType { Plain, Forest };
     public enum Team { Green, Red, Blue };
+    public enum WeaponType { Cannon, Laser, Plazma, Missile, Torpedo }
 
     public class GlobalController : MonoBehaviour
     {
@@ -20,22 +21,22 @@ namespace PracticeProject
     }
     public static class TacticControler
     {
-        internal static double Distance(GameObject unitX, GameObject unitY)
-        {
-            return Math.Sqrt(
-                Math.Pow((unitX.transform.position.x - unitY.transform.position.x), 2) +
-                Math.Pow((unitX.transform.position.y - unitY.transform.position.y), 2) +
-                Math.Pow((unitX.transform.position.z - unitY.transform.position.z), 2)
-                );
-        }
-        internal static double Distance(Vector3 A, Vector3 B)
-        {
-            return Math.Sqrt(
-                Math.Pow((A.x - B.x), 2) +
-                Math.Pow((A.y - B.y), 2) +
-                Math.Pow((A.z - B.z), 2)
-                );
-        }
+        //internal static double Distance(GameObject unitX, GameObject unitY)
+        //{
+        //    return Math.Sqrt(
+        //        Math.Pow((unitX.transform.position.x - unitY.transform.position.x), 2) +
+        //        Math.Pow((unitX.transform.position.y - unitY.transform.position.y), 2) +
+        //        Math.Pow((unitX.transform.position.z - unitY.transform.position.z), 2)
+        //        );
+        //}
+        //internal static double Distance(Vector3 A, Vector3 B)
+        //{
+        //    return Math.Sqrt(
+        //        Math.Pow((A.x - B.x), 2) +
+        //        Math.Pow((A.y - B.y), 2) +
+        //        Math.Pow((A.z - B.z), 2)
+        //        );
+        //}
     }
 
     public class MovementController
@@ -47,9 +48,10 @@ namespace PracticeProject
         {
             this.walker = walker;
             moveDestination = walker.transform.position;
-            walker.GetComponent<NavMeshAgent>().speed = walker.GetComponent<Unit>().speed;
-            walker.GetComponent<NavMeshAgent>().acceleration = walker.GetComponent<Unit>().speed * 1.6f;
-            walker.GetComponent<NavMeshAgent>().angularSpeed = walker.GetComponent<Unit>().speed * 5.3f;
+            walker.GetComponent<NavMeshAgent>().speed = walker.GetComponent<Unit>().Speed;
+            walker.GetComponent<NavMeshAgent>().acceleration = walker.GetComponent<Unit>().Speed * 1.6f;
+            walker.GetComponent<NavMeshAgent>().angularSpeed = walker.GetComponent<Unit>().Speed * 5.3f;
+            Debug.Log("Driver online");
         }
         public bool MoveTo(Vector3 destination)
         {
@@ -60,7 +62,7 @@ namespace PracticeProject
         }
         public void Update()
         {
-            if (TacticControler.Distance(walker.transform.position, moveDestination) < 3)
+            if (Vector3.Distance(walker.transform.position, moveDestination) < 3)
                 {
                     //Debug.Log("Distanse " + TacticControler.Distance(walker.transform.position, moveDestination)+" Stop.");
                     //walker.GetComponent<NavMeshAgent>().Stop();
@@ -157,9 +159,27 @@ namespace PracticeProject
     }
     public class ShootController
     {
+        private Weapon[] primary;
+        private Weapon[] secondary;
         public int backCount;
-        public bool ShootHim(Unit shooter, Unit target)
+        public ShootController(GameObject primary, GameObject secondary)
         {
+            this.primary = primary.GetComponentsInChildren<Weapon>();
+            this.secondary = secondary.GetComponentsInChildren<Weapon>();
+            Debug.Log("Gunner online");
+        }
+        public bool ShootHim(GameObject target)
+        {
+            foreach (Weapon x in primary)
+            {
+                if (x.Cooldown == 0)
+                    x.Fire(target.transform.position);
+            }
+            foreach (Weapon x in secondary)
+            {
+                if (x.Cooldown == 0)
+                    x.Fire(target.transform.position);
+            }
             return false;
         }
         public void Update()
@@ -167,7 +187,6 @@ namespace PracticeProject
             backCount--;
         }
     }
-
     //public static class ObjectCreator
     //{
     //    public static Unit RestoreUnit(UnitType type, UnityEngine.Object GraficUnitRef)

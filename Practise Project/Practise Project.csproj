@@ -75,38 +75,22 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\GUI\Dropdown.cs" />
+    <Compile Include="Assets\GUI\GameMenu.cs" />
+    <Compile Include="Assets\GUI\MoveTarget.cs" />
+    <Compile Include="Assets\GUI\Selection\Script\UnitSelectionComponent.cs" />
+    <Compile Include="Assets\GUI\Selection\Script\Utils.cs" />
+    <Compile Include="Assets\GUI\UIUtility.cs" />
     <Compile Include="Assets\Scripts\CameraMovementScript.cs" />
     <Compile Include="Assets\Scripts\GlobalController.cs" />
+    <Compile Include="Assets\Scripts\Shell.cs" />
     <Compile Include="Assets\Scripts\TerraCell.cs" />
-    <Compile Include="Assets\Scripts\TutorScripts\Build\BuildManager.cs" />
-    <Compile Include="Assets\Scripts\TutorScripts\Build\TriggerManager.cs" />
-    <Compile Include="Assets\Scripts\TutorScripts\Building\Castle.cs" />
-    <Compile Include="Assets\Scripts\TutorScripts\Building\Magic.cs" />
-    <Compile Include="Assets\Scripts\TutorScripts\Building\Mining.cs" />
-    <Compile Include="Assets\Scripts\TutorScripts\Building\Shell.cs" />
-    <Compile Include="Assets\Scripts\TutorScripts\Building\Shop.cs" />
-    <Compile Include="Assets\Scripts\TutorScripts\Building\Tower.cs" />
-    <Compile Include="Assets\Scripts\TutorScripts\Camera\CameraMove.cs" />
-    <Compile Include="Assets\Scripts\TutorScripts\Dwarf\ActiveState.cs" />
-    <Compile Include="Assets\Scripts\TutorScripts\Dwarf\AnimationDwarf.cs" />
-    <Compile Include="Assets\Scripts\TutorScripts\Dwarf\Grid.cs" />
-    <Compile Include="Assets\Scripts\TutorScripts\Dwarf\Stats.cs" />
-    <Compile Include="Assets\Scripts\TutorScripts\Enemy\StatsEnemy.cs" />
-    <Compile Include="Assets\Scripts\TutorScripts\GUI\BackgroudUI.cs" />
-    <Compile Include="Assets\Scripts\TutorScripts\GUI\Dropdown.cs" />
-    <Compile Include="Assets\Scripts\TutorScripts\GUI\GameMenu.cs" />
-    <Compile Include="Assets\Scripts\TutorScripts\GUI\UIUtility.cs" />
-    <Compile Include="Assets\Scripts\TutorScripts\GlobalDB.cs" />
-    <Compile Include="Assets\Scripts\TutorScripts\Magic\DefenceUnit.cs" />
-    <Compile Include="Assets\Scripts\TutorScripts\Select\Select.cs" />
     <Compile Include="Assets\Scripts\Unit.cs" />
-    <Compile Include="Assets\Selection\Script\SelectableUnitComponent.cs" />
-    <Compile Include="Assets\Selection\Script\UnitSelectionComponent.cs" />
-    <Compile Include="Assets\Selection\Script\Utils.cs" />
+    <Compile Include="Assets\Scripts\Weapon.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\Selection\Projector\ProjectorAdditiveTint.shader" />
-    <None Include="Assets\Selection\ProjectorAdditiveTint.shader" />
+    <None Include="Assets\GUI\Selection\Projector\ProjectorAdditiveTint.shader" />
+    <None Include="Assets\GUI\Selection\ProjectorAdditiveTint.shader" />
     <None Include="Assets\read me.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

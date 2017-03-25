@@ -6,7 +6,7 @@ namespace PracticeProject
 {
     public class TerraCell : MonoBehaviour
     {
-        public TerrainType type;
+        //public TerrainType type;
         public UnityEngine.Object GraficUnitRef;
 
         public bool Busy;
