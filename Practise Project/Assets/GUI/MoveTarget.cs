@@ -6,14 +6,15 @@ namespace PracticeProject
     public class MoveTarget : MonoBehaviour
     {
         public Texture Target;
-        public int ttl;
+        private float ttl;
+        //public int time;
         public int TargetFrameWidth;
         public int TargetFrameHeight;
         public int TargetFrameOffset;
         // Use this for initialization
         void Start()
         {
-
+            ttl = 1.5f;
         }
         private void OnGUI()
         {
@@ -35,8 +36,8 @@ namespace PracticeProject
         void Update()
         {
             if (ttl > 0)
-                ttl--;
-            else Destroy(this);
+                ttl -= Time.deltaTime;
+            else Destroy(this.gameObject);
         }
     }
 }

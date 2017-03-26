@@ -9,17 +9,18 @@ namespace PracticeProject
     {
         //protected float damage;
         protected float range;
-        protected int ammo;
-        protected int coolingTime;
-        protected int cooldown;
-        protected float dispersion;
+        public int ammo;
+        protected float coolingTime;
+        public float cooldown;
+        public float dispersion;
         public WeaponType Type;
         public GameObject ShellPrefab;
         public AudioClip ShootSound;
 
         public float Range { get { return range; } }
         public int Ammo { get { return ammo; } }
-        public int Cooldown { get { return cooldown; } }
+        public float Cooldown { get { return cooldown; } }
+        public float CoolingTime { get { return coolingTime; } }
 
         private void Start()
         {
@@ -29,9 +30,9 @@ namespace PracticeProject
                 case WeaponType.Cannon:
                     {
                         //damage = 30;
-                        range = 50;
+                        range = 70;
                         ammo = 2000;
-                        coolingTime = 45;
+                        coolingTime = 0.3f;
                         cooldown = 0;
                         dispersion = 0.5f;//normal
                         break;
@@ -39,11 +40,21 @@ namespace PracticeProject
                 case WeaponType.Laser:
                     {
                         //damage = 30;
-                        range = 50;
+                        range = 150;
                         ammo = Int32.MaxValue;
-                        coolingTime = 300;
+                        coolingTime = 5f;
                         cooldown = 0;
                         dispersion = 0.001f;//exponential
+                        break;
+                    }
+                case WeaponType.Missile:
+                    {
+                        //damage = 30;
+                        range = 100;
+                        ammo = 10;
+                        coolingTime = 10f;
+                        cooldown = 10f;
+                        dispersion = 0.000f;
                         break;
                     }
             }
@@ -53,25 +64,25 @@ namespace PracticeProject
         void Update()
         {
             if (cooldown > 0)
-                cooldown--;
+                cooldown -= Time.deltaTime;
         }
 
-        public bool Fire(Vector3 target)
+        public bool Fire(Transform target)
         {
-            if ((ammo > 0) && (cooldown == 0))
+            if ((ammo > 0) && (cooldown <= 0))
             {
-                Debug.Log("Fire");
+                //Debug.Log("Fire");
                 Shoot(target);
                 cooldown = coolingTime;
                 ammo--;
             }
             return false;
         }
-        private void Shoot(Vector3 target)
+        private void Shoot(Transform target)
         {
             switch (Type)
             {
-                case (WeaponType.Cannon):
+                case WeaponType.Cannon:
                     {
                         Quaternion direction = transform.rotation;
                         double[] random = Randomizer.Normal(1, 1, 32, 0, 128);
@@ -84,10 +95,10 @@ namespace PracticeProject
                             direction.y = direction.y + (Convert.ToSingle(random[1] - (random.Min() + random.Max()) / 2) * dispersion);
                         else
                             direction.y = direction.y + (Convert.ToSingle(random[1] - (random.Min() + random.Max()) / 2) * -dispersion);
-                        GameObject ShellInstance = Instantiate(ShellPrefab, gameObject.transform.position, direction);
+                        Instantiate(ShellPrefab, gameObject.transform.position, direction);
                         break;
                     }
-                case (WeaponType.Laser):
+                case WeaponType.Laser:
                     {
                         Quaternion direction = transform.rotation;
                         double[] random = Randomizer.Exponential(7, 32, 0, 128);
@@ -100,7 +111,14 @@ namespace PracticeProject
                             direction.y = direction.y + (Convert.ToSingle(random[1]) * dispersion);
                         else
                             direction.y = direction.y + (Convert.ToSingle(random[1]) * -dispersion);
-                        GameObject ShellInstance = Instantiate(ShellPrefab, gameObject.transform.position, direction);
+                        Instantiate(ShellPrefab, gameObject.transform.position, direction);
+                        break;
+                    }
+                case WeaponType.Missile:
+                    {
+                        Debug.Log("Launsh Missile");
+                        GameObject missile = Instantiate(ShellPrefab, gameObject.transform.position, transform.rotation);
+                        missile.GetComponent<Missile>().SetTarget(target);
                         break;
                     }
             }

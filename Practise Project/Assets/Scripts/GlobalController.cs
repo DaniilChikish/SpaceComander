@@ -12,7 +12,7 @@ namespace PracticeProject
     //public enum TerrainType { Plain, Forest };
     public enum Team { Green, Red, Blue };
     public enum WeaponType { Cannon, Laser, Plazma, Missile, Torpedo }
-
+    public enum BlastType { Plazma, Missile, Torpedo, Ship }
     public class GlobalController : MonoBehaviour
     {
         public List<GameObject> unitList; // список 
@@ -21,6 +21,10 @@ namespace PracticeProject
     }
     public static class TacticControler
     {
+        public static double GetAngel(Vector3 A, Vector3 B)
+        {
+            return Math.Acos((A.x * B.x + A.y * B.y + A.z * B.z) / ((Math.Sqrt(A.x * A.x + A.y * A.y + A.z * A.z) * Math.Sqrt(B.x * B.x + B.y * B.y + B.z * B.z))));
+        }
         //internal static double Distance(GameObject unitX, GameObject unitY)
         //{
         //    return Math.Sqrt(
@@ -43,15 +47,30 @@ namespace PracticeProject
     {
         private GameObject walker;
         private Vector3 moveDestination;
-        public int backCount;
+
+        public float backCount;
         public MovementController(GameObject walker)
         {
             this.walker = walker;
             moveDestination = walker.transform.position;
             walker.GetComponent<NavMeshAgent>().speed = walker.GetComponent<Unit>().Speed;
             walker.GetComponent<NavMeshAgent>().acceleration = walker.GetComponent<Unit>().Speed * 1.6f;
-            walker.GetComponent<NavMeshAgent>().angularSpeed = walker.GetComponent<Unit>().Speed * 5.3f;
-            Debug.Log("Driver online");
+            walker.GetComponent<NavMeshAgent>().angularSpeed = walker.GetComponent<Unit>().Speed * 3.3f;
+            //Debug.Log("Driver online");
+        }
+        public void Update()
+        {
+            //if (Vector3.Distance(walker.transform.position, moveDestination) < 3)
+            //    {
+                    //Debug.Log("Distanse " + TacticControler.Distance(walker.transform.position, moveDestination)+" Stop.");
+                    //walker.GetComponent<NavMeshAgent>().Stop();
+            //    }
+            if (backCount == 0)
+            {
+                walker.GetComponent<NavMeshAgent>().SetDestination(moveDestination);
+                backCount = 1;
+            }
+            else backCount -= Time.deltaTime;
         }
         public bool MoveTo(Vector3 destination)
         {
@@ -60,24 +79,7 @@ namespace PracticeProject
             backCount = 100;            
             return false;
         }
-        public void Update()
-        {
-            if (Vector3.Distance(walker.transform.position, moveDestination) < 3)
-                {
-                    //Debug.Log("Distanse " + TacticControler.Distance(walker.transform.position, moveDestination)+" Stop.");
-                    //walker.GetComponent<NavMeshAgent>().Stop();
-                }
-            if (backCount == 0)
-            {
-                walker.GetComponent<NavMeshAgent>().SetDestination(moveDestination);
-                backCount = 100;
-            }
-            else backCount--;
-        }
-        private double GetAngel(Vector3 A, Vector3 B)
-        {
-            return Math.Acos((A.x * B.x + A.y * B.y + A.z * B.z) / ((Math.Sqrt(A.x * A.x + A.y * A.y + A.z * A.z) * Math.Sqrt(B.x * B.x + B.y * B.y + B.z * B.z))));
-        }
+
         //public bool MoveTo(Vector3 destination)
         //{
         //    State = MovementState.Stering;
@@ -99,7 +101,7 @@ namespace PracticeProject
         //                    //Debug.Log("Breaking");
         //                    //walker.GetComponent<Unit>().state = UnitStateType.Waiting;
         //                    //walker.GetComponent<Rigidbody>().AddForce(-moveDirection, ForceMode.VelocityChange);
-        //                    backCount--;
+        //                    backCount -= Time.deltaTime;
         //                }
         //                else
         //                {
@@ -113,7 +115,7 @@ namespace PracticeProject
         //            {
         //                if (backCount > 0)
         //                {
-        //                    backCount--;
+        //                    backCount -= Time.deltaTime;
         //                }
         //                else
         //                {
@@ -128,7 +130,7 @@ namespace PracticeProject
         //                    var target = walker.transform.position - rotDirection;
         //                    target.y = 0;
         //                    walker.transform.rotation = Quaternion.LookRotation(target, Vector3.up);
-        //                    backCount--;
+        //                    backCount -= Time.deltaTime;
         //                }
         //                else
         //                {
@@ -142,7 +144,7 @@ namespace PracticeProject
         //            {
         //                if (backCount > 0)
         //                {
-        //                    backCount--;
+        //                    backCount -= Time.deltaTime;
         //                }
         //                else
         //                {
@@ -161,30 +163,105 @@ namespace PracticeProject
     {
         private Weapon[] primary;
         private Weapon[] secondary;
-        public int backCount;
-        public ShootController(GameObject primary, GameObject secondary)
+        public GameObject body;
+        private GameObject aimTarget;
+        //private float backCount;
+        private float synchPrimary;
+        private int indexPrimary;
+        private float synchSecondary;
+        private int indexSecondary;
+        public ShootController(GameObject body)
         {
-            this.primary = primary.GetComponentsInChildren<Weapon>();
-            this.secondary = secondary.GetComponentsInChildren<Weapon>();
-            Debug.Log("Gunner online");
+            this.body = body;
+            this.primary = body.transform.FindChild("Primary").GetComponentsInChildren<Weapon>();
+            synchPrimary = this.primary[0].CoolingTime / this.primary.Length;
+
+            indexPrimary = 0;
+            this.secondary = body.transform.FindChild("Secondary").GetComponentsInChildren<Weapon>();
+            synchSecondary = this.secondary[0].CoolingTime / this.secondary.Length;
+
+            indexSecondary = 0;
+            //Debug.Log("Gunner online");
         }
-        public bool ShootHim(GameObject target)
+        public bool ShootHimPrimary(GameObject target)
         {
-            foreach (Weapon x in primary)
-            {
-                if (x.Cooldown == 0)
-                    x.Fire(target.transform.position);
-            }
-            foreach (Weapon x in secondary)
-            {
-                if (x.Cooldown == 0)
-                    x.Fire(target.transform.position);
-            }
+            //if (synchPrimary <= 0)
+            //{
+                if (indexPrimary >= primary.Length)
+                    indexPrimary = 0;
+                if (primary[indexPrimary].Cooldown <= 0)
+                {
+                    primary[indexPrimary].Fire(target.transform);
+                    indexPrimary++;
+                    return true;
+                }
+                else indexPrimary++;
+            //}
+            //else             Debug.Log(synchPrimary);
+            return false;
+        }
+        public bool ShootHimSecondary(GameObject target)
+        {
+            //if (synchSecondary <= 0)
+            //{
+                if (indexSecondary >= secondary.Length)
+                    indexSecondary = 0;
+                if (secondary[indexSecondary].Cooldown <= 0)
+                {
+                    secondary[indexSecondary].Fire(target.transform);
+                    indexSecondary++;
+                    return true;
+                }
+                else indexSecondary++;
+            //}
+            //else             Debug.Log(synchSecondary);
             return false;
         }
         public void Update()
         {
-            backCount--;
+            if (synchPrimary > 0)
+                synchPrimary -= Time.deltaTime;
+            else
+                synchPrimary = this.primary[0].CoolingTime / this.primary.Length;
+            if (synchSecondary > 0)
+                synchSecondary -= Time.deltaTime;
+            else
+                synchSecondary = this.secondary[0].CoolingTime / this.secondary.Length;
+            if (aimTarget != null)
+            {
+                var targetvelocity = aimTarget.GetComponent<Rigidbody>().velocity;
+                var Distance = Vector3.Distance(body.transform.position, aimTarget.transform.position);
+                var targetPoint = new Vector3(aimTarget.transform.position.x + targetvelocity.x * Mathf.Sqrt(Mathf.Pow(Distance, 2) / (Mathf.Pow(7500, 2) - Mathf.Pow(targetvelocity.x, 2))), aimTarget.transform.position.y + targetvelocity.y * Mathf.Sqrt(Mathf.Pow(Distance, 2) / (Mathf.Pow(7500, 2) - Mathf.Pow(targetvelocity.y, 2))), aimTarget.transform.position.z + targetvelocity.z * Mathf.Sqrt(Mathf.Pow(Distance, 2) / (Mathf.Pow(7500, 2) - Mathf.Pow(targetvelocity.z, 2))));//Поправку берём тут
+                Quaternion targetRotation = Quaternion.LookRotation(targetPoint - body.transform.position, new Vector3(0, 1, 0));
+                body.transform.rotation = Quaternion.Slerp(
+                body.transform.rotation, targetRotation, Time.deltaTime * body.GetComponent<Unit>().Speed * 0.2f);
+                //var forward = walker.transform.TransformDirection(Vector3.forward);
+                //var targetDir = aimTarget - walker.transform.position;
+                //if (Vector3.Angle(forward, targetDir) < shootAngleDistance)
+            }
+        }
+        public bool SetAim(GameObject target)
+        {
+            if (aimTarget == null)
+            {
+                aimTarget = target;
+                //rotateDestination = Quaternion.Lerp(walker.transform.rotation, Quaternion.LookRotation(target - walker.transform.position), walker.GetComponent<Unit>().Speed * 0.3f);
+                return true;
+            }
+            else return false;
+        }
+        public bool ResetAim()
+        {
+            aimTarget = null;
+            return true;
+        }
+        public float GetRangePrimary()
+        {
+            return primary[0].Range;
+        }
+        public float GetRangeSecondary()
+        {
+            return secondary[0].Range;
         }
     }
     //public static class ObjectCreator

@@ -82,7 +82,9 @@
     <Compile Include="Assets\GUI\Selection\Script\Utils.cs" />
     <Compile Include="Assets\GUI\UIUtility.cs" />
     <Compile Include="Assets\Scripts\CameraMovementScript.cs" />
+    <Compile Include="Assets\Scripts\Explosion.cs" />
     <Compile Include="Assets\Scripts\GlobalController.cs" />
+    <Compile Include="Assets\Scripts\Missile.cs" />
     <Compile Include="Assets\Scripts\Shell.cs" />
     <Compile Include="Assets\Scripts\TerraCell.cs" />
     <Compile Include="Assets\Scripts\Unit.cs" />

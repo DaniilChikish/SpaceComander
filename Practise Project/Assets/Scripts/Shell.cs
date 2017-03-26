@@ -8,9 +8,10 @@ namespace PracticeProject
         public WeaponType Type;
         private float speed;
         private float damage;
-        private int ttl;
+        private float ttl;
         public float Speed { get { return speed; } }
         public float Damage { get { return damage; } }
+        public GameObject Blast;
         // Use this for initialization
         void Start()
         {
@@ -20,7 +21,7 @@ namespace PracticeProject
                     {
                         damage = 30;
                         speed = 7500;
-                        ttl = 150;
+                        ttl = 2;
                         gameObject.GetComponent<Rigidbody>().AddForce(transform.forward * Speed);
                         break;
                     }
@@ -28,7 +29,7 @@ namespace PracticeProject
                     {
                         damage = 50;
                         speed = 20000;
-                        ttl = 150;
+                        ttl = 1.5f;
                         gameObject.GetComponent<Rigidbody>().AddForce(transform.forward * Speed);
                         break;
                     }
@@ -39,30 +40,17 @@ namespace PracticeProject
         void Update()
         {
             if (ttl > 0)
-            {
-                ttl--;
-                //gameObject.GetComponent<Light>().intensity = gameObject.GetComponent<Light>().intensity * (ttl / 150);
-            }
+                ttl -= Time.deltaTime;
             else
-            {
-                Destroy(this.gameObject);
-            }
+                Explode();
         }
-        public void SetTarget(Vector3 target)
+        private void OnCollisionEnter(Collision collision)
         {
-            switch (Type)
-            {
-                case WeaponType.Missile:
-                    {
-
-                        break;
-                    }
-                case WeaponType.Torpedo:
-                    {
-                        break;
-                    }
-            }
+            Explode();
         }
-
+        private void Explode()
+        {
+            Destroy(this.gameObject);
+        }
     }
 }
