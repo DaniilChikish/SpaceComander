@@ -19,21 +19,28 @@ namespace PracticeProject
                     {
                         maxRadius = 6f;
                         waveSpeed = 1f;
-                        damage = 100;
+                        damage = 10;
                         break;
                     }
-                case BlastType.Torpedo:
+                case BlastType.NukeTorpedo:
                     {
-                        maxRadius = 10f;
-                        waveSpeed = 1.1f;
-                        damage = 200;
+                        maxRadius = 40f;
+                        waveSpeed = 1.3f;
+                        damage = 20;
                         break;
                     }
-                case BlastType.Ship:
+                case BlastType.SmallShip:
                     {
                         maxRadius = 8f;
                         waveSpeed = 1.1f;
-                        damage = 20;
+                        damage = 2;
+                        break;
+                    }
+                case BlastType.Plazma:
+                    {
+                        maxRadius = 12f;
+                        waveSpeed = 0.2f;
+                        damage = 1;
                         break;
                     }
                 default:

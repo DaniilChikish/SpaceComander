@@ -98,10 +98,13 @@ namespace PracticeProject
         private void SendTo(Vector3 destination)
         {
             //Debug.Log("SendTo...");
-            if (FindObjectsOfType<GlobalController>()[0].selectedList.Count>0)
+            if (FindObjectsOfType<GlobalController>()[0].selectedList.Count > 0)
                 foreach (GameObject x in FindObjectsOfType<GlobalController>()[0].selectedList)
                 {
-                    x.GetComponent<Unit>().SendTo(destination);
+                    if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
+                        x.GetComponent<Unit>().SendToQueue(destination);
+                    else
+                        x.GetComponent<Unit>().SendTo(destination);
                 }
         }
 
