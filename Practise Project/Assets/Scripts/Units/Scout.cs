@@ -25,6 +25,7 @@ namespace PracticeProject
             jamming = false;
             warpDrive = false;
             stealthness = 0.2f; //set in child
+            radiolink = 2.5f;
         }
         protected override void DecrementCounters()
         {
@@ -49,23 +50,53 @@ namespace PracticeProject
                 cooldownMissileInhibitor -= Time.deltaTime;
         }
         //AI logick
-        //protected override bool ManeuverFunction()
-        //{
-        //    return false;
-        //}
+        protected override bool ManeuverFunction()
+        {
+            switch (targetStatus)
+            {
+                case TargetStateType.NotFinded:
+                    {
+                        return Patrool();
+                    }
+                case TargetStateType.Captured:
+                    {
+                        if (Warp())
+                        return Raid();
+                        else return ShortenDistance();
+                    }
+                case TargetStateType.InPrimaryRange:
+                    {
+                        return IncreaseDistance();
+                    }
+                case TargetStateType.InSecondaryRange:
+                    {
+                        if (Warp())
+                            return Raid();
+                        else return ShortenDistance();
+                    }
+                case TargetStateType.BehindABarrier:
+                    {
+                        return Raid();
+                    }
+                default:
+                    return false;
+            }
+        }
         protected override bool RoleFunction()
         {
-            //Warp();
-            return false;
+            return Warp();
         }
         protected override bool SelfDefenceFunction()
         {
-            RadarWarningResiever();
+            SelfDefenceFunctionBase();
+            if (RadarWarningResiever() > 5)
+                Jammer();
             MissileGuidanceInhibitor();
             return true;
         }
         public override void SendTo(Vector3 destination)
         {
+            Debug.Log("under control" + destination);
             Warp();
             waitingBackCount = 3;
             aiStatus = UnitStateType.UnderControl;
@@ -77,17 +108,6 @@ namespace PracticeProject
             waitingBackCount = 3;
             aiStatus = UnitStateType.UnderControl;
             Driver.MoveToQueue(destination);
-        }
-        private void RadarWarningResiever()
-        {
-            int CapByTarget = 0;
-            foreach (GameObject x in enemys)
-            {
-                if (x.GetComponent<Unit>().CurrentTarget == this)
-                    CapByTarget++;
-            }
-            if (CapByTarget > 5)
-                Jammer();
         }
         private void Jammer()
         {
@@ -120,9 +140,9 @@ namespace PracticeProject
             }
             return false;
         }
-        private void Warp()
+        private bool Warp()
         {
-            if (!warpDrive&&cooldownWarp <= 0)
+            if (!warpDrive && cooldownWarp <= 0)
             {
                 //Debug.Log("WarpOn");
                 warpDrive = true;
@@ -130,7 +150,10 @@ namespace PracticeProject
                 this.GetComponent<Rigidbody>().mass = this.GetComponent<Rigidbody>().mass * 0.1f;
                 Driver.UpdateSpeed();
                 cooldownWarp = 2f;
+                waitingBackCount = 1.5f;
+                return true;
             }
+            else return false;
         }
     }
 }

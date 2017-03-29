@@ -1,0 +1,21 @@
+Spaceship 
+
+Description:
+Product consist of 4 spaceship main body models that can be used as diffrent NPC or Player upgrades.
+2 seperate weapons that can be placed anywhere on the ships.
+
+Textures
+2x 1024x1024 clr/nrm
+2x 256x256 Intensity
+1x 256x256 Force_effect
+1x 256x128 Engine_effect
+
+Models
+4x Spaceship main body models (998 tris  / 1270 tris / 1861 tris / 2088 tris)
+Missle launcher        122 tris
+Turret                 240 tris
+4 x Force field
+1 Engine FX mesh
+
+12 Prefabs:
+3 weapon placement variations for each of the 4 body models.

@@ -7,8 +7,8 @@ using UnityEngine.AI;
 namespace PracticeProject
 {
     public enum UnitClass { Scout, Recon, ECM, Figther, Bomber, Command, LR_Corvette, Guard_Corvette, Support_Corvette };
-    public enum UnitStateType { MoveAI, AtackAI, UnderControl, Waiting};
-    public enum TargetStateType { BehindABarrier,  InPramaryRange, InSecondaryRange, Captured}; 
+    public enum UnitStateType { MoveAI, UnderControl, Waiting};
+    public enum TargetStateType { BehindABarrier,  InPrimaryRange, InSecondaryRange, Captured, NotFinded}; 
     //public enum ImpactType { ForestStaticImpact };
     //public enum TerrainType { Plain, Forest };
     public enum Team { Green, Red, Blue };
@@ -19,6 +19,37 @@ namespace PracticeProject
         public List<GameObject> unitList; // список 
         public List<GameObject> selectedList; // спиков выделенных объектов
         public Team playerArmy;
+        //selection
+        public float NameFrameOffset;
+        public Texture Selection;
+        public float SelectionFrameWidth;
+        public float SelectionFrameHeight;
+        public float SelectionFrameOffset;
+        public GameObject CannonUnitaryShell;
+        public AudioClip CannonShootSound;
+        public GameObject CannonShellBlast;
+        public GameObject LaserBeam;
+        public GameObject PlasmaSphere;
+        public GameObject SelfGuidedMissile;
+        public GameObject UnguidedMissile;
+        public GameObject UnitaryTorpedo;
+        public GameObject SpruteTorpedo;
+        public GameObject NukeTorpedo;
+        public GameObject SmallShipDieBlast;
+        public GameObject MediumShipDieBlast;
+        public GameObject CorvetteDieBlast;
+		public float[] RandomNormalPool;
+		public float RandomNormalMin;
+		public float[] RandomExponentPool;
+		private randomPoolBackCoount;
+		public void Update()
+		{
+		if (randomPoolBackCoount<0)
+		RandomNormalPool = Randomizer.Normal(1, 1, 128, 0, 128);
+		RandomNormalMin = RandomNormalPool.Min();
+		RandomExponentPool = Randomizer.Exponential(7, 32, 0, 128);
+		else randomPoolBackCoount-=Time.deltaTime;
+		}
     }
     public abstract class Unit : MonoBehaviour
     {
@@ -26,23 +57,14 @@ namespace PracticeProject
         protected UnitClass type;
         public UnitClass Type { get { return type; } }
         public UnitStateType aiStatus;
-        public TargetStateType targetStus;
+        public TargetStateType targetStatus;
         public Team alliesArmy;
         public bool isSelected;
         public string UnitName;
 
-        //selection
-        public float NameFrameOffset;
-        public Texture Selection;
-        public float SelectionFrameWidth;
-        public float SelectionFrameHeight;
-        public float SelectionFrameOffset;
-
         //depend varibles
         public float Health;
-        public GameObject DieBlast;
-        public float Accurancy;
-        public float Radiolink = 1.5f;
+        protected float radiolink;
 
         //constants
         protected float maxHealth; //set in child
@@ -69,6 +91,7 @@ namespace PracticeProject
         public float waitingBackCount; //Make private after debug;
         public List<GameObject> enemys;
         public GameObject CurrentTarget;
+        protected Stack<GameObject> CapByTarget;
 
         protected void Start()
         {
@@ -78,11 +101,13 @@ namespace PracticeProject
             UnitName = type.ToString();
             Driver = new MovementController(this.gameObject);
             Gunner = new ShootController(this.gameObject);
+            CapByTarget = new Stack<GameObject>();
             Global = FindObjectsOfType<GlobalController>()[0];
             Global.unitList.Add(gameObject);
+            //aiStatus = UnitStateType.MoveAI;
         }
         protected abstract void StatsUp();
-        protected void Update()
+        protected void Update()//
         {
             if (Health < 0)
                 Die();
@@ -95,17 +120,64 @@ namespace PracticeProject
             if (synchAction <= 0)
             {
                 synchAction = 0.05f;
-                if (waitingBackCount <= 0)
+                switch (aiStatus)
                 {
-                    aiStatus = UnitStateType.MoveAI;
-                    ManeuverFunction();
+                    case UnitStateType.MoveAI:
+                        {
+                            if (!BattleFunction())
+                            {
+                                if (targetStatus == TargetStateType.NotFinded)
+                                    aiStatus = UnitStateType.Waiting;
+                            }
+                            if (roleModuleEnabled)
+                                RoleFunction();
+                            if (selfDefenceAIEnabled)
+                                SelfDefenceFunction();
+                            break;
+                        }
+                    case UnitStateType.UnderControl:
+                        {
+                            if (!BattleFunction())
+                            if (roleModuleEnabled)
+                                RoleFunction();
+                            if (selfDefenceAIEnabled)
+                                SelfDefenceFunction();
+                            break;
+                        }
+                    case UnitStateType.Waiting:
+                        {
+                            if (!BattleFunction())
+                            {
+                                if (targetStatus == TargetStateType.NotFinded)
+                                    aiStatus = UnitStateType.Waiting;
+                                else
+                                {
+                                    if (roleModuleEnabled)
+                                        RoleFunction();
+                                    if (selfDefenceAIEnabled)
+                                        SelfDefenceFunction();
+                                }
+                            }
+                            if (waitingBackCount < 0)
+                                if (ManeuverFunction())
+                                    aiStatus = UnitStateType.MoveAI;
+                            break;
+                        }
                 }
-                else if (!BattleFunction())
-                    aiStatus = UnitStateType.Waiting;
-                if (roleModuleEnabled)
-                    RoleFunction();
-                if (selfDefenceAIEnabled)
-                    SelfDefenceFunction();
+                //if (!BattleFunction())
+                //{
+                //    if (targetStatus == TargetStateType.NotFinded)
+                //        aiStatus = UnitStateType.Waiting;
+                //}
+                //if (roleModuleEnabled)
+                //    RoleFunction();
+                //if (selfDefenceAIEnabled)
+                //    SelfDefenceFunction();
+                //if (waitingBackCount <= 0 && aiStatus != UnitStateType.MoveAI /*|| (aiStatus != UnitStateType.Waiting && aiStatus != UnitStateType.MoveAI)*/)
+                //{
+                //    if (ManeuverFunction())
+                //        aiStatus = UnitStateType.MoveAI;
+                //}
             }
         }
         protected void DecrementBaseCounters()
@@ -141,8 +213,8 @@ namespace PracticeProject
                 style.alignment = TextAnchor.MiddleCenter;
                 //style.fontStyle = FontStyle.Italic;
 
-                GUI.DrawTexture(new Rect(crd.x - SelectionFrameWidth / 2, crd.y - SelectionFrameOffset, SelectionFrameWidth, SelectionFrameHeight), Selection);
-                GUI.Label(new Rect(crd.x - 120, crd.y - NameFrameOffset, 240, 18), UnitName, style);
+                GUI.DrawTexture(new Rect(crd.x - Global.SelectionFrameWidth / 2, crd.y - Global.SelectionFrameOffset, Global.SelectionFrameWidth, Global.SelectionFrameHeight), Global.Selection);
+                GUI.Label(new Rect(crd.x - 120, crd.y - Global.NameFrameOffset, 240, 18), UnitName, style);
             }
         }
 
@@ -152,10 +224,14 @@ namespace PracticeProject
             {
                 case "Shell":
                     {
-                        this.Health = this.Health - collision.gameObject.GetComponent<Shell>().Damage;
+                        this.Health -= collision.gameObject.GetComponent<Round>().GetEnergy();
                         break;
                     }
-
+                case "Energy":
+                    {
+                        this.Health -= collision.gameObject.GetComponent<Round>().GetEnergy()*0.2f;
+                        break;
+                    }
             }
         }
         protected void OnTriggerStay(Collider other)
@@ -186,7 +262,7 @@ namespace PracticeProject
         }
         public void Die()
         {
-            Instantiate(DieBlast, gameObject.transform.position, gameObject.transform.rotation);
+            Instantiate(Global.SmallShipDieBlast, gameObject.transform.position, gameObject.transform.rotation);
             Global.selectedList.Remove(this.gameObject);
             Global.unitList.Remove(this.gameObject);
             Destroy(this.gameObject);
@@ -196,10 +272,15 @@ namespace PracticeProject
         {
             if (CurrentTarget == null)//текущей цели нет
             {
+                targetStatus = TargetStateType.NotFinded;
                 enemys = Scan();//поиск в зоне действия радара
                 if (enemys.Count > 0)
                 {
-                    bool output = OpenFire(GetNearest());//огонь по ближайшей
+                    bool output;
+                    if (RadarWarningResiever() > 0)
+                        output = OpenFire(RetaliatoryCapture());//ответный захват
+                    else
+                        output = OpenFire(GetNearest());//огонь по ближайшей
                     CooperateFire();//целеуказание союзникам
                     return output;
                 }
@@ -235,73 +316,192 @@ namespace PracticeProject
         }
         protected virtual bool ManeuverFunction()
         {
-
-            if (CurrentTarget == null)
-            {
-                return false;
-            }
-            else
-            {
-                switch (targetStus)
+                switch (targetStatus)
                 {
+                    case TargetStateType.NotFinded:
+                        {
+                            return Patrool();
+                        }
                     case TargetStateType.Captured:
                         {
-                            Debug.Log("AiManeur");
-                            Debug.Log((CurrentTarget.transform.position - this.transform.position) * 0.1f);
-                            Driver.MoveTo((CurrentTarget.transform.position - this.transform.position) * 0.1f);
-                            return true;
+                            return ShortenDistance();
                         }
-                    case TargetStateType.InPramaryRange:
+                    case TargetStateType.InPrimaryRange:
                         {
-                            return true;
+                            return IncreaseDistance();
                         }
                     case TargetStateType.InSecondaryRange:
                         {
-                            Debug.Log("AiManeur");
-                            //Debug.Log((CurrentTarget.transform.position - this.transform.position) * 0.1f);
-                            //Driver.MoveTo((CurrentTarget.transform.position - this.transform.position) * 0.1f);
-                            //Driver.MoveTo(gameObject.transform.position + transform.forward * 5);
-                            gameObject.GetComponent<Rigidbody>().AddForce(transform.forward * Speed, ForceMode.Force);
-                            return true;
+                            return ShortenDistance();
                         }
                     case TargetStateType.BehindABarrier:
                         {
-                            return false;
+                            return Raid();
                         }
                     default:
                         return false;
                 }
+        }
+        protected virtual bool Patrool()
+        {
+            waitingBackCount = 30f;
+            Vector3 target1 = this.transform.forward * 40f;
+            target1 += this.transform.position + new Vector3(0, 0.5f, 0);
+//            Debug.Log(target1);
+            Driver.MoveToQueue(target1);
+
+            float random = Convert.ToSingle(Randomizer.Uniform(-10, 10, 1)[0]);
+            Vector3 target2;
+            if (random > 0)
+                target2 = this.transform.right * 40f;
+            else
+                target2 = this.transform.right * -40f;
+            target2 += this.transform.position + new Vector3(0, 0.5f, 0);
+      //      Debug.Log(target2);
+            Driver.MoveToQueue(target2);
+
+            Vector3 target3 = -this.transform.forward * 40f;
+            target3 += this.transform.position + new Vector3(0, 0.5f, 0);
+    //        Debug.Log(target3);
+            Driver.MoveToQueue(target3);
+
+            Vector3 target4;
+            if (random < 0)
+                target4 = this.transform.right * 40f;
+            else
+                target4 = this.transform.right * -40f;
+            target4 += this.transform.position + new Vector3(0, 0.5f, 0);
+  //          Debug.Log(target4);
+            Driver.MoveToQueue(target3);
+
+            Vector3 target5;
+            target5 = this.transform.position;
+
+            return Driver.MoveToQueue(target5);
+        }
+        protected virtual bool ShortenDistance()
+        {
+            if (CurrentTarget != null)
+            {
+                waitingBackCount = 1.5f;
+                Vector3 target = this.transform.forward * (Vector3.Distance(this.transform.position, CurrentTarget.transform.position) - Gunner.GetRangeSecondary() + 10);
+                target += this.transform.position + new Vector3(0, 0.5f, 0);
+                return Driver.MoveToQueue(target);
             }
+            else
+            {
+                waitingBackCount = 1.5f;
+                Vector3 target = this.transform.forward * 30f;
+                target += this.transform.position + new Vector3(0, 0.5f, 0);
+                return Driver.MoveToQueue(target);
+            }
+        }
+        protected virtual bool IncreaseDistance()
+        {
+            if (CurrentTarget != null)
+            {
+                waitingBackCount = 1.5f;
+                Vector3 target = -this.transform.forward * (Gunner.GetRangeSecondary() - Vector3.Distance(this.transform.position, CurrentTarget.transform.position) - 10);
+                target += this.transform.position + new Vector3(0, 0.5f, 0);
+                return Driver.MoveTo(target);
+            }
+            else
+            {
+                waitingBackCount = 1.5f;
+                Vector3 target = this.transform.forward * -30f;
+                target += this.transform.position + new Vector3(0, 0.5f, 0);
+                return Driver.MoveToQueue(target);
+            }
+}
+        protected virtual bool Evasion()
+        {
+            waitingBackCount = 1f;
+            float random = Convert.ToSingle(Randomizer.Uniform(-10, 10, 1)[0]);
+            Vector3 target;
+            if (random > 0)
+                target = this.transform.right * (random + 20f);
+            else
+                target = this.transform.right * (random - 20f);
+            target += this.transform.position + new Vector3(0, 0.5f, 0);
+            return Driver.MoveToQueue(target);
+        }
+        protected virtual bool Raid()
+        {
+            waitingBackCount = 5f;
+            return Driver.MoveToQueue(CurrentTarget.transform.position);
         }
         protected abstract bool RoleFunction();
         protected abstract bool SelfDefenceFunction();
-
+        protected bool SelfDefenceFunctionBase()
+        {
+            if (waitingBackCount < 0 && ShortRangeRadar() > 5)
+                Evasion();
+            return true;
+        }
+        protected virtual int ShortRangeRadar()
+        {
+            int output = 0;
+            List<GameObject> rounds = new List<GameObject>();
+            rounds.AddRange(GameObject.FindGameObjectsWithTag("Torpedo"));
+            foreach (GameObject x in rounds)
+            {
+                if (Vector3.Distance(x.transform.position, this.transform.position) < radarRange * 0.5)
+                    return 10;
+            }
+            rounds.Clear();
+            rounds.AddRange(GameObject.FindGameObjectsWithTag("Energy"));
+            rounds.AddRange(GameObject.FindGameObjectsWithTag("Shell"));
+            foreach (GameObject x in rounds)
+            {
+                if (Vector3.Distance(x.transform.position, this.transform.position) < radarRange * 0.5)
+                    output++;
+                if (output > 9)
+                    return output;
+            }
+            return output;
+        }
+        protected virtual int RadarWarningResiever()
+        {
+            CapByTarget.Clear();
+            foreach (GameObject x in enemys)
+            {
+                if (x.GetComponent<Unit>().CurrentTarget == this)
+                {
+                    CapByTarget.Push(x);
+                }
+            }
+            return CapByTarget.Count;
+        }
+        protected virtual float RetaliatoryCapture()
+        {
+            CurrentTarget = CapByTarget.Pop();
+            return Vector3.Distance(this.transform.position, CurrentTarget.transform.position);
+        }
         protected bool OpenFire(float distance)
         {
-            this.aiStatus = UnitStateType.AtackAI;
             RaycastHit hit;
             Physics.Raycast(this.transform.position, CurrentTarget.transform.position - this.transform.position, out hit);
             if (hit.transform==CurrentTarget.transform)
             {
-                targetStus = TargetStateType.Captured;//наведение
+                targetStatus = TargetStateType.Captured;//наведение
                 Gunner.SetAim(CurrentTarget);
                 if (inhibition <= 0)//если не действует подавление оружия
                 {
                     if (distance < Gunner.GetRangePrimary())//выбор оружия
                     {
-                        targetStus = TargetStateType.InPramaryRange;
+                        targetStatus = TargetStateType.InPrimaryRange;
                         return Gunner.ShootHimPrimary(CurrentTarget);
                     }
                     else if (distance < Gunner.GetRangeSecondary())
                     {
-                        targetStus = TargetStateType.InSecondaryRange;
+                        targetStatus = TargetStateType.InSecondaryRange;
                         return Gunner.ShootHimSecondary(CurrentTarget);
                     }
                 }
             }
             return false;
         }
-        protected List<GameObject> Scan()
+        protected List<GameObject> Scan() //
         {
             List<GameObject> enemys = new List<GameObject>();
             foreach (GameObject x in Global.unitList)
@@ -318,7 +518,7 @@ namespace PracticeProject
                 }
             }
             return enemys;
-        }
+        } 
         public virtual bool Allies(Team army)
         {
             if (army == Global.playerArmy)
@@ -336,17 +536,19 @@ namespace PracticeProject
                 if (x.GetComponent<Unit>().alliesArmy == alliesArmy)
                 {
                     float distance = Vector3.Distance(this.gameObject.transform.position, x.transform.position);
-                    if (distance < RadarRange * Radiolink)
+                    if (distance < RadarRange * radiolink)
                     {
-                        enemys.AddRange(x.GetComponent<Unit>().GetScout());
+                        enemys.AddRange(x.GetComponent<Unit>().GetScout(this.transform.position));
                     }
                 }
             }
             return enemys;
         }
-        public List<GameObject> GetScout()
+        public List<GameObject> GetScout(Vector3 sender)
         {
-            return Scan();
+            if (Vector3.Distance(this.gameObject.transform.position, sender) < RadarRange * radiolink)
+                return Scan();
+            else return null;
         }
         protected bool TargetScouting()
         {
@@ -377,7 +579,7 @@ namespace PracticeProject
                 if (x.GetComponent<Unit>().alliesArmy == alliesArmy)
                 {
                     float distance = Vector3.Distance(this.gameObject.transform.position, x.transform.position);
-                    if (distance < RadarRange * Radiolink)
+                    if (distance < RadarRange * radiolink)
                     {
                         x.GetComponent<Unit>().GetFireSupport(CurrentTarget);
                     }
@@ -390,6 +592,7 @@ namespace PracticeProject
         }
         public virtual void SendTo(Vector3 destination)
         {
+            Debug.Log("under control" + destination);
             waitingBackCount = 3;
             aiStatus = UnitStateType.UnderControl;
             Driver.MoveTo(destination);
@@ -408,9 +611,10 @@ namespace PracticeProject
         protected float coolingTime;
         public float cooldown;
         public float dispersion;
+        protected float shildBlinkTime;
+        public float ShildBlink { get { return shildBlinkTime; } }
         //public WeaponType Type;
-        public GameObject ShellPrefab;
-        public AudioClip ShootSound;
+
 
         public float Range { get { return range; } }
         public int Ammo { get { return ammo; } }
@@ -437,18 +641,21 @@ namespace PracticeProject
             }
             return false;
         }
-        protected virtual void Shoot(Transform target) { }
+        protected abstract void Shoot(Transform target);
     }
-    public abstract class Shell : MonoBehaviour
+    public abstract class Round : MonoBehaviour
     {
         public float speed;
         public float damage;
         public float ttl;
         public float Speed { get { return speed; } }
-        public float Damage { get { return damage; } }
-        public GameObject Blast;
+        //public float Damage { get { return damage; } }
+
         // Use this for initialization
-        protected abstract void Start();
+        protected virtual void Start()
+        {
+            gameObject.GetComponent<Rigidbody>().AddForce(transform.forward * Speed);
+        }
 
         // Update is called once per frame
         public void Update()
@@ -458,14 +665,25 @@ namespace PracticeProject
             else
                 Explode();
         }
-        protected void OnCollisionEnter()
+        protected virtual void OnCollisionEnter(Collision collision)
         {
-            Explode();
+            switch (collision.gameObject.tag)
+            {
+                case "Unit":
+                    {
+                        Explode();
+                        break;
+                    }
+            }
         }
-        protected void Explode()
+        public virtual float GetEnergy()
         {
-            if (Blast != null)
-                Instantiate(Blast, this.transform.position, this.transform.rotation);
+            float output = damage;
+            damage = 0;
+            return output;
+        }
+        protected virtual void Explode()
+        {
             Destroy(this.gameObject);
         }
     }
@@ -473,7 +691,6 @@ namespace PracticeProject
     {
         public GameObject Blast;// префаб взрыва
         public Vector3 target;
-        public Team allies;//свой-чужой
         public float Speed;// скорость ракеты      
         public float TurnSpeed;// скорость поворота ракеты            
         public float DropImpulse;//импульс сброса                  
@@ -504,12 +721,18 @@ namespace PracticeProject
             Instantiate(Blast, this.transform.position, this.transform.rotation);
             Destroy(gameObject);
         }
-
         // взрываем при коллизии
-        public virtual void OnCollisionEnter()
+        public virtual void OnCollisionEnter(Collision collision)
         {
-            if (lt > 1)
-                Explode();
+            switch (collision.gameObject.tag)
+            {
+                case "Shell":
+                    {
+                        if (lt > 1)
+                            Explode();
+                        break;
+                    }
+            }
         }
         public virtual void SetTarget(Vector3 target)
         {
@@ -543,8 +766,8 @@ namespace PracticeProject
     {
         private GameObject walker;
         //private Vector3 moveDestination;
-        private Queue<Vector3> path;
-        public float backCount;
+        private Queue<Vector3> path; //очередь путевых точек
+        public float backCount; //время обновления пути.
         public MovementController(GameObject walker)
         {
             this.walker = walker;
@@ -558,16 +781,13 @@ namespace PracticeProject
             if (backCount <= 0)
             {
                 UpdateSpeed();
-                if (path.Count == 1)
-                    walker.GetComponent<NavMeshAgent>().SetDestination(path.Peek());
+                if (path.Count == 0)
+                    backCount = 1f;
                 else
                 {
-                    if (Vector3.Distance(walker.transform.position, path.Peek())>10)
-                        walker.GetComponent<NavMeshAgent>().SetDestination(path.Peek());
-                    else
-                        walker.GetComponent<NavMeshAgent>().SetDestination(path.Dequeue());
+                    backCount = Vector3.Distance(walker.transform.position, path.Peek()) / walker.GetComponent<NavMeshAgent>().speed;
+                    walker.GetComponent<NavMeshAgent>().SetDestination(path.Dequeue());
                 }
-                backCount = 0.2f;
             }
             else backCount -= Time.deltaTime;
         }
@@ -584,9 +804,20 @@ namespace PracticeProject
         }
         public bool MoveToQueue(Vector3 destination)
         {
-            path.Enqueue(destination);
-            backCount = 0.2f;
-            return true;
+            if (path.Count < 10)
+            {
+                if (path.Contains(destination))
+                    return false;
+                path.Enqueue(destination);
+                backCount = Vector3.Distance(walker.transform.position, destination) / walker.GetComponent<NavMeshAgent>().speed;
+                return true;
+            }
+            else return false;
+        }
+        public void ClearQueue()
+        {
+            walker.GetComponent<NavMeshAgent>().ResetPath();
+            path.Clear();
         }
         
         //public bool MoveTo(Vector3 destination)
@@ -674,6 +905,7 @@ namespace PracticeProject
         private Weapon[] secondary;
         public GameObject body;
         private GameObject aimTarget;
+        private ForceShield shield;
         //private float backCount;
         private float synchPrimary;
         private int indexPrimary;
@@ -684,12 +916,13 @@ namespace PracticeProject
             this.body = body;
             this.primary = body.transform.FindChild("Primary").GetComponentsInChildren<Weapon>();
             synchPrimary = this.primary[0].CoolingTime / this.primary.Length;
-
             indexPrimary = 0;
+
             this.secondary = body.transform.FindChild("Secondary").GetComponentsInChildren<Weapon>();
             synchSecondary = this.secondary[0].CoolingTime / this.secondary.Length;
-
             indexSecondary = 0;
+
+            shield = body.GetComponent<ForceShield>();
             //Debug.Log("Gunner online");
         }
         public bool ShootHimPrimary(GameObject target)
@@ -700,6 +933,7 @@ namespace PracticeProject
                     indexPrimary = 0;
                 if (primary[indexPrimary].Cooldown <= 0)
                 {
+                    shield.Blink(primary[indexPrimary].ShildBlink);
                     bool output = primary[indexPrimary].Fire(target.transform);
                     indexPrimary++;
                     return output;
@@ -716,6 +950,7 @@ namespace PracticeProject
                     indexSecondary = 0;
                 if (secondary[indexSecondary].Cooldown <= 0)
                 {
+                    shield.Blink(secondary[indexSecondary].ShildBlink);
                     bool output = secondary[indexSecondary].Fire(target.transform);
                     indexSecondary++;
                     return output;
@@ -769,25 +1004,6 @@ namespace PracticeProject
             return secondary[0].Range;
         }
     }
-    //public static class ObjectCreator
-    //{
-    //    public static Unit RestoreUnit(UnitType type, UnityEngine.Object GraficUnitRef)
-    //    {
-    //        string StatPath = type.ToString("F") + ".stat.dat";
-    //        string[] stats = System.IO.File.ReadAllLines(StatPath);
-    //        Unit newUnit = new Unit(
-    //            Convert.ToInt32(stats[1]),
-    //            Convert.ToInt32(stats[2]),
-    //            Convert.ToDouble(stats[3]),
-    //            Convert.ToDouble(stats[4]),
-    //            Convert.ToInt32(stats[5]),
-    //            Convert.ToInt32(stats[6]),
-    //            Convert.ToInt32(stats[7]),
-    //            Convert.ToInt32(stats[8]));
-    //        newUnit.type = type;
-    //        return newUnit;
-    //    }
-    //}
     public static class Randomizer
     {
         public static double[] Uniform(int minValue, int maxValue, int Count)

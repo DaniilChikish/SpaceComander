@@ -15,13 +15,14 @@ namespace PracticeProject
         {
             type = UnitClass.Scout;
             maxHealth = 100; //set in child
-            radarRange = 300; //set in child
+            radarRange = 200; //set in child
             speed = 12; //set in child
             battleAIEnabled = true; //set in child
             selfDefenceAIEnabled = true; //set in child
             roleModuleEnabled = true; //set in child
             jamming = false;
             stealthness = 0.2f; //set in child
+            radiolink = 1.1f;
         }
         protected override void DecrementCounters()
         {
@@ -53,20 +54,11 @@ namespace PracticeProject
         }
         protected override bool SelfDefenceFunction()
         {
-            RadarWarningResiever();
+            SelfDefenceFunctionBase();
+            if (RadarWarningResiever() > 5)
+                Jammer();
             MissileGuidanceInhibitor();
             return true;
-        }
-        private void RadarWarningResiever()
-        {
-            int CapByTarget = 0;
-            foreach (GameObject x in enemys)
-            {
-                if (x.GetComponent<Unit>().CurrentTarget == this)
-                    CapByTarget++;
-            }
-            if (CapByTarget > 5)
-                Jammer();
         }
         private void Jammer()
         {

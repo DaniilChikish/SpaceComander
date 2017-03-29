@@ -5,9 +5,9 @@ namespace PracticeProject
 {
     public class Explosion : MonoBehaviour {
         public BlastType Type;
-        public float waveSpeed; // Скорость волны
-        public float maxRadius; // Радиус взрыва
-        public float damage; // Урон
+        private float waveSpeed; // Скорость волны
+        private float maxRadius; // Радиус взрыва
+        private float damage; // Урон
         public float Damage { get { return damage; } }
         public float MaxRadius { get { return maxRadius; } }
 
@@ -36,11 +36,25 @@ namespace PracticeProject
                         damage = 2;
                         break;
                     }
+                case BlastType.MediumShip:
+                    {
+                        maxRadius = 12f;
+                        waveSpeed = 1.1f;
+                        damage = 2;
+                        break;
+                    }
+                case BlastType.Corvette:
+                    {
+                        maxRadius = 20f;
+                        waveSpeed = 1.1f;
+                        damage = 2;
+                        break;
+                    }
                 case BlastType.Plazma:
                     {
                         maxRadius = 12f;
                         waveSpeed = 0.2f;
-                        damage = 1;
+                        damage = 0.1f;
                         break;
                     }
                 default:

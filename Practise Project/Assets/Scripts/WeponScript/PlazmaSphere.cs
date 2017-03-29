@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 namespace PracticeProject
 {
-    public class PlazmaSphere : Shell
+    public class PlazmaSphere : Round
     {
         // цель для ракеты
         public Transform target;
@@ -20,13 +20,11 @@ namespace PracticeProject
         }
         public new void Update()
         {
-            if (ttl < liveTime * 0.9)
+            gameObject.GetComponent<Rigidbody>().AddForce(transform.forward * Speed, ForceMode.Force);
+
+            if (target != null && ttl < liveTime * 0.7)
             {
-                gameObject.GetComponent<Rigidbody>().AddForce(transform.forward * Speed, ForceMode.Force);
                 transform.localScale += new Vector3(ScaleSpeed, ScaleSpeed, ScaleSpeed);
-            }
-            if (target != null && ttl < liveTime * 0.8)
-            {
                 Quaternion targetRotation = Quaternion.LookRotation(target.position - this.transform.position, new Vector3(0, 1, 0));
                 this.transform.rotation = Quaternion.Slerp(this.transform.rotation, targetRotation, Time.deltaTime * TurnSpeed);
             }

@@ -24,6 +24,7 @@ namespace PracticeProject
             selfDefenceAIEnabled = true; //set in child
             roleModuleEnabled = true; //set in child
             stealthness = 0.1f; //set in child
+            radiolink = 1.5f;
         }
         protected override void DecrementCounters()
         {
@@ -44,10 +45,37 @@ namespace PracticeProject
                 cooldownMissileInhibitor -= Time.deltaTime;
         }
         //AI logick
-        //protected override bool ManeuverFunction()
-        //{
-        //    return false;
-        //}
+        protected override bool ManeuverFunction()
+        {
+            switch (targetStatus)
+            {
+                case TargetStateType.NotFinded:
+                    {
+                        return Patrool();
+                    }
+                case TargetStateType.Captured:
+                    {
+                        if (RadarTransponder())
+                            return Raid();
+                        else
+                        return ShortenDistance();
+                    }
+                case TargetStateType.InPrimaryRange:
+                    {
+                        return IncreaseDistance();
+                    }
+                case TargetStateType.InSecondaryRange:
+                    {
+                        return ShortenDistance();
+                    }
+                case TargetStateType.BehindABarrier:
+                    {
+                        return Raid();
+                    }
+                default:
+                    return false;
+            }
+        }
         protected override bool RoleFunction()
         {
             RadarTransponder();
@@ -55,21 +83,11 @@ namespace PracticeProject
         }
         protected override bool SelfDefenceFunction()
         {
-            RadarWarningResiever();
+            SelfDefenceFunctionBase();
+            if (RadarWarningResiever() > 5)
+                Jammer();
             MissileGuidanceInhibitor();
             return true;
-        }
-
-        private void RadarWarningResiever()
-        {
-            int CapByTarget = 0;
-            foreach (GameObject x in enemys)
-            {
-                if (x.GetComponent<Unit>().CurrentTarget == this)
-                    CapByTarget++;
-            }
-            if (CapByTarget > 5)
-                Jammer();
         }
         private void Jammer()
         {
@@ -102,14 +120,16 @@ namespace PracticeProject
             }
             return false;
         }
-        private void RadarTransponder()
+        private bool RadarTransponder()
         {
             if (!transpond && cooldownTransponder <= 0)
             {
                 //Debug.Log("TransponderOn");
                 transpond = true;
                 cooldownTransponder = 1f;
+                return true;
             }
+            else return false;
         }
         public new bool Allies(Team army)
         {

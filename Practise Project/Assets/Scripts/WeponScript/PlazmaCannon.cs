@@ -29,7 +29,7 @@ namespace PracticeProject
                 direction.y = direction.y + (Convert.ToSingle(random[1] - (random.Min() + random.Max()) / 2) * dispersion);
             else
                 direction.y = direction.y + (Convert.ToSingle(random[1] - (random.Min() + random.Max()) / 2) * -dispersion);
-            GameObject shell = Instantiate(ShellPrefab, gameObject.transform.position, transform.rotation);
+            GameObject shell = Instantiate(FindObjectsOfType<GlobalController>()[0].PlasmaSphere, gameObject.transform.position, transform.rotation);
             shell.GetComponent<PlazmaSphere>().SetTarget(target);
         }
     }
