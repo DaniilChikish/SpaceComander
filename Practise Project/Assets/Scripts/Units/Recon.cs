@@ -19,10 +19,8 @@ namespace PracticeProject
             type = UnitClass.Recon;
             maxHealth = 90; //set in child
             radarRange = 250; //set in child
-            speed = 10; //set in child
-            battleAIEnabled = true; //set in child
-            selfDefenceAIEnabled = true; //set in child
-            roleModuleEnabled = true; //set in child
+            radarPover = 1.1f;
+            speed = 8.5f; //set in child
             stealthness = 0.1f; //set in child
             radiolink = 1.5f;
         }
@@ -45,20 +43,16 @@ namespace PracticeProject
                 cooldownMissileInhibitor -= Time.deltaTime;
         }
         //AI logick
-        protected override bool ManeuverFunction()
+        protected override bool BattleManeuverFunction()
         {
             switch (targetStatus)
             {
-                case TargetStateType.NotFinded:
-                    {
-                        return Patrool();
-                    }
                 case TargetStateType.Captured:
                     {
                         if (RadarTransponder())
-                            return Raid();
+                            return ToPrimaryDistance();
                         else
-                        return ShortenDistance();
+                        return ToSecondaryDistance();
                     }
                 case TargetStateType.InPrimaryRange:
                     {
@@ -66,11 +60,13 @@ namespace PracticeProject
                     }
                 case TargetStateType.InSecondaryRange:
                     {
-                        return ShortenDistance();
+                        return Evasion();
                     }
                 case TargetStateType.BehindABarrier:
                     {
-                        return Raid();
+                        if (RadarTransponder())
+                            return Rush();
+                        else return ToSecondaryDistance();
                     }
                 default:
                     return false;
@@ -131,7 +127,7 @@ namespace PracticeProject
             }
             else return false;
         }
-        public new bool Allies(Team army)
+        public new bool Allies(Army army)
         {
             if (!transpond)
             {
@@ -140,10 +136,13 @@ namespace PracticeProject
                     cooldownDetected = 1;
                     this.gameObject.transform.FindChild("MinimapPict").GetComponent<Renderer>().enabled = true;
                 }
-                return (alliesArmy == army);
+                return (Team == army);
             }
             else
+            {
+                Debug.Log("Team request replacement");
                 return true;
+            }
         }
     }
 }

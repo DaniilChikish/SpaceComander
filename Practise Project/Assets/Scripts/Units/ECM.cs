@@ -15,11 +15,9 @@ namespace PracticeProject
         {
             type = UnitClass.Scout;
             maxHealth = 100; //set in child
-            radarRange = 200; //set in child
-            speed = 12; //set in child
-            battleAIEnabled = true; //set in child
-            selfDefenceAIEnabled = true; //set in child
-            roleModuleEnabled = true; //set in child
+            radarRange = 150; //set in child
+            radarPover = 5;
+            speed = 9; //set in child
             jamming = false;
             stealthness = 0.2f; //set in child
             radiolink = 1.1f;
@@ -39,10 +37,33 @@ namespace PracticeProject
                 cooldownMissileInhibitor -= Time.deltaTime;
         }
         //AI logick
-        //protected override bool ManeuverFunction()
-        //{
-        //    return false;
-        //}
+        protected override bool BattleManeuverFunction()
+        {
+            switch (targetStatus)
+            {
+                case TargetStateType.Captured:
+                    {
+                        return ShortenDistance();
+                    }
+                case TargetStateType.InPrimaryRange:
+                    {
+                        return IncreaseDistance();
+                    }
+                case TargetStateType.InSecondaryRange:
+                    {
+                        if (WeaponInhibitor(CurrentTarget))
+                            return Rush();
+                        else
+                        return ShortenDistance();
+                    }
+                case TargetStateType.BehindABarrier:
+                    {
+                        return Rush();
+                    }
+                default:
+                    return false;
+            }
+        }
         protected override bool RoleFunction()
         {
             if (CurrentTarget != null)
@@ -59,6 +80,28 @@ namespace PracticeProject
                 Jammer();
             MissileGuidanceInhibitor();
             return true;
+        }
+        protected override int RadarWarningResiever()
+        {
+            capByTarget.Clear();
+            foreach (GameObject x in enemys)
+            {
+                if (x.GetComponent<Unit>().CurrentTarget == this)
+                    capByTarget.Add(x);
+                if (jamming)
+                {
+                    x.GetComponent<Unit>().CurrentTarget = null;
+                    if (cooldownWeaponInhibitor < 0)
+                        x.GetComponent<Unit>().inhibition = 0.1f;
+                }
+            }
+            capByTarget.Sort(delegate (GameObject x, GameObject y)
+            {
+                if (Vector3.Distance(this.transform.position, x.transform.position) > Vector3.Distance(this.transform.position, y.transform.position))
+                    return 1;
+                else return -1;
+            });
+            return capByTarget.Count;
         }
         private void Jammer()
         {
@@ -83,7 +126,7 @@ namespace PracticeProject
                             if (Randomizer.Uniform(0, 100, 1)[0] < 70 * multiplicator)
                             {
                                 x.GetComponent<Missile>().target = null;
-                                cooldownMissileInhibitor = 4;
+                                cooldownMissileInhibitor = 3.5f;
                                 return true;
                             }
                         }
@@ -91,13 +134,15 @@ namespace PracticeProject
             }
             return false;
         }
-        private void WeaponInhibitor(GameObject target)
+        private bool WeaponInhibitor(GameObject target)
         {
             if (cooldownWeaponInhibitor <= 0)
             {
-                target.GetComponent<Unit>().inhibition = 2f;
+                target.GetComponent<Unit>().inhibition = 4f;
                 cooldownWeaponInhibitor = 10f;
+                return true;
             }
+            return false;
         }
     }
 }

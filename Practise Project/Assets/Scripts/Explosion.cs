@@ -22,6 +22,13 @@ namespace PracticeProject
                         damage = 10;
                         break;
                     }
+                case BlastType.UnitaryTorpedo:
+                    {
+                        maxRadius = 20f;
+                        waveSpeed = 1.1f;
+                        damage = 12f;
+                        break;
+                    }
                 case BlastType.NukeTorpedo:
                     {
                         maxRadius = 40f;
@@ -50,13 +57,7 @@ namespace PracticeProject
                         damage = 2;
                         break;
                     }
-                case BlastType.Plazma:
-                    {
-                        maxRadius = 12f;
-                        waveSpeed = 0.2f;
-                        damage = 0.1f;
-                        break;
-                    }
+
                 default:
                     {
                         break;

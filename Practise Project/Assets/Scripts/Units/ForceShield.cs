@@ -41,7 +41,8 @@ namespace PracticeProject
                 firstFieldRend.enabled = true;
                 firstFieldColl.enabled = true;
             }
-            else cooldownChield -= Time.deltaTime;
+            if (cooldownChield > 0)
+                cooldownChield -= Time.deltaTime;
             if (firstBlinker < 0)
                 firstFieldColl.enabled = true;
             else firstBlinker -= Time.deltaTime;
@@ -57,14 +58,14 @@ namespace PracticeProject
                 {
                     case "Shell":
                         {
-                            this.force -= collision.gameObject.GetComponent<Round>().GetEnergy()*0.3f;
+                            this.force -= collision.gameObject.GetComponent<Round>().Damage * 0.3f;
                             secondField.enabled = true;
                             secondBlinker = 0.5f;
                             break;
                         }
                     case "Energy":
                         {
-                            this.force -= collision.gameObject.GetComponent<Round>().GetEnergy() * 1f;
+                            this.force -= collision.gameObject.GetComponent<Round>().Damage * 1f;
                             secondField.enabled = true;
                             secondBlinker = 0.5f;
                             break;
@@ -76,6 +77,17 @@ namespace PracticeProject
                             break;
                         }
                 }
+            }
+        }
+        protected void OnTriggerStay(Collider other)
+        {
+            switch (other.gameObject.tag)
+            {
+                case "Explosion":
+                    {
+                        this.force = this.force - other.gameObject.GetComponent<Explosion>().Damage * 0.01f;
+                        break;
+                    }
             }
         }
         public void Blink(float blink)

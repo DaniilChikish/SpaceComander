@@ -6,7 +6,7 @@ namespace PracticeProject
 {
     public class Lazer : Weapon
     {
-        protected override void Start()
+        protected override void StatUp()
         {
             gameObject.GetComponent<MeshRenderer>().enabled = false;
             range = 300;
@@ -18,17 +18,17 @@ namespace PracticeProject
         }
         protected override void Shoot(Transform target)
         {
-					Global = FindObjectsOfType<GlobalController>()[0];
+				GlobalController Global = FindObjectsOfType<GlobalController>()[0];
             Quaternion direction = transform.rotation;
             double[] randomOffset = Randomizer.Uniform(0, 100, 2);
             if (randomOffset[0] > 50)
-                direction.x = direction.x + (Convert.ToSingle(RandomExponentPool[randomOffset[0]]) * dispersion);
+                direction.x = direction.x + (Convert.ToSingle(Global.RandomExponentPool[Convert.ToInt32(randomOffset[0])]) * dispersion);
             else
-                direction.x = direction.x + (Convert.ToSingle(RandomExponentPool[randomOffset[0]]) * -dispersion);
+                direction.x = direction.x + (Convert.ToSingle(Global.RandomExponentPool[Convert.ToInt32(randomOffset[0])]) * -dispersion);
             if (randomOffset[1] > 50)
-                direction.y = direction.y + (Convert.ToSingle(RandomExponentPool[randomOffset[1]]) * dispersion);
+                direction.y = direction.y + (Convert.ToSingle(Global.RandomExponentPool[Convert.ToInt32(randomOffset[1])]) * dispersion);
             else
-                direction.y = direction.y + (Convert.ToSingle(RandomExponentPool[randomOffset[1]]) * -dispersion);
+                direction.y = direction.y + (Convert.ToSingle(Global.RandomExponentPool[Convert.ToInt32(randomOffset[1])]) * -dispersion);
             Instantiate(Global.LaserBeam, gameObject.transform.position, direction);
         }
     }

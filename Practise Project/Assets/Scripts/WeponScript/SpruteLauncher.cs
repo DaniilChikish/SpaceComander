@@ -1,9 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
 namespace PracticeProject
 {
-    public class TorpedoLauncher : Weapon
+    public class SpruteLauncher : Weapon
     {
         private Unit owner;
         protected override void StatUp()
@@ -19,7 +20,7 @@ namespace PracticeProject
         }
         protected override void Shoot(Transform target)
         {
-            GameObject torpedo = Instantiate(FindObjectsOfType<GlobalController>()[0].UnitaryTorpedo, gameObject.transform.position, transform.rotation);
+            GameObject torpedo = Instantiate(Global.SpruteTorpedo, gameObject.transform.position, transform.rotation);
             torpedo.GetComponent<Torpedo>().SetTarget(target.position);
             torpedo.GetComponent<Torpedo>().SetTeam(owner.Team);
         }

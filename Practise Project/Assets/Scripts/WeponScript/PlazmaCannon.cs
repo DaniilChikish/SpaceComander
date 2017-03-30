@@ -7,10 +7,10 @@ namespace PracticeProject
 {
     public class PlazmaCannon : Weapon
     {
-        protected override void Start()
+        protected override void StatUp()
         {
             gameObject.GetComponent<MeshRenderer>().enabled = false;
-            range = 70;
+            range = 85;
             ammo = 500;
             coolingTime = 1f;
             cooldown = 0;

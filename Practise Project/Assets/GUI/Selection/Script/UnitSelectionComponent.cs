@@ -39,7 +39,7 @@ namespace PracticeProject
                 var selectedObjects = new List<Unit>();
                 foreach (var selectableObject in FindObjectsOfType<Unit>())
                 {
-                    if ((FindObjectsOfType<GlobalController>()[0].playerArmy == selectableObject.GetComponent<Unit>().alliesArmy) &&
+                    if ((FindObjectsOfType<GlobalController>()[0].playerArmy == selectableObject.GetComponent<Unit>().Team) &&
                         (IsWithinSelectionBounds(selectableObject.gameObject)))
                     {
                         selectedObjects.Add(selectableObject);
@@ -61,7 +61,7 @@ namespace PracticeProject
 
                 foreach (var selectableObject in FindObjectsOfType<Unit>())
                 {
-                    if ((FindObjectsOfType<GlobalController>()[0].playerArmy == selectableObject.GetComponent<Unit>().alliesArmy) && 
+                    if ((FindObjectsOfType<GlobalController>()[0].playerArmy == selectableObject.GetComponent<Unit>().Team) && 
                         IsWithinSelectionBounds(selectableObject.gameObject))
                     {
                         if (selectableObject.isSelected == false)

@@ -5,12 +5,12 @@ namespace PracticeProject
 {
     public class RocketLauncher : Weapon
     {
-        protected override void Start()
+        protected override void StatUp()
         {
             gameObject.GetComponent<MeshRenderer>().enabled = false;
             range = 150;
             ammo = 12;
-            coolingTime = 7f;
+            coolingTime = 12f;
             cooldown = 0;
             dispersion = 6f;
         }

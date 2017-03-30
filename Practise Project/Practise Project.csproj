@@ -103,6 +103,7 @@
     <Compile Include="Assets\Scripts\WeponScript\PlazmaCannon.cs" />
     <Compile Include="Assets\Scripts\WeponScript\PlazmaSphere.cs" />
     <Compile Include="Assets\Scripts\WeponScript\RocketLauncher.cs" />
+    <Compile Include="Assets\Scripts\WeponScript\SpruteLauncher.cs" />
     <Compile Include="Assets\Scripts\WeponScript\SpruteTorpedo.cs" />
     <Compile Include="Assets\Scripts\WeponScript\TorpedoLauncher.cs" />
     <Compile Include="Assets\Scripts\WeponScript\UnitaryTorpedo.cs" />
