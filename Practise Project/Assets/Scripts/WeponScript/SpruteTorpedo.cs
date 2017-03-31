@@ -29,7 +29,7 @@ namespace PracticeProject
             }
             if (enemys.Count > 0)
             {
-                Debug.Log(enemys.Count + " enemy finded");
+                //Debug.Log(enemys.Count + " enemy finded");
                 int i = 0;
                 foreach (GameObject M in missile)
                 {

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace PracticeProject
 {
@@ -120,16 +121,15 @@ namespace PracticeProject
         }
         public override void SendTo(Vector3 destination)
         {
-            Debug.Log("under control" + destination);
             Warp();
-            //waitingBackCount = 3;
+            orderBackCount = Vector3.Distance(this.transform.position, destination) / (this.GetComponent<NavMeshAgent>().speed * 0.9f);
             aiStatus = UnitStateType.UnderControl;
             Driver.MoveTo(destination);
         }
         public override void SendToQueue(Vector3 destination)
         {
             Warp();
-            //waitingBackCount = 3;
+            orderBackCount += Vector3.Distance(this.transform.position, destination) / (this.GetComponent<NavMeshAgent>().speed * 0.9f);
             aiStatus = UnitStateType.UnderControl;
             Driver.MoveToQueue(destination);
         }

@@ -15,6 +15,7 @@ namespace PracticeProject
             coolingTime = 1f;
             cooldown = 0;
             dispersion = 5f;
+            avarageRounSpeed = Global.CannonUnitaryShell.GetComponent<Round>().Speed;
         }
         protected override void Shoot(Transform target)
         {

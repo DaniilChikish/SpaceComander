@@ -17,7 +17,7 @@ namespace PracticeProject
             radarRange = 300; //set in child
             speed = 12; //set in child
             battleAIEnabled = true; //set in child
-            selfDefenceAIEnabled = true; //set in child
+            selfDefenceModuleEnabled = true; //set in child
             roleModuleEnabled = true; //set in child
             jamming = false;
             stealthness = 0.2f; //set in child

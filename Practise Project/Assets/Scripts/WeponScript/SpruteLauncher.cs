@@ -15,7 +15,7 @@ namespace PracticeProject
             coolingTime = 20f;
             cooldown = 0;
             dispersion = 3f;
-            shildBlinkTime = 0.5f;
+            shildBlinkTime = 1f;
             owner = this.transform.GetComponentInParent<Unit>();
         }
         protected override void Shoot(Transform target)

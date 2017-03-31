@@ -22,10 +22,12 @@ namespace PracticeProject
         public Army playerArmy;
         //selection
         public float NameFrameOffset;
-        public Texture Selection;
-        public float SelectionFrameWidth;
-        public float SelectionFrameHeight;
-        public float SelectionFrameOffset;
+        public Texture AlliesSelectedGUIFrame;
+        public Texture AlliesGUIFrame;
+        public Texture EnemyGUIFrame;
+        public float GUIFrameWidth;
+        public float GUIFrameHeight;
+        public float GUIFrameOffset;
         public GameObject CannonUnitaryShell;
         public AudioClip CannonShootSound;
         public GameObject CannonShellBlast;
@@ -44,7 +46,9 @@ namespace PracticeProject
 		public double RandomNormalMin;
 		public double[] RandomExponentPool;
 		private float randomPoolBackCoount;
-		public void Update()
+
+
+        public void Update()
 		{
             if (randomPoolBackCoount < 0)
             {
@@ -82,7 +86,7 @@ namespace PracticeProject
         //modules
         public bool movementAiEnabled; // default true
         public bool battleAIEnabled;  // default true
-        public bool selfDefenceAIEnabled;  // default true
+        public bool selfDefenceModuleEnabled;  // default true
         public bool roleModuleEnabled; // default true
         protected float stealthness; //set in child
         public float Stealthness { get { return stealthness; } }
@@ -94,7 +98,7 @@ namespace PracticeProject
         protected ShootController Gunner;
         protected GlobalController Global;
         protected float synchAction;
-        public float waitingBackCount; //Make private after debug;
+        public float orderBackCount; //Make private after debug;
         public List<GameObject> enemys;
         public GameObject CurrentTarget;
         protected List<GameObject> capByTarget;
@@ -104,9 +108,11 @@ namespace PracticeProject
         {
             movementAiEnabled = true;
             battleAIEnabled = true;
-            selfDefenceAIEnabled = true;
+            selfDefenceModuleEnabled = true;
             roleModuleEnabled = true;
-            StatsUp();
+
+            StatsUp();//
+
             Health = MaxHealth;
             cooldownDetected = 0;
             radarPover = 1;
@@ -118,7 +124,12 @@ namespace PracticeProject
             capByTarget = new List<GameObject>();
             Global = FindObjectOfType<GlobalController>();
             Global.unitList.Add(gameObject);
-            //aiStatus = UnitStateType.MoveAI;
+            this.gameObject.transform.FindChild("MinimapPict").FindChild("AlliesMinimapPict").GetComponent<Renderer>().enabled = false;
+            this.gameObject.transform.FindChild("MinimapPict").FindChild("EnemyMinimapPict").GetComponent<Renderer>().enabled = false;
+            this.gameObject.transform.FindChild("MinimapPict").FindChild("SelectedMinimapPict").GetComponent<Renderer>().enabled = false;
+
+            if (Team == Global.playerArmy)
+                this.gameObject.transform.FindChild("MinimapPict").FindChild("AlliesMinimapPict").GetComponent<Renderer>().enabled = true;
         }
         protected abstract void StatsUp();
         protected void Update()//
@@ -136,127 +147,135 @@ namespace PracticeProject
                 synchAction = 0.05f;
                 if (movementAiEnabled)
                 {
-                    switch (aiStatus)
+                    if (battleAIEnabled)
                     {
-                        case UnitStateType.MoveAI:
+                        BattleFunction();
+                        if (targetStatus == TargetStateType.NotFinded)
+                        {
+                            if (orderBackCount < 0)
                             {
-                                if (battleAIEnabled)
-                                    if (!BattleFunction())
-                                    {
-                                        if (targetStatus == TargetStateType.NotFinded)
-                                            aiStatus = UnitStateType.Waiting;
-                                    }
-                                if (roleModuleEnabled)
-                                    RoleFunction();
-                                if (selfDefenceAIEnabled)
-                                    SelfDefenceFunction();
-                                if (Driver.PathPoints == 0)
-                                    BattleManeuverFunction();
-                                break;
+                                aiStatus = UnitStateType.Waiting;
+                                orderBackCount = 1f;
                             }
-                        case UnitStateType.UnderControl:
+                            else
                             {
-                                if (battleAIEnabled)
-                                    BattleFunction();
-                                if (roleModuleEnabled)
-                                    RoleFunction();
-                                if (selfDefenceAIEnabled)
-                                    SelfDefenceFunction();
-                                if (!isSelected)
-                                {
-                                    aiStatus = UnitStateType.Waiting;
-                                    //waitingBackCount = 1f;
-                                }
-                                break;
+                                aiStatus = UnitStateType.Idle;
                             }
-                        case UnitStateType.Waiting:
-                            {
-                                if (battleAIEnabled)
-                                    if (!BattleFunction())
-                                    {
-                                        if (targetStatus == TargetStateType.NotFinded)
-                                            aiStatus = UnitStateType.Idle;
-                                        break;
-                                    }
-                                    else
-                                    {
-                                        if (roleModuleEnabled)
-                                            RoleFunction();
-                                        if (selfDefenceAIEnabled)
-                                            SelfDefenceFunction();
-                                    }
-                                if (Driver.PathPoints == 0)
-                                {
-                                    BattleManeuverFunction();
-                                    aiStatus = UnitStateType.MoveAI;
-                                }
-                                break;
-                            }
-                        case UnitStateType.Idle:
-                            {
-                                if (battleAIEnabled)
-                                {
-                                    BattleFunction();
-                                    if (targetStatus != TargetStateType.NotFinded)
-                                    {
-                                        if (roleModuleEnabled)
-                                            RoleFunction();
-                                        if (selfDefenceAIEnabled)
-                                            SelfDefenceFunction();
-                                        //waitingBackCount = 0;
-                                        Driver.ClearQueue();
-                                        BattleManeuverFunction();
-                                        aiStatus = UnitStateType.MoveAI;
-                                        break;
-                                    }
-                                }
-                                if (Driver.PathPoints == 0)
-                                    IdleManeuverFunction();
-                                break;
-                            }
+                        }
+                        else if (aiStatus == UnitStateType.Idle && aiStatus != UnitStateType.UnderControl)
+                        {
+                            //waitingBackCount = 0;
+                            Driver.ClearQueue();
+                            BattleManeuverFunction();
+                            aiStatus = UnitStateType.MoveAI;
+                        }
+                        if (roleModuleEnabled)
+                            RoleFunction();
+                        if (selfDefenceModuleEnabled)
+                            SelfDefenceFunction();
                     }
+                    if (Driver.PathPoints == 0)
+                        switch (aiStatus)
+                        {
+                            case UnitStateType.MoveAI:
+                                {
+                                    BattleManeuverFunction();
+                                    break;
+                                }
+                            case UnitStateType.UnderControl:
+                                {
+                                    if (!isSelected)
+                                    {
+                                        aiStatus = UnitStateType.Waiting;
+                                        orderBackCount = 1f;
+                                    }
+                                    break;
+                                }
+                            case UnitStateType.Waiting:
+                                {
+
+                                    break;
+                                }
+                            case UnitStateType.Idle:
+                                {
+                                    IdleManeuverFunction();
+                                    break;
+                                }
+                        }
                 }
                 else
                 {
                     if (battleAIEnabled)
+                    {
                         BattleFunction();
-                    if (roleModuleEnabled)
-                        RoleFunction();
-                    if (selfDefenceAIEnabled)
-                        SelfDefenceFunction();
+                        if (roleModuleEnabled)
+                            RoleFunction();
+                        if (selfDefenceModuleEnabled)
+                            SelfDefenceFunction();
+                    }
                 }
             }
         }
         protected void DecrementBaseCounters()
         {
             synchAction -= Time.deltaTime;
-            //if (waitingBackCount > 0)
-            //    waitingBackCount -= Time.deltaTime;
+            if (orderBackCount > 0)
+                orderBackCount -= Time.deltaTime;
             //waitingBackCount = Driver.backCount;//синхронизация счетчиков
             if (this.Team != Global.playerArmy)
                 cooldownDetected -= Time.deltaTime;
+            else if (isSelected)
+            {
+                cooldownDetected = 0.1f;
+                this.gameObject.transform.FindChild("MinimapPict").FindChild("SelectedMinimapPict").GetComponent<Renderer>().enabled = true;
+            }
             if (cooldownDetected < 0)
-                this.gameObject.transform.FindChild("MinimapPict").GetComponent<Renderer>().enabled = false;
+            {
+                this.gameObject.transform.FindChild("MinimapPict").FindChild("SelectedMinimapPict").GetComponent<Renderer>().enabled = false;
+                //this.gameObject.transform.FindChild("AlliesMinimapPict").GetComponent<Renderer>().enabled = false;
+                this.gameObject.transform.FindChild("MinimapPict").FindChild("EnemyMinimapPict").GetComponent<Renderer>().enabled = false;
+            }
             if (inhibition > 0)
                 inhibition -= Time.deltaTime;
         }
         protected abstract void DecrementCounters();
         protected void OnGUI()
         {
-            if (isSelected)
+            Vector3 crd = Camera.main.WorldToScreenPoint(transform.position);
+            crd.y = Screen.height - crd.y;
+            if (Team == Global.playerArmy)
             {
-                Vector3 crd = Camera.main.WorldToScreenPoint(transform.position);
-                crd.y = Screen.height - crd.y;
+                if (isSelected)
+                {
+                    //Debug.Log("draw selected");
+                    GUIStyle style = new GUIStyle();
+                    style.fontSize = 12;
+                    //style.font = GuiProcessor.getI.rusfont;
+                    style.normal.textColor = Color.cyan;
+                    style.alignment = TextAnchor.MiddleCenter;
+                    //style.fontStyle = FontStyle.Italic;
 
+                    GUI.DrawTexture(new Rect(crd.x - Global.GUIFrameWidth / 2, crd.y - Global.GUIFrameOffset, Global.GUIFrameWidth, Global.GUIFrameHeight), Global.AlliesSelectedGUIFrame);
+                    GUI.Label(new Rect(crd.x - 120, crd.y - Global.NameFrameOffset, 240, 18), UnitName, style);
+                }
+                else
+                {
+                    //Debug.Log("draw allies");
+                    GUI.DrawTexture(new Rect(crd.x - Global.GUIFrameWidth / 2, crd.y - Global.GUIFrameOffset, Global.GUIFrameWidth, Global.GUIFrameHeight), Global.AlliesGUIFrame);
+                }
+            }
+            else if (cooldownDetected > 0)
+            {
+                //Debug.Log("draw enemy");
                 GUIStyle style = new GUIStyle();
                 style.fontSize = 12;
                 //style.font = GuiProcessor.getI.rusfont;
-                style.normal.textColor = Color.cyan;
+                style.normal.textColor = Color.red;
                 style.alignment = TextAnchor.MiddleCenter;
                 //style.fontStyle = FontStyle.Italic;
 
-                GUI.DrawTexture(new Rect(crd.x - Global.SelectionFrameWidth / 2, crd.y - Global.SelectionFrameOffset, Global.SelectionFrameWidth, Global.SelectionFrameHeight), Global.Selection);
-                GUI.Label(new Rect(crd.x - 120, crd.y - Global.NameFrameOffset, 240, 18), UnitName, style);
+                GUI.DrawTexture(new Rect(crd.x - Global.GUIFrameWidth / 2, crd.y - Global.GUIFrameOffset, Global.GUIFrameWidth, Global.GUIFrameHeight), Global.EnemyGUIFrame);
+                //GUI.Label(new Rect(crd.x - 120, crd.y - Global.NameFrameOffset, 240, 18), UnitName, style);
             }
         }
 
@@ -267,15 +286,15 @@ namespace PracticeProject
                 case "Shell":
                     {
                         float multoplicator = 1;
-                        if (!gameObject.GetComponent<ForceShield>().shildOwerheat) multoplicator = multoplicator * 0.05f;
-                        this.Health -= collision.gameObject.GetComponent<Round>().Damage * multoplicator;
+                        if (!gameObject.GetComponent<ForceShield>().shildOwerheat) multoplicator = multoplicator * 0.01f;
+                        this.Health -= collision.gameObject.GetComponent<Round>().Damage * multoplicator * 1.2f;
                         break;
                     }
                 case "Energy":
                     {
-                        float multoplicator = 0.2f;
-                        if (!gameObject.GetComponent<ForceShield>().shildOwerheat) multoplicator = multoplicator * 0.5f;
-                        this.Health -= collision.gameObject.GetComponent<Round>().Damage * multoplicator;
+                        float multoplicator = 1;
+                        if (!gameObject.GetComponent<ForceShield>().shildOwerheat) multoplicator = multoplicator * 0.05f;
+                        this.Health -= collision.gameObject.GetComponent<Round>().Damage * multoplicator * 0.2f;
                         break;
                     }
             }
@@ -481,7 +500,7 @@ namespace PracticeProject
         protected abstract bool SelfDefenceFunction();
         protected bool SelfDefenceFunctionBase()
         {
-            if (aiStatus == UnitStateType.Waiting && waitingBackCount < 0 && ShortRangeRadar() > 3)
+            if (aiStatus == UnitStateType.Waiting && orderBackCount < 0 && ShortRangeRadar() > 3)
                 Evasion();
             return true;
         }
@@ -535,7 +554,7 @@ namespace PracticeProject
             if (hit.transform==CurrentTarget.transform)
             {
                 targetStatus = TargetStateType.Captured;//наведение
-                Gunner.SetAim(CurrentTarget);
+                Gunner.SetTarget(CurrentTarget);
                 if (inhibition <= 0)//если не действует подавление оружия
                 {
                     if (distance < Gunner.GetRangePrimary())//выбор оружия
@@ -575,13 +594,13 @@ namespace PracticeProject
                 else return -1;
             });
             return enemys;
-        } 
+        }
         public virtual bool Allies(Army army)
         {
-            if (army == Global.playerArmy)
+            if (army != Global.playerArmy)
             {
                 cooldownDetected = 1;
-                this.gameObject.transform.FindChild("MinimapPict").GetComponent<Renderer>().enabled = true;
+                this.gameObject.transform.FindChild("MinimapPict").FindChild("EnemyMinimapPict").GetComponent<Renderer>().enabled = true;
             }
             return (Team == army);
         }
@@ -636,13 +655,216 @@ namespace PracticeProject
         }
         public virtual void SendTo(Vector3 destination)
         {
+            orderBackCount = Vector3.Distance(this.transform.position, destination) / (this.GetComponent<NavMeshAgent>().speed * 0.9f);
             aiStatus = UnitStateType.UnderControl;
             Driver.MoveTo(destination);
         }
         public virtual void SendToQueue(Vector3 destination)
         {
+            orderBackCount += Vector3.Distance(this.transform.position, destination) / (this.GetComponent<NavMeshAgent>().speed * 0.9f);
             aiStatus = UnitStateType.UnderControl;
             Driver.MoveToQueue(destination);
+        }
+    }
+    public class MovementController
+    {
+        private GameObject walker;
+        //private Vector3 moveDestination;
+        private Queue<Vector3> path; //очередь путевых точек
+        public int PathPoints {
+            get
+            {
+                if ((walker.GetComponent<NavMeshAgent>().pathEndPosition - walker.transform.position).magnitude < 1)
+                    return path.Count;
+                else return path.Count + 1;
+            }
+        }
+        //public float backCount; //время обновления пути.
+        public MovementController(GameObject walker)
+        {
+            this.walker = walker;
+            UpdateSpeed();
+            path = new Queue<Vector3>();
+            walker.GetComponent<NavMeshAgent>().SetDestination(walker.transform.position);
+            //Debug.Log("Driver online");
+        }
+        public void Update()
+        {
+            if ((walker.GetComponent<NavMeshAgent>().pathEndPosition - walker.transform.position).magnitude < 10)
+            {
+                UpdateSpeed();
+                if (path.Count > 1)
+                {
+                    //Debug.Log("1");
+                    //backCount = Vector3.Distance(walker.transform.position, path.Peek()) / (walker.GetComponent<NavMeshAgent>().speed*0.9f);
+                    walker.GetComponent<NavMeshAgent>().SetDestination(path.Dequeue());
+                }
+                if (path.Count == 1&& (walker.GetComponent<NavMeshAgent>().pathEndPosition - walker.transform.position).magnitude < 1)
+                {
+                    //backCount = Vector3.Distance(walker.transform.position, path.Peek()) / (walker.GetComponent<NavMeshAgent>().speed * 0.9f);
+                    walker.GetComponent<NavMeshAgent>().SetDestination(path.Dequeue());
+                }
+            }
+            //else backCount -= Time.deltaTime;
+        }
+        public void UpdateSpeed()
+        {
+            walker.GetComponent<NavMeshAgent>().speed = walker.GetComponent<Unit>().Speed;
+            walker.GetComponent<NavMeshAgent>().acceleration = walker.GetComponent<Unit>().Speed * 1.6f;
+            if (walker.GetComponent<Unit>().CurrentTarget == null)
+                walker.GetComponent<NavMeshAgent>().angularSpeed = walker.GetComponent<Unit>().Speed * 3.3f;
+            else
+                walker.GetComponent<NavMeshAgent>().angularSpeed = walker.GetComponent<Unit>().Speed * 0.05f;
+        }
+        public bool MoveTo(Vector3 destination)
+        {
+            ClearQueue();
+            return MoveToQueue(destination);
+        }
+        public bool MoveToQueue(Vector3 destination)
+        {
+            if (path.Count < 10)
+            {
+                path.Enqueue(destination);
+                //backCount = Vector3.Distance(walker.transform.position, destination) / (walker.GetComponent<NavMeshAgent>().speed - 2);
+                return true;
+            }
+            else return false;
+        }
+        public void ClearQueue()
+        {
+            walker.GetComponent<NavMeshAgent>().ResetPath();
+            //backCount = 0;
+            path.Clear();
+        }
+    }
+    public class ShootController
+    {
+        private Weapon[] primary;
+        private Weapon[] secondary;
+        public GameObject body;
+        private GameObject Target;
+        private Vector3 oldTargetPosition;
+        private Vector3 aimPoint;
+        private ForceShield shield;
+        //private float backCount;
+        private float synchPrimary;
+        private int indexPrimary;
+        private float synchSecondary;
+        private int indexSecondary;
+        public ShootController(GameObject body)
+        {
+            this.body = body;
+            this.primary = body.transform.FindChild("Primary").GetComponentsInChildren<Weapon>();
+            synchPrimary = this.primary[0].CoolingTime / this.primary.Length;
+            indexPrimary = 0;
+
+            this.secondary = body.transform.FindChild("Secondary").GetComponentsInChildren<Weapon>();
+            synchSecondary = this.secondary[0].CoolingTime / this.secondary.Length;
+            indexSecondary = 0;
+
+            //Target = null;
+
+            shield = body.GetComponent<ForceShield>();
+            //Debug.Log("Gunner online");
+        }
+        public bool ShootHimPrimary(GameObject target)
+        {
+            if (Vector3.Angle(aimPoint - body.transform.position, body.transform.forward) < primary[0].dispersion * 10)
+            {
+                if (indexPrimary >= primary.Length)
+                    indexPrimary = 0;
+                if (primary[indexPrimary].Cooldown <= 0)
+                {
+                    shield.Blink(primary[indexPrimary].ShildBlink);
+                    bool output = primary[indexPrimary].Fire(target.transform);
+                    indexPrimary++;
+                    return output;
+                }
+                else indexPrimary++;
+            }
+            return false;
+        }
+        public bool ShootHimSecondary(GameObject target)
+        {
+            float angel = Vector3.Angle(aimPoint - body.transform.position, body.transform.forward);
+            if (angel < secondary[0].dispersion * 5 || angel < 1)
+            {
+                if (indexSecondary >= secondary.Length)
+                    indexSecondary = 0;
+                if (secondary[indexSecondary].Cooldown <= 0)
+                {
+                    shield.Blink(secondary[indexSecondary].ShildBlink);
+                    bool output = secondary[indexSecondary].Fire(target.transform);
+                    indexSecondary++;
+                    return output;
+                }
+                else indexSecondary++;
+            }
+            return false;
+        }
+        public void Update()
+        {
+            if (synchPrimary > 0)
+                synchPrimary -= Time.deltaTime;
+            else
+                synchPrimary = this.primary[0].CoolingTime / this.primary.Length;
+            if (synchSecondary > 0)
+                synchSecondary -= Time.deltaTime;
+            else
+                synchSecondary = this.secondary[0].CoolingTime / this.secondary.Length;
+
+            if (Target != null)
+            {
+                //просчет новой точки упреждения
+                float time = 2;
+                aimPoint = oldTargetPosition + ((Target.transform.position - oldTargetPosition) * time); //корректировка на движение цели
+
+                float distance = Vector3.Distance(body.transform.position, aimPoint);        
+                float approachTime;
+                if (distance < primary[0].Range)
+                    approachTime = distance / primary[0].RoundSpeed;
+                else
+                    approachTime = distance / secondary[0].RoundSpeed;
+                aimPoint = aimPoint + ((Target.transform.position - oldTargetPosition) * (approachTime * 1.5f)); //корректировка на движение снаряда
+
+                //Debug.Log("target - " + Target.transform.position);
+                //Debug.Log("aim - " + aimPoint);
+                //наведение на точку упреждения
+                Quaternion targetRotation = Quaternion.LookRotation(aimPoint - body.transform.position, new Vector3(0, 1, 0));
+                body.transform.rotation = Quaternion.Slerp(body.transform.rotation, targetRotation, Time.deltaTime * body.GetComponent<Unit>().Speed * 0.2f);
+                oldTargetPosition = Target.transform.position;
+            }
+            else oldTargetPosition = Vector3.zero;
+        }
+        public bool SetTarget(GameObject target)
+        {
+            if (Target == null)
+            {
+                Target = target;
+                oldTargetPosition = target.transform.position;
+                //Debug.Log("set target - " + Target.transform.position);
+                //Debug.Log("set aim - " + oldTargetPosition);
+                return true;
+            }
+            else return false;
+        }
+        //public bool SetAIM(Vector3 aimPoint)
+        //{
+
+        //}
+        public bool ResetAim()
+        {
+            Target = null;
+            return true;
+        }
+        public float GetRangePrimary()
+        {
+            return primary[0].Range;
+        }
+        public float GetRangeSecondary()
+        {
+            return secondary[0].Range;
         }
     }
     public abstract class Weapon : MonoBehaviour
@@ -654,19 +876,23 @@ namespace PracticeProject
         public float cooldown;
         public float dispersion;
         protected float shildBlinkTime;
+        protected float avarageRounSpeed; //default 1000;
         public float ShildBlink { get { return shildBlinkTime; } }
         //public WeaponType Type;
 
 
         public float Range { get { return range; } }
+        public float RoundSpeed { get { return avarageRounSpeed; } }
         public int Ammo { get { return ammo; } }
         public float Cooldown { get { return cooldown; } }
         public float CoolingTime { get { return coolingTime; } }
 
         protected void Start()
         {
-            StatUp();
             Global = FindObjectOfType<GlobalController>();
+            avarageRounSpeed = 500;
+            StatUp();
+
         }
         protected abstract void StatUp();
         // Update is called once per frame
@@ -700,7 +926,7 @@ namespace PracticeProject
         // Use this for initialization
         protected virtual void Start()
         {
-            gameObject.GetComponent<Rigidbody>().AddForce(transform.forward * Speed);
+            gameObject.GetComponent<Rigidbody>().AddForce(transform.forward * Speed, ForceMode.VelocityChange);
         }
 
         // Update is called once per frame
@@ -793,180 +1019,6 @@ namespace PracticeProject
         public virtual bool Allies(Army army)
         {
             return (Team == army);
-        }
-    }
-    public class MovementController
-    {
-        private GameObject walker;
-        //private Vector3 moveDestination;
-        private Queue<Vector3> path; //очередь путевых точек
-        public int PathPoints {
-            get
-            {
-                if ((walker.GetComponent<NavMeshAgent>().pathEndPosition - walker.transform.position).magnitude < 1)
-                    return path.Count;
-                else return path.Count + 1;
-            }
-        }
-        public float backCount; //время обновления пути.
-        public MovementController(GameObject walker)
-        {
-            this.walker = walker;
-            UpdateSpeed();
-            path = new Queue<Vector3>();
-            walker.GetComponent<NavMeshAgent>().SetDestination(walker.transform.position);
-            //Debug.Log("Driver online");
-        }
-        public void Update()
-        {
-            if ((walker.GetComponent<NavMeshAgent>().pathEndPosition - walker.transform.position).magnitude < 10)
-            {
-                UpdateSpeed();
-                if (path.Count > 1)
-                {
-                    //Debug.Log("1");
-                    backCount = Vector3.Distance(walker.transform.position, path.Peek()) / (walker.GetComponent<NavMeshAgent>().speed*0.9f);
-                    walker.GetComponent<NavMeshAgent>().SetDestination(path.Dequeue());
-                }
-                if (path.Count == 1&& (walker.GetComponent<NavMeshAgent>().pathEndPosition - walker.transform.position).magnitude < 1)
-                {
-                    backCount = Vector3.Distance(walker.transform.position, path.Peek()) / (walker.GetComponent<NavMeshAgent>().speed * 0.9f);
-                    walker.GetComponent<NavMeshAgent>().SetDestination(path.Dequeue());
-                }
-            }
-            //else backCount -= Time.deltaTime;
-        }
-        public void UpdateSpeed()
-        {
-            walker.GetComponent<NavMeshAgent>().speed = walker.GetComponent<Unit>().Speed;
-            walker.GetComponent<NavMeshAgent>().acceleration = walker.GetComponent<Unit>().Speed * 1.6f;
-            walker.GetComponent<NavMeshAgent>().angularSpeed = walker.GetComponent<Unit>().Speed * 3.3f;
-        }
-        public bool MoveTo(Vector3 destination)
-        {
-            path.Clear();
-            return MoveToQueue(destination);
-        }
-        public bool MoveToQueue(Vector3 destination)
-        {
-            if (path.Count < 10)
-            {
-                path.Enqueue(destination);
-                backCount = Vector3.Distance(walker.transform.position, destination) / (walker.GetComponent<NavMeshAgent>().speed - 2);
-                return true;
-            }
-            else return false;
-        }
-        public void ClearQueue()
-        {
-            walker.GetComponent<NavMeshAgent>().ResetPath();
-            //backCount = 0;
-            path.Clear();
-        }
-    }
-    public class ShootController
-    {
-        private Weapon[] primary;
-        private Weapon[] secondary;
-        public GameObject body;
-        private GameObject aimTarget;
-        private ForceShield shield;
-        //private float backCount;
-        private float synchPrimary;
-        private int indexPrimary;
-        private float synchSecondary;
-        private int indexSecondary;
-        public ShootController(GameObject body)
-        {
-            this.body = body;
-            this.primary = body.transform.FindChild("Primary").GetComponentsInChildren<Weapon>();
-            synchPrimary = this.primary[0].CoolingTime / this.primary.Length;
-            indexPrimary = 0;
-
-            this.secondary = body.transform.FindChild("Secondary").GetComponentsInChildren<Weapon>();
-            synchSecondary = this.secondary[0].CoolingTime / this.secondary.Length;
-            indexSecondary = 0;
-
-            shield = body.GetComponent<ForceShield>();
-            //Debug.Log("Gunner online");
-        }
-        public bool ShootHimPrimary(GameObject target)
-        {
-            if (Vector3.Angle(target.transform.position - body.transform.position, body.transform.forward) < primary[0].dispersion * 5)
-            {
-                if (indexPrimary >= primary.Length)
-                    indexPrimary = 0;
-                if (primary[indexPrimary].Cooldown <= 0)
-                {
-                    shield.Blink(primary[indexPrimary].ShildBlink);
-                    bool output = primary[indexPrimary].Fire(target.transform);
-                    indexPrimary++;
-                    return output;
-                }
-                else indexPrimary++;
-            }
-            return false;
-        }
-        public bool ShootHimSecondary(GameObject target)
-        {
-            if (Vector3.Angle(target.transform.position - body.transform.position, body.transform.forward) < secondary[0].dispersion * 5)
-            {
-                if (indexSecondary >= secondary.Length)
-                    indexSecondary = 0;
-                if (secondary[indexSecondary].Cooldown <= 0)
-                {
-                    shield.Blink(secondary[indexSecondary].ShildBlink);
-                    bool output = secondary[indexSecondary].Fire(target.transform);
-                    indexSecondary++;
-                    return output;
-                }
-                else indexSecondary++;
-            }
-            return false;
-        }
-        public void Update()
-        {
-            if (synchPrimary > 0)
-                synchPrimary -= Time.deltaTime;
-            else
-                synchPrimary = this.primary[0].CoolingTime / this.primary.Length;
-            if (synchSecondary > 0)
-                synchSecondary -= Time.deltaTime;
-            else
-                synchSecondary = this.secondary[0].CoolingTime / this.secondary.Length;
-            if (aimTarget != null)
-            {
-                var targetvelocity = aimTarget.GetComponent<Rigidbody>().velocity;
-                var Distance = Vector3.Distance(body.transform.position, aimTarget.transform.position);
-                var targetPoint = new Vector3(aimTarget.transform.position.x + targetvelocity.x * Mathf.Sqrt(Mathf.Pow(Distance, 2) / (Mathf.Pow(7500, 2) - Mathf.Pow(targetvelocity.x, 2))), aimTarget.transform.position.y + targetvelocity.y * Mathf.Sqrt(Mathf.Pow(Distance, 2) / (Mathf.Pow(7500, 2) - Mathf.Pow(targetvelocity.y, 2))), aimTarget.transform.position.z + targetvelocity.z * Mathf.Sqrt(Mathf.Pow(Distance, 2) / (Mathf.Pow(7500, 2) - Mathf.Pow(targetvelocity.z, 2))));//Поправку берём тут
-                Quaternion targetRotation = Quaternion.LookRotation(targetPoint - body.transform.position, new Vector3(0, 1, 0));
-                body.transform.rotation = Quaternion.Slerp(body.transform.rotation, targetRotation, Time.deltaTime * body.GetComponent<Unit>().Speed * 0.2f);
-                //var forward = walker.transform.TransformDirection(Vector3.forward);
-                //var targetDir = aimTarget - walker.transform.position;
-                //if (Vector3.Angle(forward, targetDir) < shootAngleDistance)
-            }
-        }
-        public bool SetAim(GameObject target)
-        {
-            if (aimTarget == null)
-            {
-                aimTarget = target;
-                return true;
-            }
-            else return false;
-        }
-        public bool ResetAim()
-        {
-            aimTarget = null;
-            return true;
-        }
-        public float GetRangePrimary()
-        {
-            return primary[0].Range;
-        }
-        public float GetRangeSecondary()
-        {
-            return secondary[0].Range;
         }
     }
     public static class Randomizer

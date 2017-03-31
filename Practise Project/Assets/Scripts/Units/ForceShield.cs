@@ -36,7 +36,7 @@ namespace PracticeProject
             else
             if (cooldownChield <= 0 && secondBlinker < 0 && force < maxCampacity)
             {
-                force += Mathf.Sqrt(maxCampacity);
+                force += Mathf.Sqrt(maxCampacity * 0.03f);
                 shildOwerheat = false;
                 firstFieldRend.enabled = true;
                 firstFieldColl.enabled = true;
@@ -65,7 +65,7 @@ namespace PracticeProject
                         }
                     case "Energy":
                         {
-                            this.force -= collision.gameObject.GetComponent<Round>().Damage * 1f;
+                            this.force -= collision.gameObject.GetComponent<Round>().Damage * 1.5f;
                             secondField.enabled = true;
                             secondBlinker = 0.5f;
                             break;

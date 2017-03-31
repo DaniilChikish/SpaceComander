@@ -16,6 +16,7 @@ namespace PracticeProject
             cooldown = 0;
             dispersion = 0.5f;
             shildBlinkTime = 0.01f;
+            avarageRounSpeed = Global.CannonUnitaryShell.GetComponent<Round>().Speed;
         }
         protected override void Shoot(Transform target)
         {

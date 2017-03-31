@@ -32,7 +32,7 @@ namespace PracticeProject
             }
             //полет по прямой
             float multiplicator = Mathf.Pow((lt * 0.05f), (1 / 4));
-            gameObject.GetComponent<Rigidbody>().AddForce(transform.forward * Speed * multiplicator, ForceMode.Force);
+            gameObject.GetComponent<Rigidbody>().AddForce(transform.forward * Speed * multiplicator, ForceMode.VelocityChange);
 
             if (lt > explosionTime)
                 Explode();
