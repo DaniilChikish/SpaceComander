@@ -1,13 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor;
+//using UnityEditor;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
 public class UIUtility : MonoBehaviour
 {
-    [MenuItem("GameObject/UI/Dropdown")]
+    //[MenuItem("GameObject/UI/Dropdown")]
     public static void NewDropdown()
     {
         NewButton("Dropdown", "Dropdown", GetCanvas().transform).gameObject.AddComponent<Dropdown>();

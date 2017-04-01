@@ -10,9 +10,10 @@ namespace PracticeProject
             gameObject.GetComponent<MeshRenderer>().enabled = false;
             range = 150;
             ammo = 12;
-            coolingTime = 12f;
+            coolingTime = 10f;
             cooldown = 0;
             dispersion = 6f;
+            shildBlinkTime = 0.1f;
         }
         protected override void Shoot(Transform target)
         {

@@ -104,7 +104,7 @@ namespace PracticeProject
         protected List<GameObject> capByTarget;
         public string ManeuverName; //debug only
 
-        protected void Start()
+        protected void Start()//_______________________Start
         {
             movementAiEnabled = true;
             battleAIEnabled = true;
@@ -132,7 +132,7 @@ namespace PracticeProject
                 this.gameObject.transform.FindChild("MinimapPict").FindChild("AlliesMinimapPict").GetComponent<Renderer>().enabled = true;
         }
         protected abstract void StatsUp();
-        protected void Update()//
+        protected void Update()//______________________Update
         {
             if (Health < 0)
                 Die();
@@ -326,7 +326,7 @@ namespace PracticeProject
                 isSelected = false;
             }
         }
-        public void Die()
+        public void Die()//____________________________Die
         {
             Instantiate(Global.SmallShipDieBlast, gameObject.transform.position, gameObject.transform.rotation);
             Global.selectedList.Remove(this.gameObject);
@@ -571,7 +571,7 @@ namespace PracticeProject
             }
             return false;
         }
-        protected List<GameObject> Scan() //
+        protected List<GameObject> Scan() //___________Scan
         {
             List<GameObject> enemys = new List<GameObject>();
             foreach (GameObject x in Global.unitList)
@@ -581,7 +581,7 @@ namespace PracticeProject
                 {
                     if (!x.GetComponent<Unit>().Allies(Team))
                     {
-                        float multiplicator = Mathf.Pow(((-distance + RadarRange) * 0.02f), (1 / 5)) * ((2 / (distance + 0.1f)) + radarPover);
+                        float multiplicator = Mathf.Pow(((-distance + RadarRange) * 0.02f), (1f / 5f)) * ((2f / (distance + 0.1f)) + radarPover);
                         if (Randomizer.Uniform(0, 100, 1)[0] < x.GetComponent<Unit>().Stealthness * multiplicator * 100)
                             enemys.Add(x);
                     }
@@ -770,36 +770,43 @@ namespace PracticeProject
         }
         public bool ShootHimPrimary(GameObject target)
         {
-            if (Vector3.Angle(aimPoint - body.transform.position, body.transform.forward) < primary[0].dispersion * 10)
+            if (synchPrimary < 0)
             {
-                if (indexPrimary >= primary.Length)
-                    indexPrimary = 0;
-                if (primary[indexPrimary].Cooldown <= 0)
+                float angel = Vector3.Angle(aimPoint - body.transform.position, body.transform.forward);
+                if (angel < primary[0].dispersion * 5 || angel < 1)
                 {
-                    shield.Blink(primary[indexPrimary].ShildBlink);
-                    bool output = primary[indexPrimary].Fire(target.transform);
-                    indexPrimary++;
-                    return output;
+                    if (indexPrimary >= primary.Length)
+                        indexPrimary = 0;
+                    if (primary[indexPrimary].Cooldown <= 0)
+                    {
+                        shield.Blink(primary[indexPrimary].ShildBlink);
+                        bool output = primary[indexPrimary].Fire(target.transform);
+                        indexPrimary++;
+                        return output;
+                    }
+                    else indexPrimary++;
                 }
-                else indexPrimary++;
             }
             return false;
         }
         public bool ShootHimSecondary(GameObject target)
         {
-            float angel = Vector3.Angle(aimPoint - body.transform.position, body.transform.forward);
-            if (angel < secondary[0].dispersion * 5 || angel < 1)
+            if (synchSecondary < 0)
             {
-                if (indexSecondary >= secondary.Length)
-                    indexSecondary = 0;
-                if (secondary[indexSecondary].Cooldown <= 0)
+                float angel = Vector3.Angle(aimPoint - body.transform.position, body.transform.forward);
+                if (angel < secondary[0].dispersion * 5 || angel < 1)
                 {
-                    shield.Blink(secondary[indexSecondary].ShildBlink);
-                    bool output = secondary[indexSecondary].Fire(target.transform);
-                    indexSecondary++;
-                    return output;
+                    if (indexSecondary >= secondary.Length)
+                        indexSecondary = 0;
+                    if (secondary[indexSecondary].Cooldown <= 0)
+                    {
+                        shield.Blink(secondary[indexSecondary].ShildBlink);
+                        bool output = secondary[indexSecondary].Fire(target.transform);
+                        indexSecondary++;
+                        return output;
+                    }
+                    else indexSecondary++;
                 }
-                else indexSecondary++;
             }
             return false;
         }
@@ -983,8 +990,8 @@ namespace PracticeProject
                 this.transform.rotation = Quaternion.Slerp(this.transform.rotation, targetRotation, Time.deltaTime * TurnSpeed);
             }
             //полет по прямой
-            float multiplicator = Mathf.Pow((lt * 0.5f), (1 / 8)) * 0.7f;
-            gameObject.GetComponent<Rigidbody>().AddForce(transform.forward * Speed * multiplicator, ForceMode.Force);
+            float multiplicator = Mathf.Pow((lt * 0.5f), (1f / 8f)) * 0.7f;
+            gameObject.GetComponent<Rigidbody>().velocity = transform.forward * Speed * multiplicator;//AddForce(transform.forward * Speed * multiplicator, ForceMode.Acceleration);
             if (Vector3.Distance(this.transform.position, target) < explosionRange)
                 Explode();
             else

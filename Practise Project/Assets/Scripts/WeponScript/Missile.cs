@@ -31,9 +31,11 @@ namespace PracticeProject
                     target = null;
             }
             //полет по прямой
-            float multiplicator = Mathf.Pow((lt * 0.05f), (1 / 4));
-            gameObject.GetComponent<Rigidbody>().AddForce(transform.forward * Speed * multiplicator, ForceMode.VelocityChange);
-
+            float multiplicator = Mathf.Pow((lt * 0.05f), (1f / 4f));
+            //Debug.Log(multiplicator);
+            //Debug.Log(Convert.ToSingle(multiplicator));
+            gameObject.GetComponent<Rigidbody>().velocity = transform.forward * Speed * Convert.ToSingle(multiplicator); //AddForce(transform.forward * Speed * multiplicator, ForceMode.Acceleration);
+            //Debug.Log(gameObject.GetComponent<Rigidbody>().velocity.magnitude);
             if (lt > explosionTime)
                 Explode();
             else

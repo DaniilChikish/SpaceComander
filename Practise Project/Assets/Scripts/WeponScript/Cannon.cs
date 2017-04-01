@@ -10,9 +10,9 @@ namespace PracticeProject
         protected override void StatUp()
         {
             gameObject.GetComponent<MeshRenderer>().enabled = false;
-            range = 100;
+            range = 90;
             ammo = 2000;
-            coolingTime = 0.3f;
+            coolingTime = 0.15f;
             cooldown = 0;
             dispersion = 0.5f;
             shildBlinkTime = 0.01f;
