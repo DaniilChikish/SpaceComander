@@ -19,7 +19,6 @@ namespace PracticeProject
         protected override void StatsUp()
         {
             type = UnitClass.Scout;
-            maxHealth = 100; //set in child
             radarRange = 300; //set in child
             radarPover = 2;
             speed = 10; //set in child
@@ -49,6 +48,18 @@ namespace PracticeProject
             }
             if (cooldownMissileInhibitor > 0)
                 cooldownMissileInhibitor -= Time.deltaTime;
+        }
+        protected override bool RoleFunction()
+        {
+            return Warp();
+        }
+        protected override bool SelfDefenceFunction()
+        {
+            SelfDefenceFunctionBase();
+            if (RadarWarningResiever() > 5)
+                Jammer();
+            MissileGuidanceInhibitor();
+            return true;
         }
         //AI logick
         protected override bool BattleManeuverFunction()
@@ -107,18 +118,7 @@ namespace PracticeProject
             Driver.MoveToQueue(this.transform.position);
             return true;
         }
-        protected override bool RoleFunction()
-        {
-            return Warp();
-        }
-        protected override bool SelfDefenceFunction()
-        {
-            SelfDefenceFunctionBase();
-            if (RadarWarningResiever() > 5)
-                Jammer();
-            MissileGuidanceInhibitor();
-            return true;
-        }
+
         public override void SendTo(Vector3 destination)
         {
             Warp();

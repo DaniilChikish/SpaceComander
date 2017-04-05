@@ -20,7 +20,6 @@ namespace PracticeProject
         }
         protected override void Shoot(Transform target)
         {
-			GlobalController Global = FindObjectsOfType<GlobalController>()[0];
             Quaternion direction = transform.rotation;
             double[] randomOffset = Randomizer.Uniform(0, 100, 2);
             if (randomOffset[0] > 50)

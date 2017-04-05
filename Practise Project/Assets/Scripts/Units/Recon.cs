@@ -17,7 +17,6 @@ namespace PracticeProject
         protected override void StatsUp()
         {
             type = UnitClass.Recon;
-            maxHealth = 90; //set in child
             radarRange = 250; //set in child
             radarPover = 1.1f;
             speed = 8.5f; //set in child

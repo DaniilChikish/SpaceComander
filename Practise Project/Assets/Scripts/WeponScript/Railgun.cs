@@ -1,0 +1,34 @@
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+namespace PracticeProject
+{
+    public class Railgun : Weapon {
+        protected override void StatUp()
+        {
+            gameObject.GetComponent<MeshRenderer>().enabled = false;
+            range = 500;
+            ammo = 15;
+            coolingTime = 5f;
+            cooldown = 0;
+            dispersion = 0.000001f;//exponential
+            shildBlinkTime = 0.05f;
+            avarageRounSpeed = Global.RailgunShell.GetComponent<Round>().Speed;
+        }
+        protected override void Shoot(Transform target)
+        {
+            Quaternion direction = transform.rotation;
+            //double[] randomOffset = Randomizer.Uniform(0, 100, 2);
+            //if (randomOffset[0] > 50)
+            //    direction.x = direction.x + (Convert.ToSingle(Global.RandomNormalPool[Convert.ToInt32(randomOffset[0])] - Convert.ToSingle(Global.RandomNormalMin)) * dispersion);
+            //else
+            //    direction.x = direction.x + (Convert.ToSingle(Global.RandomNormalPool[Convert.ToInt32(randomOffset[0])] - Convert.ToSingle(Global.RandomNormalMin)) * -dispersion);
+            //if (randomOffset[1] > 50)
+            //    direction.y = direction.y + (Convert.ToSingle(Global.RandomNormalPool[Convert.ToInt32(randomOffset[1])] - Convert.ToSingle(Global.RandomNormalMin)) * dispersion);
+            //else
+            //    direction.y = direction.y + (Convert.ToSingle(Global.RandomNormalPool[Convert.ToInt32(randomOffset[1])] - Convert.ToSingle(Global.RandomNormalMin)) * -dispersion);
+            Instantiate(Global.RailgunShell, gameObject.transform.position, direction);
+        }
+    }
+}

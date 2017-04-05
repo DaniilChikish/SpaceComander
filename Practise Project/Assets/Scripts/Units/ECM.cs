@@ -13,8 +13,7 @@ namespace PracticeProject
         public float cooldownMissileInhibitor;//Make private after debug;
         protected override void StatsUp()
         {
-            type = UnitClass.Scout;
-            maxHealth = 100; //set in child
+            type = UnitClass.ECM;
             radarRange = 150; //set in child
             radarPover = 5;
             speed = 9; //set in child

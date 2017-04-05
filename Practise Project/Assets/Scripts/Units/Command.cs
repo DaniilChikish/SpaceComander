@@ -13,7 +13,6 @@ namespace PracticeProject
         protected override void StatsUp()
         {
             type = UnitClass.Command;
-            maxHealth = 150; //set in child
             radarRange = 300; //set in child
             speed = 12; //set in child
             battleAIEnabled = true; //set in child

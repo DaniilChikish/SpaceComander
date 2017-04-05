@@ -11,7 +11,6 @@ namespace PracticeProject
     public enum UnitStateType { MoveAI, UnderControl, Waiting, Idle};
     public enum TargetStateType { BehindABarrier,  InPrimaryRange, InSecondaryRange, Captured, NotFinded}; 
     //public enum ImpactType { ForestStaticImpact };
-    //public enum TerrainType { Plain, Forest };
     public enum Army { Green, Red, Blue };
     public enum WeaponType { Cannon, Laser, Plazma, Missile, Torpedo }
     public enum BlastType { UnitaryTorpedo, Missile, NukeTorpedo, SmallShip, MediumShip, Corvette }
@@ -31,6 +30,7 @@ namespace PracticeProject
         public GameObject CannonUnitaryShell;
         public AudioClip CannonShootSound;
         public GameObject CannonShellBlast;
+        public GameObject RailgunShell;
         public GameObject LaserBeam;
         public GameObject PlasmaSphere;
         public GameObject SelfGuidedMissile;
@@ -71,15 +71,17 @@ namespace PracticeProject
         public string UnitName;
 
         //depend varibles
-        public float Health;
         protected float radiolink;
 
         //constants
-        protected float maxHealth; //set in child
         protected float radarRange; //set in child
         protected float radarPover; // default 1
         protected float speed; //set in child
-        public float MaxHealth { get { return maxHealth; } }
+        public float Health {
+            set { armor.hitpoints = value; }
+            get { return armor.hitpoints; }
+        }
+        public float MaxHealth { get { return armor.maxHitpoints; } }
         public float RadarRange { get { return radarRange; } }
         public float Speed { get { return speed; } }
         public Army Army { get { return Team; } }
@@ -92,11 +94,14 @@ namespace PracticeProject
         public float Stealthness { get { return stealthness; } }
         public float inhibition;
         protected bool detected;
-        protected float cooldownDetected;
+        public float cooldownDetected;
         //controllers
         protected MovementController Driver;
         protected ShootController Gunner;
         protected GlobalController Global;
+        protected Armor armor;
+        protected ForceShield shield;
+        public ForceShield GetShieldRef { get { return shield; } }
         protected float synchAction;
         public float orderBackCount; //Make private after debug;
         public List<GameObject> enemys;
@@ -113,16 +118,22 @@ namespace PracticeProject
 
             StatsUp();//
 
-            Health = MaxHealth;
+            //Health = MaxHealth;
             cooldownDetected = 0;
             radarPover = 1;
             //waitingBackCount = 0.2f;
             aiStatus = UnitStateType.Idle;
             UnitName = type.ToString();
+            Global = FindObjectOfType<GlobalController>();
+            //armor = GetComponentInChildren<Armor>(); 
+            armor = this.gameObject.GetComponent<Armor>(); 
+
+            shield = this.gameObject.GetComponent<ForceShield>();
+            //shield = GetComponentInChildren<ForceShield>();
+            //
             Driver = new MovementController(this.gameObject);
             Gunner = new ShootController(this.gameObject);
             capByTarget = new List<GameObject>();
-            Global = FindObjectOfType<GlobalController>();
             Global.unitList.Add(gameObject);
             this.gameObject.transform.FindChild("MinimapPict").FindChild("AlliesMinimapPict").GetComponent<Renderer>().enabled = false;
             this.gameObject.transform.FindChild("MinimapPict").FindChild("EnemyMinimapPict").GetComponent<Renderer>().enabled = false;
@@ -134,8 +145,6 @@ namespace PracticeProject
         protected abstract void StatsUp();
         protected void Update()//______________________Update
         {
-            if (Health < 0)
-                Die();
             Driver.Update();
             Gunner.Update();
             //cooldowns
@@ -278,40 +287,6 @@ namespace PracticeProject
                 //GUI.Label(new Rect(crd.x - 120, crd.y - Global.NameFrameOffset, 240, 18), UnitName, style);
             }
         }
-
-        protected void OnCollisionEnter(Collision collision)
-        {
-            switch (collision.gameObject.tag)
-            {
-                case "Shell":
-                    {
-                        float multoplicator = 1;
-                        if (!gameObject.GetComponent<ForceShield>().shildOwerheat) multoplicator = multoplicator * 0.01f;
-                        this.Health -= collision.gameObject.GetComponent<Round>().Damage * multoplicator * 1.2f;
-                        break;
-                    }
-                case "Energy":
-                    {
-                        float multoplicator = 1;
-                        if (!gameObject.GetComponent<ForceShield>().shildOwerheat) multoplicator = multoplicator * 0.05f;
-                        this.Health -= collision.gameObject.GetComponent<Round>().Damage * multoplicator * 0.2f;
-                        break;
-                    }
-            }
-        }
-        protected void OnTriggerStay(Collider other)
-        {
-            switch (other.gameObject.tag)
-            {
-                case "Explosion":
-                    {
-                        float multiplicator = Mathf.Pow(((-Vector3.Distance(this.gameObject.transform.position, other.gameObject.transform.position) + other.gameObject.GetComponent<Explosion>().MaxRadius) * 0.01f), (1 / 3));
-                        if (!gameObject.GetComponent<ForceShield>().shildOwerheat) multiplicator = multiplicator * 0.15f;
-                        this.Health = this.Health - other.gameObject.GetComponent<Explosion>().Damage * multiplicator;
-                        break;
-                    }
-            }
-        }
         public void SelectUnit(bool isSelect)
         {
             if (isSelect)
@@ -340,9 +315,9 @@ namespace PracticeProject
             enemys = Scan();//поиск в зоне действия радара
             if (CurrentTarget == null)//текущей цели нет
             {
-
                 if (enemys.Count > 0)
                 {
+
                     bool output;
                     if (RadarWarningResiever() > 0)
                         output = OpenFire(RetaliatoryCapture());//ответный захват
@@ -354,9 +329,14 @@ namespace PracticeProject
                 else
                 {
                     enemys = RequestScout();//запрос разведданных
+
                     if (enemys.Count > 0)
+                    {
+                        if (enemys[0] == null) enemys.Clear();
+                        else
                         return OpenFire(GetNearest());
-                    else//переходим в ожидение
+                    }
+//переходим в ожидение
                         return false;
                 }
             }
@@ -548,6 +528,7 @@ namespace PracticeProject
         protected bool OpenFire(GameObject target)
         {
             CurrentTarget = target;
+            bool shot = false;
             float distance = Vector3.Distance(this.transform.position, CurrentTarget.transform.position);
             RaycastHit hit;
             Physics.Raycast(this.transform.position, CurrentTarget.transform.position - this.transform.position, out hit);
@@ -557,19 +538,19 @@ namespace PracticeProject
                 Gunner.SetTarget(CurrentTarget);
                 if (inhibition <= 0)//если не действует подавление оружия
                 {
+                    if (distance < Gunner.GetRangeSecondary() && distance > 50)
+                    {
+                        targetStatus = TargetStateType.InSecondaryRange;
+                        shot = Gunner.ShootHimSecondary(CurrentTarget);
+                    }
                     if (distance < Gunner.GetRangePrimary())//выбор оружия
                     {
                         targetStatus = TargetStateType.InPrimaryRange;
-                        return Gunner.ShootHimPrimary(CurrentTarget);
-                    }
-                    else if (distance < Gunner.GetRangeSecondary())
-                    {
-                        targetStatus = TargetStateType.InSecondaryRange;
-                        return Gunner.ShootHimSecondary(CurrentTarget);
+                        shot = Gunner.ShootHimPrimary(CurrentTarget);
                     }
                 }
             }
-            return false;
+            return shot;
         }
         protected List<GameObject> Scan() //___________Scan
         {
@@ -597,7 +578,7 @@ namespace PracticeProject
         }
         public virtual bool Allies(Army army)
         {
-            if (army != Global.playerArmy)
+            if (army == Global.playerArmy)
             {
                 cooldownDetected = 1;
                 this.gameObject.transform.FindChild("MinimapPict").FindChild("EnemyMinimapPict").GetComponent<Renderer>().enabled = true;
@@ -765,7 +746,7 @@ namespace PracticeProject
 
             //Target = null;
 
-            shield = body.GetComponent<ForceShield>();
+            shield = body.GetComponent<Unit>().GetShieldRef;
             //Debug.Log("Gunner online");
         }
         public bool ShootHimPrimary(GameObject target)
@@ -984,7 +965,7 @@ namespace PracticeProject
         }
         public virtual void Update()
         {
-            if (target != null)//контроль курса
+            if (target != Vector3.zero)//контроль курса
             {
                 Quaternion targetRotation = Quaternion.LookRotation(target - this.transform.position, new Vector3(0, 1, 0));
                 this.transform.rotation = Quaternion.Slerp(this.transform.rotation, targetRotation, Time.deltaTime * TurnSpeed);
