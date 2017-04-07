@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace PracticeProject
 {
-    public class ECM : Unit
+    public class ECM : SpaceShip
     {
         public bool jamming;//Make private after debug;
         public new float Stealthness { get { if (jamming) return stealthness * 0.4f; else return stealthness; } }
@@ -15,11 +15,17 @@ namespace PracticeProject
         {
             type = UnitClass.ECM;
             radarRange = 150; //set in child
-            radarPover = 5;
-            speed = 9; //set in child
+            radarPover = 2f;
+            speed = 9f; //set in child
             jamming = false;
-            stealthness = 0.2f; //set in child
+            stealthness = 0.4f; //set in child
             radiolink = 1.1f;
+            sortDelegate = SortEnemys;
+        }
+        protected override void Explosion()
+        {
+            GameObject blast = Instantiate(Global.ShipDieBlast, gameObject.transform.position, gameObject.transform.rotation);
+            blast.GetComponent<Explosion>().StatUp(BlastType.SmallShip);
         }
         protected override void DecrementCounters()
         {
@@ -36,7 +42,7 @@ namespace PracticeProject
                 cooldownMissileInhibitor -= Time.deltaTime;
         }
         //AI logick
-        protected override bool BattleManeuverFunction()
+        protected override bool CombatManeuverFunction()
         {
             switch (targetStatus)
             {
@@ -53,7 +59,7 @@ namespace PracticeProject
                         if (WeaponInhibitor(CurrentTarget))
                             return Rush();
                         else
-                        return ShortenDistance();
+                            return ShortenDistance();
                     }
                 case TargetStateType.BehindABarrier:
                     {
@@ -85,13 +91,13 @@ namespace PracticeProject
             capByTarget.Clear();
             foreach (GameObject x in enemys)
             {
-                if (x.GetComponent<Unit>().CurrentTarget == this)
+                if (x.GetComponent<SpaceShip>().CurrentTarget == this)
                     capByTarget.Add(x);
                 if (jamming)
                 {
-                    x.GetComponent<Unit>().CurrentTarget = null;
+                    x.GetComponent<SpaceShip>().CurrentTarget = null;
                     if (cooldownWeaponInhibitor < 0)
-                        x.GetComponent<Unit>().inhibition = 0.1f;
+                        x.GetComponent<SpaceShip>().inhibition = 0.1f;
                 }
             }
             capByTarget.Sort(delegate (GameObject x, GameObject y)
@@ -118,13 +124,13 @@ namespace PracticeProject
                 if (missiles.Length > 0)
                     foreach (GameObject x in missiles)
                     {
-                        if (x.GetComponent<Missile>().target == gameObject.transform)
+                        if (x.GetComponent<SelfguidedMissile>().target == gameObject.transform)
                         {
                             float distance = Vector3.Distance(x.transform.position, this.transform.position);
                             float multiplicator = Mathf.Pow(((-distance + (RadarRange * 0.5f)) * 0.02f), (1 / 3));
                             if (Randomizer.Uniform(0, 100, 1)[0] < 70 * multiplicator)
                             {
-                                x.GetComponent<Missile>().target = null;
+                                x.GetComponent<SelfguidedMissile>().target = null;
                                 cooldownMissileInhibitor = 3.5f;
                                 return true;
                             }
@@ -137,11 +143,86 @@ namespace PracticeProject
         {
             if (cooldownWeaponInhibitor <= 0)
             {
-                target.GetComponent<Unit>().inhibition = 4f;
+                target.GetComponent<SpaceShip>().inhibition = 4f;
                 cooldownWeaponInhibitor = 10f;
                 return true;
             }
             return false;
+        }
+        private int SortEnemys(IUnit x, IUnit y)
+        {
+            int xPriority;
+            int yPriority;
+            switch (x.Type)
+            {
+                case UnitClass.Command: //высший приоритет - командир
+                    {
+                        xPriority = 20;
+                        break;
+                    }
+                case UnitClass.Scout: //жертва
+                    {
+                        xPriority = 10;
+                        break;
+                    }
+                case UnitClass.ECM: //паритет
+                    {
+                        xPriority = 5;
+                        break;
+                    }
+                case UnitClass.Recon: //хищник
+                    {
+                        xPriority = -5;
+                        break;
+                    }
+                default:
+                    {
+                        xPriority = 0; 
+                        break;
+                    }
+            }
+            switch (y.Type)
+            {
+                case UnitClass.Command: //высший приоритет - командир
+                    {
+                        yPriority = 20;
+                        break;
+                    }
+                case UnitClass.Scout: //жертва
+                    {
+                        yPriority = 10;
+                        break;
+                    }
+                case UnitClass.ECM: //паритет
+                    {
+                        yPriority = 5;
+                        break;
+                    }
+                case UnitClass.Recon: //хищник
+                    {
+                        yPriority = -5;
+                        break;
+                    }
+                default:
+                    {
+                        yPriority = 0;
+                        break;
+                    }
+            }
+            float xDictance = Vector3.Distance(this.transform.position, x.ObjectTransform.position);
+            float yDistance = Vector3.Distance(this.transform.position, y.ObjectTransform.position);
+            if ((xDictance - yDistance) > -100 && (xDictance - yDistance) < 100)
+            { } //приоритет не меняется
+            else
+            {
+                if (xDictance > yDistance)
+                    yPriority += 5;
+                else
+                    xPriority += 5;
+            }
+            if (xPriority > yPriority)
+                return -1;
+            else return 1;
         }
     }
 }

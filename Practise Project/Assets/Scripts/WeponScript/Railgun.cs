@@ -5,7 +5,7 @@ using UnityEngine;
 namespace PracticeProject
 {
     public class Railgun : Weapon {
-        protected override void StatUp()
+        public override void StatUp()
         {
             gameObject.GetComponent<MeshRenderer>().enabled = false;
             range = 500;
@@ -14,7 +14,7 @@ namespace PracticeProject
             cooldown = 0;
             dispersion = 0.000001f;//exponential
             shildBlinkTime = 0.05f;
-            avarageRounSpeed = Global.RailgunShell.GetComponent<Round>().Speed;
+            averageRoundSpeed = 300;
         }
         protected override void Shoot(Transform target)
         {
@@ -28,7 +28,8 @@ namespace PracticeProject
             //    direction.y = direction.y + (Convert.ToSingle(Global.RandomNormalPool[Convert.ToInt32(randomOffset[1])] - Convert.ToSingle(Global.RandomNormalMin)) * dispersion);
             //else
             //    direction.y = direction.y + (Convert.ToSingle(Global.RandomNormalPool[Convert.ToInt32(randomOffset[1])] - Convert.ToSingle(Global.RandomNormalMin)) * -dispersion);
-            Instantiate(Global.RailgunShell, gameObject.transform.position, direction);
+            GameObject shell = Instantiate(Global.RailgunShell, gameObject.transform.position, direction);
+            shell.GetComponent<IShell>().StatUp(ShellType.Railgun);
         }
     }
 }

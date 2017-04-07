@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace PracticeProject
 {
-    public class Command : Unit
+    public class Command : SpaceShip
     {
         public bool jamming;//Make private after debug;
         public new float Stealthness { get { if (jamming) return stealthness * 0.8f; else return stealthness; } }
@@ -15,7 +15,7 @@ namespace PracticeProject
             type = UnitClass.Command;
             radarRange = 300; //set in child
             speed = 12; //set in child
-            battleAIEnabled = true; //set in child
+            combatAIEnabled = true; //set in child
             selfDefenceModuleEnabled = true; //set in child
             roleModuleEnabled = true; //set in child
             jamming = false;
@@ -70,13 +70,13 @@ namespace PracticeProject
                 if (missiles.Length > 0)
                     foreach (GameObject x in missiles)
                     {
-                        if (x.GetComponent<Missile>().target == gameObject.transform)
+                        if (x.GetComponent<SelfguidedMissile>().target == gameObject.transform)
                         {
                             float distance = Vector3.Distance(x.transform.position, this.transform.position);
                             float multiplicator = Mathf.Pow(((-distance + (RadarRange * 0.5f)) * 0.02f), (1 / 3));
                             if (Randomizer.Uniform(0, 100, 1)[0] < 70 * multiplicator)
                             {
-                                x.GetComponent<Missile>().target = null;
+                                x.GetComponent<SelfguidedMissile>().target = null;
                                 cooldownMissileInhibitor = 4;
                                 return true;
                             }

@@ -21,11 +21,11 @@ namespace PracticeProject
                 isSelecting = true;
                 mousePosition1 = Input.mousePosition;
 
-                foreach (var selectableObject in FindObjectsOfType<Unit>())
+                foreach (var selectableObject in FindObjectsOfType<SpaceShip>())
                 {
                     if (selectableObject.isSelected == true)
                     {
-                        selectableObject.gameObject.GetComponent<Unit>().SelectUnit(false);
+                        selectableObject.gameObject.GetComponent<SpaceShip>().SelectUnit(false);
                         //Destroy(selectableObject.selectionCircle.gameObject);
                         //selectableObject.selectionCircle = null;
                     }
@@ -36,10 +36,10 @@ namespace PracticeProject
             // If we let go of the left mouse button, end selection
             if (Input.GetMouseButtonUp(0))
             {
-                var selectedObjects = new List<Unit>();
-                foreach (var selectableObject in FindObjectsOfType<Unit>())
+                var selectedObjects = new List<SpaceShip>();
+                foreach (var selectableObject in FindObjectsOfType<SpaceShip>())
                 {
-                    if ((FindObjectsOfType<GlobalController>()[0].playerArmy == selectableObject.GetComponent<Unit>().Team) &&
+                    if ((FindObjectsOfType<GlobalController>()[0].playerArmy == selectableObject.GetComponent<SpaceShip>().team) &&
                         (IsWithinSelectionBounds(selectableObject.gameObject)))
                     {
                         selectedObjects.Add(selectableObject);
@@ -59,14 +59,14 @@ namespace PracticeProject
             if (isSelecting)
             {
 
-                foreach (var selectableObject in FindObjectsOfType<Unit>())
+                foreach (var selectableObject in FindObjectsOfType<SpaceShip>())
                 {
-                    if ((FindObjectsOfType<GlobalController>()[0].playerArmy == selectableObject.GetComponent<Unit>().Team) && 
+                    if ((FindObjectsOfType<GlobalController>()[0].playerArmy == selectableObject.GetComponent<SpaceShip>().team) && 
                         IsWithinSelectionBounds(selectableObject.gameObject))
                     {
                         if (selectableObject.isSelected == false)
                         {
-                            selectableObject.gameObject.GetComponent<Unit>().SelectUnit(true);
+                            selectableObject.gameObject.GetComponent<SpaceShip>().SelectUnit(true);
                             GameObject.Find("Gui").transform.FindChild("UnitPeviev").gameObject.SetActive(true);
                             //selectableObject.selectionCircle = Instantiate(selectableObject.selectionCirclePrefab);
                             //selectableObject.selectionCircle.transform.SetParent(selectableObject.transform, false);
@@ -102,9 +102,9 @@ namespace PracticeProject
                 foreach (GameObject x in FindObjectsOfType<GlobalController>()[0].selectedList)
                 {
                     if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
-                        x.GetComponent<Unit>().SendToQueue(destination);
+                        x.GetComponent<SpaceShip>().SendToQueue(destination);
                     else
-                        x.GetComponent<Unit>().SendTo(destination);
+                        x.GetComponent<SpaceShip>().SendTo(destination);
                 }
         }
 

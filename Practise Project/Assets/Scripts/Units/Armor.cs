@@ -10,11 +10,11 @@ namespace PracticeProject
         public float shellResist;
         public float energyResist;
         public float blastResist;
-        private Unit owner;
+        private SpaceShip owner;
         // Use this for initialization
         void Start()
         {
-            owner = transform.GetComponentInParent<Unit>();
+            owner = transform.GetComponentInParent<SpaceShip>();
         }
 
         // Update is called once per frame
@@ -23,28 +23,40 @@ namespace PracticeProject
             if (hitpoints < 0)
                 owner.Die();
         }
-        protected void OnCollisionEnter(Collision collision)
+        protected void OnCollisionStay(Collision collision)
         {
             //Debug.Log("Hit armor");
-            if (owner.GetShieldRef.force < 0)
+            //if (owner.GetShieldRef.force < 0)
+            //{
+            float multiplicator;
+            switch (collision.gameObject.tag)
             {
-                float multiplicator;
-                switch (collision.gameObject.tag)
-                {
-                    case "Shell":
-                        {
-                            multiplicator = 1 - shellResist;
-                            this.hitpoints -= collision.gameObject.GetComponent<Round>().Damage * multiplicator;
-                            break;
-                        }
-                    case "Energy":
-                        {
-                            multiplicator = 1 - energyResist;
-                            this.hitpoints -= collision.gameObject.GetComponent<Round>().Damage * multiplicator;
-                            break;
-                        }
-                }
+                case "Shell":
+                    {
+                        float difference = collision.gameObject.GetComponent<IShell>().ArmorPiersing - shellResist;
+                        if (difference > 1.5)
+                            multiplicator = 1.2f;
+                        else if (difference > -3)
+                            multiplicator = (Mathf.Sin((difference / 1.4f) + 0.5f) + 1f) * 0.6f;
+                        else
+                            multiplicator = 0.0f;
+                        this.hitpoints -= collision.gameObject.GetComponent<IShell>().Damage * multiplicator;
+                        break;
+                    }
+                case "Energy":
+                    {
+                        float difference = collision.gameObject.GetComponent<IEnergy>().ArmorPiersing - energyResist;
+                        if (difference > 0.5)
+                            multiplicator = 1f;
+                        else if (difference > -3)
+                            multiplicator = (Mathf.Sin((difference / 1.1f) + 1f) + 1f) * 0.5f;
+                        else
+                            multiplicator = 0.0f;
+                        this.hitpoints -= collision.gameObject.GetComponent<IEnergy>().Damage * multiplicator;
+                        break;
+                    }
             }
+            //}
         }
 
         protected void OnTriggerStay(Collider trigger)

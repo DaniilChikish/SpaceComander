@@ -7,16 +7,64 @@ namespace PracticeProject
 {
     public class Cannon : Weapon
     {
-        protected override void StatUp()
+        public ShellType AmmoType;
+        public override void StatUp()
         {
             gameObject.GetComponent<MeshRenderer>().enabled = false;
-            range = 90;
+            range = 150;
             ammo = 2000;
-            coolingTime = 0.15f;
+            coolingTime = 0.7f;
             cooldown = 0;
-            dispersion = 0.5f;
-            shildBlinkTime = 0.01f;
-            avarageRounSpeed = Global.CannonUnitaryShell.GetComponent<Round>().Speed;
+            dispersion = 0.05f;
+            shildBlinkTime = 0.1f;
+            switch (AmmoType)
+            {
+                case ShellType.Solid:
+                    {
+                        averageRoundSpeed = 133.33f;
+                        break;
+                    }
+                case ShellType.SolidAP:
+                    {
+                        this.averageRoundSpeed = 88.89f;
+                        break;
+                    }
+                case ShellType.Subcaliber:
+                    {
+                        this.averageRoundSpeed = 177.78f;
+                        break;
+                    }
+                case ShellType.Camorous:
+                    {
+                        this.averageRoundSpeed = 148.15f;
+                        break;
+                    }
+                case ShellType.CamorousAP:
+                    {
+                        this.averageRoundSpeed = 98.77f;
+                        break;
+                    }
+                case ShellType.Сumulative:
+                    {
+                        this.averageRoundSpeed = 111.11f;
+                        break;
+                    }
+                case ShellType.HightExplosive:
+                    {
+                        this.averageRoundSpeed = 102.56f;
+                        break;
+                    }
+                case ShellType.Uranium:
+                    {
+                        this.averageRoundSpeed = 40f;
+                        break;
+                    }
+                case ShellType.Railgun:
+                    {
+                        this.averageRoundSpeed = 300f;
+                        break;
+                    }
+            }
         }
         protected override void Shoot(Transform target)
         {
@@ -30,7 +78,8 @@ namespace PracticeProject
                 direction.y = direction.y + (Convert.ToSingle(Global.RandomNormalPool[Convert.ToInt32(randomOffset[1])] - Convert.ToSingle(Global.RandomNormalMin)) * dispersion);
             else
                 direction.y = direction.y + (Convert.ToSingle(Global.RandomNormalPool[Convert.ToInt32(randomOffset[1])] - Convert.ToSingle(Global.RandomNormalMin)) * -dispersion);
-            Instantiate(Global.CannonUnitaryShell, gameObject.transform.position, direction);
+            GameObject shell = Instantiate(Global.UnitaryShell, gameObject.transform.position, direction);
+            shell.GetComponent<IShell>().StatUp(AmmoType);
         }
     }
 }

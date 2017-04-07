@@ -3,17 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 namespace PracticeProject
 {
-    public class Explosion : MonoBehaviour {
-        public BlastType Type;
+    public class Explosion : MonoBehaviour
+    {
+        public BlastType type;
         private float waveSpeed; // Скорость волны
         private float maxRadius; // Радиус взрыва
         private float damage; // Урон
         public float Damage { get { return damage; } }
         public float MaxRadius { get { return maxRadius; } }
-
-        void Start()
+        void Start(){ }
+        public void StatUp(BlastType type)
         {
-            switch (Type)
+            this.type = type;
+            switch (type)
             {
                 case BlastType.Missile:
                     {
@@ -47,14 +49,28 @@ namespace PracticeProject
                     {
                         maxRadius = 12f;
                         waveSpeed = 1.1f;
-                        damage = 2;
+                        damage = 3;
                         break;
                     }
                 case BlastType.Corvette:
                     {
                         maxRadius = 20f;
                         waveSpeed = 1.1f;
+                        damage = 4;
+                        break;
+                    }
+                case BlastType.Shell:
+                    {
+                        maxRadius = 2f;
+                        waveSpeed = 1.1f;
                         damage = 2;
+                        break;
+                    }
+                case BlastType.ExplosiveShell:
+                    {
+                        maxRadius = 5f;
+                        waveSpeed = 1f;
+                        damage = 4;
                         break;
                     }
 

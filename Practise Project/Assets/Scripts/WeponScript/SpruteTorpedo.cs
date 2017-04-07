@@ -23,7 +23,7 @@ namespace PracticeProject
                 float distance = Vector3.Distance(this.gameObject.transform.position, x.transform.position);
                 if (distance < explosionRange * 3)
                 {
-                    if (!x.GetComponent<Unit>().Allies(this.Team))
+                    if (!x.GetComponent<SpaceShip>().Allies(this.Team))
                         enemys.Add(x);
                 }
             }
@@ -33,7 +33,7 @@ namespace PracticeProject
                 int i = 0;
                 foreach (GameObject M in missile)
                 {
-                    M.GetComponent<Missile>().SetTarget(enemys[i].transform);
+                    M.GetComponent<SelfguidedMissile>().SetTarget(enemys[i].transform);
                     //M.GetComponent<Missile>().AimCone = 60;
                     i++;
                     if (i >= enemys.Count)

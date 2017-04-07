@@ -7,15 +7,16 @@ namespace PracticeProject
 {
     public class PlazmaCannon : Weapon
     {
-        protected override void StatUp()
+        public override void StatUp()
         {
             gameObject.GetComponent<MeshRenderer>().enabled = false;
-            range = 85;
+            range = 105;
             ammo = 500;
-            coolingTime = 1f;
+            coolingTime = 1.2f;
             cooldown = 0;
             dispersion = 5f;
-            avarageRounSpeed = Global.CannonUnitaryShell.GetComponent<Round>().Speed;
+            shildBlinkTime = 0.5f;
+            averageRoundSpeed = 60;
         }
         protected override void Shoot(Transform target)
         {
@@ -30,8 +31,9 @@ namespace PracticeProject
                 direction.y = direction.y + (Convert.ToSingle(random[1] - (random.Min() + random.Max()) / 2) * dispersion);
             else
                 direction.y = direction.y + (Convert.ToSingle(random[1] - (random.Min() + random.Max()) / 2) * -dispersion);
-            GameObject shell = Instantiate(FindObjectsOfType<GlobalController>()[0].PlasmaSphere, gameObject.transform.position, transform.rotation);
-            shell.GetComponent<PlazmaSphere>().SetTarget(target);
+            GameObject sphere = Instantiate(FindObjectsOfType<GlobalController>()[0].PlasmaSphere, gameObject.transform.position, transform.rotation);
+            sphere.GetComponent<PlazmaSphere>().SetTarget(target);
+            sphere.GetComponent<PlazmaSphere>().StatUp(EnergyType.Plazma);
         }
     }
 }

@@ -6,20 +6,21 @@ namespace PracticeProject
 {
     public class Lazer : Weapon
     {
-        protected override void StatUp()
+        public EnergyType AmmoType;
+        public override void StatUp()
         {
             gameObject.GetComponent<MeshRenderer>().enabled = false;
             range = 350;
             ammo = Int32.MaxValue;
-            coolingTime = 3f;
+            coolingTime = 1.5f;
             cooldown = 0;
             dispersion = 0.001f;//exponential
-            shildBlinkTime = 0.01f;
-            avarageRounSpeed = Global.LaserBeam.GetComponent<Round>().Speed;
+            shildBlinkTime = 0.05f;
+            averageRoundSpeed = 500;
         }
         protected override void Shoot(Transform target)
         {
-				GlobalController Global = FindObjectsOfType<GlobalController>()[0];
+		    //GlobalController Global = FindObjectsOfType<GlobalController>()[0];
             Quaternion direction = transform.rotation;
             double[] randomOffset = Randomizer.Uniform(0, 100, 2);
             if (randomOffset[0] > 50)
@@ -30,7 +31,8 @@ namespace PracticeProject
                 direction.y = direction.y + (Convert.ToSingle(Global.RandomExponentPool[Convert.ToInt32(randomOffset[1])]) * dispersion);
             else
                 direction.y = direction.y + (Convert.ToSingle(Global.RandomExponentPool[Convert.ToInt32(randomOffset[1])]) * -dispersion);
-            Instantiate(Global.LaserBeam, gameObject.transform.position, direction);
+            GameObject beam = Instantiate(Global.LaserBeam, gameObject.transform.position, direction);
+            beam.GetComponent<IEnergy>().StatUp(AmmoType);
         }
     }
 }

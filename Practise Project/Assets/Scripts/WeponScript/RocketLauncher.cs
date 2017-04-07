@@ -5,7 +5,8 @@ namespace PracticeProject
 {
     public class RocketLauncher : Weapon
     {
-        protected override void StatUp()
+        public MissileType AmmoType;
+        public override void StatUp()
         {
             gameObject.GetComponent<MeshRenderer>().enabled = false;
             range = 150;
@@ -13,12 +14,25 @@ namespace PracticeProject
             coolingTime = 10f;
             cooldown = 0;
             dispersion = 6f;
-            shildBlinkTime = 0.1f;
+            shildBlinkTime = 0.8f;
         }
         protected override void Shoot(Transform target)
         {
-            GameObject missile = Instantiate(FindObjectsOfType<GlobalController>()[0].SelfGuidedMissile, gameObject.transform.position, transform.rotation);
-            missile.GetComponent<Missile>().SetTarget(target);
+            switch (AmmoType)
+            {
+                case MissileType.Selfguided:
+                    {
+                        GameObject missile = Instantiate(FindObjectsOfType<GlobalController>()[0].SelfGuidedMissile, gameObject.transform.position, transform.rotation);
+                        missile.GetComponent<SelfguidedMissile>().SetTarget(target);
+                        break;
+                    }
+                case MissileType.Unguided:
+                    {
+                        GameObject torpedo = Instantiate(FindObjectsOfType<GlobalController>()[0].UnguidedMissile, gameObject.transform.position, transform.rotation);
+                        torpedo.GetComponent<Torpedo>().SetTarget(target.position);
+                        break;
+                    }
+            }
         }
     }
 }
