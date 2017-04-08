@@ -6,12 +6,13 @@ namespace PracticeProject
     public class Explosion : MonoBehaviour
     {
         public BlastType type;
+        private float ttl;
         private float waveSpeed; // Скорость волны
         private float maxRadius; // Радиус взрыва
         private float damage; // Урон
-        public float Damage { get { return damage; } }
+        public float Damage { get { return damage * Time.deltaTime / 2; } }
         public float MaxRadius { get { return maxRadius; } }
-        void Start(){ }
+        void Start() { }
         public void StatUp(BlastType type)
         {
             this.type = type;
@@ -20,74 +21,67 @@ namespace PracticeProject
                 case BlastType.Missile:
                     {
                         maxRadius = 6f;
-                        waveSpeed = 1f;
-                        damage = 10;
+                        damage = 100;
                         break;
                     }
                 case BlastType.UnitaryTorpedo:
                     {
-                        maxRadius = 20f;
-                        waveSpeed = 1.1f;
-                        damage = 12f;
+                        maxRadius = 30f;
+                        damage = 150f;
                         break;
                     }
                 case BlastType.NukeTorpedo:
                     {
-                        maxRadius = 40f;
-                        waveSpeed = 1.3f;
-                        damage = 20;
+                        maxRadius = 80f;
+                        damage = 500;
                         break;
                     }
                 case BlastType.SmallShip:
                     {
-                        maxRadius = 8f;
-                        waveSpeed = 1.1f;
-                        damage = 2;
+                        maxRadius = 18f;
+                        damage = 20;
                         break;
                     }
                 case BlastType.MediumShip:
                     {
-                        maxRadius = 12f;
-                        waveSpeed = 1.1f;
-                        damage = 3;
+                        maxRadius = 24f;
+                        damage = 30;
                         break;
                     }
                 case BlastType.Corvette:
                     {
-                        maxRadius = 20f;
-                        waveSpeed = 1.1f;
-                        damage = 4;
+                        maxRadius = 40f;
+                        damage = 40;
                         break;
                     }
                 case BlastType.Shell:
                     {
                         maxRadius = 2f;
-                        waveSpeed = 1.1f;
-                        damage = 2;
+                        damage = 20;
                         break;
                     }
                 case BlastType.ExplosiveShell:
                     {
                         maxRadius = 5f;
-                        waveSpeed = 1f;
-                        damage = 4;
+                        damage = 40;
                         break;
                     }
-
                 default:
                     {
                         break;
                     }
             }
+            ttl = 2f;
+            waveSpeed = maxRadius / ttl;
         }
 
         void Update()
         {
-            if (transform.localScale.y >= maxRadius) Destroy(gameObject);
-            else
-            {
-                transform.localScale += new Vector3(waveSpeed, waveSpeed, waveSpeed);
-            }
+            if (transform.localScale.y < maxRadius)
+                transform.localScale += new Vector3(waveSpeed * Time.deltaTime, waveSpeed * Time.deltaTime, waveSpeed * Time.deltaTime);
+            if (ttl < 0)
+                Destroy(gameObject);
+            else ttl -= Time.deltaTime;
         }
     }
 }

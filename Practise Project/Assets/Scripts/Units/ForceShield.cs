@@ -32,9 +32,6 @@ namespace PracticeProject
             else if (cooldownChield <= 0 && secondBlinker <= 0 && force < maxCampacity)
             {
                 force += recharging * Time.deltaTime;
-                shildOwerheat = false;
-                firstFieldRend.enabled = true;
-                firstFieldColl.enabled = true;
             }
             if (cooldownChield > 0)
                 cooldownChield -= Time.deltaTime;
@@ -44,6 +41,8 @@ namespace PracticeProject
                     firstFieldColl.enabled = true;
                 else firstBlinker -= Time.deltaTime;
             }
+            else if (force > maxCampacity * 0.1)
+                Reload();
             if (secondBlinker <= 0)
                 secondField.enabled = false;
             else secondBlinker -= Time.deltaTime;
@@ -128,8 +127,15 @@ namespace PracticeProject
             shildOwerheat = true;
             firstFieldRend.enabled = false;
             firstFieldColl.enabled = false;
+            this.GetComponentInChildren<ParticleSystem>().Play();
             force = 0;
             cooldownChield = 2;
+        }
+        public void Reload()
+        {
+            shildOwerheat = false;
+            firstFieldRend.enabled = true;
+            firstFieldColl.enabled = true;
         }
     }
 }

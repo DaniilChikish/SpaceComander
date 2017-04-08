@@ -100,7 +100,7 @@ namespace PracticeProject
         public GameObject NukeBlast;
         public GameObject ShipDieBlast;
 		public double[] RandomNormalPool;
-		public double RandomNormalMin;
+		public double RandomNormalAverage;
 		public double[] RandomExponentPool;
 		private float randomPoolBackCoount;
 
@@ -110,7 +110,7 @@ namespace PracticeProject
             if (randomPoolBackCoount < 0)
             {
                 RandomNormalPool = Randomizer.Normal(1, 1, 128, 0, 128);
-                RandomNormalMin = RandomNormalPool.Min();
+                RandomNormalAverage = RandomNormalPool.Average();
                 RandomExponentPool = Randomizer.Exponential(7, 128, 0, 128);
             }
             else randomPoolBackCoount -= Time.deltaTime;
@@ -369,6 +369,7 @@ namespace PracticeProject
         }
         public void Die()//____________________________Die
         {
+            shield.Owerheat();
             Explosion();
             Global.selectedList.Remove(this.gameObject);
             Global.unitList.Remove(this.gameObject);
@@ -923,11 +924,15 @@ namespace PracticeProject
 
             distance = Vector3.Distance(this.gameObject.transform.position, aimPoint); //расстояние до цели
             approachTime = distance / averageRoundSpeed;
-            aimPoint = target.transform.position + target.GetComponent<NavMeshAgent>().velocity * approachTime; //первое приближение
+            Vector3 targetVelocity = target.GetComponent<NavMeshAgent>().velocity;
+            targetVelocity.y = 0; //исключаем вертикальную компоненту
+            aimPoint = target.transform.position + targetVelocity * approachTime; //первое приближение
 
             distance = Vector3.Distance(this.gameObject.transform.position, aimPoint); //расстояние до точки первого приближения
             approachTime = distance / averageRoundSpeed;
-            aimPoint = target.transform.position + target.GetComponent<NavMeshAgent>().velocity * approachTime * 1.1f; //второе приближение
+            targetVelocity = target.GetComponent<NavMeshAgent>().velocity;
+            targetVelocity.y = 0;
+            aimPoint = target.transform.position + targetVelocity * approachTime * 1.1f; //второе приближение
 
             //distance = Vector3.Distance(this.gameObject.transform.position, aimPoint);
             //approachTime = distance / averageRoundSpeed;
@@ -938,6 +943,7 @@ namespace PracticeProject
             if ((ammo > 0) && (cooldown <= 0))
             {
                 //Debug.Log("Fire");
+                this.GetComponentInChildren<ParticleSystem>().Play();
                 Shoot(target.transform);
                 cooldown = coolingTime;
                 ammo--;
@@ -965,7 +971,7 @@ namespace PracticeProject
         //}
 
         // Update is called once per frame
-        public void Update()
+        public virtual void Update()
         {
             if (ttl > 0)
                 ttl -= Time.deltaTime;

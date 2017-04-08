@@ -69,15 +69,15 @@ namespace PracticeProject
         protected override void Shoot(Transform target)
         {
             Quaternion direction = transform.rotation;
-            double[] randomOffset = Randomizer.Uniform(0, 100, 2);
+            double[] randomOffset = Randomizer.Uniform(10, 90, 2);
             if (randomOffset[0] > 50)
-                direction.x = direction.x + (Convert.ToSingle(Global.RandomNormalPool[Convert.ToInt32(randomOffset[0])] - Convert.ToSingle(Global.RandomNormalMin)) * dispersion);
+                direction.x = direction.x + (Convert.ToSingle(Global.RandomNormalPool[Convert.ToInt32(randomOffset[0])] - Convert.ToSingle(Global.RandomNormalAverage)) * dispersion);
             else
-                direction.x = direction.x + (Convert.ToSingle(Global.RandomNormalPool[Convert.ToInt32(randomOffset[0])] - Convert.ToSingle(Global.RandomNormalMin)) * -dispersion);
+                direction.x = direction.x + (Convert.ToSingle(Global.RandomNormalPool[Convert.ToInt32(randomOffset[0])] - Convert.ToSingle(Global.RandomNormalAverage)) * -dispersion);
             if (randomOffset[1] > 50)
-                direction.y = direction.y + (Convert.ToSingle(Global.RandomNormalPool[Convert.ToInt32(randomOffset[1])] - Convert.ToSingle(Global.RandomNormalMin)) * dispersion);
+                direction.y = direction.y + (Convert.ToSingle(Global.RandomNormalPool[Convert.ToInt32(randomOffset[1])] - Convert.ToSingle(Global.RandomNormalAverage)) * dispersion);
             else
-                direction.y = direction.y + (Convert.ToSingle(Global.RandomNormalPool[Convert.ToInt32(randomOffset[1])] - Convert.ToSingle(Global.RandomNormalMin)) * -dispersion);
+                direction.y = direction.y + (Convert.ToSingle(Global.RandomNormalPool[Convert.ToInt32(randomOffset[1])] - Convert.ToSingle(Global.RandomNormalAverage)) * -dispersion);
             GameObject shell = Instantiate(Global.UnitaryShell, gameObject.transform.position, direction);
             shell.GetComponent<IShell>().StatUp(AmmoType);
         }
