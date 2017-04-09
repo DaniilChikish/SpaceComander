@@ -65,7 +65,7 @@ namespace PracticeProject
                     }
                 case TargetStateType.InSecondaryRange:
                     {
-                        return Evasion();
+                        return Evasion(CurrentTarget.transform.right);
                     }
                 case TargetStateType.BehindABarrier:
                     {
@@ -224,6 +224,5 @@ namespace PracticeProject
                 return -1;
             else return 1;
         }
-
     }
 }

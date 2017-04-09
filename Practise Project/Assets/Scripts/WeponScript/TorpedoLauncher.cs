@@ -45,7 +45,7 @@ namespace PracticeProject
                     }
             }
             torpedo.GetComponent<Torpedo>().SetTarget(target.position);
-            torpedo.GetComponent<Torpedo>().SetTeam(owner.team);
+            torpedo.GetComponent<Torpedo>().SetTeam(owner.Team);
         }
     }
 }

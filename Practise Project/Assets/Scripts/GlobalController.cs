@@ -33,8 +33,8 @@ namespace PracticeProject
     public interface IGunner
     {
         void Update();
-        bool SetAim(GameObject target);
-        bool ShootHim(GameObject target, int slot);
+        bool SetAim(Transform target);
+        bool ShootHim(SpaceShip target, int slot);
         bool ResetAim();
         float GetRange(int slot);
     }
@@ -72,10 +72,17 @@ namespace PracticeProject
     public enum MissileType { Selfguided, Unguided }
     public enum TorpedoType { Unitary, Nuke, Sprute }
     public enum BlastType { UnitaryTorpedo, Missile, NukeTorpedo, SmallShip, MediumShip, Corvette, Shell, ExplosiveShell }
+    public interface IImpact
+    {
+        string ImpactName { get; }
+        void ActImpact();
+        void CompleteImpact();
+        string ToString();
+    }
     public class GlobalController : MonoBehaviour
     {
-        public List<GameObject> unitList; // список 
-        public List<GameObject> selectedList; // спиков выделенных объектов
+        public List<SpaceShip> unitList; // список 
+        public List<SpaceShip> selectedList; // спиков выделенных объектов
         public Army playerArmy;
         //selection
         public float NameFrameOffset;
@@ -121,11 +128,12 @@ namespace PracticeProject
         //base varibles
         protected UnitClass type;
         public UnitClass Type { get { return type; } }
-        public UnitStateType aiStatus;
-        public TargetStateType targetStatus;
+        protected UnitStateType aiStatus;
+        protected TargetStateType targetStatus;
         public Army team;
         public bool isSelected;
         public string UnitName;
+        public List<IImpact> Impacts;
 
         //depend varibles
         protected float radiolink;
@@ -134,13 +142,11 @@ namespace PracticeProject
         protected float radarRange; //set in child
         protected float radarPover; // default 1
         protected float speed; //set in child
-        public float Health {
-            set { armor.hitpoints = value; }
-            get { return armor.hitpoints; }
-        }
+        public float Health { set { armor.hitpoints = value; } get { return armor.hitpoints; } }
         public float MaxHealth { get { return armor.maxHitpoints; } }
-        public float RadarRange { get { return radarRange; } }
-        public float Speed { get { return speed; } }
+        public float ShieldRecharging { set { shield.recharging = value; } get { return shield.recharging; } }
+        public float RadarRange { set { radarRange = value; }  get { return radarRange; } }
+        public float Speed { set { speed = value; } get { return speed; } }
         public Army Team { get { return team; } }
         public Transform ObjectTransform { get { return this.gameObject.transform; } }
         //modules
@@ -150,7 +156,6 @@ namespace PracticeProject
         public bool roleModuleEnabled; // default true
         protected float stealthness; //set in child
         public float Stealthness { get { return stealthness; } }
-        public float inhibition;
         protected bool detected;
         public float cooldownDetected;
         //controllers
@@ -162,11 +167,14 @@ namespace PracticeProject
         public ForceShield GetShieldRef { get { return shield; } }
         protected float synchAction;
         public float orderBackCount; //Make private after debug;
-        public List<GameObject> enemys;
-        public GameObject CurrentTarget;
-        protected List<GameObject> capByTarget;
+        protected List<SpaceShip> enemys = new List<SpaceShip>();
+        protected List<SpaceShip> allies = new List<SpaceShip>();
+        public SpaceShip CurrentTarget;
+        protected List<SpaceShip> capByTarget;
         public string ManeuverName; //debug only
         protected SortEnemys sortDelegate;
+
+        //base interface
         protected void Start()//_______________________Start
         {
             movementAiEnabled = true;
@@ -183,16 +191,18 @@ namespace PracticeProject
             aiStatus = UnitStateType.Idle;
             UnitName = type.ToString();
             Global = FindObjectOfType<GlobalController>();
-            //armor = GetComponentInChildren<Armor>(); 
+            Global.unitList.Add(this);
             armor = this.gameObject.GetComponent<Armor>(); 
 
             shield = this.gameObject.GetComponent<ForceShield>();
-            //shield = GetComponentInChildren<ForceShield>();
             //
             Driver = new MovementController(this.gameObject);
-            Gunner = new ShootController(this.gameObject);
-            capByTarget = new List<GameObject>();
-            Global.unitList.Add(gameObject);
+            Gunner = new ShootController(this);
+            capByTarget = new List<SpaceShip>();
+            //List<SpaceShip> enemys = new List<SpaceShip>();
+            //List<SpaceShip> allies = new List<SpaceShip>();
+            Impacts = new List<IImpact>();
+
             this.gameObject.transform.FindChild("MinimapPict").FindChild("AlliesMinimapPict").GetComponent<Renderer>().enabled = false;
             this.gameObject.transform.FindChild("MinimapPict").FindChild("EnemyMinimapPict").GetComponent<Renderer>().enabled = false;
             this.gameObject.transform.FindChild("MinimapPict").FindChild("SelectedMinimapPict").GetComponent<Renderer>().enabled = false;
@@ -219,12 +229,12 @@ namespace PracticeProject
                         CombatFunction();
                         if (targetStatus == TargetStateType.NotFinded)
                         {
-                            if (orderBackCount < 0)
+                            if (orderBackCount <= 0)
                             {
                                 aiStatus = UnitStateType.Waiting;
                                 orderBackCount = 1f;
                             }
-                            else
+                            else if (aiStatus == UnitStateType.Waiting)
                             {
                                 aiStatus = UnitStateType.Idle;
                             }
@@ -306,8 +316,11 @@ namespace PracticeProject
                 //this.gameObject.transform.FindChild("AlliesMinimapPict").GetComponent<Renderer>().enabled = false;
                 this.gameObject.transform.FindChild("MinimapPict").FindChild("EnemyMinimapPict").GetComponent<Renderer>().enabled = false;
             }
-            if (inhibition > 0)
-                inhibition -= Time.deltaTime;
+            if (Impacts.Count > 0)
+            {
+                for(int i = 0; i < Impacts.Count; i++)
+                    Impacts[i].ActImpact();
+            }
         }
         protected abstract void DecrementCounters();
         protected void OnGUI()
@@ -354,7 +367,7 @@ namespace PracticeProject
             if (isSelect)
             {
                 gameObject.GetComponentInChildren<Camera>().enabled = true;
-                Global.selectedList.Add(gameObject);
+                Global.selectedList.Add(this);
                 isSelected = true;
             }
             else
@@ -371,8 +384,8 @@ namespace PracticeProject
         {
             shield.Owerheat();
             Explosion();
-            Global.selectedList.Remove(this.gameObject);
-            Global.unitList.Remove(this.gameObject);
+            Global.selectedList.Remove(this);
+            Global.unitList.Remove(this);
             Destroy(this.gameObject);
         }
         protected virtual void Explosion()
@@ -380,11 +393,40 @@ namespace PracticeProject
             GameObject blast = Instantiate(Global.ShipDieBlast, gameObject.transform.position, gameObject.transform.rotation);
             blast.GetComponent<Explosion>().StatUp(BlastType.SmallShip);
         }
+
         //AI logick
+        protected virtual bool CombatManeuverFunction()
+        {
+                switch (targetStatus)
+                {
+                    case TargetStateType.Captured:
+                        {
+                            return ToSecondaryDistance();
+                        }
+                    case TargetStateType.InPrimaryRange:
+                        {
+                            return IncreaseDistance();
+                        }
+                    case TargetStateType.InSecondaryRange:
+                        {
+                            return ToPrimaryDistance();
+                        }
+                    case TargetStateType.BehindABarrier:
+                        {
+                            return Rush();
+                        }
+                    default:
+                        return false;
+                }
+        }
+        protected virtual bool IdleManeuverFunction()
+        {
+            return PatroolPoint();
+        }
         protected bool CombatFunction()
         {
             targetStatus = TargetStateType.NotFinded;
-            enemys = Scan();//поиск в зоне действия радара
+            Scan();//поиск в зоне действия радара
             if (CurrentTarget == null)//текущей цели нет
             {
                 if (enemys.Count > 0)
@@ -434,34 +476,9 @@ namespace PracticeProject
                 }
             }
         }
-        protected virtual bool CombatManeuverFunction()
-        {
-                switch (targetStatus)
-                {
-                    case TargetStateType.Captured:
-                        {
-                            return ToSecondaryDistance();
-                        }
-                    case TargetStateType.InPrimaryRange:
-                        {
-                            return IncreaseDistance();
-                        }
-                    case TargetStateType.InSecondaryRange:
-                        {
-                            return ToPrimaryDistance();
-                        }
-                    case TargetStateType.BehindABarrier:
-                        {
-                            return Rush();
-                        }
-                    default:
-                        return false;
-                }
-        }
-        protected virtual bool IdleManeuverFunction()
-        {
-            return PatroolPoint();
-        }
+
+        //sevice function
+        //base maneuvers
         protected bool PatroolPoint()
         {
             ManeuverName = "Patrool";
@@ -528,16 +545,16 @@ namespace PracticeProject
             target += this.transform.position + new Vector3(0, 0.5f, 0);
             return Driver.MoveToQueue(target);
         }
-        protected bool Evasion()
+        protected bool Evasion(Vector3 hazardRight)
         {
             ManeuverName = "Evasion";
             //waitingBackCount = 1f;
             float random = Convert.ToSingle(Randomizer.Uniform(-10, 10, 1)[0]);
             Vector3 target;
             if (random > 0)
-                target = this.transform.right * (random + 20f);
+                target = hazardRight * (random + 20f);
             else
-                target = this.transform.right * (random - 20f);
+                target = hazardRight * (random - 20f);
             target += this.transform.position + new Vector3(0, 0.5f, 0);
             return Driver.MoveToQueue(target);
         }
@@ -549,95 +566,65 @@ namespace PracticeProject
             return Driver.MoveToQueue(target);
         }
 
-        protected abstract bool RoleFunction();
-        protected abstract bool SelfDefenceFunction();
-        protected bool SelfDefenceFunctionBase()
+        //sensors
+        protected void Scan() //___________Scan
         {
-            if (aiStatus == UnitStateType.Waiting && orderBackCount < 0 && ShortRangeRadar() > 3)
-                Evasion();
-            return true;
-        }
-        protected virtual int ShortRangeRadar()
-        {
-            int output = 0;
-            List<GameObject> rounds = new List<GameObject>();
-            rounds.AddRange(GameObject.FindGameObjectsWithTag("Torpedo"));
-            foreach (GameObject x in rounds)
-            {
-                if (Vector3.Distance(x.transform.position, this.transform.position) < radarRange * 0.5 && !x.GetComponent<Torpedo>().Allies(team))
-                    return 10;
-            }
-            rounds.Clear();
-            rounds.AddRange(GameObject.FindGameObjectsWithTag("Missile"));
-            foreach (GameObject x in rounds)
-            {
-                if (Vector3.Distance(x.transform.position, this.transform.position) < radarRange * 0.5)
-                    output++;
-                if (output > 9)
-                    return output;
-            }
-            return output;
-        }
-        protected virtual int RadarWarningResiever()
-        {
-            capByTarget.Clear();
-            foreach (GameObject x in enemys)
-            {
-                if (x.GetComponent<SpaceShip>().CurrentTarget == this)
-                    capByTarget.Add(x);
-            }
-            capByTarget.Sort(delegate (GameObject x, GameObject y) { return sortDelegate(x.GetComponent<IUnit>(), y.GetComponent<IUnit>()); });
-            return capByTarget.Count;
-        }
-        protected virtual GameObject RetaliatoryCapture()
-        {
-            return capByTarget[0];
-        }
-        protected bool OpenFire(GameObject target)
-        {
-            CurrentTarget = target;
-            bool shot = false;
-            float distance = Vector3.Distance(this.transform.position, CurrentTarget.transform.position);
-            RaycastHit hit;
-            Physics.Raycast(this.transform.position, CurrentTarget.transform.position - this.transform.position, out hit);
-            if (hit.transform==CurrentTarget.transform)
-            {
-                targetStatus = TargetStateType.Captured;//наведение
-                Gunner.SetAim(CurrentTarget);
-                if (inhibition <= 0)//если не действует подавление оружия
-                {
-                    if (distance < Gunner.GetRange(1) && distance > 50)
-                    {
-                        targetStatus = TargetStateType.InSecondaryRange;
-                        shot = Gunner.ShootHim(CurrentTarget, 1);
-                    }
-                    if (distance < Gunner.GetRange(0))//выбор оружия
-                    {
-                        targetStatus = TargetStateType.InPrimaryRange;
-                        shot = Gunner.ShootHim(CurrentTarget, 0);
-                    }
-                }
-            }
-            return shot;
-        }
-        protected List<GameObject> Scan() //___________Scan
-        {
-            List<GameObject> enemys = new List<GameObject>();
-            foreach (GameObject x in Global.unitList)
+            enemys.Clear();
+            allies.Clear();
+            foreach (SpaceShip x in Global.unitList)
             {
                 float distance = Vector3.Distance(this.gameObject.transform.position, x.transform.position);
                 if (distance < RadarRange)
                 {
-                    if (!x.GetComponent<SpaceShip>().Allies(team))
+                    SpaceShip unknown = x.GetComponent<SpaceShip>();
+                    if (!unknown.Allies(team))
                     {
                         float multiplicator = Mathf.Pow(((-distance + RadarRange) * 0.02f), (1f / 5f)) * ((2f / (distance + 0.1f)) + 1);
-                        if (Randomizer.Uniform(0, 100, 1)[0] < x.GetComponent<SpaceShip>().Stealthness * radarPover * multiplicator * 100)
+                        if (Randomizer.Uniform(0, 100, 1)[0] < unknown.Stealthness * radarPover * multiplicator * 100)
                             enemys.Add(x);
+                    }
+                    else
+                    {
+                        if (unknown != this)
+                            if ((distance < this.RadarRange * this.radiolink) && (distance < unknown.RadarRange * unknown.radiolink))
+                                allies.Add(x);
                     }
                 }
             }
-            enemys.Sort(delegate (GameObject x, GameObject y) { return sortDelegate(x.GetComponent<IUnit>(), y.GetComponent<IUnit>()); });
-            return enemys;
+            enemys.Sort(delegate (SpaceShip x, SpaceShip y) { return sortDelegate(x.GetComponent<IUnit>(), y.GetComponent<IUnit>()); });
+        }
+        protected virtual GameObject ShortRangeRadar()
+        {
+            List<GameObject> hazard = new List<GameObject>();
+            hazard.AddRange(GameObject.FindGameObjectsWithTag("Torpedo"));
+            foreach (GameObject x in hazard)
+            {
+                if (Vector3.Distance(x.transform.position, this.transform.position) < radarRange * 0.5 && !x.GetComponent<Torpedo>().Allies(team))
+                    return x;
+            }
+            hazard.Clear();
+            hazard.AddRange(GameObject.FindGameObjectsWithTag("Missile"));
+            foreach (GameObject x in hazard)
+            {
+                if (Vector3.Distance(x.transform.position, this.transform.position) < radarRange * 0.3)
+                {
+                    float angel = Vector3.Angle(this.transform.position-x.transform.position, x.transform.forward);
+                    if (angel < 10)
+                        return x;
+                }
+            }
+            return null;
+        }
+        protected virtual int RadarWarningResiever()
+        {
+            capByTarget.Clear();
+            foreach (SpaceShip x in enemys)
+            {
+                if (x.GetComponent<SpaceShip>().CurrentTarget == this)
+                    capByTarget.Add(x);
+            }
+            capByTarget.Sort(delegate (SpaceShip x, SpaceShip y) { return sortDelegate(x.GetComponent<IUnit>(), y.GetComponent<IUnit>()); });
+            return capByTarget.Count;
         }
         private int SortEnemysBase(IUnit x, IUnit y)
         {
@@ -645,6 +632,64 @@ namespace PracticeProject
                     return 1;
                 else return -1;
         }
+
+        //combat
+        protected SpaceShip GetNearest()
+        {
+            return enemys[0];
+        }
+        protected virtual SpaceShip RetaliatoryCapture()
+        {
+            return capByTarget[0];
+        }
+        protected bool OpenFire(SpaceShip target)
+        {
+            CurrentTarget = target;
+            bool shot = false;
+            float distance = Vector3.Distance(this.transform.position, CurrentTarget.transform.position);
+            RaycastHit hit;
+            Physics.Raycast(this.transform.position, CurrentTarget.transform.position - this.transform.position, out hit);
+            if (hit.transform == CurrentTarget.transform)
+            {
+                targetStatus = TargetStateType.Captured;//наведение
+                Gunner.SetAim(CurrentTarget.transform);
+                if (distance < Gunner.GetRange(1) && distance > 50)
+                {
+                    targetStatus = TargetStateType.InSecondaryRange;
+                    shot = Gunner.ShootHim(CurrentTarget, 1);
+                }
+                if (distance < Gunner.GetRange(0))//выбор оружия
+                {
+                    targetStatus = TargetStateType.InPrimaryRange;
+                    shot = Gunner.ShootHim(CurrentTarget, 0);
+                }
+            }
+            return shot;
+        } //_________OpenFire
+        protected abstract bool RoleFunction();
+        protected abstract bool SelfDefenceFunction();
+        protected bool SelfDefenceFunctionBase()
+        {
+            GameObject hazard = ShortRangeRadar();
+            if (hazard != null)
+            {
+                if (aiStatus == UnitStateType.Idle)
+                {
+                    Driver.ClearQueue();
+                    Evasion(hazard.transform.right);
+                    aiStatus = UnitStateType.MoveAI;
+                }
+                else if (Driver.PathPoints == 0)
+                {
+                    Evasion(hazard.transform.right);
+                    aiStatus = UnitStateType.MoveAI;
+                }
+                return true;
+            }
+            else return false;
+        }
+
+        //group interaction
         public virtual bool Allies(Army army)
         {
             if (army == Global.playerArmy)
@@ -654,55 +699,59 @@ namespace PracticeProject
             }
             return (team == army);
         }
-        protected List<GameObject> RequestScout()
+        protected List<SpaceShip> RequestScout()
         {
-            List<GameObject> enemys = new List<GameObject>();
-            foreach (GameObject x in Global.unitList)
+            List<SpaceShip> enemys = new List<SpaceShip>();
+            foreach (SpaceShip x in Global.unitList)
             {
-                if (x.GetComponent<SpaceShip>().team == team)
+                if (x.team == team)
                 {
                     float distance = Vector3.Distance(this.gameObject.transform.position, x.transform.position);
                     if (distance < RadarRange * radiolink)
                     {
-                        enemys.AddRange(x.GetComponent<SpaceShip>().GetScout(this.transform.position));
+                        enemys.AddRange(x.GetScout(this.transform.position));
                     }
                 }
             }
             return enemys;
         }
-        public GameObject[] GetScout(Vector3 sender)
+        public SpaceShip[] GetScout(Vector3 sender)
         {
             if (Vector3.Distance(this.gameObject.transform.position, sender) < RadarRange * radiolink)
                 return enemys.ToArray();
-            else return new GameObject[0];
+            else return new SpaceShip[0];
         }
+        //public bool Ping(Vector3 sender)
+        //{
+        //    if (Vector3.Distance(this.gameObject.transform.position, sender) < RadarRange * radiolink)
+        //        return true;
+        //    else return false;
+        //}
         protected bool TargetScouting()
         {
-            List<GameObject> scoutingenemys = RequestScout();
+            List<SpaceShip> scoutingenemys = RequestScout();
             return scoutingenemys.Exists(x => CurrentTarget);
-        }
-        protected GameObject GetNearest()
-        {
-            return enemys[0];
         }
         protected void CooperateFire()
         {
-            foreach (GameObject x in Global.unitList)
+            foreach (SpaceShip x in Global.unitList)
             {
-                if ((x.GetComponent<IUnit>().Team == team) && (x.GetComponent<IUnit>().Type == type))
+                if ((x.Team == team) && (x.Type == type))
                 {
                     float distance = Vector3.Distance(this.gameObject.transform.position, x.transform.position);
                     if (distance < RadarRange * radiolink)
                     {
-                        x.GetComponent<SpaceShip>().GetFireSupport(CurrentTarget);
+                        x.GetFireSupport(CurrentTarget);
                     }
                 }
             }
         }
-        public void GetFireSupport(GameObject Target)
+        public void GetFireSupport(SpaceShip Target)
         {
             CurrentTarget = Target;
         }
+
+        //remote control
         public virtual void SendTo(Vector3 destination)
         {
             orderBackCount = Vector3.Distance(this.transform.position, destination) / (this.GetComponent<NavMeshAgent>().speed * 0.9f);
@@ -718,13 +767,15 @@ namespace PracticeProject
     }
     public class MovementController : IDriver
     {
-        private GameObject walker;
+        private SpaceShip walker;
+        private Transform walkerTransform;
+        private NavMeshAgent walkerAgent;
         //private Vector3 moveDestination;
         private Queue<Vector3> path; //очередь путевых точек
         public int PathPoints {
             get
             {
-                if ((walker.GetComponent<NavMeshAgent>().pathEndPosition - walker.transform.position).magnitude < 1)
+                if ((walkerAgent.pathEndPosition - walkerTransform.position).magnitude < 1)
                     return path.Count;
                 else return path.Count + 1;
             }
@@ -732,39 +783,41 @@ namespace PracticeProject
         //public float backCount; //время обновления пути.
         public MovementController(GameObject walker)
         {
-            this.walker = walker;
-            UpdateSpeed();
+            this.walkerTransform = walker.transform;
             path = new Queue<Vector3>();
-            walker.GetComponent<NavMeshAgent>().SetDestination(walker.transform.position);
+            walkerAgent = walker.GetComponent<NavMeshAgent>();
+            walkerAgent.SetDestination(walker.transform.position);
+            this.walker = walker.GetComponent<SpaceShip>();
+            UpdateSpeed();
             //Debug.Log("Driver online");
         }
         public void Update()
         {
-            if ((walker.GetComponent<NavMeshAgent>().pathEndPosition - walker.transform.position).magnitude < 10)
+            if ((walkerAgent.pathEndPosition - walkerTransform.position).magnitude < 10)
             {
                 UpdateSpeed();
                 if (path.Count > 1)
                 {
                     //Debug.Log("1");
                     //backCount = Vector3.Distance(walker.transform.position, path.Peek()) / (walker.GetComponent<NavMeshAgent>().speed*0.9f);
-                    walker.GetComponent<NavMeshAgent>().SetDestination(path.Dequeue());
+                    walkerAgent.SetDestination(path.Dequeue());
                 }
-                if (path.Count == 1&& (walker.GetComponent<NavMeshAgent>().pathEndPosition - walker.transform.position).magnitude < 1)
+                if (path.Count == 1&& (walkerAgent.pathEndPosition - walkerTransform.position).magnitude < 1)
                 {
                     //backCount = Vector3.Distance(walker.transform.position, path.Peek()) / (walker.GetComponent<NavMeshAgent>().speed * 0.9f);
-                    walker.GetComponent<NavMeshAgent>().SetDestination(path.Dequeue());
+                    walkerAgent.SetDestination(path.Dequeue());
                 }
             }
             //else backCount -= Time.deltaTime;
         }
         public void UpdateSpeed()
         {
-            walker.GetComponent<NavMeshAgent>().speed = walker.GetComponent<SpaceShip>().Speed;
-            walker.GetComponent<NavMeshAgent>().acceleration = walker.GetComponent<SpaceShip>().Speed * 1.6f;
-            if (walker.GetComponent<SpaceShip>().CurrentTarget == null)
-                walker.GetComponent<NavMeshAgent>().angularSpeed = walker.GetComponent<SpaceShip>().Speed * 3.3f;
+            walkerAgent.speed = walker.Speed;
+            walkerAgent.acceleration = walker.Speed * 1.6f;
+            if (walker.CurrentTarget == null)
+                walkerAgent.angularSpeed = walker.Speed * 3.3f;
             else
-                walker.GetComponent<NavMeshAgent>().angularSpeed = walker.GetComponent<SpaceShip>().Speed * 0.05f;
+                walkerAgent.angularSpeed = walker.Speed * 0.05f;
         }
         public bool MoveTo(Vector3 destination)
         {
@@ -791,9 +844,9 @@ namespace PracticeProject
     public class ShootController : IGunner
     {
         private IWeapon[][] weapons;
-        public GameObject body;
+        public Transform bodyTransform;
         private float turnSpeed;
-        private GameObject Target;
+        private Transform targetTransform;
         //private Vector3 oldTargetPosition;
         //private Vector3 aimPoint; //точка сведения
         private ForceShield shield;
@@ -802,10 +855,10 @@ namespace PracticeProject
         //private float averageRoundSpeed;
         //private float averageRange;
 
-        public ShootController(GameObject body)
+        public ShootController(SpaceShip body)
         {
-            this.body = body;
-            turnSpeed = body.GetComponent<SpaceShip>().Speed * 0.5f;
+            this.bodyTransform = body.transform;
+            turnSpeed = body.Speed * 0.5f;
             List<IWeapon[]> buffer = new List<IWeapon[]>();
             for (int i = 0; i < body.transform.childCount; i++)
             {
@@ -820,14 +873,14 @@ namespace PracticeProject
             synchWeapons = new float[weapons.Length];
             indexWeapons = new int[weapons.Length];
 
-            shield = body.GetComponent<SpaceShip>().GetShieldRef;
+            shield = body.GetShieldRef;
             //Debug.Log("Gunner online");
         }
-        public bool ShootHim(GameObject target, int slot)
+        public bool ShootHim(SpaceShip target, int slot)
         {
             if (synchWeapons[slot] <= 0)
             {
-                float angel = Vector3.Angle(target.transform.position - body.transform.position, body.transform.forward);
+                float angel = Vector3.Angle(target.transform.position - bodyTransform.position, bodyTransform.forward);
                 if (angel < weapons[slot][0].Dispersion * 5 || angel < 1)
                 {
                     if (indexWeapons[slot] >= weapons[slot].Length)
@@ -836,7 +889,7 @@ namespace PracticeProject
                     {
                         shield.Blink(weapons[slot][indexWeapons[slot]].ShildBlink);
                         synchWeapons[slot] = this.weapons[slot][0].CoolingTime / this.weapons[slot].Length;
-                        bool output = weapons[slot][indexWeapons[slot]].Fire(target);
+                        bool output = weapons[slot][indexWeapons[slot]].Fire(target.gameObject);
                         indexWeapons[slot]++;
                         return output;
                     }
@@ -851,20 +904,20 @@ namespace PracticeProject
             if (synchWeapons[slot] > 0)
                 synchWeapons[slot] -= Time.deltaTime;
 
-            if (Target != null)
+            if (targetTransform != null)
             {
                 //Debug.Log("target - " + Target.transform.position);
                 //Debug.Log("aim - " + aimPoint);
                 //наведение на цель
-                Quaternion targetRotation = Quaternion.LookRotation((Target.transform.position - body.transform.position).normalized * turnSpeed, new Vector3(0, 1, 0));
-                body.transform.rotation = Quaternion.Slerp(body.transform.rotation, targetRotation, Time.deltaTime * body.GetComponent<SpaceShip>().Speed * 0.2f);
+                Quaternion targetRotation = Quaternion.LookRotation((targetTransform.position - bodyTransform.position).normalized * turnSpeed, new Vector3(0, 1, 0));
+                bodyTransform.rotation = Quaternion.Slerp(bodyTransform.rotation, targetRotation, Time.deltaTime * turnSpeed * 0.2f);
             }
         }
-        public bool SetAim(GameObject target)
+        public bool SetAim(Transform target)
         {
-            if (Target == null)
+            if (targetTransform == null)
             {
-                Target = target;
+                targetTransform = target;
                 //Debug.Log("set target - " + Target.transform.position);
                 //Debug.Log("set aim - " + oldTargetPosition);
                 return true;
@@ -873,7 +926,7 @@ namespace PracticeProject
         }
         public bool ResetAim()
         {
-            Target = null;
+            targetTransform = null;
             return true;
         }
         public float GetRange(int slot)

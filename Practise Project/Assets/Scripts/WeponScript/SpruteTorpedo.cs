@@ -17,13 +17,13 @@ namespace PracticeProject
             missile[3] = Instantiate(Global.SelfGuidedMissile, gameObject.transform.position - transform.up * a / 2 + transform.right * h, Quaternion.Euler(gameObject.transform.eulerAngles.x, gameObject.transform.eulerAngles.y, 60));
             missile[4] = Instantiate(Global.SelfGuidedMissile, gameObject.transform.position + transform.up * a / 2 - transform.right * h, Quaternion.Euler(gameObject.transform.eulerAngles.x, gameObject.transform.eulerAngles.y, -130));
             missile[5] = Instantiate(Global.SelfGuidedMissile, gameObject.transform.position - transform.up * a / 2 - transform.right * h, Quaternion.Euler(gameObject.transform.eulerAngles.x, gameObject.transform.eulerAngles.y, -60));
-            List<GameObject> enemys = new List<GameObject>();
-            foreach (GameObject x in Global.unitList)
+            List<SpaceShip> enemys = new List<SpaceShip>();
+            foreach (SpaceShip x in Global.unitList)
             {
                 float distance = Vector3.Distance(this.gameObject.transform.position, x.transform.position);
                 if (distance < explosionRange * 3)
                 {
-                    if (!x.GetComponent<SpaceShip>().Allies(this.Team))
+                    if (!x.Allies(this.Team))
                         enemys.Add(x);
                 }
             }

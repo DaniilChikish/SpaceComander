@@ -9,7 +9,6 @@ namespace PracticeProject
     public class Scout : SpaceShip
     {
         public bool jamming;//Make private after debug;
-        public bool warpDrive;//Make private after debug;
         public new float Stealthness { get { if (jamming) return stealthness * 0.6f; else return stealthness; } }
         //private float cooldownInhibitor;
         public float cooldownJammer; //Make private after debug;
@@ -23,7 +22,6 @@ namespace PracticeProject
             radarPover = 5;
             speed = 10; //set in child
             jamming = false;
-            warpDrive = false;
             stealthness = 0.3f; //set in child
             radiolink = 2.5f;
             sortDelegate = SortEnemys;
@@ -44,14 +42,6 @@ namespace PracticeProject
             }
             if (cooldownWarp > 0)
                 cooldownWarp -= Time.deltaTime;
-            if (warpDrive && cooldownWarp <= 0)
-            {
-                //Debug.Log("WarpOff");
-                warpDrive = false;
-                speed = speed / 6;
-                this.GetComponent<Rigidbody>().mass = this.GetComponent<Rigidbody>().mass * 10f;
-                cooldownWarp = 15;
-            }
             if (cooldownMissileInhibitor > 0)
                 cooldownMissileInhibitor -= Time.deltaTime;
         }
@@ -80,7 +70,7 @@ namespace PracticeProject
                     }
                 case TargetStateType.InPrimaryRange:
                     {
-                        return Evasion();
+                        return Evasion(CurrentTarget.transform.right);
                     }
                 case TargetStateType.InSecondaryRange:
                     {
@@ -114,9 +104,9 @@ namespace PracticeProject
             Vector3 point;
             float n = Convert.ToSingle(Randomizer.Uniform(10, 25, 1)[0]);
             float j = 1;
-            for (float i = 1; i<8; i++)
+            for (float i = 1; i < 8; i++)
             {
-                point = (transform.forward * n * i) + (transform.right * j * dirflag * n) + new Vector3(0,0.5f,0) + this.transform.position;
+                point = (transform.forward * n * i) + (transform.right * j * dirflag * n) + new Vector3(0, 0.5f, 0) + this.transform.position;
                 dirflag = dirflag * -1;
                 Driver.MoveToQueue(point);
                 j++;
@@ -172,15 +162,10 @@ namespace PracticeProject
         }
         private bool Warp()
         {
-            if (!warpDrive && cooldownWarp <= 0)
+            if (cooldownWarp <= 0)
             {
-                //Debug.Log("WarpOn");
-                warpDrive = true;
-                speed = speed * 6;
-                this.GetComponent<Rigidbody>().mass = this.GetComponent<Rigidbody>().mass / 10;
-                Driver.UpdateSpeed();
-                cooldownWarp = 1.4f;
-                //waitingBackCount = 1.5f;
+                cooldownWarp = 14f;
+                this.Impacts.Add(new WarpImpact(this));
                 return true;
             }
             else return false;
@@ -259,6 +244,78 @@ namespace PracticeProject
             if (xPriority > yPriority)
                 return -1;
             else return 1;
+        }
+    }
+    public class WarpImpact : IImpact
+    {
+        public string ImpactName { get { return "WarpImpact"; } }
+        float ttl;
+        SpaceShip owner;
+        private float ownerSpeedPrev;
+        private float ownerMassPrev;
+        public WarpImpact(SpaceShip owner)
+        {
+            this.owner = owner;
+            ownerSpeedPrev = owner.Speed;
+            ownerMassPrev = owner.GetComponent<Rigidbody>().mass;
+            if (owner.Impacts.Exists(x => x.ImpactName == this.ImpactName))
+                ttl = 0;
+            else
+            {
+                ttl = 4;
+
+                owner.Speed = owner.Speed * 6;
+                owner.GetComponent<Rigidbody>().mass = owner.GetComponent<Rigidbody>().mass / 10;
+            }
+        }
+        public void ActImpact()
+        {
+            if (ttl > 0)
+                ttl -= Time.deltaTime;
+            else CompleteImpact();
+        }
+
+        public void CompleteImpact()
+        {
+            owner.Speed = ownerSpeedPrev;
+            owner.GetComponent<Rigidbody>().mass = ownerMassPrev;
+            owner.Impacts.Remove(this);
+        }
+    }
+    public class RadarBoosterImpact : IImpact
+    {
+        public string ImpactName { get { return "RadarBoosterImpact"; } }
+        float ttl;
+        SpaceShip owner;
+        private float ownerRadarRangePrev;
+        public RadarBoosterImpact(SpaceShip owner, float time)
+        {
+            this.owner = owner;
+            ownerRadarRangePrev = owner.RadarRange;
+            if (owner.Impacts.Exists(x => x.ImpactName == this.ImpactName))
+                ttl = 0;
+            else
+            {
+                if (owner.Impacts.Exists(x => x.ImpactName == "RadarInhibitorImpact"))
+                    ttl = 0;
+                else
+                {
+                    ttl = time;
+                    owner.RadarRange = owner.RadarRange * 2;
+                }
+            }
+        }
+        public void ActImpact()
+        {
+            if (ttl > 0)
+                ttl -= Time.deltaTime;
+            else CompleteImpact();
+        }
+
+        public void CompleteImpact()
+        {
+            owner.RadarRange = ownerRadarRangePrev;
+            owner.Impacts.Remove(this);
         }
     }
 }

@@ -13,7 +13,6 @@ namespace PracticeProject
             speed = 5; //set in child
             stealthness = 0.8f; //set in child
             radiolink = 2.5f;
-            movementAiEnabled = false;
             sortDelegate = SortEnemys;
         }
         protected override void Explosion()

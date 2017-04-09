@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,6 +12,7 @@ namespace PracticeProject
         public float cooldownJammer; //Make private after debug;
         public float cooldownWeaponInhibitor;//Make private after debug;
         public float cooldownMissileInhibitor;//Make private after debug;
+        public float cooldownRadarInhibitor;//Make private after debug;
         protected override void StatsUp()
         {
             type = UnitClass.ECM;
@@ -38,6 +40,8 @@ namespace PracticeProject
             }
             if (cooldownWeaponInhibitor > 0)
                 cooldownWeaponInhibitor -= Time.deltaTime;
+            if (cooldownRadarInhibitor > 0)
+                cooldownRadarInhibitor -= Time.deltaTime;
             if (cooldownMissileInhibitor > 0)
                 cooldownMissileInhibitor -= Time.deltaTime;
         }
@@ -48,7 +52,10 @@ namespace PracticeProject
             {
                 case TargetStateType.Captured:
                     {
-                        return ShortenDistance();
+                        if (RadarInhibitor(CurrentTarget))
+                            return Rush();
+                        else
+                            return ShortenDistance();
                     }
                 case TargetStateType.InPrimaryRange:
                     {
@@ -56,6 +63,7 @@ namespace PracticeProject
                     }
                 case TargetStateType.InSecondaryRange:
                     {
+
                         if (WeaponInhibitor(CurrentTarget))
                             return Rush();
                         else
@@ -73,6 +81,7 @@ namespace PracticeProject
         {
             if (CurrentTarget != null)
             {
+                RadarInhibitor(CurrentTarget);
                 WeaponInhibitor(CurrentTarget);
                 return true;
             }
@@ -89,23 +98,21 @@ namespace PracticeProject
         protected override int RadarWarningResiever()
         {
             capByTarget.Clear();
-            foreach (GameObject x in enemys)
+            foreach (SpaceShip x in enemys)
             {
-                if (x.GetComponent<SpaceShip>().CurrentTarget == this)
+                SpaceShip enemy = x.GetComponent<SpaceShip>();
+                if (enemy.CurrentTarget == this)
                     capByTarget.Add(x);
                 if (jamming)
                 {
-                    x.GetComponent<SpaceShip>().CurrentTarget = null;
+                    enemy.CurrentTarget = null;
                     if (cooldownWeaponInhibitor < 0)
-                        x.GetComponent<SpaceShip>().inhibition = 0.1f;
+                        enemy.Impacts.Add(new WeaponInhibitorImpact(enemy, 0.2f));
+                    if (cooldownRadarInhibitor < 0)
+                        enemy.Impacts.Add(new WeaponInhibitorImpact(enemy, 2f));
                 }
             }
-            capByTarget.Sort(delegate (GameObject x, GameObject y)
-            {
-                if (Vector3.Distance(this.transform.position, x.transform.position) > Vector3.Distance(this.transform.position, y.transform.position))
-                    return 1;
-                else return -1;
-            });
+            capByTarget.Sort(delegate (SpaceShip x, SpaceShip y) { return SortEnemys(x.GetComponent<IUnit>(), y.GetComponent<IUnit>()); });
             return capByTarget.Count;
         }
         private void Jammer()
@@ -139,12 +146,22 @@ namespace PracticeProject
             }
             return false;
         }
-        private bool WeaponInhibitor(GameObject target)
+        private bool WeaponInhibitor(SpaceShip target)
         {
             if (cooldownWeaponInhibitor <= 0)
             {
-                target.GetComponent<SpaceShip>().inhibition = 4f;
+                target.Impacts.Add(new WeaponInhibitorImpact(target, 4f));
                 cooldownWeaponInhibitor = 10f;
+                return true;
+            }
+            return false;
+        }
+        private bool RadarInhibitor(SpaceShip target)
+        {
+            if (cooldownRadarInhibitor <= 0)
+            {
+                target.Impacts.Add(new RadarInhibitorImpact(target, 8f));
+                cooldownRadarInhibitor = 8f;
                 return true;
             }
             return false;
@@ -177,7 +194,7 @@ namespace PracticeProject
                     }
                 default:
                     {
-                        xPriority = 0; 
+                        xPriority = 0;
                         break;
                     }
             }
@@ -223,6 +240,77 @@ namespace PracticeProject
             if (xPriority > yPriority)
                 return -1;
             else return 1;
+        }
+    }
+    public class WeaponInhibitorImpact : IImpact
+    {
+        public string ImpactName { get { return "WeaponInhibitorImpact"; } }
+        private float ttl;
+        private SpaceShip owner;
+        private bool ownerCombatAIEnabledPrev;
+        public WeaponInhibitorImpact(SpaceShip owner, float time)
+        {
+
+            this.owner = owner;
+            ownerCombatAIEnabledPrev = owner.combatAIEnabled;
+            if (owner.Impacts.Exists(x => x.ImpactName == this.ImpactName))
+                ttl = 0;
+            else
+            {
+                if (owner.Impacts.Exists(x => x.ImpactName == "RadarBoosterImpact"))
+                    ttl = 0;
+                else
+                {
+                    ttl = time;
+                    owner.combatAIEnabled = false;
+                }
+            }
+        }
+        public void ActImpact()
+        {
+            if (ttl > 0)
+                ttl -= Time.deltaTime;
+            else CompleteImpact();
+        }
+        public void CompleteImpact()
+        {
+            owner.combatAIEnabled = ownerCombatAIEnabledPrev;
+            owner.Impacts.Remove(this);
+        }
+        public override string ToString()
+        {
+            return ImpactName;
+        }
+    }
+    public class RadarInhibitorImpact : IImpact
+    {
+        public string ImpactName { get { return "RadarInhibitorImpact"; } }
+        float ttl;
+        SpaceShip owner;
+        private float ownerRadarRangePrev;
+        public RadarInhibitorImpact(SpaceShip owner, float time)
+        {
+            this.owner = owner;
+            ownerRadarRangePrev = owner.RadarRange;
+            if (owner.Impacts.Exists(x => x.ImpactName == this.ImpactName))
+                ttl = 0;
+            else
+            {
+                ttl = time;
+                owner.RadarRange = owner.RadarRange / 2;
+            }
+        }
+        public void ActImpact()
+        {
+            if (ttl > 0)
+                ttl -= Time.deltaTime;
+            else CompleteImpact();
+        }
+
+        public void CompleteImpact()
+        {
+            owner.RadarRange = ownerRadarRangePrev;
+            owner.Impacts.Remove(this);
         }
     }
 }
