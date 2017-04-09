@@ -16,11 +16,13 @@ namespace PracticeProject
         MeshRenderer firstFieldRend;
         MeshCollider firstFieldColl;
         MeshRenderer secondField;
+        ParticleSystem shildCollaps;
         // Use this for initialization
         void Start()
         {
             firstFieldRend = this.transform.FindChild("FirstField").GetComponent<MeshRenderer>();
             firstFieldColl = this.transform.FindChild("FirstField").GetComponent<MeshCollider>();
+            shildCollaps = this.transform.FindChild("FirstField").GetComponentInChildren<ParticleSystem>();
             secondField = this.transform.FindChild("SecondField").GetComponent<MeshRenderer>();
         }
 
@@ -127,7 +129,7 @@ namespace PracticeProject
             shildOwerheat = true;
             firstFieldRend.enabled = false;
             firstFieldColl.enabled = false;
-            this.GetComponentInChildren<ParticleSystem>().Play();
+            shildCollaps.Play();
             force = 0;
             cooldownChield = 2;
         }

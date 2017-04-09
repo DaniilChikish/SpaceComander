@@ -7,13 +7,7 @@ namespace PracticeProject
     {
         public EnergyType type;
         // Use this for initialization
-        protected void Start()
-        {
-            //damage = 50;
-            //speed = 20000;
-            //ttl = 1.5f;
-
-        }
+        protected void Start()       {       }
         public void StatUp(EnergyType type)
         {
             this.type = type;
@@ -45,6 +39,10 @@ namespace PracticeProject
                     }
             }
             gameObject.GetComponent<Rigidbody>().AddForce(transform.forward * Speed, ForceMode.VelocityChange);
+        }
+        protected void OnCollisionExit(Collision collision)
+        {
+            Explode();
         }
         protected override void Explode()
         {

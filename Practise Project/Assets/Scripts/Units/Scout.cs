@@ -24,7 +24,8 @@ namespace PracticeProject
             jamming = false;
             stealthness = 0.3f; //set in child
             radiolink = 2.5f;
-            sortDelegate = SortEnemys;
+            EnemySortDelegate = ScoutSortEnemys;
+            AlliesSortDelegate = ReconSortEnemys;
         }
         protected override void Explosion()
         {
@@ -58,7 +59,7 @@ namespace PracticeProject
             return true;
         }
         //AI logick
-        protected override bool CombatManeuverFunction()
+        protected override bool AttackManeuver()
         {
             switch (targetStatus)
             {
@@ -169,81 +170,6 @@ namespace PracticeProject
                 return true;
             }
             else return false;
-        }
-        private int SortEnemys(IUnit x, IUnit y)
-        {
-            int xPriority;
-            int yPriority;
-            switch (x.Type)
-            {
-                case UnitClass.Command: //высший приоритет - командир
-                    {
-                        xPriority = 20;
-                        break;
-                    }
-                case UnitClass.Recon: //жертва
-                    {
-                        xPriority = 10;
-                        break;
-                    }
-                case UnitClass.Scout: //паритет
-                    {
-                        xPriority = 5;
-                        break;
-                    }
-                case UnitClass.ECM: //хищник
-                    {
-                        xPriority = -5;
-                        break;
-                    }
-                default: //более крупные цели не интересны
-                    {
-                        xPriority = 0;
-                        break;
-                    }
-            }
-            switch (y.Type)
-            {
-                case UnitClass.Command: //высший приоритет - командир
-                    {
-                        yPriority = 20;
-                        break;
-                    }
-                case UnitClass.Recon: //жертва
-                    {
-                        yPriority = 10;
-                        break;
-                    }
-                case UnitClass.Scout: //паритет
-                    {
-                        yPriority = 5;
-                        break;
-                    }
-                case UnitClass.ECM: //хищник
-                    {
-                        yPriority = -5;
-                        break;
-                    }
-                default: //более крупные цели не интересны
-                    {
-                        yPriority = 0;
-                        break;
-                    }
-            }
-            float xDictance = Vector3.Distance(this.transform.position, x.ObjectTransform.position);
-            float yDistance = Vector3.Distance(this.transform.position, y.ObjectTransform.position);
-            if ((xDictance - yDistance) > -100 && (xDictance - yDistance) < 100)
-            { } //приоритет не меняется
-            else
-            {
-                if (xDictance > yDistance)
-                    yPriority += 5;
-                else
-                    xPriority += 5;
-            }
-            if (xPriority > yPriority)
-                return -1;
-            else return 1;
         }
     }
     public class WarpImpact : IImpact

@@ -10,6 +10,7 @@ namespace PracticeProject
         public float shellResist;
         public float energyResist;
         public float blastResist;
+        private float hitCount;
         private SpaceShip owner;
         // Use this for initialization
         void Start()
@@ -20,10 +21,13 @@ namespace PracticeProject
         // Update is called once per frame
         void Update()
         {
-            if (hitpoints < 0)
-                owner.Die();
-            else if (hitpoints < maxHitpoints * 0.1)
-                hitpoints -= Time.deltaTime;
+            if (hitCount > 5)
+                if (hitpoints < 0)
+                    owner.Die();
+                else if (hitpoints < maxHitpoints * 0.3)
+                    owner.ArmorCriticalAlarm();
+                else if (hitpoints < maxHitpoints * 0.1)
+                    hitpoints -= Time.deltaTime;
         }
         protected void OnCollisionEnter(Collision collision)
         {
@@ -32,6 +36,7 @@ namespace PracticeProject
             {
                 case "Shell":
                     {
+                        hitCount += 1;
                         float difference = collision.gameObject.GetComponent<IShell>().ArmorPiersing - shellResist;
                         if (difference > 1.5)
                             multiplicator = 1.2f;
@@ -66,6 +71,7 @@ namespace PracticeProject
                 //    }
                 case "Energy":
                     {
+                        hitCount += 3;
                         float difference = collision.gameObject.GetComponent<IEnergy>().ArmorPiersing - energyResist;
                         if (difference > 0.5)
                             multiplicator = 1f;

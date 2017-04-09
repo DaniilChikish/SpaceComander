@@ -68,6 +68,8 @@ namespace PracticeProject
         }
         protected override void Shoot(Transform target)
         {
+            ammo -= 1;
+            cooldown = CoolingTime;
             Quaternion direction = transform.rotation;
             double[] randomOffset = Randomizer.Uniform(10, 90, 2);
             if (randomOffset[0] > 50)

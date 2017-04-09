@@ -11,8 +11,8 @@ namespace PracticeProject
         {
             gameObject.GetComponent<MeshRenderer>().enabled = false;
             range = 250;
-            ammo = 8;
-            coolingTime = 20f;
+            ammo = 16;
+            coolingTime = 10f;
             cooldown = 0;
             dispersion = 3f;
             shildBlinkTime = 1f;
@@ -25,22 +25,34 @@ namespace PracticeProject
             {
                 case TorpedoType.Unitary:
                     {
-                        torpedo = Instantiate(Global.UnitaryTorpedo, gameObject.transform.position, transform.rotation);
+                        ammo -= 1;
+                        cooldown = CoolingTime;
+                        torpedo = Instantiate(Global.Torpedo, gameObject.transform.position, transform.rotation);
+                        torpedo.AddComponent<UnitaryTorpedo>();
                         break;
                     }
                 case TorpedoType.Nuke:
                     {
-                        torpedo = Instantiate(Global.NukeTorpedo, gameObject.transform.position, transform.rotation);
+                        ammo -= 4;
+                        cooldown = CoolingTime * 4;
+                        torpedo = Instantiate(Global.Torpedo, gameObject.transform.position, transform.rotation);
+                        torpedo.AddComponent<NukeTorpedo>();
                         break;
                     }
                 case TorpedoType.Sprute:
                     {
-                        torpedo = Instantiate(Global.SpruteTorpedo, gameObject.transform.position, transform.rotation);
+                        ammo -= 2;
+                        cooldown = CoolingTime * 2;
+                        torpedo = Instantiate(Global.Torpedo, gameObject.transform.position, transform.rotation);
+                        torpedo.AddComponent<SpruteTorpedo>();
                         break;
                     }
                 default:
                     {
-                        torpedo = Instantiate(Global.UnitaryTorpedo, gameObject.transform.position, transform.rotation);
+                        ammo -= 1;
+                        cooldown = CoolingTime;
+                        torpedo = Instantiate(Global.Torpedo, gameObject.transform.position, transform.rotation);
+                        torpedo.AddComponent<UnitaryTorpedo>();
                         break;
                     }
             }

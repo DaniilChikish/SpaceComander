@@ -20,17 +20,19 @@ namespace PracticeProject
         }
         protected override void Shoot(Transform target)
         {
-		    //GlobalController Global = FindObjectsOfType<GlobalController>()[0];
+            ammo -= 1;
+            cooldown = CoolingTime;
+            //GlobalController Global = FindObjectsOfType<GlobalController>()[0];
             Quaternion direction = transform.rotation;
             double[] randomOffset = Randomizer.Uniform(0, 100, 2);
             if (randomOffset[0] > 50)
-                direction.x = direction.x + (Convert.ToSingle(Global.RandomExponentPool[Convert.ToInt32(randomOffset[0])]) * dispersion);
+                direction.x = direction.x + (Convert.ToSingle(Global.RandomNormalPool[Convert.ToInt32(randomOffset[0])] - Convert.ToSingle(Global.RandomNormalAverage)) * dispersion);
             else
-                direction.x = direction.x + (Convert.ToSingle(Global.RandomExponentPool[Convert.ToInt32(randomOffset[0])]) * -dispersion);
+                direction.x = direction.x + (Convert.ToSingle(Global.RandomNormalPool[Convert.ToInt32(randomOffset[0])] - Convert.ToSingle(Global.RandomNormalAverage)) * -dispersion);
             if (randomOffset[1] > 50)
-                direction.y = direction.y + (Convert.ToSingle(Global.RandomExponentPool[Convert.ToInt32(randomOffset[1])]) * dispersion);
+                direction.y = direction.y + (Convert.ToSingle(Global.RandomNormalPool[Convert.ToInt32(randomOffset[1])] - Convert.ToSingle(Global.RandomNormalAverage)) * dispersion);
             else
-                direction.y = direction.y + (Convert.ToSingle(Global.RandomExponentPool[Convert.ToInt32(randomOffset[1])]) * -dispersion);
+                direction.y = direction.y + (Convert.ToSingle(Global.RandomNormalPool[Convert.ToInt32(randomOffset[1])] - Convert.ToSingle(Global.RandomNormalAverage)) * -dispersion);
             GameObject beam = Instantiate(Global.LaserBeam, gameObject.transform.position, direction);
             beam.GetComponent<IEnergy>().StatUp(AmmoType);
         }

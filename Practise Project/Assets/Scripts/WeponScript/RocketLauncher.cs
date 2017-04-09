@@ -10,8 +10,8 @@ namespace PracticeProject
         {
             gameObject.GetComponent<MeshRenderer>().enabled = false;
             range = 150;
-            ammo = 12;
-            coolingTime = 10f;
+            ammo = 40;
+            coolingTime = 5f;
             cooldown = 0;
             dispersion = 6f;
             shildBlinkTime = 0.8f;
@@ -20,16 +20,28 @@ namespace PracticeProject
         {
             switch (AmmoType)
             {
-                case MissileType.Selfguided:
+                case MissileType.Hunter:
                     {
-                        GameObject missile = Instantiate(FindObjectsOfType<GlobalController>()[0].SelfGuidedMissile, gameObject.transform.position, transform.rotation);
-                        missile.GetComponent<SelfguidedMissile>().SetTarget(target);
+                        ammo -= 2;
+                        cooldown = CoolingTime * 2;
+                        GameObject missile = Instantiate(FindObjectsOfType<GlobalController>()[0].Missile, gameObject.transform.position, transform.rotation);
+                        missile.AddComponent<HunterMissile>().SetTarget(target);
                         break;
                     }
-                case MissileType.Unguided:
+                case MissileType.Metheor:
                     {
-                        GameObject torpedo = Instantiate(FindObjectsOfType<GlobalController>()[0].UnguidedMissile, gameObject.transform.position, transform.rotation);
-                        torpedo.GetComponent<Torpedo>().SetTarget(target.position);
+                        ammo -= 2;
+                        cooldown = CoolingTime * 2;
+                        GameObject missile = Instantiate(FindObjectsOfType<GlobalController>()[0].Missile, gameObject.transform.position, transform.rotation);
+                        missile.AddComponent<MetheorMissile>().SetTarget(target);
+                        break;
+                    }
+                case MissileType.Bombardier:
+                    {
+                        ammo -= 1;
+                        cooldown = CoolingTime;
+                        GameObject torpedo = Instantiate(FindObjectsOfType<GlobalController>()[0].Missile, gameObject.transform.position, transform.rotation);
+                        torpedo.AddComponent<BombardierMissile>().SetTarget(target.position);                       
                         break;
                     }
             }

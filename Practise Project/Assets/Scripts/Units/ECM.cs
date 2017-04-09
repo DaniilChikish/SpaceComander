@@ -22,7 +22,8 @@ namespace PracticeProject
             jamming = false;
             stealthness = 0.4f; //set in child
             radiolink = 1.1f;
-            sortDelegate = SortEnemys;
+            EnemySortDelegate = EMCSortEnemys;
+            AlliesSortDelegate = ScoutSortEnemys;
         }
         protected override void Explosion()
         {
@@ -46,7 +47,7 @@ namespace PracticeProject
                 cooldownMissileInhibitor -= Time.deltaTime;
         }
         //AI logick
-        protected override bool CombatManeuverFunction()
+        protected override bool AttackManeuver()
         {
             switch (targetStatus)
             {
@@ -112,7 +113,7 @@ namespace PracticeProject
                         enemy.Impacts.Add(new WeaponInhibitorImpact(enemy, 2f));
                 }
             }
-            capByTarget.Sort(delegate (SpaceShip x, SpaceShip y) { return SortEnemys(x.GetComponent<IUnit>(), y.GetComponent<IUnit>()); });
+            capByTarget.Sort(delegate (SpaceShip x, SpaceShip y) { return EnemySortDelegate(x.GetComponent<IUnit>(), y.GetComponent<IUnit>()); });
             return capByTarget.Count;
         }
         private void Jammer()
@@ -165,81 +166,6 @@ namespace PracticeProject
                 return true;
             }
             return false;
-        }
-        private int SortEnemys(IUnit x, IUnit y)
-        {
-            int xPriority;
-            int yPriority;
-            switch (x.Type)
-            {
-                case UnitClass.Command: //высший приоритет - командир
-                    {
-                        xPriority = 20;
-                        break;
-                    }
-                case UnitClass.Scout: //жертва
-                    {
-                        xPriority = 10;
-                        break;
-                    }
-                case UnitClass.ECM: //паритет
-                    {
-                        xPriority = 5;
-                        break;
-                    }
-                case UnitClass.Recon: //хищник
-                    {
-                        xPriority = -5;
-                        break;
-                    }
-                default:
-                    {
-                        xPriority = 0;
-                        break;
-                    }
-            }
-            switch (y.Type)
-            {
-                case UnitClass.Command: //высший приоритет - командир
-                    {
-                        yPriority = 20;
-                        break;
-                    }
-                case UnitClass.Scout: //жертва
-                    {
-                        yPriority = 10;
-                        break;
-                    }
-                case UnitClass.ECM: //паритет
-                    {
-                        yPriority = 5;
-                        break;
-                    }
-                case UnitClass.Recon: //хищник
-                    {
-                        yPriority = -5;
-                        break;
-                    }
-                default:
-                    {
-                        yPriority = 0;
-                        break;
-                    }
-            }
-            float xDictance = Vector3.Distance(this.transform.position, x.ObjectTransform.position);
-            float yDistance = Vector3.Distance(this.transform.position, y.ObjectTransform.position);
-            if ((xDictance - yDistance) > -100 && (xDictance - yDistance) < 100)
-            { } //приоритет не меняется
-            else
-            {
-                if (xDictance > yDistance)
-                    yPriority += 5;
-                else
-                    xPriority += 5;
-            }
-            if (xPriority > yPriority)
-                return -1;
-            else return 1;
         }
     }
     public class WeaponInhibitorImpact : IImpact
