@@ -21,6 +21,16 @@ namespace PracticeProject
                         this.GetComponent<Rigidbody>().AddForce(transform.forward * Speed, ForceMode.VelocityChange);
                         break;
                     }
+                case ShellType.SolidBig:
+                    {
+                        this.speed = 133.33f;
+                        this.damage = 30f * 4;
+                        this.armorPiersing = 2f + 3;
+                        this.ttl = 2f;
+                        this.GetComponent<Rigidbody>().mass = 3f * 4;
+                        this.GetComponent<Rigidbody>().AddForce(transform.forward * Speed, ForceMode.VelocityChange);
+                        break;
+                    }
                 case ShellType.SolidAP:
                     {
                         this.speed = 88.89f;
@@ -41,6 +51,16 @@ namespace PracticeProject
                         this.GetComponent<Rigidbody>().AddForce(transform.forward * Speed, ForceMode.VelocityChange);
                         break;
                     }
+                case ShellType.SubcaliberBig:
+                    {
+                        this.speed = 177.78f;
+                        this.damage = 22f * 4;
+                        this.armorPiersing = 5f + 3;
+                        this.ttl = 2f;
+                        this.GetComponent<Rigidbody>().mass = 2.25f * 4;
+                        this.GetComponent<Rigidbody>().AddForce(transform.forward * Speed, ForceMode.VelocityChange);
+                        break;
+                    }
                 case ShellType.Camorous:
                     {
                         this.speed = 148.15f;
@@ -48,6 +68,16 @@ namespace PracticeProject
                         this.armorPiersing = 1.8f;
                         this.ttl = 2f;
                         this.GetComponent<Rigidbody>().mass = 2.7f;
+                        this.GetComponent<Rigidbody>().AddForce(transform.forward * Speed, ForceMode.VelocityChange);
+                        break;
+                    }
+                case ShellType.CamorousBig:
+                    {
+                        this.speed = 148.15f;
+                        this.damage = 28.5f * 4;
+                        this.armorPiersing = 1.8f + 3;
+                        this.ttl = 2f;
+                        this.GetComponent<Rigidbody>().mass = 2.7f * 4;
                         this.GetComponent<Rigidbody>().AddForce(transform.forward * Speed, ForceMode.VelocityChange);
                         break;
                     }
@@ -94,7 +124,7 @@ namespace PracticeProject
                 case ShellType.Railgun:
                     {
                         this.speed = 300f;
-                        this.damage = 200f;
+                        this.damage = 250f;
                         this.armorPiersing = 6f;
                         this.ttl = 1.5f;
                         this.GetComponent<Rigidbody>().mass = 15f;

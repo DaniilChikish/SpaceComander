@@ -11,8 +11,8 @@ namespace PracticeProject
         {
             gameObject.GetComponent<MeshRenderer>().enabled = false;
             range = 105;
-            ammo = 500;
-            coolingTime = 1.2f;
+            ammo = 100; //2 Min
+            coolingTime = 1.2f; //40 DD, 33 DpS
             cooldown = 0;
             dispersion = 5f;
             shildBlinkTime = 0.5f;

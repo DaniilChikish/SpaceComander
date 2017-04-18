@@ -11,9 +11,10 @@ namespace PracticeProject
         public bool jamming;//Make private after debug;
         public new float Stealthness { get { if (jamming) return stealthness * 0.6f; else return stealthness; } }
         //private float cooldownInhibitor;
-        public float cooldownJammer; //Make private after debug;
-        public float cooldownWarp;//Make private after debug;
-        public float cooldownMissileInhibitor;//Make private after debug;
+        private float cooldownJammer; //Make private after debug;
+        private float cooldownWarp;//Make private after debug;
+        private float cooldownMissileInhibitor;//Make private after debug;
+        private float cooldownRadarBooster;
         private bool idleFulag;
         protected override void StatsUp()
         {
@@ -48,6 +49,7 @@ namespace PracticeProject
         }
         protected override bool RoleFunction()
         {
+
             return Warp();
         }
         protected override bool SelfDefenceFunction()
@@ -161,6 +163,22 @@ namespace PracticeProject
             }
             return false;
         }
+        private bool RadarBooster()
+        {
+            if (cooldownRadarBooster < 0)
+            {
+                this.Impacts.Add(new RadarBoosterImpact(this, 4f));
+                cooldownRadarBooster = 8;
+                return true;
+            }
+            else if (cooldownRadarBooster < 4)
+            {
+                foreach (SpaceShip x in allies)
+                    x.Impacts.Add(new RadarBoosterImpact(x, 0.5f));
+                return false;
+            }
+            return false;
+        }
         private bool Warp()
         {
             if (cooldownWarp <= 0)
@@ -188,10 +206,14 @@ namespace PracticeProject
                 ttl = 0;
             else
             {
-                ttl = 4;
-
-                owner.Speed = owner.Speed * 6;
-                owner.GetComponent<Rigidbody>().mass = owner.GetComponent<Rigidbody>().mass / 10;
+                if (owner.Impacts.Exists(x => x.ImpactName == "TrusterInhibitorImpact"))
+                    ttl = 0;
+                else
+                {
+                    ttl = 4;
+                    owner.Speed = owner.Speed * 6;
+                    owner.GetComponent<Rigidbody>().mass = owner.GetComponent<Rigidbody>().mass / 10;
+                }
             }
         }
         public void ActImpact()

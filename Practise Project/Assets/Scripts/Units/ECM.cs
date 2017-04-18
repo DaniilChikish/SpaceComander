@@ -108,9 +108,9 @@ namespace PracticeProject
                 {
                     enemy.CurrentTarget = null;
                     if (cooldownWeaponInhibitor < 0)
-                        enemy.Impacts.Add(new WeaponInhibitorImpact(enemy, 0.2f));
+                        enemy.Impacts.Add(new TrusterInhibitorImpact(enemy, 0.2f));
                     if (cooldownRadarInhibitor < 0)
-                        enemy.Impacts.Add(new WeaponInhibitorImpact(enemy, 2f));
+                        enemy.Impacts.Add(new TrusterInhibitorImpact(enemy, 2f));
                 }
             }
             capByTarget.Sort(delegate (SpaceShip x, SpaceShip y) { return EnemySortDelegate(x.GetComponent<IUnit>(), y.GetComponent<IUnit>()); });
@@ -151,7 +151,7 @@ namespace PracticeProject
         {
             if (cooldownWeaponInhibitor <= 0)
             {
-                target.Impacts.Add(new WeaponInhibitorImpact(target, 4f));
+                target.Impacts.Add(new TrusterInhibitorImpact(target, 4f));
                 cooldownWeaponInhibitor = 10f;
                 return true;
             }
@@ -168,27 +168,27 @@ namespace PracticeProject
             return false;
         }
     }
-    public class WeaponInhibitorImpact : IImpact
+    public class TrusterInhibitorImpact : IImpact
     {
-        public string ImpactName { get { return "WeaponInhibitorImpact"; } }
+        public string ImpactName { get { return "TrusterInhibitorImpact"; } }
         private float ttl;
         private SpaceShip owner;
-        private bool ownerCombatAIEnabledPrev;
-        public WeaponInhibitorImpact(SpaceShip owner, float time)
+        private float ownerSpeedPrev;
+        public TrusterInhibitorImpact(SpaceShip owner, float time)
         {
 
             this.owner = owner;
-            ownerCombatAIEnabledPrev = owner.combatAIEnabled;
+            ownerSpeedPrev = owner.Speed;
             if (owner.Impacts.Exists(x => x.ImpactName == this.ImpactName))
                 ttl = 0;
             else
             {
-                if (owner.Impacts.Exists(x => x.ImpactName == "RadarBoosterImpact"))
+                if (owner.Impacts.Exists(x => x.ImpactName == "WarpImpact"))
                     ttl = 0;
                 else
                 {
                     ttl = time;
-                    owner.combatAIEnabled = false;
+                    owner.Speed = 0;
                 }
             }
         }
@@ -200,7 +200,7 @@ namespace PracticeProject
         }
         public void CompleteImpact()
         {
-            owner.combatAIEnabled = ownerCombatAIEnabledPrev;
+            owner.Speed = ownerSpeedPrev;
             owner.Impacts.Remove(this);
         }
         public override string ToString()
@@ -222,8 +222,13 @@ namespace PracticeProject
                 ttl = 0;
             else
             {
-                ttl = time;
-                owner.RadarRange = owner.RadarRange / 2;
+                if (owner.Impacts.Exists(x => x.ImpactName == "RadarBoosterImpact"))
+                    ttl = 0;
+                else
+                {
+                    ttl = time;
+                    owner.RadarRange = owner.RadarRange / 2;
+                }
             }
         }
         public void ActImpact()

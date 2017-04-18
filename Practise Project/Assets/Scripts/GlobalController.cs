@@ -39,6 +39,7 @@ namespace PracticeProject
         bool SetAim(Transform target);
         bool ShootHim(SpaceShip target, int slot);
         bool ResetAim();
+        void ReloadWeapons();
         float GetRange(int slot);
     }
     public enum WeaponType { Cannon, Laser, Plazma, Missile, Torpedo}
@@ -52,9 +53,10 @@ namespace PracticeProject
         float CoolingTime { get; }
         float ShildBlink { get; }
         void StatUp();
+        void Reset();
         bool Fire(GameObject target);
     }
-    public enum ShellType { Solid, SolidAP, Subcaliber, HightExplosive, Camorous, CamorousAP, Uranium, Сumulative, Railgun}
+    public enum ShellType { Solid, SolidAP, Subcaliber, HightExplosive, Camorous, CamorousAP, Uranium, Сumulative, Railgun, SolidBig, CamorousBig, SubcaliberBig}
     public enum ShellLineType { ArmorPenetration, ShildOwerheat, QuickShell, Explosive, Universal}
     public interface IShell
     {
@@ -148,7 +150,7 @@ namespace PracticeProject
         public float Health { set { armor.hitpoints = value; } get { return armor.hitpoints; } }
         public float MaxHealth { get { return armor.maxHitpoints; } }
         public float ShieldRecharging { set { shield.recharging = value; } get { return shield.recharging; } }
-        public float RadarRange { set { radarRange = value; }  get { return radarRange; } }
+        public float RadarRange { set { radarRange = value; } get { return radarRange; } }
         public float Speed { set { speed = value; } get { return speed; } }
         public Army Team { get { return team; } }
         public Transform ObjectTransform { get { return this.gameObject.transform; } }
@@ -161,6 +163,7 @@ namespace PracticeProject
         public float Stealthness { get { return stealthness; } }
         protected bool detected;
         public float cooldownDetected;
+        public bool NeedReloading;
         //controllers
         protected IDriver Driver;
         protected IGunner Gunner;
@@ -188,11 +191,11 @@ namespace PracticeProject
             selfDefenceModuleEnabled = true;
             roleModuleEnabled = true;
             EnemySortDelegate = SortEnemysBase;
+            radarPover = 1;
             StatsUp();//
 
             //Health = MaxHealth;
             cooldownDetected = 0;
-            radarPover = 1;
             //waitingBackCount = 0.2f;
             aiStatus = UnitStateType.Waiting;
             UnitName = type.ToString();
@@ -200,11 +203,12 @@ namespace PracticeProject
             Global.unitList.Add(this);
             Anchor = this.transform.position;
             //
-            armor = this.gameObject.GetComponent<Armor>(); 
+            armor = this.gameObject.GetComponent<Armor>();
             shield = this.gameObject.GetComponent<ForceShield>();
             //
             Driver = new MovementController(this.gameObject);
             Gunner = new ShootController(this);
+            NeedReloading = false;
             capByTarget = new List<SpaceShip>();
             Squad = new SpaceShip[3];
             //List<SpaceShip> enemys = new List<SpaceShip>();
@@ -217,6 +221,10 @@ namespace PracticeProject
 
             if (team == Global.playerArmy)
                 this.gameObject.transform.FindChild("MinimapPict").FindChild("AlliesMinimapPict").GetComponent<Renderer>().enabled = true;
+        }
+        public void ResetStats()
+        {
+            Start();
         }
         protected abstract void StatsUp();
         protected void Update()//______________________Update
@@ -273,7 +281,11 @@ namespace PracticeProject
                         {
                             case UnitStateType.MoveAI:
                                 {
-                                    CombatManeuverFunction();
+                                    aiStatus = UnitStateType.MoveAI;
+                                    if (unitSquadStatus == SquadStatus.InSquad && Squad[0] != null)
+                                        SyncSquadManeuver();
+                                    else
+                                        CombatManeuverFunction();
                                     //RegroupingManeuver();
                                     break;
                                 }
@@ -290,6 +302,14 @@ namespace PracticeProject
                                 {
                                     if (situation == TacticSituation.SectorСlear)
                                         IdleManeuverFunction();
+                                    else if (orderBackCount<0)
+                                    {
+                                        aiStatus = UnitStateType.MoveAI;
+                                        if (unitSquadStatus == SquadStatus.InSquad && Squad[0] != null)
+                                            SyncSquadManeuver();
+                                        else
+                                            CombatManeuverFunction();
+                                    }
                                     break;
                                 }
                         }
@@ -332,7 +352,7 @@ namespace PracticeProject
             }
             if (Impacts.Count > 0)
             {
-                for(int i = 0; i < Impacts.Count; i++)
+                for (int i = 0; i < Impacts.Count; i++)
                     Impacts[i].ActImpact();
             }
         }
@@ -406,6 +426,14 @@ namespace PracticeProject
         {
             GameObject blast = Instantiate(Global.ShipDieBlast, gameObject.transform.position, gameObject.transform.rotation);
             blast.GetComponent<Explosion>().StatUp(BlastType.SmallShip);
+        }
+        public void ReloadWeapons()
+        {
+            if (NeedReloading)
+            {
+                Gunner.ReloadWeapons();
+                NeedReloading = false;
+            }
         }
 
         //AI logick
@@ -503,7 +531,7 @@ namespace PracticeProject
                 nearest = FindAllies(UnitClass.Guard_Corvette);
                 if (nearest != null)
                     return Driver.MoveToQueue(this.transform.position + new Vector3(0, 0.5f, 0) + -nearest.transform.forward * 30f);
-                else return false;
+                else return BackToAncour();
             }
         }
         protected virtual bool IdleManeuverFunction()
@@ -536,10 +564,10 @@ namespace PracticeProject
                     {
                         if (enemys[0] == null) enemys.Clear();
                         else
-                        return OpenFire(GetNearest());
+                            return OpenFire(GetNearest());
                     }
                     //переходим в ожидение
-                        return false;
+                    return false;
                 }
             }
             else
@@ -567,21 +595,65 @@ namespace PracticeProject
         }
         protected void SituationAnalysys()
         {
-            if (enemys.Count > 0)
+            switch (situation)
             {
-                if (situation == TacticSituation.SectorСlear)
-                    situation = TacticSituation.Attack;
-                else if (unitSquadStatus == SquadStatus.SquadMaster)
-                {
-                    //if ((Squad[1] != null && Vector3.Distance(this.transform.position, Squad[1].transform.position) > 100) || (Squad[1] != null && Vector3.Distance(this.transform.position, Squad[1].transform.position) > 100))
-                        ///RegroupingManeuver();
-                }
-                else if (unitSquadStatus == SquadStatus.InSquad)
-                {
-                    if (Squad[0] == null)
-                        unitSquadStatus = SquadStatus.Free;
-                    else situation = Squad[0].situation;
-                }
+                case TacticSituation.Attack:
+                    {
+                        if (allies.Count == 0)
+                            situation = TacticSituation.Retreat;
+                        else if (enemys.Count > allies.Count)
+                            situation = TacticSituation.Defense;
+                        if (enemys.Count == 0 && CurrentTarget == null)
+                            situation = TacticSituation.SectorСlear;
+                        break;
+                    }
+                case TacticSituation.Defense:
+                    {
+                        if (allies.Count == 0)
+                            situation = TacticSituation.Retreat;
+                        else if (enemys.Count < allies.Count)
+                            situation = TacticSituation.Attack;
+                        if (enemys.Count == 0 && CurrentTarget == null)
+                            situation = TacticSituation.SectorСlear;
+                        break;
+                    }
+                case TacticSituation.Retreat:
+                    {
+                        if (enemys.Count < allies.Count)
+                            situation = TacticSituation.Attack;
+                        else if (enemys.Count > allies.Count)
+                            situation = TacticSituation.Defense;
+                        if (enemys.Count == 0 && CurrentTarget == null)
+                            situation = TacticSituation.SectorСlear;
+                        break;
+                    }
+                case TacticSituation.ExitTheBattle:
+                    {
+                        if (unitSquadStatus == SquadStatus.SquadMaster)
+                        {
+                            if (Squad[1] != null)
+                                Squad[1].unitSquadStatus = SquadStatus.Free;
+                            if (Squad[2] != null)
+                                Squad[2].unitSquadStatus = SquadStatus.Free;
+                        }
+                        else if (unitSquadStatus == SquadStatus.InSquad)
+                        {
+                            unitSquadStatus = SquadStatus.Free;
+                        }
+                        break;
+                    }
+                case TacticSituation.SectorСlear:
+                    {
+                        if (enemys.Count > 0)
+                            situation = TacticSituation.Attack;
+                        break;
+                    }
+            }
+            if (unitSquadStatus == SquadStatus.InSquad)
+            {
+                if (Squad[0] == null)
+                    unitSquadStatus = SquadStatus.Free;
+                else situation = Squad[0].situation;
             }
             if (unitSquadStatus == SquadStatus.Free)
                 FormSquad();
@@ -715,7 +787,7 @@ namespace PracticeProject
             {
                 foreach (Base x in bases)
                     if (x.team == this.Team)
-                        return Driver.MoveToQueue(x.GetDock());
+                        return Driver.MoveToQueue(x.GetInQueue(this));
                 return BackToAncour();
             }
             else return BackToAncour();
@@ -747,6 +819,7 @@ namespace PracticeProject
                 }
             }
             enemys.Sort(delegate (SpaceShip x, SpaceShip y) { return EnemySortDelegate(x.GetComponent<IUnit>(), y.GetComponent<IUnit>()); });
+            allies.Sort(delegate (SpaceShip x, SpaceShip y) { return AlliesSortDelegate(x.GetComponent<IUnit>(), y.GetComponent<IUnit>()); });
         }
         protected virtual GameObject ShortRangeRadar()
         {
@@ -904,21 +977,24 @@ namespace PracticeProject
             Squad[0] = this;
             foreach (SpaceShip x in allies)
             {
-                if (x.unitSquadStatus == SquadStatus.Free)
+                if (x.Type == this.Type)
                 {
-                    this.unitSquadStatus = SquadStatus.SquadMaster;
-                    x.unitSquadStatus = SquadStatus.InSquad;
-                    inSquadCount++;
-                    this.Squad[inSquadCount] = x;
-                    x.Squad[0] = this.Squad[0];
-                    x.Squad[1] = this.Squad[1];
-                    x.Squad[2] = this.Squad[2];
-                }
-                else if (x.unitSquadStatus == SquadStatus.SquadMaster)
-                    if (x.ComeInSquadRequest(this))
+                    if (x.unitSquadStatus == SquadStatus.Free)
+                    {
+                        this.unitSquadStatus = SquadStatus.SquadMaster;
+                        x.unitSquadStatus = SquadStatus.InSquad;
+                        inSquadCount++;
+                        this.Squad[inSquadCount] = x;
+                        x.Squad[0] = this.Squad[0];
+                        x.Squad[1] = this.Squad[1];
+                        x.Squad[2] = this.Squad[2];
+                    }
+                    else if (x.unitSquadStatus == SquadStatus.SquadMaster)
+                        if (x.ComeInSquadRequest(this))
+                            return;
+                    if (inSquadCount >= 2)
                         return;
-                if (inSquadCount >= 2)
-                    return;
+                }
             }
         }
         protected bool ComeInSquadRequest(SpaceShip sender)
@@ -935,6 +1011,26 @@ namespace PracticeProject
             }
             return false;
         }
+        protected bool SyncSquadManeuver()
+        {
+            //Debug.Log("squad maneuver");
+            Vector3 destination = Squad[0].SyncManeuverRequest(this);
+            if (destination != Vector3.zero)
+                return Driver.MoveToQueue(destination);
+            else return CombatManeuverFunction();
+        }
+        public Vector3 SyncManeuverRequest(SpaceShip sender)
+        {
+            if (Driver.NextPoint != Vector3.zero)
+            {
+                if (sender = Squad[1])
+                    return Driver.NextPoint + -this.transform.forward * RadarRange * 0.1f + this.transform.right * RadarRange * 0.2f;
+                else if (sender = Squad[2])
+                    return Driver.NextPoint + -this.transform.forward * RadarRange * 0.1f + -this.transform.right * RadarRange * 0.2f;
+                else return Vector3.zero;
+            }
+            else return Vector3.zero;
+        }
         //
         protected SpaceShip FindAllies(UnitClass ofType)
         {
@@ -946,91 +1042,6 @@ namespace PracticeProject
             return null;
         }
         //
-        protected int LRCorvetteSortEnemys(IUnit x, IUnit y)
-        {
-            int xPriority;
-            int yPriority;
-            switch (x.Type)
-            {
-                case UnitClass.Command: //высший приоритет - командир
-                    {
-                        xPriority = 20;
-                        break;
-                    }
-                case UnitClass.Support_Corvette: //жертва
-                    {
-                        xPriority = 10;
-                        break;
-                    }
-                case UnitClass.Guard_Corvette: //жертва
-                    {
-                        xPriority = 10;
-                        break;
-                    }
-                case UnitClass.LR_Corvette: //паритет
-                    {
-                        xPriority = 5;
-                        break;
-                    }
-                case UnitClass.Bomber: //хищник
-                    {
-                        xPriority = -5;
-                        break;
-                    }
-                default:
-                    {
-                        xPriority = 0;
-                        break;
-                    }
-            }
-            switch (y.Type)
-            {
-                case UnitClass.Command: //высший приоритет - командир
-                    {
-                        yPriority = 20;
-                        break;
-                    }
-                case UnitClass.Support_Corvette: //жертва
-                    {
-                        yPriority = 10;
-                        break;
-                    }
-                case UnitClass.Guard_Corvette: //жертва
-                    {
-                        yPriority = 10;
-                        break;
-                    }
-                case UnitClass.LR_Corvette: //паритет
-                    {
-                        yPriority = 5;
-                        break;
-                    }
-                case UnitClass.Bomber: //хищник
-                    {
-                        yPriority = -5;
-                        break;
-                    }
-                default:
-                    {
-                        yPriority = 0;
-                        break;
-                    }
-            }
-            float xDictance = Vector3.Distance(this.transform.position, x.ObjectTransform.position);
-            float yDistance = Vector3.Distance(this.transform.position, y.ObjectTransform.position);
-            if ((xDictance - yDistance) > -300 && (xDictance - yDistance) < 300)
-            { } //приоритет не меняется
-            else
-            {
-                if (xDictance > yDistance)
-                    yPriority += 5;
-                else
-                    xPriority += 5;
-            }
-            if (xPriority > yPriority)
-                return -1;
-            else return 1;
-        }
         protected int EMCSortEnemys(IUnit x, IUnit y)
         {
             int xPriority;
@@ -1256,7 +1267,176 @@ namespace PracticeProject
                 return -1;
             else return 1;
         }
-
+        protected int LRCorvetteSortEnemys(IUnit x, IUnit y)
+        {
+            int xPriority;
+            int yPriority;
+            switch (x.Type)
+            {
+                case UnitClass.Command: //высший приоритет - командир
+                    {
+                        xPriority = 20;
+                        break;
+                    }
+                case UnitClass.Support_Corvette: //жертва
+                    {
+                        xPriority = 10;
+                        break;
+                    }
+                case UnitClass.Guard_Corvette: //жертва
+                    {
+                        xPriority = 10;
+                        break;
+                    }
+                case UnitClass.LR_Corvette: //паритет
+                    {
+                        xPriority = 5;
+                        break;
+                    }
+                case UnitClass.Bomber: //хищник
+                    {
+                        xPriority = -5;
+                        break;
+                    }
+                default:
+                    {
+                        xPriority = 0;
+                        break;
+                    }
+            }
+            switch (y.Type)
+            {
+                case UnitClass.Command: //высший приоритет - командир
+                    {
+                        yPriority = 20;
+                        break;
+                    }
+                case UnitClass.Support_Corvette: //жертва
+                    {
+                        yPriority = 10;
+                        break;
+                    }
+                case UnitClass.Guard_Corvette: //жертва
+                    {
+                        yPriority = 10;
+                        break;
+                    }
+                case UnitClass.LR_Corvette: //паритет
+                    {
+                        yPriority = 5;
+                        break;
+                    }
+                case UnitClass.Bomber: //хищник
+                    {
+                        yPriority = -5;
+                        break;
+                    }
+                default:
+                    {
+                        yPriority = 0;
+                        break;
+                    }
+            }
+            float xDictance = Vector3.Distance(this.transform.position, x.ObjectTransform.position);
+            float yDistance = Vector3.Distance(this.transform.position, y.ObjectTransform.position);
+            if ((xDictance - yDistance) > -300 && (xDictance - yDistance) < 300)
+            { } //приоритет не меняется
+            else
+            {
+                if (xDictance > yDistance)
+                    yPriority += 5;
+                else
+                    xPriority += 5;
+            }
+            if (xPriority > yPriority)
+                return -1;
+            else return 1;
+        }
+        protected int SupportCorvetteSortEnemys(IUnit x, IUnit y)
+        {
+            int xPriority;
+            int yPriority;
+            switch (x.Type)
+            {
+                case UnitClass.Command: //высший приоритет - командир
+                    {
+                        xPriority = 20;
+                        break;
+                    }
+                case UnitClass.Support_Corvette: //паритет
+                    {
+                        xPriority = 5;
+                        break;
+                    }
+                case UnitClass.Bomber: //хищник
+                    {
+                        xPriority = -5;
+                        break;
+                    }
+                case UnitClass.Guard_Corvette: //хищник
+                    {
+                        xPriority = -5;
+                        break;
+                    }
+                case UnitClass.LR_Corvette: //хищник
+                    {
+                        xPriority = -5;
+                        break;
+                    }
+                default:
+                    {
+                        xPriority = 0;
+                        break;
+                    }
+            }
+            switch (y.Type)
+            {
+                case UnitClass.Command: //высший приоритет - командир
+                    {
+                        yPriority = 20;
+                        break;
+                    }
+                case UnitClass.Support_Corvette: //паритет
+                    {
+                        yPriority = 5;
+                        break;
+                    }
+                case UnitClass.Bomber: //хищник
+                    {
+                        yPriority = -5;
+                        break;
+                    }
+                case UnitClass.Guard_Corvette: //хищник
+                    {
+                        yPriority = -5;
+                        break;
+                    }
+                case UnitClass.LR_Corvette: //хищник
+                    {
+                        yPriority = -5;
+                        break;
+                    }
+                default:
+                    {
+                        yPriority = 0;
+                        break;
+                    }
+            }
+            float xDictance = Vector3.Distance(this.transform.position, x.ObjectTransform.position);
+            float yDistance = Vector3.Distance(this.transform.position, y.ObjectTransform.position);
+            if ((xDictance - yDistance) > -300 && (xDictance - yDistance) < 300)
+            { } //приоритет не меняется
+            else
+            {
+                if (xDictance > yDistance)
+                    yPriority += 5;
+                else
+                    xPriority += 5;
+            }
+            if (xPriority > yPriority)
+                return -1;
+            else return 1;
+        }
         //remote control
         public virtual void SendTo(Vector3 destination)
         {
@@ -1351,7 +1531,7 @@ namespace PracticeProject
     public class ShootController : IGunner
     {
         private IWeapon[][] weapons;
-        public Transform bodyTransform;
+        public SpaceShip owner;
         private float turnSpeed;
         private Transform targetTransform;
         //private Vector3 oldTargetPosition;
@@ -1364,7 +1544,7 @@ namespace PracticeProject
 
         public ShootController(SpaceShip body)
         {
-            this.bodyTransform = body.transform;
+            this.owner = body;
             turnSpeed = body.Speed * 0.5f;
             List<IWeapon[]> buffer = new List<IWeapon[]>();
             for (int i = 0; i < body.transform.childCount; i++)
@@ -1387,7 +1567,7 @@ namespace PracticeProject
         {
             if (synchWeapons[slot] <= 0)
             {
-                float angel = Vector3.Angle(target.transform.position - bodyTransform.position, bodyTransform.forward);
+                float angel = Vector3.Angle(target.transform.position - owner.transform.position, owner.transform.forward);
                 if (angel < weapons[slot][0].Dispersion * 5 || angel < 1)
                 {
                     if (indexWeapons[slot] >= weapons[slot].Length)
@@ -1407,17 +1587,18 @@ namespace PracticeProject
         }
         public void Update()
         {
-            for (int slot = 0; slot< weapons.Length; slot++ )
-            if (synchWeapons[slot] > 0)
-                synchWeapons[slot] -= Time.deltaTime;
-
+            for (int slot = 0; slot < weapons.Length; slot++)
+                if (synchWeapons[slot] > 0)
+                    synchWeapons[slot] -= Time.deltaTime;
+            if (owner.NeedReloading == false)
+                CheckWeapons();
             if (targetTransform != null)
             {
                 //Debug.Log("target - " + Target.transform.position);
                 //Debug.Log("aim - " + aimPoint);
                 //наведение на цель
-                Quaternion targetRotation = Quaternion.LookRotation((targetTransform.position - bodyTransform.position).normalized * turnSpeed, new Vector3(0, 1, 0));
-                bodyTransform.rotation = Quaternion.Slerp(bodyTransform.rotation, targetRotation, Time.deltaTime * turnSpeed * 0.2f);
+                Quaternion targetRotation = Quaternion.LookRotation((targetTransform.position - owner.transform.position).normalized * turnSpeed, new Vector3(0, 1, 0));
+                owner.transform.rotation = Quaternion.Slerp(owner.transform.rotation, targetRotation, Time.deltaTime * turnSpeed * 0.2f);
             }
         }
         public bool SetAim(Transform target)
@@ -1436,6 +1617,30 @@ namespace PracticeProject
             targetTransform = null;
             return true;
         }
+        public void CheckWeapons()
+        {
+            //Debug.Log("_" + weapons.Length);
+            for (int i = 0; i < weapons.Length; i++)
+            {
+                //Debug.Log(i +"-" + weapons.Length);
+                for (int j = 0; j < weapons[i].Length; j++)
+                {
+                    if (weapons[i][j].Ammo <= 0)
+                    {
+                        owner.NeedReloading = true;
+                        return;
+                    }
+                }
+            }
+        }
+        public void ReloadWeapons()
+        {
+            for (int i = 0; i < weapons.Length; i++)
+                for (int j = 0; i < weapons[i].Length; j++)
+                {
+                    weapons[i][j].Reset();
+                }
+        }
         public float GetRange(int slot)
         {
             return weapons[slot][0].Range;
@@ -1445,10 +1650,11 @@ namespace PracticeProject
     {
         protected GlobalController Global;
         protected float range;
-        public int ammo;
+        //protected int maxAmmo;
+        protected int ammo;
         protected float coolingTime;
-        public float cooldown;
-        public float dispersion; //dafault 0;
+        protected float cooldown;
+        protected float dispersion; //dafault 0;
         protected float shildBlinkTime; //default 0.01
         protected float averageRoundSpeed; //default 1000;
 
@@ -1474,7 +1680,11 @@ namespace PracticeProject
             if (cooldown > 0)
                 cooldown -= Time.deltaTime;
         }
-
+        public void Reset()
+        {
+            Start();
+            cooldown = coolingTime * 10;
+        }
         public bool Fire(GameObject target)
         {
             float distance;

@@ -15,7 +15,7 @@ namespace PracticeProject
         protected void Start()       {        }
         public void StatUp(EnergyType type)
         {
-            damage = 2.5f;
+            damage = 20f; // + 20 along second
             speed = 70;
             ttl = 8f;
             liveTime = ttl;
@@ -44,7 +44,7 @@ namespace PracticeProject
             {
                 case "Unit":
                     {
-                        damage -= Time.deltaTime;
+                        damage -= damage * Time.deltaTime;
                         break;
                     }
             }
@@ -53,7 +53,7 @@ namespace PracticeProject
         {
             float output = damage * 0.3f;
             damage -= output;
-            return output * 10;
+            return output;
         }
 
         public void SetTarget(Transform target)

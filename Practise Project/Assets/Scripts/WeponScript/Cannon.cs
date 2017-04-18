@@ -12,8 +12,8 @@ namespace PracticeProject
         {
             gameObject.GetComponent<MeshRenderer>().enabled = false;
             range = 150;
-            ammo = 2000;
-            coolingTime = 0.7f;
+            ammo = 200; //~2 Min
+            coolingTime = 0.7f; //30 DD, 43 DpS
             cooldown = 0;
             dispersion = 0.05f;
             shildBlinkTime = 0.1f;
@@ -22,6 +22,12 @@ namespace PracticeProject
                 case ShellType.Solid:
                     {
                         averageRoundSpeed = 133.33f;
+                        break;
+                    }
+                case ShellType.SolidBig:
+                    {
+                        averageRoundSpeed = 133.33f;
+                        coolingTime = coolingTime * 5f;
                         break;
                     }
                 case ShellType.SolidAP:
@@ -34,9 +40,21 @@ namespace PracticeProject
                         this.averageRoundSpeed = 177.78f;
                         break;
                     }
+                case ShellType.SubcaliberBig:
+                    {
+                        this.averageRoundSpeed = 177.78f;
+                        coolingTime = coolingTime * 5f;
+                        break;
+                    }
                 case ShellType.Camorous:
                     {
                         this.averageRoundSpeed = 148.15f;
+                        break;
+                    }
+                case ShellType.CamorousBig:
+                    {
+                        this.averageRoundSpeed = 148.15f;
+                        coolingTime = coolingTime * 5f;
                         break;
                     }
                 case ShellType.CamorousAP:

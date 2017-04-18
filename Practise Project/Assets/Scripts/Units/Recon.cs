@@ -151,4 +151,44 @@ namespace PracticeProject
             }
         }
     }
+    public class ShildStunImpact : IImpact
+    {
+        public string ImpactName { get { return "ShildStunImpact"; } }
+        private float ttl;
+        private SpaceShip owner;
+        private float ownerShildRechargingPrev;
+        public ShildStunImpact(SpaceShip owner, float time)
+        {
+
+            this.owner = owner;
+            ownerShildRechargingPrev = owner.ShieldRecharging;
+            if (owner.Impacts.Exists(x => x.ImpactName == this.ImpactName))
+                ttl = 0;
+            else
+            {
+                if (owner.Impacts.Exists(x => x.ImpactName == "ShildBoosterImpact"))
+                    ttl = 0;
+                else
+                {
+                    ttl = time;
+                    owner.ShieldRecharging = -10;
+                }
+            }
+        }
+        public void ActImpact()
+        {
+            if (ttl > 0)
+                ttl -= Time.deltaTime;
+            else CompleteImpact();
+        }
+        public void CompleteImpact()
+        {
+            owner.ShieldRecharging = ownerShildRechargingPrev;
+            owner.Impacts.Remove(this);
+        }
+        public override string ToString()
+        {
+            return ImpactName;
+        }
+    }
 }

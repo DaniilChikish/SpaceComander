@@ -37,6 +37,7 @@ namespace PracticeProject
                 case "Shell":
                     {
                         hitCount += 1;
+                        //Debug.Log(collision.gameObject.name + " hit " + owner.name);
                         float difference = collision.gameObject.GetComponent<IShell>().ArmorPiersing - shellResist;
                         if (difference > 1.5)
                             multiplicator = 1.2f;
@@ -45,6 +46,19 @@ namespace PracticeProject
                         else
                             multiplicator = 0.0f;
                         this.hitpoints -= collision.gameObject.GetComponent<IShell>().Damage * multiplicator;
+                        break;
+                    }
+                case "Energy":
+                    {
+                        hitCount += 3;
+                        float difference = collision.gameObject.GetComponent<IEnergy>().ArmorPiersing - energyResist;
+                        if (difference > 0.5)
+                            multiplicator = 1f;
+                        else if (difference > -3)
+                            multiplicator = (Mathf.Sin((difference / 1.1f) + 1f) + 1f) * 0.5f;
+                        else
+                            multiplicator = 0.0f;
+                        this.hitpoints -= collision.gameObject.GetComponent<IEnergy>().Damage * multiplicator;
                         break;
                     }
             }
@@ -79,7 +93,7 @@ namespace PracticeProject
                             multiplicator = (Mathf.Sin((difference / 1.1f) + 1f) + 1f) * 0.5f;
                         else
                             multiplicator = 0.0f;
-                        this.hitpoints -= collision.gameObject.GetComponent<IEnergy>().Damage * multiplicator;
+                        this.hitpoints -= collision.gameObject.GetComponent<IEnergy>().Damage * multiplicator * Time.deltaTime;
                         break;
                     }
                 case "Explosion":

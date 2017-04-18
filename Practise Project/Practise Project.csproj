@@ -87,6 +87,7 @@
     <Compile Include="Assets\Scripts\CameraMovementScript.cs" />
     <Compile Include="Assets\Scripts\Explosion.cs" />
     <Compile Include="Assets\Scripts\GlobalController.cs" />
+    <Compile Include="Assets\Scripts\RepairDock.cs" />
     <Compile Include="Assets\Scripts\TerraCell.cs" />
     <Compile Include="Assets\Scripts\Units\Armor.cs" />
     <Compile Include="Assets\Scripts\Units\Bait.cs" />

@@ -21,7 +21,7 @@ namespace PracticeProject
                 case BlastType.Missile:
                     {
                         maxRadius = 6f;
-                        damage = 100;
+                        damage = 100f;
                         break;
                     }
                 case BlastType.UnitaryTorpedo:
@@ -72,6 +72,8 @@ namespace PracticeProject
                     }
             }
             ttl = 2f;
+            transform.localScale = new Vector3(maxRadius / 4, maxRadius / 4, maxRadius / 4);
+            //transform.GetComponentInChildren<ParticleSystem>().transform.localScale = new Vector3(maxRadius / 4, maxRadius / 4, maxRadius / 4);
             waveSpeed = maxRadius / ttl;
         }
 
