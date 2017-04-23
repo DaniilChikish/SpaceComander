@@ -10,7 +10,7 @@ namespace PracticeProject
         protected override void StatsUp()
         {
             type = UnitClass.LR_Corvette;
-            radarRange = 200; //set in child
+            radarRange = 350; //set in child
             radarPover = 1;
             speed = 5; //set in child
             stealthness = 0.8f; //set in child

@@ -38,6 +38,7 @@ namespace PracticeProject
         void Update();
         bool SetAim(Transform target);
         bool ShootHim(SpaceShip target, int slot);
+        bool Volley(SpaceShip[] targets, int slot);
         bool ResetAim();
         void ReloadWeapons();
         float GetRange(int slot);
@@ -54,6 +55,7 @@ namespace PracticeProject
         float ShildBlink { get; }
         void StatUp();
         void Reset();
+        void InstantCool();
         bool Fire(GameObject target);
     }
     public enum ShellType { Solid, SolidAP, Subcaliber, HightExplosive, Camorous, CamorousAP, Uranium, Сumulative, Railgun, SolidBig, CamorousBig, SubcaliberBig}
@@ -1267,6 +1269,101 @@ namespace PracticeProject
                 return -1;
             else return 1;
         }
+        protected int BomberSortEnemys(IUnit x, IUnit y)
+        {
+            int xPriority;
+            int yPriority;
+            switch (x.Type)
+            {
+                case UnitClass.Command: //высший приоритет - командир
+                    {
+                        xPriority = 20;
+                        break;
+                    }
+                case UnitClass.Support_Corvette: //жертва
+                    {
+                        xPriority = 10;
+                        break;
+                    }
+                case UnitClass.Guard_Corvette: //жертва
+                    {
+                        xPriority = 10;
+                        break;
+                    }
+                case UnitClass.LR_Corvette: //жертва
+                    {
+                        xPriority = 10;
+                        break;
+                    }
+                case UnitClass.Bomber: //паритет
+                    {
+                        xPriority = 5;
+                        break;
+                    }
+                case UnitClass.Figther: //хищник
+                    {
+                        xPriority = -5;
+                        break;
+                    }
+                default:
+                    {
+                        xPriority = 0;
+                        break;
+                    }
+            }
+            switch (y.Type)
+            {
+                case UnitClass.Command: //высший приоритет - командир
+                    {
+                        yPriority = 20;
+                        break;
+                    }
+                case UnitClass.Support_Corvette: //жертва
+                    {
+                        yPriority = 10;
+                        break;
+                    }
+                case UnitClass.Guard_Corvette: //жертва
+                    {
+                        yPriority = 10;
+                        break;
+                    }
+                case UnitClass.LR_Corvette: //жертва
+                    {
+                        yPriority = 10;
+                        break;
+                    }
+                case UnitClass.Bomber: //паритет
+                    {
+                        yPriority = 5;
+                        break;
+                    }
+                case UnitClass.Figther: //хищник
+                    {
+                        yPriority = -5;
+                        break;
+                    }
+                default:
+                    {
+                        yPriority = 0;
+                        break;
+                    }
+            }
+            float xDictance = Vector3.Distance(this.transform.position, x.ObjectTransform.position);
+            float yDistance = Vector3.Distance(this.transform.position, y.ObjectTransform.position);
+            if ((xDictance - yDistance) > -300 && (xDictance - yDistance) < 300)
+            { } //приоритет не меняется
+            else
+            {
+                if (xDictance > yDistance)
+                    yPriority += 5;
+                else
+                    xPriority += 5;
+            }
+            if (xPriority > yPriority)
+                return -1;
+            else return 1;
+        }
         protected int LRCorvetteSortEnemys(IUnit x, IUnit y)
         {
             int xPriority;
@@ -1585,6 +1682,27 @@ namespace PracticeProject
             }
             return false;
         }
+        public bool Volley(SpaceShip[] targets, int slot)//relative cooldown indexWeapon, ignore angel;
+        {
+            if (indexWeapons[slot] >= weapons[slot].Length)
+                indexWeapons[slot] = 0;
+            if (synchWeapons[slot] <= 0 && weapons[slot][indexWeapons[slot]].Cooldown <= 0)
+            {
+                int i = 0, j = 0;
+                shield.Blink(weapons[slot][indexWeapons[slot]].ShildBlink);
+                synchWeapons[slot] = this.weapons[slot][0].CoolingTime / this.weapons[slot].Length;
+                indexWeapons[slot]++;
+                for (i = 0; i < weapons[slot].Length; i++)
+                {
+                    weapons[slot][i].InstantCool();
+                    weapons[slot][i].Fire(targets[j].gameObject);
+                    j++;
+                    if (j >= targets.Length) j = 0;
+                }
+                return true;
+            }
+            else return false;
+        }
         public void Update()
         {
             for (int slot = 0; slot < weapons.Length; slot++)
@@ -1685,6 +1803,10 @@ namespace PracticeProject
             Start();
             cooldown = coolingTime * 10;
         }
+        public void InstantCool()
+        {
+            cooldown = 0;
+        }
         public bool Fire(GameObject target)
         {
             float distance;
@@ -1715,10 +1837,11 @@ namespace PracticeProject
                 //Debug.Log("Fire");
                 this.GetComponentInChildren<ParticleSystem>().Play();
                 Shoot(target.transform);
+                return true;
                 //cooldown = coolingTime; !set in children
                 //ammo--; !set in children
             }
-            return false;
+            else return false;
         }
         protected abstract void Shoot(Transform target);
     }
@@ -1821,10 +1944,22 @@ namespace PracticeProject
             }
         }
         // взрываем при коллизии
-        public virtual void OnCollisionEnter()
+        public virtual void OnCollisionEnter(Collision collision)
         {
-            if (lt > explosionTime / 20)
-                Explode();
+            switch (collision.gameObject.tag)
+            {
+                case "Shell":
+                    {
+                        Arm();
+                        break;
+                    }
+                case "Unit":
+                    {
+                        if (lt > explosionTime / 20)
+                            Explode();
+                        break;
+                    }
+            }
         }
         public void SetTarget(Transform target)
         {
@@ -1844,18 +1979,21 @@ namespace PracticeProject
         protected abstract void Start();
         public virtual void Update()
         {
-            if (target != Vector3.zero)//контроль курса
-            {
-                Quaternion targetRotation = Quaternion.LookRotation(target - this.transform.position, new Vector3(0, 1, 0));
-                this.transform.rotation = Quaternion.Slerp(this.transform.rotation, targetRotation, Time.deltaTime * TurnSpeed);
-            }
-            //полет по прямой
-            float multiplicator = Mathf.Pow((lt * 0.5f), (1f / 8f)) * 0.7f;
-            gameObject.GetComponent<Rigidbody>().velocity = transform.forward * Speed * multiplicator;//AddForce(transform.forward * Speed * multiplicator, ForceMode.Acceleration);
             if (Vector3.Distance(this.transform.position, target) < explosionRange)
                 Explode();
             else
                 lt += Time.deltaTime;
+            if (lt > 0.5)//задержка старта
+            {
+                if (target != Vector3.zero)//контроль курса
+                {
+                    Quaternion targetRotation = Quaternion.LookRotation(target - this.transform.position, new Vector3(0, 1, 0));
+                    this.transform.rotation = Quaternion.Slerp(this.transform.rotation, targetRotation, Time.deltaTime * TurnSpeed);
+                }
+                //полет по прямой
+                float multiplicator = Mathf.Pow((lt * 0.5f), (1f / 8f)) * 0.7f;
+                gameObject.GetComponent<Rigidbody>().velocity = transform.forward * Speed * multiplicator;//AddForce(transform.forward * Speed * multiplicator, ForceMode.Acceleration);
+            }
         }
         public virtual void Explode()
         {
@@ -1871,6 +2009,12 @@ namespace PracticeProject
                 case "Shell":
                     {
                         if (lt > 1)
+                            Explode();
+                        break;
+                    }
+                case "Unit":
+                    {
+                        if (Vector3.Distance(this.transform.position, target) < explosionRange * 0.1)
                             Explode();
                         break;
                     }

@@ -14,9 +14,9 @@ namespace PracticeProject
             speed = 10; //set in child
             stealthness = 1f; //set in child
             radiolink = 2f;
-            movementAiEnabled = true;
-            combatAIEnabled = true;
-            selfDefenceModuleEnabled = true;
+            movementAiEnabled = false;
+            combatAIEnabled = false;
+            selfDefenceModuleEnabled = false;
             roleModuleEnabled = false;
         }
         protected override void DecrementCounters()

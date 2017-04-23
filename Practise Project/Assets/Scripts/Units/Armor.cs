@@ -21,13 +21,12 @@ namespace PracticeProject
         // Update is called once per frame
         void Update()
         {
-            if (hitCount > 5)
-                if (hitpoints < 0)
-                    owner.Die();
-                else if (hitpoints < maxHitpoints * 0.3)
-                    owner.ArmorCriticalAlarm();
-                else if (hitpoints < maxHitpoints * 0.1)
-                    hitpoints -= Time.deltaTime;
+            if (hitpoints < 0)
+                owner.Die();
+            else if (hitpoints < maxHitpoints * 0.1)
+                hitpoints -= Time.deltaTime;
+            else if (hitpoints < maxHitpoints * 0.3)
+                owner.ArmorCriticalAlarm();
         }
         protected void OnCollisionEnter(Collision collision)
         {
@@ -105,14 +104,18 @@ namespace PracticeProject
             }
             //}
         }
-
-        //protected void OnTriggerStay(Collider trigger)
-        //{
-        //    float multiplicator;
-        //    switch (trigger.gameObject.tag)
-        //    {
-
-        //    }
-        //}
+        protected void OnTriggerStay(Collider trigger)
+        {
+            float multiplicator;
+            switch (trigger.gameObject.tag)
+            {
+                case "Explosion":
+                    {
+                        multiplicator = (1 - blastResist) * Mathf.Pow(((-Vector3.Distance(this.gameObject.transform.position, trigger.gameObject.transform.position) + trigger.gameObject.GetComponent<Explosion>().MaxRadius) * 0.01f), (1 / 3));
+                        this.hitpoints -= trigger.gameObject.GetComponent<Explosion>().Damage * multiplicator;
+                        break;
+                    }
+            }
+        }
     }
 }

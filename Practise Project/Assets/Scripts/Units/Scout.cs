@@ -19,12 +19,12 @@ namespace PracticeProject
         protected override void StatsUp()
         {
             type = UnitClass.Scout;
-            radarRange = 300; //set in child
+            radarRange = 500; //set in child
             radarPover = 5;
             speed = 10; //set in child
             jamming = false;
             stealthness = 0.3f; //set in child
-            radiolink = 2.5f;
+            radiolink = 1.5f;
             EnemySortDelegate = ScoutSortEnemys;
             AlliesSortDelegate = ReconSortEnemys;
         }

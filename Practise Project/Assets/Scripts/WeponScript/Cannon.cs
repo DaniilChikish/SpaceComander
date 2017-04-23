@@ -28,6 +28,7 @@ namespace PracticeProject
                     {
                         averageRoundSpeed = 133.33f;
                         coolingTime = coolingTime * 5f;
+                        range = range * 2f;
                         break;
                     }
                 case ShellType.SolidAP:
@@ -44,6 +45,7 @@ namespace PracticeProject
                     {
                         this.averageRoundSpeed = 177.78f;
                         coolingTime = coolingTime * 5f;
+                        range = range * 2f;
                         break;
                     }
                 case ShellType.Camorous:
@@ -55,6 +57,7 @@ namespace PracticeProject
                     {
                         this.averageRoundSpeed = 148.15f;
                         coolingTime = coolingTime * 5f;
+                        range = range * 2f;
                         break;
                     }
                 case ShellType.CamorousAP:

@@ -9,8 +9,8 @@ namespace PracticeProject
         private float ttl;
         private float waveSpeed; // Скорость волны
         private float maxRadius; // Радиус взрыва
-        private float damage; // Урон
-        public float Damage { get { return damage * Time.deltaTime / 2; } }
+        private float damage; // Урон в секунду
+        public float Damage { get { return damage * Time.deltaTime; } }
         public float MaxRadius { get { return maxRadius; } }
         void Start() { }
         public void StatUp(BlastType type)
@@ -27,13 +27,13 @@ namespace PracticeProject
                 case BlastType.UnitaryTorpedo:
                     {
                         maxRadius = 30f;
-                        damage = 150f;
+                        damage = 300f;
                         break;
                     }
                 case BlastType.NukeTorpedo:
                     {
                         maxRadius = 80f;
-                        damage = 500;
+                        damage = 1000;
                         break;
                     }
                 case BlastType.SmallShip:
