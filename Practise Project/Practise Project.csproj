@@ -13,13 +13,11 @@
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Unity Subset v3.5</TargetFrameworkProfile>
-    <CompilerResponseFile>
-    </CompilerResponseFile>
+    <CompilerResponseFile></CompilerResponseFile>
     <UnityProjectType>Game:1</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows:5</UnityBuildTarget>
     <UnityVersion>5.5.1f1</UnityVersion>
-    <RootNamespace>
-    </RootNamespace>
+    <RootNamespace></RootNamespace>
     <LangVersion Condition=" '$(VisualStudioVersion)' != '10.0' ">4</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -103,8 +101,10 @@
     <Compile Include="Assets\Scripts\Units\Scout.cs" />
     <Compile Include="Assets\Scripts\Units\Support_Corvette.cs" />
     <Compile Include="Assets\Scripts\WeponScript\AutoCannon.cs" />
+    <Compile Include="Assets\Scripts\WeponScript\BombardierMissile.cs" />
     <Compile Include="Assets\Scripts\WeponScript\Cannon.cs" />
     <Compile Include="Assets\Scripts\WeponScript\CannonShell.cs" />
+    <Compile Include="Assets\Scripts\WeponScript\HunterMissile.cs" />
     <Compile Include="Assets\Scripts\WeponScript\LaserBeam.cs" />
     <Compile Include="Assets\Scripts\WeponScript\Lazer.cs" />
     <Compile Include="Assets\Scripts\WeponScript\MetheorMissile.cs" />
@@ -114,10 +114,8 @@
     <Compile Include="Assets\Scripts\WeponScript\Railgun.cs" />
     <Compile Include="Assets\Scripts\WeponScript\RailgunShell.cs" />
     <Compile Include="Assets\Scripts\WeponScript\RocketLauncher.cs" />
-    <Compile Include="Assets\Scripts\WeponScript\HunterMissile.cs" />
     <Compile Include="Assets\Scripts\WeponScript\SpruteTorpedo.cs" />
     <Compile Include="Assets\Scripts\WeponScript\TorpedoLauncher.cs" />
-    <Compile Include="Assets\Scripts\WeponScript\BombardierMissile.cs" />
     <Compile Include="Assets\Scripts\WeponScript\UnitaryTorpedo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -125,6 +123,7 @@
     <None Include="Assets\Effects\Shaders\SFE_TransparentRim.shader" />
     <None Include="Assets\GUI\Selection\Projector\ProjectorAdditiveTint.shader" />
     <None Include="Assets\GUI\Selection\ProjectorAdditiveTint.shader" />
+    <None Include="Assets\SpaceD\readme.txt" />
     <None Include="Assets\read me.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
