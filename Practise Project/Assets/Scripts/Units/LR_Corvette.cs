@@ -7,6 +7,7 @@ namespace PracticeProject
     {
         private float cooldownReloadBot;
         private float cooldownRepairBot;
+        private bool idleFulag;
         protected override void StatsUp()
         {
             type = UnitClass.LR_Corvette;
@@ -54,6 +55,14 @@ namespace PracticeProject
                     return false;
             }
         }
+        protected override bool IdleManeuverFunction()
+        {
+            idleFulag = !idleFulag;
+            if (idleFulag)
+                return PatroolLineParallel(150);
+            else return PatroolLineParallel(50);
+        }
+
         protected override bool RoleFunction()
         {
             return (SelfReloadBot()||SelfRepairBot());

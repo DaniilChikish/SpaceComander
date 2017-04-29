@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.SceneManagement;
 
 namespace PracticeProject
 {
@@ -114,8 +115,27 @@ namespace PracticeProject
 		public double RandomNormalAverage;
 		//public double[] RandomExponentPool;
 		private float randomPoolBackCoount;
-
-
+        private Scenario Mission;
+        public string MissionName { get
+            {
+                if (Mission != null)
+                    return Mission.Name;
+                else return SceneManager.GetActiveScene().name;
+            } }
+        public string MissionBrief
+        {
+            get
+            {
+                if (Mission != null)
+                    return Mission.Brief;
+                else return "Eliminate all enemies!";
+            }
+        }
+        private void Start()
+        {
+            //Debug.Log("GlobalController started");
+            Mission = FindObjectOfType<Scenario>();
+        }
         public void Update()
 		{
             if (randomPoolBackCoount < 0)
@@ -125,8 +145,29 @@ namespace PracticeProject
                 //RandomExponentPool = Randomizer.Exponential(7, 128, 0, 128);
                 randomPoolBackCoount = 10;
             }
-            else randomPoolBackCoount -= Time.deltaTime;
+            else randomPoolBackCoount -= Time.deltaTime;           
 		}
+        public int CheckVictory()
+        {
+            if (Mission != null)
+                return Mission.CheckVictory();
+            else
+            {
+                int alies = 0;
+                int enemy = 0;
+                foreach (IUnit x in unitList)
+                {
+                    if (x.Team == this.playerArmy)
+                        alies++;
+                    else enemy++;
+                }
+                if (enemy == 0)
+                    return 1;
+                else if (alies == 0)
+                    return -1;
+                else return 0;
+            }
+        }
     }
     public abstract class SpaceShip : MonoBehaviour, IUnit
     {
@@ -188,6 +229,7 @@ namespace PracticeProject
         //base interface
         protected void Start()//_______________________Start
         {
+            Debug.Log("Unit " + this.gameObject.name + " started");
             movementAiEnabled = true;
             combatAIEnabled = true;
             selfDefenceModuleEnabled = true;
@@ -497,11 +539,11 @@ namespace PracticeProject
                     }
                 case TargetStateType.InSecondaryRange:
                     {
-                        return PatroolLine();
+                        return PatroolLinePerpendicularly();
                     }
                 case TargetStateType.BehindABarrier:
                     {
-                        return PatroolLine();
+                        return PatroolLinePerpendicularly();
                     }
                 default:
                     return false;
@@ -701,7 +743,35 @@ namespace PracticeProject
 
             return Driver.MoveToQueue(target5);
         }
-        protected bool PatroolLine()
+        protected bool PatroolLineForward()
+        {
+            ManeuverName = "Patrool";
+            Vector3 target2;
+            target2 = this.transform.forward * 60f;
+            target2 += this.transform.position + new Vector3(0, 0.5f, 0);
+            //      Debug.Log(target2);
+            Driver.MoveToQueue(target2);
+
+            Vector3 target5;
+            target5 = this.transform.position;
+
+            return Driver.MoveToQueue(target5);
+        }
+        protected bool PatroolLineForward(float length)
+        {
+            ManeuverName = "Patrool";
+            Vector3 target2;
+            target2 = this.transform.forward * length;
+            target2 += this.transform.position + new Vector3(0, 0.5f, 0);
+            //      Debug.Log(target2);
+            Driver.MoveToQueue(target2);
+
+            Vector3 target5;
+            target5 = this.transform.position;
+
+            return Driver.MoveToQueue(target5);
+        }
+        protected bool PatroolLinePerpendicularly()
         {
             ManeuverName = "Patrool";
 
@@ -720,6 +790,78 @@ namespace PracticeProject
                 /*target4 = new Vector3(60, 0, 0);*/ target4 = this.transform.right * 60f;
             else
                 /*target4 = new Vector3(-60, 0, 0);*/ target4 = this.transform.right * -60f;
+            target4 += this.transform.position + new Vector3(0, 0.5f, 0);
+            //          Debug.Log(target4);
+            Driver.MoveToQueue(target4);
+
+            Vector3 target5;
+            target5 = this.transform.position;
+
+            return Driver.MoveToQueue(target5);
+        }
+        protected bool PatroolLinePerpendicularly(float length)
+        {
+            ManeuverName = "Patrool";
+
+            float random = Convert.ToSingle(Randomizer.Uniform(-10, 10, 1)[0]);
+            Vector3 target2;
+            if (random > 0)
+                /*target2 = new Vector3(60, 0, 0);*/
+                target2 = this.transform.right * length;
+            else
+                /*target2 = new Vector3(-60, 0, 0);*/
+                target2 = this.transform.right * -length;
+            target2 += this.transform.position + new Vector3(0, 0.5f, 0);
+            //      Debug.Log(target2);
+            Driver.MoveToQueue(target2);
+
+            Vector3 target4;
+            if (random < 0)
+                /*target4 = new Vector3(60, 0, 0);*/
+                target4 = this.transform.right * length;
+            else
+                /*target4 = new Vector3(-60, 0, 0);*/
+                target4 = this.transform.right * -length;
+            target4 += this.transform.position + new Vector3(0, 0.5f, 0);
+            //          Debug.Log(target4);
+            Driver.MoveToQueue(target4);
+
+            Vector3 target5;
+            target5 = this.transform.position;
+
+            return Driver.MoveToQueue(target5);
+        }
+        protected bool PatroolLineParallel()
+        {
+            ManeuverName = "Patrool";
+            Vector3 target2;
+            target2 = this.transform.forward * 60f;
+            target2 += this.transform.position + new Vector3(0, 0.5f, 0);
+            //      Debug.Log(target2);
+            Driver.MoveToQueue(target2);
+
+            Vector3 target4;
+            target4 = this.transform.forward * -60f;
+            target4 += this.transform.position + new Vector3(0, 0.5f, 0);
+            //          Debug.Log(target4);
+            Driver.MoveToQueue(target4);
+
+            Vector3 target5;
+            target5 = this.transform.position;
+
+            return Driver.MoveToQueue(target5);
+        }
+        protected bool PatroolLineParallel(float length)
+        {
+            ManeuverName = "Patrool";
+            Vector3 target2;
+            target2 = this.transform.forward * length;
+            target2 += this.transform.position + new Vector3(0, 0.5f, 0);
+            //      Debug.Log(target2);
+            Driver.MoveToQueue(target2);
+
+            Vector3 target4;
+            target4 = this.transform.forward * -length;
             target4 += this.transform.position + new Vector3(0, 0.5f, 0);
             //          Debug.Log(target4);
             Driver.MoveToQueue(target4);

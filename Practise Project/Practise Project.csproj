@@ -13,11 +13,13 @@
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Unity Subset v3.5</TargetFrameworkProfile>
-    <CompilerResponseFile></CompilerResponseFile>
+    <CompilerResponseFile>
+    </CompilerResponseFile>
     <UnityProjectType>Game:1</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows:5</UnityBuildTarget>
     <UnityVersion>5.5.1f1</UnityVersion>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <LangVersion Condition=" '$(VisualStudioVersion)' != '10.0' ">4</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -75,8 +77,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\GUI\Dropdown.cs" />
-    <Compile Include="Assets\GUI\GameMenu.cs" />
+    <Compile Include="Assets\GUI\HUDBase.cs" />
+    <Compile Include="Assets\GUI\HUDMiniMap.cs" />
+    <Compile Include="Assets\GUI\HUDUnitPrew.cs" />
+    <Compile Include="Assets\GUI\MainMenu.cs" />
     <Compile Include="Assets\GUI\MoveTarget.cs" />
     <Compile Include="Assets\GUI\Selection\Script\UnitSelectionComponent.cs" />
     <Compile Include="Assets\GUI\Selection\Script\Utils.cs" />
@@ -86,6 +90,7 @@
     <Compile Include="Assets\Scripts\Explosion.cs" />
     <Compile Include="Assets\Scripts\GlobalController.cs" />
     <Compile Include="Assets\Scripts\RepairDock.cs" />
+    <Compile Include="Assets\Scripts\Scenario.cs" />
     <Compile Include="Assets\Scripts\TerraCell.cs" />
     <Compile Include="Assets\Scripts\Units\Armor.cs" />
     <Compile Include="Assets\Scripts\Units\Bait.cs" />

@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/SpaceD/GUI/SpaceDScene.unity
+- path: Assets/MainPractiseScene.unity
   isLoaded: 1
   isActive: 1

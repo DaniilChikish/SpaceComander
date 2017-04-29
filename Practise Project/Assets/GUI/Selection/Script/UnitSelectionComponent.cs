@@ -11,7 +11,13 @@ namespace PracticeProject
         bool isSelecting = false;
         Vector3 mousePosition1;
         public GameObject destanationMarkerPrefab;
-
+        HUDUnitPrew UnitPrew;
+        GlobalController Global;
+        private void Start()
+        {
+            UnitPrew = FindObjectOfType<HUDUnitPrew>();
+            Global = FindObjectOfType<GlobalController>();
+        }
         void Update()
         {
 
@@ -30,8 +36,8 @@ namespace PracticeProject
                         //selectableObject.selectionCircle = null;
                     }
                 }
-                GameObject.Find("Gui").transform.FindChild("UnitPeviev").gameObject.SetActive(false);
-                FindObjectsOfType<GlobalController>()[0].selectedList.Clear();
+                UnitPrew.Enabled = false;
+                Global.selectedList.Clear();
             }
             // If we let go of the left mouse button, end selection
             if (Input.GetMouseButtonUp(0))
@@ -67,7 +73,7 @@ namespace PracticeProject
                         if (selectableObject.isSelected == false)
                         {
                             selectableObject.gameObject.GetComponent<SpaceShip>().SelectUnit(true);
-                            GameObject.Find("Gui").transform.FindChild("UnitPeviev").gameObject.SetActive(true);
+                            UnitPrew.Enabled = true;
                         }
                     }
                 }

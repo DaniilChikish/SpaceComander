@@ -7,6 +7,7 @@ namespace PracticeProject
     {
         private float cooldownRepairBot;
         private float cooldownReloadBot;
+        private bool idleFulag;
         protected override void StatsUp()
         {
             type = UnitClass.Support_Corvette;
@@ -29,6 +30,13 @@ namespace PracticeProject
                 cooldownRepairBot -= Time.deltaTime;
             if (cooldownReloadBot > 0)
                 cooldownReloadBot -= Time.deltaTime;
+        }
+        protected override bool IdleManeuverFunction()
+        {
+            idleFulag = !idleFulag;
+            if (idleFulag)
+                return PatroolLinePerpendicularly(150);
+            else return PatroolPoint();
         }
         protected override bool RoleFunction()
         {

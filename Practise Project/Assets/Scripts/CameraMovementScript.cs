@@ -14,7 +14,7 @@ namespace PracticeProject
         // Use this for initialization
         void Start()
         {
-            player = (GameObject)this.gameObject;
+            player = this.gameObject;
             //Vector3 rotSpeedRight = new Vector3(0, rotSpeed, 0);
             //Vector3 rotSpeedLeft = new Vector3(0, rotSpeed * (-1), 0);
         }
@@ -35,18 +35,18 @@ namespace PracticeProject
             if (Input.GetKey(KeyCode.W))
                 player.transform.position += player.transform.forward * speed * Time.deltaTime;
             if (Input.GetKey(KeyCode.S))
-                player.transform.position -= player.transform.forward * speed * Time.deltaTime;
+                player.transform.position += -player.transform.forward * speed * Time.deltaTime;
             if (Input.GetKey(KeyCode.D))
                 player.transform.position += player.transform.right * speed * Time.deltaTime;
             if (Input.GetKey(KeyCode.A))
-                player.transform.position -= player.transform.right * speed * Time.deltaTime;
+                player.transform.position += -player.transform.right * speed * Time.deltaTime;
             if (Input.GetKey(KeyCode.E))
             {
-                player.transform.Rotate(Vector3.up * rotSpeed / 10);
+                player.transform.Rotate(Vector3.up * rotSpeed * Time.deltaTime);
             }
             if (Input.GetKey(KeyCode.Q))
             {
-                player.transform.Rotate(Vector3.up * rotSpeed * -1 / 10);
+                player.transform.Rotate(Vector3.up * -rotSpeed * Time.deltaTime);
             }
         }
     }
