@@ -10,7 +10,7 @@ namespace PracticeProject
         public override void StatUp()
         {
             gameObject.GetComponent<MeshRenderer>().enabled = false;
-            range = 250;
+            range = 350;
             ammo = 16;
             coolingTime = 10f;
             cooldown = 0;

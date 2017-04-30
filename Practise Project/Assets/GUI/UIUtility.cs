@@ -39,6 +39,21 @@ namespace PracticeProject
     }
     public static class UIUtil
     {
+        public static float Scaled(float x)
+        {
+            if (Screen.height > 800)
+                return x;
+            else return x * 0.8f;
+        }
+        public static Vector2 GetWindow(float w, float h)
+        {
+            //if (Screen.height > 1000)
+            //    return new Vector2(w * 100, h * 100);
+            //else
+            if (Screen.height > 800)
+                return new Vector2(w * 100, h * 100);
+            else return new Vector2(w * 80, h * 80);//new Vector2(Screen.height * w / 10, Screen.height * h / 10);
+        }
         public static void WindowTitle(UIWindowInfo window, string text)
         {
             Vector2 bgOffset = new Vector2(36, 15);

@@ -9,7 +9,7 @@ namespace PracticeProject
         public override void StatUp()
         {
             gameObject.GetComponent<MeshRenderer>().enabled = false;
-            range = 150;
+            range = 250;
             ammo = 40;
             coolingTime = 5f;
             cooldown = 0;
@@ -20,6 +20,14 @@ namespace PracticeProject
         {
             switch (AmmoType)
             {
+                case MissileType.Interceptor:
+                    {
+                        ammo -= 3;
+                        cooldown = CoolingTime * 3;
+                        GameObject missile = Instantiate(FindObjectsOfType<GlobalController>()[0].Missile, gameObject.transform.position, transform.rotation);
+                        missile.AddComponent<InterceptorMissile>().SetTarget(target);
+                        break;
+                    }
                 case MissileType.Hunter:
                     {
                         ammo -= 2;

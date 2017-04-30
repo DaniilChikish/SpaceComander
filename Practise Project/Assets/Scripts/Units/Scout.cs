@@ -69,7 +69,7 @@ namespace PracticeProject
                     {
                         if (Warp())
                             return Rush();
-                        else return ToSecondaryDistance();
+                        else return ToPrimaryDistance();
                     }
                 case TargetStateType.InPrimaryRange:
                     {
@@ -83,7 +83,7 @@ namespace PracticeProject
                     }
                 case TargetStateType.BehindABarrier:
                     {
-                        return ToSecondaryDistance();
+                        return ToPrimaryDistance();
                     }
                 default:
                     return false;

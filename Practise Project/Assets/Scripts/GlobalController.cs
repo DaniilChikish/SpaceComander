@@ -77,7 +77,9 @@ namespace PracticeProject
         void StatUp(EnergyType type);
         float GetEnergy();
     }
-    public enum MissileType { Hunter, Bombardier, Metheor }
+    public enum MissileType { Hunter, Bombardier, Metheor,
+        Interceptor
+    }
     public enum TorpedoType { Unitary, Nuke, Sprute }
     public enum BlastType { UnitaryTorpedo, Missile, NukeTorpedo, SmallShip, MediumShip, Corvette, Shell, ExplosiveShell }
     public interface IImpact
@@ -701,6 +703,8 @@ namespace PracticeProject
             }
             if (unitSquadStatus == SquadStatus.Free)
                 FormSquad();
+            if (aiStatus == UnitStateType.UnderControl)
+                situation = TacticSituation.Defense;
         }
 
         //sevice function
@@ -1719,9 +1723,9 @@ namespace PracticeProject
         }
         public void Update()
         {
+            UpdateSpeed();
             if ((walkerAgent.pathEndPosition - walkerTransform.position).magnitude < 10)
             {
-                UpdateSpeed();
                 if (path.Count > 1)
                 {
                     //Debug.Log("1");
@@ -1738,7 +1742,16 @@ namespace PracticeProject
         }
         public void UpdateSpeed()
         {
-            walkerAgent.speed = walker.Speed;
+            float distance = Vector3.Distance(walkerAgent.destination, walkerTransform.position);
+            //Debug.Log(distance +" - "+ walker.gameObject.name);
+            if (distance > 250)
+                walkerAgent.speed = walker.Speed * 2.5f;
+            else if (distance > 150)
+                walkerAgent.speed = walker.Speed * 2f;
+            else if (distance > 70)
+                walkerAgent.speed = walker.Speed * 1.5f;
+            else
+                walkerAgent.speed = walker.Speed;
             walkerAgent.acceleration = walker.Speed * 1.6f;
             if (walker.CurrentTarget == null)
                 walkerAgent.angularSpeed = walker.Speed * 3.3f;
@@ -1754,6 +1767,7 @@ namespace PracticeProject
         {
             if (path.Count < 10)
             {
+                UpdateSpeed();
                 path.Enqueue(destination);
                 //backCount = Vector3.Distance(walker.transform.position, destination) / (walker.GetComponent<NavMeshAgent>().speed - 2);
                 return true;
@@ -1807,7 +1821,7 @@ namespace PracticeProject
             if (synchWeapons[slot] <= 0)
             {
                 float angel = Vector3.Angle(target.transform.position - owner.transform.position, owner.transform.forward);
-                if (angel < weapons[slot][0].Dispersion * 5 || angel < 1)
+                if (angel < weapons[slot][0].Dispersion * 5 || angel < 10)
                 {
                     if (indexWeapons[slot] >= weapons[slot].Length)
                         indexWeapons[slot] = 0;
@@ -2032,10 +2046,10 @@ namespace PracticeProject
         //public GameObject Blast;// префаб взрыва   
         protected MissileType type;        
         protected float Speed;// скорость ракеты           
-        protected float DropImpulse;//импульс сброса          
+        public float DropImpulse;//импульс сброса          
         protected float TurnSpeed;// скорость поворота ракеты            
         protected float explosionTime;// длительность жизни
-        protected float AimCone;
+        public float AimCone;
         protected float lt;//продолжительность жизни
         protected float detonateTimer;
         protected bool isArmed;
@@ -2079,7 +2093,7 @@ namespace PracticeProject
         protected abstract void Explode();
         public void Arm()
         {
-            if (lt > 1.5)
+            if (!isArmed && lt > 1.5)
             {
                 isArmed = true;
                 detonateTimer = 0.2f;

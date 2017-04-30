@@ -43,8 +43,7 @@ namespace PracticeProject
                 int i = 0;
                 foreach (GameObject M in missile)
                 {
-                    M.AddComponent<HunterMissile>().SetTarget(enemys[i].transform);
-                    //M.GetComponent<Missile>().AimCone = 60;
+                    M.AddComponent<InterceptorMissile>().SetTarget(enemys[i].transform);
                     i++;
                     if (i >= enemys.Count)
                         i = 0;

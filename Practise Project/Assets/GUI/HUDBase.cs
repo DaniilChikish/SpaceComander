@@ -9,7 +9,7 @@ namespace PracticeProject
 
     public class HUDBase : MonoBehaviour
     {
-   protected  enum PauseWindow {Start, Main, Restart, Options, About, Quit, Victory, Defeat}
+        protected enum PauseWindow { Start, Main, Restart, Options, About, Quit, Victory, Defeat }
         private PauseWindow CurWin;
         public GUISkin Skin;
         public Texture2D VictoryBanner;
@@ -35,11 +35,6 @@ namespace PracticeProject
             pauseButtonBoxBorder.z = pauseButtonBoxSize.x * 4 / 88;
             pauseButtonBoxBorder.w = pauseButtonBoxSize.y * 8 / 40;
             Windows = new UIWindowInfo[5];
-            Windows[0] = new UIWindowInfo(new Rect(Screen.width / 2 - 200, 100, 400, 400));//main
-            Windows[1] = new UIWindowInfo(new Rect(Screen.width / 2 - 300, 200, 600, 250));//question
-            Windows[2] = new UIWindowInfo(new Rect(Screen.width / 2 - 400, 50, 800, 600));//options
-            Windows[3] = new UIWindowInfo(new Rect(Screen.width / 2 - 400, 50, 800, 600));//about
-            Windows[4] = new UIWindowInfo(new Rect(Screen.width / 2 - 300, Screen.height - 400, 600, 200));//victory
             CurWin = PauseWindow.Start;
             Stop();
         }
@@ -47,12 +42,23 @@ namespace PracticeProject
         // Update is called once per frame
         void Update()
         {
+            //
+            Vector2 W4x4 = UIUtil.GetWindow(4, 4);
+            Vector2 W8x6 = UIUtil.GetWindow(8, 6);
+            Vector2 W6x2 = UIUtil.GetWindow(6, 2);
+            Vector2 W6x2f5 = UIUtil.GetWindow(6, 2.5f);
+            Windows[0] = new UIWindowInfo(new Rect(new Vector2((Screen.width - W4x4.x) / 2, 100), W4x4));//main
+            Windows[1] = new UIWindowInfo(new Rect(new Vector2((Screen.width - W6x2f5.x) / 2, 200), W6x2f5));//question
+            Windows[2] = new UIWindowInfo(new Rect(new Vector2((Screen.width - W8x6.x) / 2, 50), W8x6));//options
+            Windows[3] = new UIWindowInfo(new Rect(new Vector2((Screen.width - W6x2.x) / 2, (Screen.height - W6x2.y) / 2 + 100), W6x2));//victory
+            //
+
             if (Input.GetKeyDown(KeyCode.Escape))
-                {
-                    if (Pause)
-                        Continue();
-                    else Stop();
-                }
+            {
+                if (Pause)
+                    Continue();
+                else Stop();
+            }
         }
 
         private void OnGUI()
@@ -89,12 +95,12 @@ namespace PracticeProject
                             }
                         case PauseWindow.About:
                             {
-                                GUI.Window(3, Windows[3].rect, DrawAboutW, "");
+                                GUI.Window(2, Windows[2].rect, DrawAboutW, "");
                                 break;
                             }
                         case PauseWindow.Start:
                             {
-                                GUI.Window(3, Windows[3].rect, DrawStartW, "");
+                                GUI.Window(2, Windows[2].rect, DrawStartW, "");
                                 break;
                             }
                         case PauseWindow.Quit:
@@ -112,8 +118,8 @@ namespace PracticeProject
         private void Victory()
         {
             CurWin = PauseWindow.Victory;
-            GUI.DrawTexture(new Rect((Screen.width- VictoryBannerSize.x) / 2 , (Screen.height- VictoryBannerSize.y) / 2  - 200, VictoryBannerSize.x, VictoryBannerSize.y), VictoryBanner);
-            GUI.Window(4, Windows[4].rect, DrawVictoryQW, "");
+            GUI.DrawTexture(new Rect((Screen.width - VictoryBannerSize.x) / 2, (Screen.height - VictoryBannerSize.y) / 2 - 200, VictoryBannerSize.x, VictoryBannerSize.y), VictoryBanner);
+            GUI.Window(3, Windows[3].rect, DrawVictoryQW, "");
         }
         void DrawVictoryQW(int windowID)
         {
@@ -132,7 +138,7 @@ namespace PracticeProject
         {
             CurWin = PauseWindow.Defeat;
             GUI.DrawTexture(new Rect((Screen.width - VictoryBannerSize.x) / 2, (Screen.height - VictoryBannerSize.y) / 2 - 200, VictoryBannerSize.x, VictoryBannerSize.y), DefeatBanner);
-            GUI.Window(4, Windows[4].rect, DrawDefeatQW, "");
+            GUI.Window(3, Windows[3].rect, DrawDefeatQW, "");
         }
         void DrawDefeatQW(int windowID)
         {
@@ -149,7 +155,7 @@ namespace PracticeProject
         }
         private void DrawPauseW(int windowID)
         {
-            UIUtil.WindowTitle(Windows[windowID], "Space Comander");
+            UIUtil.WindowTitle(Windows[windowID], "Pause");
             //GUI.color.a = window.UIAlpha;
             if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - 90, 100, 180, 50), "Restart"))
             {
@@ -207,7 +213,7 @@ namespace PracticeProject
         {
             Time.timeScale = 1;
             Pause = false;
-            if (CurWin == PauseWindow.Restart || CurWin == PauseWindow.Quit)
+            if (CurWin == PauseWindow.Restart || CurWin == PauseWindow.Quit || CurWin == PauseWindow.Start)
                 CurWin = PauseWindow.Main;
         }
 
@@ -232,11 +238,12 @@ namespace PracticeProject
         void DrawAboutW(int windowID)
         {
             UIUtil.WindowTitle(Windows[windowID], Global.MissionName);
-            GUI.BeginGroup(new Rect(Windows[windowID].CenterX - 300, 100, 600, 400), GUI.skin.GetStyle("textContainer"));
-            UIUtil.TextContainerTitle(new Rect(27, 10, 220, 20), "Targets");
-            UIUtil.TextContainerText(new Rect(27, 40, 220, 60), Global.MissionBrief);
+            Vector2 W6x4 = UIUtil.GetWindow(6, 4);
+            GUI.BeginGroup(new Rect(new Vector2(Windows[windowID].CenterX - (W6x4.x / 2), 100), W6x4), GUI.skin.GetStyle("textContainer"));
+            UIUtil.TextContainerTitle(new Rect(27, 10, UIUtil.Scaled(220), 20), "Targets");
+            UIUtil.TextContainerText(new Rect(27, 40, UIUtil.Scaled(546), 60), Global.MissionBrief);
             GUI.EndGroup();
-            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - 90, Windows[windowID].Bottom - 100, 180, 50), "Back"))
+            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - UIUtil.Scaled(90), Windows[windowID].Bottom - 100, UIUtil.Scaled(180), 50), "Back"))
             {
                 CurWin = PauseWindow.Main;
             }
@@ -244,11 +251,12 @@ namespace PracticeProject
         void DrawStartW(int windowID)
         {
             UIUtil.WindowTitle(Windows[windowID], Global.MissionName);
-            GUI.BeginGroup(new Rect(Windows[windowID].CenterX - 300, 100, 600, 400), GUI.skin.GetStyle("textContainer"));
-            UIUtil.TextContainerTitle(new Rect(27, 10, 220, 20), "Targets");
-            UIUtil.TextContainerText(new Rect(27, 40, 220, 60), Global.MissionBrief);
+            Vector2 W6x4 = UIUtil.GetWindow(6, 4);
+            GUI.BeginGroup(new Rect(new Vector2(Windows[windowID].CenterX - (W6x4.x / 2), 100), W6x4), GUI.skin.GetStyle("textContainer"));
+            UIUtil.TextContainerTitle(new Rect(27, 10, UIUtil.Scaled(220), 20), "Targets");
+            UIUtil.TextContainerText(new Rect(27, 40, UIUtil.Scaled(546), 60), Global.MissionBrief);
             GUI.EndGroup();
-            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - 90, Windows[windowID].Bottom - 100, 180, 50), "Start"))
+            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - UIUtil.Scaled(90), Windows[windowID].Bottom - 100, UIUtil.Scaled(180), 50), "Start"))
             {
                 CurWin = PauseWindow.Main;
                 Continue();
@@ -293,12 +301,12 @@ namespace PracticeProject
         int Question(int windowID, string title, string text, string var1, string var2)
         {
             UIUtil.WindowTitle(Windows[windowID], title);
-            UIUtil.Label(new Rect(100, 100, 400, 43), text);
-            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX + 10, 150, 180, 50), var1))
+            UIUtil.Label(new Rect(100, 100, UIUtil.Scaled(400), 43), text);
+            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX + UIUtil.Scaled(10), 150, UIUtil.Scaled(180), 50), var1))
             {
                 return 1;
             }
-            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - 190, 150, 180, 50), var2))
+            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - UIUtil.Scaled(190), 150, UIUtil.Scaled(180), 50), var2))
             {
                 return -1;
             }

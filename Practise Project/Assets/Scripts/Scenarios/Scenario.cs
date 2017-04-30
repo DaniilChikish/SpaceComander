@@ -6,21 +6,14 @@ namespace PracticeProject
 {
     public abstract class Scenario : MonoBehaviour
     {
-        private GlobalController Global;
+        protected GlobalController Global;
         public string Name;
         public string Brief;
         // Use this for initialization
-        protected virtual void Start()
-        {
-            Global = FindObjectOfType<GlobalController>();
-            //Debug.Log("Scenario started");
-        }
+        protected abstract void Start();
 
         // Update is called once per frame
-        void Update()
-        {
-
-        }
+        protected abstract void Update();
         public virtual int CheckVictory()
         {
             int alies = 0;

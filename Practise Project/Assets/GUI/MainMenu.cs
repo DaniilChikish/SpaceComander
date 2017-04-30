@@ -12,20 +12,25 @@ namespace PracticeProject
         public GUISkin Skin;
         private MenuWindow CurWin;
         UIWindowInfo[] Windows;
+        private Vector2 scrollAboutPosition = Vector2.zero;
 
         void Start()
         {
+            Time.timeScale = 1;
             CurWin = MenuWindow.Main;
             Windows = new UIWindowInfo[5];
-            Windows[0] = new UIWindowInfo(new Rect(Screen.width / 2 - 200, 100, 400, 400));//main
-            Windows[1] = new UIWindowInfo(new Rect(Screen.width / 2 - 200, 100, 400, 400));//level
-            Windows[2] = new UIWindowInfo(new Rect(Screen.width / 2 - 400, 50, 800, 600));//options
-            Windows[3] = new UIWindowInfo(new Rect(Screen.width / 2 - 400, 50, 800, 600));//about
-            Windows[4] = new UIWindowInfo(new Rect(Screen.width / 2 - 300, 200, 600, 200));//quit
             //Windows[5] = new SDWindowInfo(new Rect(0, Screen.height-100, 100, 100));//info
         }
         private void Update()
         {
+            //
+            Vector2 W4x4 = UIUtil.GetWindow(4, 4);
+            Vector2 W8x6 = UIUtil.GetWindow(8, 6);
+            Vector2 W6x2 = UIUtil.GetWindow(6, 2);
+            Windows[0] = new UIWindowInfo(new Rect(new Vector2((Screen.width - W4x4.x) / 2, 100), W4x4));//main
+            Windows[1] = new UIWindowInfo(new Rect(new Vector2((Screen.width - W6x2.x) / 2, (Screen.height - W6x2.y) / 2 + 100), W6x2));//question
+            Windows[2] = new UIWindowInfo(new Rect(new Vector2((Screen.width - W8x6.x) / 2, 50), W8x6));//options
+            //
             this.gameObject.transform.Rotate(Vector3.up * 5 * Time.deltaTime);
         }
         void OnGUI()
@@ -41,7 +46,7 @@ namespace PracticeProject
                     }
                 case MenuWindow.Levels:
                     {
-                        GUI.Window(1, Windows[1].rect, DrawLevelsW, "");
+                        GUI.Window(0, Windows[0].rect, DrawLevelsW, "");
                         break;
                     }
                 case MenuWindow.Options:
@@ -51,12 +56,12 @@ namespace PracticeProject
                     }
                 case MenuWindow.About:
                     {
-                        GUI.Window(3, Windows[3].rect, DrawAboutW, "");
+                        GUI.Window(2, Windows[2].rect, DrawAboutW, "");
                         break;
                     }
                 case MenuWindow.Quit:
                     {
-                        GUI.Window(4, Windows[4].rect, DrawQuitW, "");
+                        GUI.Window(1, Windows[1].rect, DrawQuitW, "");
                         break;
                     }
             }
@@ -123,7 +128,7 @@ namespace PracticeProject
             //if (UIUtil.Button(new Rect(Windows[windowID].CenterX - 90, 200, 180, 50), "Видео"))
             //{
             //}
-            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - 90, Windows[windowID].Bottom - 100, 180, 50), "Back"))
+            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - UIUtil.Scaled(90), Windows[windowID].Bottom - 100, UIUtil.Scaled(180), 50), "Back"))
             {
                 CurWin = MenuWindow.Main;
             }
@@ -131,11 +136,19 @@ namespace PracticeProject
         void DrawAboutW(int windowID)
         {
             UIUtil.WindowTitle(Windows[windowID], "About game");
-            GUI.BeginGroup(new Rect(Windows[windowID].CenterX - 110, 100, 220, 144), GUI.skin.GetStyle("textContainer"));
-            UIUtil.TextContainerTitle(new Rect(27, 10, 220, 20), "Develop");
-            UIUtil.TextContainerText(new Rect(27, 40, 220, 60), "Designer - Jogo Deus;\r\nScripting - Jogo Deus;\r\nModeling - Jogo Deus;\r\nTexturing - Open source;\r\nMusic - Open source.");
+            GUI.BeginGroup(new Rect(Windows[windowID].CenterX - UIUtil.Scaled(140), 100, UIUtil.Scaled(280), 150), GUI.skin.GetStyle("textContainer"));
+            UIUtil.TextContainerTitle(new Rect(27, 10, UIUtil.Scaled(220), 20), "Develop");
+            UIUtil.TextContainerText(new Rect(27, 40, UIUtil.Scaled(220), 60), "Designer - Jogo Deus;\r\nScripting - Jogo Deus;\r\nModeling - Jogo Deus;\r\nTexturing - Open source;\r\nMusic - Open source.");
             GUI.EndGroup();
-            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - 90, Windows[windowID].Bottom - 150, 180, 50), "Develiper page"))
+            Rect viewRect = new Rect(0, 0, UIUtil.Scaled(546), 600);
+            scrollAboutPosition = GUI.BeginScrollView(new Rect(Windows[windowID].CenterX - UIUtil.Scaled(300), 260, UIUtil.Scaled(600), 230), scrollAboutPosition, viewRect);
+            UIUtil.TextContainerTitle(new Rect(27, 10, UIUtil.Scaled(220), 20), "Story");
+            UIUtil.TextContainerText(new Rect(27, 40, viewRect.width, viewRect.height), "   Year 2406'.\r\n" +
+"In deep space beyond the boundaries of the jurisdiction of the galactic government the struggle of conglomerates for resource - rich planets reaches astronomical proportions." +
+"Their interests are defended by huge space fleets of mercenaries." +
+"The object of the dispute was the planet Glies-876-d. It is' a harsh and dangerous world unsuitable for life but hiding endless minerals in it'.");
+            GUI.EndGroup();
+            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX + 110, Windows[windowID].Bottom - 100, 200, 50), "Developer page"))
             {
                 Application.OpenURL("https://vk.com/daniil.chikish");
             }
@@ -148,11 +161,11 @@ namespace PracticeProject
         {
             UIUtil.WindowTitle(Windows[windowID], "Running in fear?");
             //UIUtil.Label(new Rect(50, 10, 180, 43), "Running in fear?");
-            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX + 10, 100, 180, 50), "Yes"))
+            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX + UIUtil.Scaled(10), 100, UIUtil.Scaled(180), 50), "Yes"))
             {
                 Application.Quit();
             }
-            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - 190, 100, 180, 50), "No"))
+            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - UIUtil.Scaled(190), 100, UIUtil.Scaled(180), 50), "No"))
             {
                 CurWin = MenuWindow.Main;
             }
