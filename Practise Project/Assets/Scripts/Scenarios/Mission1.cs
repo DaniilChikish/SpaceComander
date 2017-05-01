@@ -19,8 +19,23 @@ namespace PracticeProject
             //File.WriteAllText("mission1.brif", "Kill them all!");
             Global = FindObjectOfType<GlobalController>();
             //Debug.Log("Scenario started");
-            Name = "Mission 1: \"Find and destroy\"";
-            Brief = File.ReadAllText("mission1.brif");
+            Name = Global.Texts["Mision1_name"];
+            string path = Application.streamingAssetsPath + "\\local";
+            switch (Global.Localisation)
+            {
+                case Languages.English:
+                    {
+                        path += "\\eng\\mission1_brief_eng.xml";
+
+                        break;
+                    }
+                case Languages.Russian:
+                    {
+                        path += "\\rus\\mission1_brief_rus.xml";
+                        break;
+                    }
+            }
+            Brief = File.ReadAllText(path);
         }
         protected override void Update()
         {

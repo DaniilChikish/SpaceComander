@@ -11,11 +11,13 @@ namespace PracticeProject
     class WarpArrive : MonoBehaviour
     {
         public GameObject ArriveUnit;
+        private GlobalController Global;
         public bool isArrive;
         public Vector3 ancor;
         public float Speed;// скорость ракеты
         private void Start()
         {
+            Global = FindObjectOfType<GlobalController>();
             ancor = this.gameObject.transform.position;
             Sleep();
         }
@@ -35,7 +37,7 @@ namespace PracticeProject
             if (isArrive)
             {
                 GUI.skin = FindObjectOfType<HUDBase>().Skin;
-                UIUtil.Exclamation(new Rect(Screen.width / 2 - 100, 0, 200, 50), "Reinforcements arrive!");
+                UIUtil.Exclamation(new Rect(Screen.width / 2 - 100, 0, 200, 50), Global.Texts["Reinforcements arrive!"]);
             }
         }
 

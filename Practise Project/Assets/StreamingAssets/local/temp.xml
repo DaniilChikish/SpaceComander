@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<SerializeDataOfStringString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <keys>
+    <string>Pause</string>
+    <string>string2_key</string>
+    <string>string3_key</string>
+  </keys>
+  <values>
+    <string>Pause_value</string>
+    <string>string2_value</string>
+    <string>string3_value</string>
+  </values>
+</SerializeDataOfStringString>

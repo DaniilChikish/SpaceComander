@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Xml;
+using System.Xml.Serialization;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.SceneManagement;
 
 namespace PracticeProject
 {
+    public enum Languages { English, Russian, temp};
     public enum UnitClass { Scout, Recon, ECM, Figther, Bomber, Command, LR_Corvette, Guard_Corvette, Support_Corvette, Turret};
     public enum UnitStateType { MoveAI, UnderControl, Waiting};
     public enum SquadStatus { Free, InSquad, SquadMaster }
@@ -77,9 +81,7 @@ namespace PracticeProject
         void StatUp(EnergyType type);
         float GetEnergy();
     }
-    public enum MissileType { Hunter, Bombardier, Metheor,
-        Interceptor
-    }
+    public enum MissileType { Hunter, Bombardier, Metheor, Interceptor }
     public enum TorpedoType { Unitary, Nuke, Sprute }
     public enum BlastType { UnitaryTorpedo, Missile, NukeTorpedo, SmallShip, MediumShip, Corvette, Shell, ExplosiveShell }
     public interface IImpact
@@ -117,6 +119,18 @@ namespace PracticeProject
 		public double RandomNormalAverage;
 		//public double[] RandomExponentPool;
 		private float randomPoolBackCoount;
+        //settings
+        private SerializeSettings settings;
+        public bool SettingsSaved;
+        public Languages Localisation { get { return settings.localisation; } set { SettingsSaved = false; settings.localisation = value; } }
+        public float SoundLevel { get { return settings.soundLevel; } set { SettingsSaved = false; settings.soundLevel = value; } }
+        public float MusicLevel { get { return settings.musicLevel; } set { SettingsSaved = false; settings.musicLevel = value; } }
+        public Vector2 Resolution {
+            get { return new Vector2(settings.screenExpWidth, settings.screenExpHeight); }
+            set { SettingsSaved = false; settings.screenExpWidth = value.x; settings.screenExpHeight = value.y; }
+        }
+        //texts
+        public Dictionary<string,string> Texts;
         private Scenario Mission;
         public string MissionName { get
             {
@@ -133,11 +147,109 @@ namespace PracticeProject
                 else return "Eliminate all enemies!";
             }
         }
-        private void Start()
+        private void OnEnable()
         {
+            LoadSettings();
+            //Debug.Log("Global - OnEnable");
+            LoadTexts();
+            //text_0 = Texts["string2_key"];
             //Debug.Log("GlobalController started");
             Mission = FindObjectOfType<Scenario>();
         }
+        public void SaveSettings()
+        {
+            XmlSerializer formatter = new XmlSerializer(typeof(SerializeSettings));
+            // получаем поток, куда будем записывать сериализованный объект
+            using (FileStream fs = new FileStream(Application.streamingAssetsPath + "\\settings.dat", FileMode.OpenOrCreate))
+            {
+                formatter.Serialize(fs, settings);
+            }
+            SettingsSaved = true;
+        }
+        public void SetDefault()
+        {
+            settings = new SerializeSettings();
+            settings.localisation = Languages.English;
+            settings.musicLevel = 100;
+            settings.soundLevel = 100;
+            SaveSettings();
+        }
+        public void LoadSettings()
+        {
+            string path = Application.streamingAssetsPath + "\\settings.dat";
+            // передаем в конструктор тип класса
+            XmlSerializer formatter = new XmlSerializer(typeof(SerializeSettings));
+            // десериализация
+            try
+            {
+                FileStream fs = new FileStream(path, FileMode.Open);
+                settings = (SerializeSettings)formatter.Deserialize(fs);
+            }
+            catch (FileNotFoundException)
+            {
+                SetDefault();
+            }
+            SettingsSaved = true;
+        }
+
+        private void Start()
+        {
+
+        }
+        private void SaveText()
+        {
+            SerializeData<string, string> serialeze = new SerializeData<string, string>();
+            //Texts.lang = Languages.English;
+            serialeze.Data = new Dictionary<string, string>();
+            serialeze.Data.Add("Pause", "Pause_value");
+            serialeze.Data.Add("string2_key", "string2_value");
+            serialeze.Data.Add("string3_key", "string3_value");
+            serialeze.OnBeforeSerialize();
+            // передаем в конструктор тип класса
+            XmlSerializer formatter = new XmlSerializer(typeof(SerializeData<string,string>));
+            // получаем поток, куда будем записывать сериализованный объект
+            using (FileStream fs = new FileStream(Application.streamingAssetsPath + "\\temp.xml", FileMode.OpenOrCreate))
+            {
+                formatter.Serialize(fs, serialeze);
+                //Debug.Log("Объект сериализован");
+            }
+        }
+        public void LoadTexts()
+        {
+            string path = Application.streamingAssetsPath + "\\local";
+            switch (Localisation)
+            {
+                case Languages.English:
+                    {
+                        path += "\\eng\\base_eng.xml";
+                        break;
+                    }
+                case Languages.Russian:
+                    {
+                        path += "\\rus\\base_rus.xml";
+                        break;
+                    }
+                case Languages.temp:
+                    {
+                        path += "\\temp.xml";
+                        break;
+                    }
+            }
+
+            //SaveText();//debug only
+            //SerializeData<string, string> textsSer = new SerializeData<string, string>();
+            // передаем в конструктор тип класса
+            XmlSerializer formatter = new XmlSerializer(typeof(SerializeData<string, string>));
+            // десериализация
+            Debug.Log("open - " + path);
+            FileStream fs = new FileStream(path, FileMode.Open);
+            SerializeData<string, string> serialeze = (SerializeData<string, string>)formatter.Deserialize(fs);
+            serialeze.OnAfterDeserialize();
+            Debug.Log(serialeze.ToString());
+            Texts = new Dictionary<string, string>();
+            Texts = serialeze.Data;
+        }
+
         public void Update()
 		{
             if (randomPoolBackCoount < 0)

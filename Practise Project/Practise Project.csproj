@@ -85,6 +85,7 @@
     <Compile Include="Assets\GUI\Selection\Script\UnitSelectionComponent.cs" />
     <Compile Include="Assets\GUI\Selection\Script\Utils.cs" />
     <Compile Include="Assets\GUI\UIUtility.cs" />
+    <Compile Include="Assets\Levels\SerializeData.cs" />
     <Compile Include="Assets\Scripts\Base.cs" />
     <Compile Include="Assets\Scripts\CameraMovementScript.cs" />
     <Compile Include="Assets\Scripts\Explosion.cs" />
@@ -132,6 +133,14 @@
     <None Include="Assets\GUI\Selection\Projector\ProjectorAdditiveTint.shader" />
     <None Include="Assets\GUI\Selection\ProjectorAdditiveTint.shader" />
     <None Include="Assets\SpaceD\readme.txt" />
+    <None Include="Assets\StreamingAssets\local\eng\base_eng.xml" />
+    <None Include="Assets\StreamingAssets\local\eng\eng.xml" />
+    <None Include="Assets\StreamingAssets\local\eng\mission1_brief_eng.xml" />
+    <None Include="Assets\StreamingAssets\local\rus\base_rus.xml" />
+    <None Include="Assets\StreamingAssets\local\rus\mission1_brief_rus.xml" />
+    <None Include="Assets\StreamingAssets\local\rus\rus.xml" />
+    <None Include="Assets\StreamingAssets\local\temp.xml" />
+    <None Include="Assets\mission1.txt" />
     <None Include="Assets\read me.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

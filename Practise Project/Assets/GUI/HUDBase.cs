@@ -123,13 +123,13 @@ namespace PracticeProject
         }
         void DrawVictoryQW(int windowID)
         {
-            UIUtil.WindowTitle(Windows[windowID], "Good job!");
+            UIUtil.WindowTitle(Windows[windowID], Global.Texts["Good job!"]);
             //UIUtil.Label(new Rect(50, 10, 180, 43), "Running in fear?");
-            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX + 10, 100, 180, 50), "Next mission"))
+            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX + 10, 100, 180, 50), Global.Texts["Next mission"]))
             {
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
             }
-            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - 190, 100, 180, 50), "Main menu"))
+            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - 190, 100, 180, 50), Global.Texts["Main menu"]))
             {
                 SceneManager.LoadScene(0);
             }
@@ -142,34 +142,34 @@ namespace PracticeProject
         }
         void DrawDefeatQW(int windowID)
         {
-            UIUtil.WindowTitle(Windows[windowID], "You lose!");
+            UIUtil.WindowTitle(Windows[windowID], Global.Texts["You lose!"]);
             //UIUtil.Label(new Rect(50, 10, 180, 43), "Running in fear?");
-            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX + 10, 100, 180, 50), "Restart"))
+            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX + 10, 100, 180, 50), Global.Texts["Restart"]))
             {
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
             }
-            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - 190, 100, 180, 50), "Main menu"))
+            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - 190, 100, 180, 50), Global.Texts["Main menu"]))
             {
                 SceneManager.LoadScene(0);
             }
         }
         private void DrawPauseW(int windowID)
         {
-            UIUtil.WindowTitle(Windows[windowID], "Pause");
+            UIUtil.WindowTitle(Windows[windowID], Global.Texts["Pause"]);
             //GUI.color.a = window.UIAlpha;
-            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - 90, 100, 180, 50), "Restart"))
+            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - 100, 100, 200, 50), Global.Texts["Restart"]))
             {
                 CurWin = PauseWindow.Restart;
             }
-            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - 90, 150, 180, 50), "Options"))
+            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - 100, 150, 200, 50), Global.Texts["Options"]))
             {
                 CurWin = PauseWindow.Options;
             }
-            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - 90, 200, 180, 50), "Briefing"))
+            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - 100, 200, 200, 50), Global.Texts["Briefing"]))
             {
                 CurWin = PauseWindow.About;
             }
-            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - 90, 250, 180, 50), "Exit mission"))
+            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - 100, 250, 200, 50), Global.Texts["Exit mission"]))
             {
                 CurWin = PauseWindow.Quit;
             }
@@ -184,9 +184,9 @@ namespace PracticeProject
                 if (UIUtil.Button(new Rect(pauseButtonBoxBorder.x, pauseButtonBoxBorder.y,
                     pauseButtonBoxSize.x - pauseButtonBoxBorder.x - pauseButtonBoxBorder.z,  //width
                     pauseButtonBoxSize.y - pauseButtonBoxBorder.y - pauseButtonBoxBorder.w), //height
-                    "Pause"))
+                    Global.Texts["Pause"]))
                 {
-                    Debug.Log("Pause");
+                    //Debug.Log("Pause");
                     Stop();
                 }
             }
@@ -195,9 +195,9 @@ namespace PracticeProject
                 if (UIUtil.Button(new Rect(pauseButtonBoxBorder.x, pauseButtonBoxBorder.y,
                     pauseButtonBoxSize.x - pauseButtonBoxBorder.x - pauseButtonBoxBorder.z,  //width
                     pauseButtonBoxSize.y - pauseButtonBoxBorder.y - pauseButtonBoxBorder.w), //height
-                    "Continue"))
+                    Global.Texts["Continue"]))
                 {
-                    Debug.Log("Continue");
+                    //Debug.Log("Continue");
                     Continue();
                 }
             }
@@ -219,20 +219,36 @@ namespace PracticeProject
 
         void DrawOptionsW(int windowID)
         {
-            UIUtil.WindowTitle(Windows[windowID], "Options");
-            //UIUtil.Label(new Rect(50, 10, 180, 43), "Настройки Игры");
-            //if (UIUtil.Button(new Rect(Windows[windowID].CenterX - 90, 100, 180, 50), "Игра"))
-            //{
-            //}
-            //if (UIUtil.Button(new Rect(Windows[windowID].CenterX - 90, 150, 180, 50), "Аудио"))
-            //{
-            //}
-            //if (UIUtil.Button(new Rect(Windows[windowID].CenterX - 90, 200, 180, 50), "Видео"))
-            //{
-            //}
-            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - 90, Windows[windowID].Bottom - 100, 180, 50), "Back"))
+            float fBuffer;
+            UIUtil.WindowTitle(Windows[windowID], Global.Texts["Options"]);
+
+            GUI.BeginGroup(new Rect(Windows[windowID].CenterX - 170, 100, 340, 55));
+            UIUtil.Label(new Rect(120, 0, 100, 20), Global.Texts["Sound"]);
+            fBuffer = GUI.HorizontalSlider(new Rect(0, 40, 340, 13), Global.SoundLevel, 0.0f, 0.2f);
+            if (Global.SoundLevel != fBuffer)
+                Global.SoundLevel = fBuffer;
+            GUI.EndGroup();
+
+            GUI.BeginGroup(new Rect(Windows[windowID].CenterX - 170, 165, 340, 55));
+            UIUtil.Label(new Rect(120, 0, 100, 20), Global.Texts["Music"]);
+            fBuffer = GUI.HorizontalSlider(new Rect(0, 40, 340, 13), Global.MusicLevel, 0.0f, 0.2f);
+            if (Global.MusicLevel != fBuffer)
+                Global.MusicLevel = fBuffer;
+            GUI.EndGroup();
+
+            if (Global.SettingsSaved)
             {
-                CurWin = PauseWindow.Main;
+                if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - UIUtil.Scaled(100), Windows[windowID].Bottom - 100, UIUtil.Scaled(200), 50), Global.Texts["Back"]))
+                {
+                    CurWin = PauseWindow.Main;
+                }
+            }
+            else
+            {
+                if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - UIUtil.Scaled(100), Windows[windowID].Bottom - 100, UIUtil.Scaled(200), 50), Global.Texts["Save"]))
+                {
+                    Global.SaveSettings();
+                }
             }
         }
         void DrawAboutW(int windowID)
@@ -240,10 +256,10 @@ namespace PracticeProject
             UIUtil.WindowTitle(Windows[windowID], Global.MissionName);
             Vector2 W6x4 = UIUtil.GetWindow(6, 4);
             GUI.BeginGroup(new Rect(new Vector2(Windows[windowID].CenterX - (W6x4.x / 2), 100), W6x4), GUI.skin.GetStyle("textContainer"));
-            UIUtil.TextContainerTitle(new Rect(27, 10, UIUtil.Scaled(220), 20), "Targets");
+            UIUtil.TextContainerTitle(new Rect(27, 10, UIUtil.Scaled(220), 20), Global.Texts["Targets"]);
             UIUtil.TextContainerText(new Rect(27, 40, UIUtil.Scaled(546), 60), Global.MissionBrief);
             GUI.EndGroup();
-            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - UIUtil.Scaled(90), Windows[windowID].Bottom - 100, UIUtil.Scaled(180), 50), "Back"))
+            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - UIUtil.Scaled(90), Windows[windowID].Bottom - 100, UIUtil.Scaled(180), 50), Global.Texts["Back"]))
             {
                 CurWin = PauseWindow.Main;
             }
@@ -253,10 +269,10 @@ namespace PracticeProject
             UIUtil.WindowTitle(Windows[windowID], Global.MissionName);
             Vector2 W6x4 = UIUtil.GetWindow(6, 4);
             GUI.BeginGroup(new Rect(new Vector2(Windows[windowID].CenterX - (W6x4.x / 2), 100), W6x4), GUI.skin.GetStyle("textContainer"));
-            UIUtil.TextContainerTitle(new Rect(27, 10, UIUtil.Scaled(220), 20), "Targets");
+            UIUtil.TextContainerTitle(new Rect(27, 10, UIUtil.Scaled(220), 20), Global.Texts["Targets"]);
             UIUtil.TextContainerText(new Rect(27, 40, UIUtil.Scaled(546), 60), Global.MissionBrief);
             GUI.EndGroup();
-            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - UIUtil.Scaled(90), Windows[windowID].Bottom - 100, UIUtil.Scaled(180), 50), "Start"))
+            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - UIUtil.Scaled(90), Windows[windowID].Bottom - 100, UIUtil.Scaled(180), 50), Global.Texts["Start"]))
             {
                 CurWin = PauseWindow.Main;
                 Continue();
@@ -274,7 +290,7 @@ namespace PracticeProject
             //{
             //    CurWin = PauseWindow.Main;
             //}
-            int ansver = Question(windowID, "Restart mission?", "Do you think you'll do better from the beginning?", "Yes", "No");
+            int ansver = Question(windowID, Global.Texts["Restart_question"], Global.Texts["Restart_discription"], Global.Texts["Yes"], Global.Texts["No"]);
             if (ansver == 1)
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
             else if (ansver == -1)
@@ -292,7 +308,7 @@ namespace PracticeProject
             //{
             //    CurWin = PauseWindow.Main;
             //}
-            int ansver = Question(windowID, "Are you deserting?", "Another time, you'll have to start the mission from the beginning.", "Yes", "No");
+            int ansver = Question(windowID, Global.Texts["ExitMission_question"], Global.Texts["ExitMission_discription"], Global.Texts["Yes"], Global.Texts["No"]);
             if (ansver == 1)
                 SceneManager.LoadScene(0);
             else if (ansver == -1)

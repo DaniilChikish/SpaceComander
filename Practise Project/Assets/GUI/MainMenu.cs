@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -13,9 +14,11 @@ namespace PracticeProject
         private MenuWindow CurWin;
         UIWindowInfo[] Windows;
         private Vector2 scrollAboutPosition = Vector2.zero;
-
+        GlobalController Global;
+        bool langChanged;
         void Start()
         {
+            Global = FindObjectOfType<GlobalController>();
             Time.timeScale = 1;
             CurWin = MenuWindow.Main;
             Windows = new UIWindowInfo[5];
@@ -73,99 +76,125 @@ namespace PracticeProject
         {
             UIUtil.WindowTitle(Windows[windowID], "Space Comander");
             //GUI.color.a = window.UIAlpha;
-            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - 90, 100, 180, 50), "Play"))
+            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - 100, 100, 200, 50), Global.Texts["Play"]))
             {
                 CurWin = MenuWindow.Levels;
             }
-            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - 90, 150, 180, 50), "Options"))
+            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - 100, 150, 200, 50), Global.Texts["Options"]))
             {
+                langChanged = false;
                 CurWin = MenuWindow.Options;
             }
-            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - 90, 200, 180, 50), "About game"))
+            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - 100, 200, 200, 50), Global.Texts["About game"]))
             {
                 CurWin = MenuWindow.About;
             }
-            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - 90, 250, 180, 50), "Quit"))
+            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - 100, 250, 200, 50), Global.Texts["Quit"]))
             {
                 CurWin = MenuWindow.Quit;
             }
         }
         void DrawLevelsW(int windowID)
         {
-            UIUtil.WindowTitle(Windows[windowID], "Start level");
+            UIUtil.WindowTitle(Windows[windowID], Global.Texts["Start level"]);
             //UIUtil.Label(new Rect(50, 10, 180, 43), "Выберите уровень");
-            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - 90, 100, 180, 50), "Level 1"))
+            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - 100, 100, 200, 50), Global.Texts["Level"]+" 1"))
             {
-                Debug.Log("Уровень 1 загружен");
-                //Application.LoadLevel(1);
                 SceneManager.LoadScene(1);
             }
-            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - 90, 150, 180, 50), "Level 2"))
+            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - 100, 150, 200, 50), Global.Texts["Level"] + " 2"))
             {
-                Debug.Log("Уровень 2 загружен");
                 //Application.LoadLevel(2);
             }
-            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - 90, 200, 180, 50), "Level 3"))
+            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - 100, 200, 200, 50), Global.Texts["Level"] + " 3"))
             {
-                Debug.Log("Уровень 3 загружен");
                 //Application.LoadLevel(3);
             }
-            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - 90, 250, 180, 50), "Back"))
+            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - 100, 250, 200, 50), Global.Texts["Back"]))
             {
                 CurWin = MenuWindow.Main;
             }
         }
         void DrawOptionsW(int windowID)
         {
-            UIUtil.WindowTitle(Windows[windowID], "Options");
-            //UIUtil.Label(new Rect(50, 10, 180, 43), "Настройки Игры");
-            //if (UIUtil.Button(new Rect(Windows[windowID].CenterX - 90, 100, 180, 50), "Игра"))
-            //{
-            //}
-            //if (UIUtil.Button(new Rect(Windows[windowID].CenterX - 90, 150, 180, 50), "Аудио"))
-            //{
-            //}
-            //if (UIUtil.Button(new Rect(Windows[windowID].CenterX - 90, 200, 180, 50), "Видео"))
-            //{
-            //}
-            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - UIUtil.Scaled(90), Windows[windowID].Bottom - 100, UIUtil.Scaled(180), 50), "Back"))
+            float fBuffer;
+            UIUtil.WindowTitle(Windows[windowID], Global.Texts["Options"]);
+
+            GUI.BeginGroup(new Rect(Windows[windowID].CenterX - 170, 100, 340, 55));
+            UIUtil.Label(new Rect(120, 0, 100, 20), Global.Texts["Sound"]);
+            fBuffer = GUI.HorizontalSlider(new Rect(0, 40, 340, 13), Global.SoundLevel, 0.0f, 0.2f);
+            if (Global.SoundLevel != fBuffer)
+                Global.SoundLevel = fBuffer;
+            GUI.EndGroup();
+
+            GUI.BeginGroup(new Rect(Windows[windowID].CenterX - 170, 165, 340, 55));
+            UIUtil.Label(new Rect(120, 0, 100, 20), Global.Texts["Music"]);
+            fBuffer = GUI.HorizontalSlider(new Rect(0, 40, 340, 13), Global.MusicLevel, 0.0f, 0.2f);
+            if (Global.MusicLevel != fBuffer)
+                Global.MusicLevel = fBuffer;
+            GUI.EndGroup();
+
+            string[] radios = new string[2];
+            radios[0] = "English";
+            radios[1] = "Русский";
+            int radioSelected = (int)Global.Localisation;
+            GUI.BeginGroup(new Rect(77, 380, 100, 110));
+            UIUtil.Label(new Rect(0, 0, 100, 20), Global.Texts["Language"]);
+            radioSelected = UIUtil.ToggleList(new Rect(0, 40, 100, 74), radioSelected, radios);
+            GUI.EndGroup();
+            if (radioSelected != (int)Global.Localisation)
             {
-                CurWin = MenuWindow.Main;
+                Global.Localisation = (Languages)radioSelected;
+                langChanged = true;
+            }
+
+            if (Global.SettingsSaved)
+            {
+                if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - UIUtil.Scaled(100), Windows[windowID].Bottom - 100, UIUtil.Scaled(200), 50), Global.Texts["Back"]))
+                {
+                    CurWin = MenuWindow.Main;
+                    if (langChanged)
+                        Global.LoadTexts();
+                }
+            }
+            else
+            {
+                if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - UIUtil.Scaled(100), Windows[windowID].Bottom - 100, UIUtil.Scaled(200), 50), Global.Texts["Save"]))
+                {
+                    Global.SaveSettings();
+                }
             }
         }
         void DrawAboutW(int windowID)
         {
-            UIUtil.WindowTitle(Windows[windowID], "About game");
+            UIUtil.WindowTitle(Windows[windowID], Global.Texts["About game"]);
             GUI.BeginGroup(new Rect(Windows[windowID].CenterX - UIUtil.Scaled(140), 100, UIUtil.Scaled(280), 150), GUI.skin.GetStyle("textContainer"));
-            UIUtil.TextContainerTitle(new Rect(27, 10, UIUtil.Scaled(220), 20), "Develop");
-            UIUtil.TextContainerText(new Rect(27, 40, UIUtil.Scaled(220), 60), "Designer - Jogo Deus;\r\nScripting - Jogo Deus;\r\nModeling - Jogo Deus;\r\nTexturing - Open source;\r\nMusic - Open source.");
+            UIUtil.TextContainerTitle(new Rect(27, 10, UIUtil.Scaled(220), 20), Global.Texts["Development"]);
+            UIUtil.TextContainerText(new Rect(27, 40, UIUtil.Scaled(220), 60), Global.Texts["Develop_content"]);
             GUI.EndGroup();
             Rect viewRect = new Rect(0, 0, UIUtil.Scaled(546), 600);
             scrollAboutPosition = GUI.BeginScrollView(new Rect(Windows[windowID].CenterX - UIUtil.Scaled(300), 260, UIUtil.Scaled(600), 230), scrollAboutPosition, viewRect);
-            UIUtil.TextContainerTitle(new Rect(27, 10, UIUtil.Scaled(220), 20), "Story");
-            UIUtil.TextContainerText(new Rect(27, 40, viewRect.width, viewRect.height), "   Year 2406'.\r\n" +
-"In deep space beyond the boundaries of the jurisdiction of the galactic government the struggle of conglomerates for resource - rich planets reaches astronomical proportions." +
-"Their interests are defended by huge space fleets of mercenaries." +
-"The object of the dispute was the planet Glies-876-d. It is' a harsh and dangerous world unsuitable for life but hiding endless minerals in it'.");
+            UIUtil.TextContainerTitle(new Rect(27, 10, UIUtil.Scaled(220), 20), Global.Texts["Story"]);
+            UIUtil.TextContainerText(new Rect(27, 40, viewRect.width, viewRect.height), Global.Texts["Story_content"]);
             GUI.EndGroup();
-            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX + 110, Windows[windowID].Bottom - 100, 200, 50), "Developer page"))
+            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX + 130, Windows[windowID].Bottom - 100, 230, 50), Global.Texts["Developer page"]))
             {
                 Application.OpenURL("https://vk.com/daniil.chikish");
             }
-            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - 90, Windows[windowID].Bottom - 100, 180, 50), "Back"))
+            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - 100, Windows[windowID].Bottom - 100, 200, 50), Global.Texts["Back"]))
             {
                 CurWin = MenuWindow.Main;
             }
         }
         void DrawQuitW(int windowID)
         {
-            UIUtil.WindowTitle(Windows[windowID], "Running in fear?");
+            UIUtil.WindowTitle(Windows[windowID], Global.Texts["Quit_question"]);
             //UIUtil.Label(new Rect(50, 10, 180, 43), "Running in fear?");
-            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX + UIUtil.Scaled(10), 100, UIUtil.Scaled(180), 50), "Yes"))
+            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX + UIUtil.Scaled(10), 100, UIUtil.Scaled(180), 50), Global.Texts["Yes"]))
             {
                 Application.Quit();
             }
-            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - UIUtil.Scaled(190), 100, UIUtil.Scaled(180), 50), "No"))
+            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - UIUtil.Scaled(190), 100, UIUtil.Scaled(180), 50), Global.Texts["No"]))
             {
                 CurWin = MenuWindow.Main;
             }
