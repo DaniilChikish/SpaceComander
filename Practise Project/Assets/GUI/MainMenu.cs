@@ -104,7 +104,7 @@ namespace PracticeProject
             }
             if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - 100, 150, 200, 50), Global.Texts["Level"] + " 2"))
             {
-                //Application.LoadLevel(2);
+                SceneManager.LoadScene(2);
             }
             if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - 100, 200, 200, 50), Global.Texts["Level"] + " 3"))
             {

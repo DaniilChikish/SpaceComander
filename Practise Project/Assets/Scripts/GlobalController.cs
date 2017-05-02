@@ -63,7 +63,7 @@ namespace PracticeProject
         void InstantCool();
         bool Fire(GameObject target);
     }
-    public enum ShellType { Solid, SolidAP, Subcaliber, HightExplosive, Camorous, CamorousAP, Uranium, Сumulative, Railgun, SolidBig, CamorousBig, SubcaliberBig}
+    public enum ShellType { Solid, SolidAP, Subcaliber, HightExplosive, Camorous, CamorousAP, Uranium, Сumulative, Railgun, SolidBig, CamorousBig, SubcaliberBig, SolidMedium, SubcaliberMedium }
     public enum ShellLineType { ArmorPenetration, ShildOwerheat, QuickShell, Explosive, Universal}
     public interface IShell
     {
@@ -306,6 +306,8 @@ namespace PracticeProject
         protected float speed; //set in child
         public float Health { set { armor.hitpoints = value; } get { return armor.hitpoints; } }
         public float MaxHealth { get { return armor.maxHitpoints; } }
+        public bool ShieldOwerheat { get { return shield.isOwerheat; } }
+        public float ShieldMaxPower{ set { shield.maxCampacity = value; } get { return shield.maxCampacity; } }
         public float ShieldRecharging { set { shield.recharging = value; } get { return shield.recharging; } }
         public float RadarRange { set { radarRange = value; } get { return radarRange; } }
         public float Speed { set { speed = value; } get { return speed; } }
@@ -1527,6 +1529,81 @@ namespace PracticeProject
                 return -1;
             else return 1;
         }
+        protected int FigtherSortEnemys(IUnit x, IUnit y)
+        {
+            int xPriority;
+            int yPriority;
+            switch (x.Type)
+            {
+                case UnitClass.Command: //высший приоритет - командир
+                    {
+                        xPriority = 20;
+                        break;
+                    }
+                case UnitClass.Bomber: //жертва
+                    {
+                        xPriority = 10;
+                        break;
+                    }
+                case UnitClass.Figther: //паритет
+                    {
+                        xPriority = 5;
+                        break;
+                    }
+                case UnitClass.Guard_Corvette: //хищник
+                    {
+                        xPriority = -5;
+                        break;
+                    }
+                default:
+                    {
+                        xPriority = 0;
+                        break;
+                    }
+            }
+            switch (y.Type)
+            {
+                case UnitClass.Command: //высший приоритет - командир
+                    {
+                        yPriority = 20;
+                        break;
+                    }
+                case UnitClass.Bomber: //жертва
+                    {
+                        yPriority = 10;
+                        break;
+                    }
+                case UnitClass.Figther: //паритет
+                    {
+                        yPriority = 5;
+                        break;
+                    }
+                case UnitClass.Guard_Corvette: //хищник
+                    {
+                        yPriority = -5;
+                        break;
+                    }
+                default:
+                    {
+                        yPriority = 0;
+                        break;
+                    }
+            }
+            float xDictance = Vector3.Distance(this.transform.position, x.ObjectTransform.position);
+            float yDistance = Vector3.Distance(this.transform.position, y.ObjectTransform.position);
+            if ((xDictance - yDistance) > -100 && (xDictance - yDistance) < 100)
+            { } //приоритет не меняется
+            else
+            {
+                if (xDictance > yDistance)
+                    yPriority += 5;
+                else
+                    xPriority += 5;
+            }
+            if (xPriority > yPriority)
+                return -1;
+            else return 1;
+        }
         protected int BomberSortEnemys(IUnit x, IUnit y)
         {
             int xPriority;
@@ -1964,8 +2041,8 @@ namespace PracticeProject
                 {
                     weapons[slot][i].InstantCool();
                     weapons[slot][i].Fire(targets[j].gameObject);
-                    j++;
-                    if (j >= targets.Length) j = 0;
+                    if (j >= targets.Length - 1) j = 0;
+                    else j++;
                 }
                 return true;
             }

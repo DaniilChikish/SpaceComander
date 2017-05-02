@@ -39,6 +39,7 @@
     <string>Story_content</string>
     <string>Developer page</string>
     <string>Mision1_name</string>
+    <string>Mision2_name</string>
   </keys>
   <values>
     <string>Да</string>
@@ -63,7 +64,7 @@
     <string>Цели</string>
     <string>Убегаешь?</string>
     <string>Перезапустить</string>
-    <string>Следующая миссия</string>
+    <string>Дальше</string>
     <string>Главное меню</string>
     <string>Хорошо сработано!</string>
     <string>Слабак!</string>
@@ -86,5 +87,6 @@
 На этот раз предметом спора стала планета Glies-876-d - суровый и опасный мир, абсолютно непригодный для жизни, но скрывающий в себе бесчисленные природные багатства.</string>
     <string>Стр. разработчика</string>
     <string>Миссия 1: "Найти и уничтожить"</string>
+    <string>Миссия 2: "Настоящий бой"</string>
   </values>
 </SerializeDataOfStringString>

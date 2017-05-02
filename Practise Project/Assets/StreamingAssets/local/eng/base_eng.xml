@@ -39,6 +39,7 @@
     <string>Story_content</string>
     <string>Developer page</string>
     <string>Mision1_name</string>
+    <string>Mision2_name</string>
   </keys>
   <values>
     <string>Yes</string>
@@ -86,5 +87,6 @@ Their interests are defended by huge space fleets of mercenaries.
 The object of the dispute was the planet Glies-876-d. It is' a harsh and dangerous world unsuitable for life but hiding endless minerals in it'.</string>
     <string>Developer page</string>
     <string>Mission 1: "Find and destroy"</string>
+    <string>Mission 2: "Real battle"</string>
   </values>
 </SerializeDataOfStringString>

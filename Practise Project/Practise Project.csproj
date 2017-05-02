@@ -13,13 +13,11 @@
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Unity Subset v3.5</TargetFrameworkProfile>
-    <CompilerResponseFile>
-    </CompilerResponseFile>
+    <CompilerResponseFile></CompilerResponseFile>
     <UnityProjectType>Game:1</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows:5</UnityBuildTarget>
     <UnityVersion>5.5.1f1</UnityVersion>
-    <RootNamespace>
-    </RootNamespace>
+    <RootNamespace></RootNamespace>
     <LangVersion Condition=" '$(VisualStudioVersion)' != '10.0' ">4</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -85,14 +83,15 @@
     <Compile Include="Assets\GUI\Selection\Script\UnitSelectionComponent.cs" />
     <Compile Include="Assets\GUI\Selection\Script\Utils.cs" />
     <Compile Include="Assets\GUI\UIUtility.cs" />
-    <Compile Include="Assets\Levels\SerializeData.cs" />
     <Compile Include="Assets\Scripts\Base.cs" />
     <Compile Include="Assets\Scripts\CameraMovementScript.cs" />
     <Compile Include="Assets\Scripts\Explosion.cs" />
     <Compile Include="Assets\Scripts\GlobalController.cs" />
     <Compile Include="Assets\Scripts\RepairDock.cs" />
     <Compile Include="Assets\Scripts\Scenarios\Mission1.cs" />
+    <Compile Include="Assets\Scripts\Scenarios\Mission2.cs" />
     <Compile Include="Assets\Scripts\Scenarios\Scenario.cs" />
+    <Compile Include="Assets\Scripts\SerializeData.cs" />
     <Compile Include="Assets\Scripts\TerraCell.cs" />
     <Compile Include="Assets\Scripts\Units\Armor.cs" />
     <Compile Include="Assets\Scripts\Units\Bait.cs" />
@@ -136,8 +135,10 @@
     <None Include="Assets\StreamingAssets\local\eng\base_eng.xml" />
     <None Include="Assets\StreamingAssets\local\eng\eng.xml" />
     <None Include="Assets\StreamingAssets\local\eng\mission1_brief_eng.xml" />
+    <None Include="Assets\StreamingAssets\local\eng\mission2_brief_eng.xml" />
     <None Include="Assets\StreamingAssets\local\rus\base_rus.xml" />
     <None Include="Assets\StreamingAssets\local\rus\mission1_brief_rus.xml" />
+    <None Include="Assets\StreamingAssets\local\rus\mission2_brief_rus.xml" />
     <None Include="Assets\StreamingAssets\local\rus\rus.xml" />
     <None Include="Assets\StreamingAssets\local\temp.xml" />
     <None Include="Assets\mission1.txt" />

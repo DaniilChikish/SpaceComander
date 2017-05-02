@@ -44,13 +44,14 @@ namespace PracticeProject
             }
             if (cooldownWarp > 0)
                 cooldownWarp -= Time.deltaTime;
+            if (cooldownRadarBooster > 0)
+                cooldownRadarBooster -= Time.deltaTime;
             if (cooldownMissileInhibitor > 0)
                 cooldownMissileInhibitor -= Time.deltaTime;
         }
         protected override bool RoleFunction()
         {
-
-            return Warp();
+            return (Warp() || RadarBooster());
         }
         protected override bool SelfDefenceFunction()
         {
@@ -165,7 +166,7 @@ namespace PracticeProject
         }
         private bool RadarBooster()
         {
-            if (cooldownRadarBooster < 0)
+            if (cooldownRadarBooster <= 0)
             {
                 this.Impacts.Add(new RadarBoosterImpact(this, 4f));
                 cooldownRadarBooster = 8;
@@ -183,7 +184,7 @@ namespace PracticeProject
         {
             if (cooldownWarp <= 0)
             {
-                cooldownWarp = 14f;
+                cooldownWarp = 15f;
                 this.Impacts.Add(new WarpImpact(this));
                 return true;
             }

@@ -21,6 +21,16 @@ namespace PracticeProject
                         this.GetComponent<Rigidbody>().AddForce(transform.forward * Speed, ForceMode.VelocityChange);
                         break;
                     }
+                case ShellType.SolidMedium:
+                    {
+                        this.speed = 133.33f;
+                        this.damage = 30f * 2;
+                        this.armorPiersing = 2f + 1.5f;
+                        this.ttl = 2f;
+                        this.GetComponent<Rigidbody>().mass = 3f * 2;
+                        this.GetComponent<Rigidbody>().AddForce(transform.forward * Speed, ForceMode.VelocityChange);
+                        break;
+                    }
                 case ShellType.SolidBig:
                     {
                         this.speed = 133.33f;
@@ -48,6 +58,16 @@ namespace PracticeProject
                         this.armorPiersing = 5f;
                         this.ttl = 2f;
                         this.GetComponent<Rigidbody>().mass = 2.25f;
+                        this.GetComponent<Rigidbody>().AddForce(transform.forward * Speed, ForceMode.VelocityChange);
+                        break;
+                    }
+                case ShellType.SubcaliberMedium:
+                    {
+                        this.speed = 177.78f;
+                        this.damage = 22f * 2;
+                        this.armorPiersing = 5f + 1.5f;
+                        this.ttl = 2f;
+                        this.GetComponent<Rigidbody>().mass = 2.25f * 2;
                         this.GetComponent<Rigidbody>().AddForce(transform.forward * Speed, ForceMode.VelocityChange);
                         break;
                     }

@@ -9,7 +9,7 @@ namespace PracticeProject
         public float maxCampacity;
         public float force;
         public float recharging;
-        public bool shildOwerheat;
+        public bool isOwerheat;
         public float cooldownChield;
         public float firstBlinker;
         public float secondBlinker;
@@ -29,7 +29,7 @@ namespace PracticeProject
         // Update is called once per frame
         void Update()
         {
-            if (force < 0 && !shildOwerheat)
+            if (force < 0 && !isOwerheat)
                 Owerheat();
             else if (cooldownChield <= 0 && secondBlinker <= 0 && force < maxCampacity)
             {
@@ -37,7 +37,7 @@ namespace PracticeProject
             }
             if (cooldownChield > 0)
                 cooldownChield -= Time.deltaTime;
-            if (!shildOwerheat)
+            if (!isOwerheat)
             {
                 if (firstBlinker <= 0)
                     firstFieldColl.enabled = true;
@@ -82,7 +82,7 @@ namespace PracticeProject
         protected void OnTriggerStay(Collider collision)
         {
 
-            if (!shildOwerheat)
+            if (!isOwerheat)
             {
                 switch (collision.gameObject.tag)
                 {
@@ -126,7 +126,7 @@ namespace PracticeProject
         }
         public void Owerheat()
         {
-            shildOwerheat = true;
+            isOwerheat = true;
             firstFieldRend.enabled = false;
             firstFieldColl.enabled = false;
             shildCollaps.Play();
@@ -135,7 +135,7 @@ namespace PracticeProject
         }
         public void Reload()
         {
-            shildOwerheat = false;
+            isOwerheat = false;
             firstFieldRend.enabled = true;
             firstFieldColl.enabled = true;
         }

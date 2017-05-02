@@ -24,11 +24,18 @@ namespace PracticeProject
                         averageRoundSpeed = 133.33f;
                         break;
                     }
-                case ShellType.SolidBig:
+                case ShellType.SolidMedium:
                     {
                         averageRoundSpeed = 133.33f;
                         coolingTime = coolingTime * 5f;
                         range = range * 2f;
+                        break;
+                    }
+                case ShellType.SolidBig:
+                    {
+                        averageRoundSpeed = 133.33f;
+                        coolingTime = coolingTime * 2f;
+                        range = range * 1.5f;
                         break;
                     }
                 case ShellType.SolidAP:
@@ -39,6 +46,13 @@ namespace PracticeProject
                 case ShellType.Subcaliber:
                     {
                         this.averageRoundSpeed = 177.78f;
+                        break;
+                    }
+                case ShellType.SubcaliberMedium:
+                    {
+                        this.averageRoundSpeed = 177.78f;
+                        coolingTime = coolingTime * 2f;
+                        range = range * 1.5f;
                         break;
                     }
                 case ShellType.SubcaliberBig:

@@ -73,14 +73,14 @@ namespace PracticeProject
                     cooldovnRocketVolley = 30;
                     return true;
                 }
-                else
+                else if (enemys.Count > 0)
                 {
                     Gunner.Volley(enemys.ToArray(), 0);
                     cooldovnRocketVolley = 40;
                     return true;
                 }
             }
-            else return false;
+            return false;
         }
     }
 }
