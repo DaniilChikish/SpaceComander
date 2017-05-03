@@ -12,11 +12,12 @@ namespace PracticeProject
             gameObject.GetComponent<MeshRenderer>().enabled = false;
             range = 350;
             ammo = Int32.MaxValue; //Infinity
-            coolingTime = 1.5f; //30 DD, 20DpS
+            coolingTime = 2f; //30 DD, 20DpS
             cooldown = 0;
             dispersion = 0.001f;//exponential
             shildBlinkTime = 0.05f;
             averageRoundSpeed = 500;
+            PreAiming = true;
         }
         protected override void Shoot(Transform target)
         {

@@ -17,6 +17,7 @@ namespace PracticeProject
             cooldown = 0;
             dispersion = 0.05f;
             shildBlinkTime = 0.1f;
+            PreAiming = true;
             switch (AmmoType)
             {
                 case ShellType.Solid:
@@ -27,15 +28,15 @@ namespace PracticeProject
                 case ShellType.SolidMedium:
                     {
                         averageRoundSpeed = 133.33f;
-                        coolingTime = coolingTime * 5f;
-                        range = range * 2f;
+                        coolingTime = coolingTime * 2f;
+                        range = range * 1.5f;
                         break;
                     }
                 case ShellType.SolidBig:
                     {
                         averageRoundSpeed = 133.33f;
-                        coolingTime = coolingTime * 2f;
-                        range = range * 1.5f;
+                        coolingTime = coolingTime * 5f;
+                        range = range * 2f;
                         break;
                     }
                 case ShellType.SolidAP:

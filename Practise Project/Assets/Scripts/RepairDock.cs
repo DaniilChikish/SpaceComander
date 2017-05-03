@@ -32,7 +32,7 @@ namespace PracticeProject
     }
     public class FullRepairing : IImpact
     {
-        public string ImpactName { get { return "FullRepairing"; } }
+        public string Name { get { return "FullRepairing"; } }
         private float ttl;
         private float repairSpeed;
         private bool ownerMovementAiEnabledPrev;
@@ -89,7 +89,7 @@ namespace PracticeProject
                         break;
                     }
             }
-            if (owner.Impacts.Exists(x => x.ImpactName == this.ImpactName))
+            if (owner.Impacts.Exists(x => x.Name == this.Name))
                 repairSpeed = 0;
             else
             {
@@ -113,7 +113,7 @@ namespace PracticeProject
         }
         public override string ToString()
         {
-            return ImpactName;
+            return Name;
         }
     }
 }

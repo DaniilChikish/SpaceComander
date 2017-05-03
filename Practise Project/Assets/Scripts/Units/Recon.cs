@@ -9,11 +9,13 @@ namespace PracticeProject
     {
         private bool jamming;
         private bool transpond;
-        public new float Stealthness { get { if (jamming) return stealthness * 0.2f; else return stealthness; } }
+        public override float Stealthness { get { if (jamming) return stealthness * 0.2f; else return stealthness; } }
         //private float cooldownInhibitor;
         private float cooldownJammer;
         private float cooldownTransponder;
         public float cooldownMissileInhibitor;//Make private after debug;
+        private float cooldownShieldStunner;
+
         protected override void StatsUp()
         {
             type = UnitClass.Recon;
@@ -43,10 +45,12 @@ namespace PracticeProject
             {
                 transpond = false;
                 //Debug.Log("TransponderOff");
-                cooldownTransponder = 4;
+                cooldownTransponder = 30;
             }
             if (cooldownMissileInhibitor > 0)
                 cooldownMissileInhibitor -= Time.deltaTime;
+            if (cooldownShieldStunner > 0)
+                cooldownShieldStunner -= Time.deltaTime;
         }
         //AI logick
         protected override bool AttackManeuver()
@@ -80,8 +84,7 @@ namespace PracticeProject
         }
         protected override bool RoleFunction()
         {
-            RadarTransponder();
-            return false;
+            return (RadarTransponder() || ShieldStunner(CurrentTarget));
         }
         protected override bool SelfDefenceFunction()
         {
@@ -128,32 +131,43 @@ namespace PracticeProject
             {
                 //Debug.Log("TransponderOn");
                 transpond = true;
-                cooldownTransponder = 1f;
+                cooldownTransponder = 10f;
                 return true;
             }
             else return false;
         }
-        public new bool Allies(Army army)
+        private bool ShieldStunner(SpaceShip target)
+        {
+            if (cooldownShieldStunner <= 0f && target != null)
+            {
+                target.Impacts.Add(new ShildStunImpact(target, 5f));
+                cooldownShieldStunner = 15f;
+                return true;
+            }
+            return false;
+        }
+
+        public override bool Allies(Army army)
         {
             if (!transpond)
             {
                 if (army == Global.playerArmy)
                 {
                     cooldownDetected = 1;
-                    this.gameObject.transform.FindChild("MinimapPict").GetComponent<Renderer>().enabled = true;
+                    this.gameObject.transform.FindChild("MinimapPict").FindChild("EnemyMinimapPict").GetComponent<Renderer>().enabled = true;
                 }
                 return (team == army);
             }
             else
             {
-                Debug.Log("Team request replacement");
                 return true;
             }
         }
     }
     public class ShildStunImpact : IImpact
     {
-        public string ImpactName { get { return "ShildStunImpact"; } }
+        public bool Act = false;
+        public string Name { get { return "ShildStunImpact"; } }
         private float ttl;
         private SpaceShip owner;
         private float ownerShildRechargingPrev;
@@ -162,15 +176,17 @@ namespace PracticeProject
 
             this.owner = owner;
             ownerShildRechargingPrev = owner.ShieldRecharging;
-            if (owner.Impacts.Exists(x => x.ImpactName == this.ImpactName))
+            if (owner.Impacts.Exists(x => x.Name == this.Name))
                 ttl = 0;
             else
             {
-                if (owner.Impacts.Exists(x => x.ImpactName == "ShildBoosterImpact"))
+                if (owner.Impacts.Exists(x => x.Name == "ShildBoosterImpact"))
                     ttl = 0;
                 else
                 {
+                    Act = true;
                     ttl = time;
+                    owner.ShieldForce -= 25;
                     owner.ShieldRecharging = -10;
                 }
             }
@@ -183,12 +199,12 @@ namespace PracticeProject
         }
         public void CompleteImpact()
         {
-            owner.ShieldRecharging = ownerShildRechargingPrev;
+            if (Act) owner.ShieldRecharging = ownerShildRechargingPrev;
             owner.Impacts.Remove(this);
         }
         public override string ToString()
         {
-            return ImpactName;
+            return Name;
         }
     }
 }

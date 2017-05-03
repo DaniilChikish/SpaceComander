@@ -9,7 +9,7 @@ namespace PracticeProject
     public class Scout : SpaceShip
     {
         public bool jamming;//Make private after debug;
-        public new float Stealthness { get { if (jamming) return stealthness * 0.6f; else return stealthness; } }
+        public override float Stealthness { get { if (jamming) return stealthness * 0.6f; else return stealthness; } }
         //private float cooldownInhibitor;
         private float cooldownJammer; //Make private after debug;
         private float cooldownWarp;//Make private after debug;
@@ -20,7 +20,7 @@ namespace PracticeProject
         {
             type = UnitClass.Scout;
             radarRange = 500; //set in child
-            radarPover = 5;
+            radarPover = 15;
             speed = 10; //set in child
             jamming = false;
             stealthness = 0.3f; //set in child
@@ -193,7 +193,7 @@ namespace PracticeProject
     }
     public class WarpImpact : IImpact
     {
-        public string ImpactName { get { return "WarpImpact"; } }
+        public string Name { get { return "WarpImpact"; } }
         float ttl;
         SpaceShip owner;
         private float ownerSpeedPrev;
@@ -203,11 +203,11 @@ namespace PracticeProject
             this.owner = owner;
             ownerSpeedPrev = owner.Speed;
             ownerMassPrev = owner.GetComponent<Rigidbody>().mass;
-            if (owner.Impacts.Exists(x => x.ImpactName == this.ImpactName))
+            if (owner.Impacts.Exists(x => x.Name == this.Name))
                 ttl = 0;
             else
             {
-                if (owner.Impacts.Exists(x => x.ImpactName == "TrusterInhibitorImpact"))
+                if (owner.Impacts.Exists(x => x.Name == "TrusterInhibitorImpact"))
                     ttl = 0;
                 else
                 {
@@ -233,7 +233,8 @@ namespace PracticeProject
     }
     public class RadarBoosterImpact : IImpact
     {
-        public string ImpactName { get { return "RadarBoosterImpact"; } }
+        public bool Act = false;
+        public string Name { get { return "RadarBoosterImpact"; } }
         float ttl;
         SpaceShip owner;
         private float ownerRadarRangePrev;
@@ -241,14 +242,15 @@ namespace PracticeProject
         {
             this.owner = owner;
             ownerRadarRangePrev = owner.RadarRange;
-            if (owner.Impacts.Exists(x => x.ImpactName == this.ImpactName))
-                ttl = 0;
+            if (owner.Impacts.Exists(x => x.Name == this.Name))
+                return;//ttl = 0;
             else
             {
-                if (owner.Impacts.Exists(x => x.ImpactName == "RadarInhibitorImpact"))
-                    ttl = 0;
+                if (owner.Impacts.Exists(x => x.Name == "RadarInhibitorImpact"))
+                    return;//ttl = 0;
                 else
                 {
+                    Act = true;
                     ttl = time;
                     owner.RadarRange = owner.RadarRange * 2;
                 }
@@ -263,7 +265,7 @@ namespace PracticeProject
 
         public void CompleteImpact()
         {
-            owner.RadarRange = ownerRadarRangePrev;
+            if (Act) owner.RadarRange = ownerRadarRangePrev;
             owner.Impacts.Remove(this);
         }
     }

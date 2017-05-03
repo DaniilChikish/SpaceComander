@@ -15,6 +15,7 @@ namespace PracticeProject
             dispersion = 0.000001f;
             shildBlinkTime = 0.05f;
             averageRoundSpeed = 300;
+            PreAiming = true;
         }
         protected override void Shoot(Transform target)
         {

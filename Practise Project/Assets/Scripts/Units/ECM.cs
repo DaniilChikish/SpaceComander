@@ -8,7 +8,7 @@ namespace PracticeProject
     public class ECM : SpaceShip
     {
         public bool jamming;//Make private after debug;
-        public new float Stealthness { get { if (jamming) return stealthness * 0.4f; else return stealthness; } }
+        public override float Stealthness { get { if (jamming) return stealthness * 0.4f; else return stealthness; } }
         public float cooldownJammer; //Make private after debug;
         public float cooldownWeaponInhibitor;//Make private after debug;
         public float cooldownMissileInhibitor;//Make private after debug;
@@ -149,7 +149,7 @@ namespace PracticeProject
         }
         private bool WeaponInhibitor(SpaceShip target)
         {
-            if (cooldownWeaponInhibitor <= 0)
+            if (cooldownWeaponInhibitor <= 0 && target != null)
             {
                 target.Impacts.Add(new TrusterInhibitorImpact(target, 4f));
                 cooldownWeaponInhibitor = 10f;
@@ -159,7 +159,7 @@ namespace PracticeProject
         }
         private bool RadarInhibitor(SpaceShip target)
         {
-            if (cooldownRadarInhibitor <= 0)
+            if (cooldownRadarInhibitor <= 0 && target != null)
             {
                 target.Impacts.Add(new RadarInhibitorImpact(target, 8f));
                 cooldownRadarInhibitor = 8f;
@@ -170,23 +170,24 @@ namespace PracticeProject
     }
     public class TrusterInhibitorImpact : IImpact
     {
-        public string ImpactName { get { return "TrusterInhibitorImpact"; } }
+        public bool Act = false;
+        public string Name { get { return "TrusterInhibitorImpact"; } }
         private float ttl;
         private SpaceShip owner;
         private float ownerSpeedPrev;
         public TrusterInhibitorImpact(SpaceShip owner, float time)
         {
-
             this.owner = owner;
             ownerSpeedPrev = owner.Speed;
-            if (owner.Impacts.Exists(x => x.ImpactName == this.ImpactName))
+            if (owner.Impacts.Exists(x => x.Name == this.Name))
                 ttl = 0;
             else
             {
-                if (owner.Impacts.Exists(x => x.ImpactName == "WarpImpact"))
+                if (owner.Impacts.Exists(x => x.Name == "WarpImpact"))
                     ttl = 0;
                 else
                 {
+                    Act = true;
                     ttl = time;
                     owner.Speed = 0;
                 }
@@ -200,17 +201,18 @@ namespace PracticeProject
         }
         public void CompleteImpact()
         {
-            owner.Speed = ownerSpeedPrev;
+            if (Act) owner.Speed = ownerSpeedPrev;
             owner.Impacts.Remove(this);
         }
         public override string ToString()
         {
-            return ImpactName;
+            return Name;
         }
     }
     public class RadarInhibitorImpact : IImpact
     {
-        public string ImpactName { get { return "RadarInhibitorImpact"; } }
+        public bool Act = false;
+        public string Name { get { return "RadarInhibitorImpact"; } }
         float ttl;
         SpaceShip owner;
         private float ownerRadarRangePrev;
@@ -218,14 +220,15 @@ namespace PracticeProject
         {
             this.owner = owner;
             ownerRadarRangePrev = owner.RadarRange;
-            if (owner.Impacts.Exists(x => x.ImpactName == this.ImpactName))
+            if (owner.Impacts.Exists(x => x.Name == this.Name))
                 ttl = 0;
             else
             {
-                if (owner.Impacts.Exists(x => x.ImpactName == "RadarBoosterImpact"))
+                if (owner.Impacts.Exists(x => x.Name == "RadarBoosterImpact"))
                     ttl = 0;
                 else
                 {
+                    Act = true;
                     ttl = time;
                     owner.RadarRange = owner.RadarRange / 2;
                 }
@@ -240,7 +243,7 @@ namespace PracticeProject
 
         public void CompleteImpact()
         {
-            owner.RadarRange = ownerRadarRangePrev;
+            if (Act) owner.RadarRange = ownerRadarRangePrev;
             owner.Impacts.Remove(this);
         }
     }

@@ -25,7 +25,7 @@ namespace PracticeProject
                     {
                         this.speed = 133.33f;
                         this.damage = 30f * 2;
-                        this.armorPiersing = 2f + 1.5f;
+                        this.armorPiersing = 4f;
                         this.ttl = 2f;
                         this.GetComponent<Rigidbody>().mass = 3f * 2;
                         this.GetComponent<Rigidbody>().AddForce(transform.forward * Speed, ForceMode.VelocityChange);
@@ -35,7 +35,7 @@ namespace PracticeProject
                     {
                         this.speed = 133.33f;
                         this.damage = 30f * 4;
-                        this.armorPiersing = 2f + 3;
+                        this.armorPiersing = 6f;
                         this.ttl = 2f;
                         this.GetComponent<Rigidbody>().mass = 3f * 4;
                         this.GetComponent<Rigidbody>().AddForce(transform.forward * Speed, ForceMode.VelocityChange);
@@ -206,6 +206,7 @@ namespace PracticeProject
         {
             if (type == ShellType.Camorous || type == ShellType.CamorousAP || type == ShellType.Сumulative || type == ShellType.HightExplosive || type == ShellType.Uranium)
                 Explode();
+            else if (collision.gameObject.tag == "Unit" && armorPiersing - collision.gameObject.GetComponent<SpaceShip>().ShellResist > -2) Explode();
         }
 
     }

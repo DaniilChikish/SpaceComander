@@ -63,8 +63,8 @@ namespace PracticeProject
         void InstantCool();
         bool Fire(GameObject target);
     }
-    public enum ShellType { Solid, SolidAP, Subcaliber, HightExplosive, Camorous, CamorousAP, Uranium, Сumulative, Railgun, SolidBig, CamorousBig, SubcaliberBig, SolidMedium, SubcaliberMedium }
-    public enum ShellLineType { ArmorPenetration, ShildOwerheat, QuickShell, Explosive, Universal}
+    public enum ShellType { Solid, SolidMedium, SolidBig, SolidAP, Subcaliber, SubcaliberMedium, SubcaliberBig, HightExplosive, Camorous, CamorousBig, CamorousAP, Uranium, Сumulative, Railgun }
+    public enum ShellLineType { Solid, Camorus, ArmorPenetration, ShildOwerheat, QuickShell, Explosive, Universal}
     public interface IShell
     {
         float Speed { get; }
@@ -86,7 +86,7 @@ namespace PracticeProject
     public enum BlastType { UnitaryTorpedo, Missile, NukeTorpedo, SmallShip, MediumShip, Corvette, Shell, ExplosiveShell }
     public interface IImpact
     {
-        string ImpactName { get; }
+        string Name { get; }
         void ActImpact();
         void CompleteImpact();
         string ToString();
@@ -305,11 +305,14 @@ namespace PracticeProject
         protected float radarPover; // default 1
         protected float speed; //set in child
         public float Health { set { armor.hitpoints = value; } get { return armor.hitpoints; } }
+        public float ShellResist { /*set { armor.shellResist = value; }*/ get { return armor.shellResist; } }
         public float MaxHealth { get { return armor.maxHitpoints; } }
         public bool ShieldOwerheat { get { return shield.isOwerheat; } }
-        public float ShieldMaxPower{ set { shield.maxCampacity = value; } get { return shield.maxCampacity; } }
+        public float ShieldForce { set { shield.force = value; } get { return shield.force; } }
+        public float ShieldMaxCampacity{ set { shield.maxCampacity = value; } get { return shield.maxCampacity; } }
         public float ShieldRecharging { set { shield.recharging = value; } get { return shield.recharging; } }
         public float RadarRange { set { radarRange = value; } get { return radarRange; } }
+        public virtual float Stealthness { get { return stealthness; } }
         public float Speed { set { speed = value; } get { return speed; } }
         public Army Team { get { return team; } }
         public Transform ObjectTransform { get { return this.gameObject.transform; } }
@@ -319,7 +322,6 @@ namespace PracticeProject
         public bool selfDefenceModuleEnabled;  // default true
         public bool roleModuleEnabled; // default true
         protected float stealthness; //set in child
-        public float Stealthness { get { return stealthness; } }
         protected bool detected;
         public float cooldownDetected;
         public bool NeedReloading;
@@ -341,7 +343,7 @@ namespace PracticeProject
         protected SortSpaceShip AlliesSortDelegate;
         protected SquadStatus unitSquadStatus;
         protected SpaceShip[] Squad;
-
+        public string[] ImpactList;
         //base interface
         protected void Start()//_______________________Start
         {
@@ -487,6 +489,7 @@ namespace PracticeProject
                 }
             }
         }
+
         protected void DecrementBaseCounters()
         {
             synchAction -= Time.deltaTime;
@@ -512,8 +515,19 @@ namespace PracticeProject
             }
             if (Impacts.Count > 0)
             {
+                ImpactListUp();
                 for (int i = 0; i < Impacts.Count; i++)
                     Impacts[i].ActImpact();
+            }
+        }
+        protected void ImpactListUp()
+        {
+            {
+                ImpactList = new string[Impacts.Count];
+                for (int i = 0; i < Impacts.Count; i++)
+                {
+                    ImpactList[i] = Impacts[i].Name;
+                }
             }
         }
         protected abstract void DecrementCounters();
@@ -708,7 +722,6 @@ namespace PracticeProject
             {
                 if (enemys.Count > 0)
                 {
-
                     bool output;
                     if (RadarWarningResiever() > 0)
                         output = OpenFire(RetaliatoryCapture());//ответный захват
@@ -1060,26 +1073,30 @@ namespace PracticeProject
         {
             enemys.Clear();
             allies.Clear();
-            foreach (SpaceShip x in Global.unitList)
-            {
-                float distance = Vector3.Distance(this.gameObject.transform.position, x.transform.position);
-                if (distance < RadarRange)
+            foreach (SpaceShip unknown in Global.unitList)
+                if (unknown != this)
                 {
-                    SpaceShip unknown = x.GetComponent<SpaceShip>();
-                    if (!unknown.Allies(team))
+                    float distance = Vector3.Distance(this.gameObject.transform.position, unknown.transform.position);
+                    if (distance < RadarRange * radiolink)
                     {
                         float multiplicator = Mathf.Pow(((-distance + RadarRange) * 0.02f), (1f / 5f)) * ((2f / (distance + 0.1f)) + 1);
                         if (Randomizer.Uniform(0, 100, 1)[0] < unknown.Stealthness * radarPover * multiplicator * 100)
-                            enemys.Add(x);
-                    }
-                    else
-                    {
-                        if (unknown != this)
-                            if ((distance < this.RadarRange * this.radiolink) && (distance < unknown.RadarRange * unknown.radiolink))
-                                allies.Add(x);
+                            if (!unknown.Allies(team))
+                            {
+                                enemys.Add(unknown);
+                            }
+                            else
+                            {
+                                if (!allies.Contains(unknown))// if ((distance < this.RadarRange * this.radiolink) && (distance < unknown.RadarRange * unknown.radiolink))
+                                {
+                                    allies.Add(unknown);
+                                    //foreach (SpaceShip all2 in unknown.GetAllies())
+                                    //    if (!allies.Contains(all2) && all2 != this)
+                                    //        allies.Add(all2);
+                                }
+                            }
                     }
                 }
-            }
             enemys.Sort(delegate (SpaceShip x, SpaceShip y) { return EnemySortDelegate(x.GetComponent<IUnit>(), y.GetComponent<IUnit>()); });
             allies.Sort(delegate (SpaceShip x, SpaceShip y) { return AlliesSortDelegate(x.GetComponent<IUnit>(), y.GetComponent<IUnit>()); });
         }
@@ -1158,6 +1175,7 @@ namespace PracticeProject
                     shot = Gunner.ShootHim(CurrentTarget, 0);
                 }
             }
+            else targetStatus = TargetStateType.BehindABarrier;
             return shot;
         } //_________OpenFire
         protected abstract bool RoleFunction();
@@ -1199,20 +1217,25 @@ namespace PracticeProject
             List<SpaceShip> enemys = new List<SpaceShip>();
             foreach (SpaceShip x in allies)
             {
-                enemys.AddRange(x.GetScout());
+                if (x.Ping(this.transform.position))
+                    enemys.AddRange(x.GetEnemys());
             }
             return enemys;
         }
-        public SpaceShip[] GetScout()
+        public SpaceShip[] GetEnemys()
         {
             return enemys.ToArray();
         }
-        //public bool Ping(Vector3 sender)
-        //{
-        //    if (Vector3.Distance(this.gameObject.transform.position, sender) < RadarRange * radiolink)
-        //        return true;
-        //    else return false;
-        //}
+        public SpaceShip[] GetAllies()
+        {
+            return allies.ToArray();
+        }
+        public bool Ping(Vector3 sender)
+        {
+            if (Vector3.Distance(this.gameObject.transform.position, sender) < RadarRange * radiolink)
+                return true;
+            else return false;
+        }
         protected bool TargetScouting()
         {
             List<SpaceShip> scoutingenemys = RequestScout();
@@ -1230,7 +1253,8 @@ namespace PracticeProject
         }
         public void GetFireSupport(SpaceShip Target)
         {
-            CurrentTarget = Target;
+            if (Target != this)
+                CurrentTarget = Target;
         }
         //
         protected void FormSquad()
@@ -1550,7 +1574,7 @@ namespace PracticeProject
                         xPriority = 5;
                         break;
                     }
-                case UnitClass.Guard_Corvette: //хищник
+                case UnitClass.Recon: //хищник
                     {
                         xPriority = -5;
                         break;
@@ -2120,7 +2144,7 @@ namespace PracticeProject
         protected float dispersion; //dafault 0;
         protected float shildBlinkTime; //default 0.01
         protected float averageRoundSpeed; //default 1000;
-
+        protected bool PreAiming;
         public float Range { get { return range; } }
         public float RoundSpeed { get { return averageRoundSpeed; } }
         public int Ammo { get { return ammo; } }
@@ -2154,29 +2178,32 @@ namespace PracticeProject
         }
         public bool Fire(GameObject target)
         {
-            float distance;
-            float approachTime;
-            Vector3 aimPoint = target.transform.position;
-            //Debug.Log(target.GetComponent<NavMeshAgent>().velocity);
+            if (PreAiming)
+            {
+                float distance;
+                float approachTime;
+                Vector3 aimPoint = target.transform.position;
+                //Debug.Log(target.GetComponent<NavMeshAgent>().velocity);
 
-            distance = Vector3.Distance(this.gameObject.transform.position, aimPoint); //расстояние до цели
-            approachTime = distance / averageRoundSpeed;
-            Vector3 targetVelocity = target.GetComponent<NavMeshAgent>().velocity;
-            targetVelocity.y = 0; //исключаем вертикальную компоненту
-            aimPoint = target.transform.position + targetVelocity * approachTime; //первое приближение
+                distance = Vector3.Distance(this.gameObject.transform.position, aimPoint); //расстояние до цели
+                approachTime = distance / averageRoundSpeed;
+                Vector3 targetVelocity = target.GetComponent<NavMeshAgent>().velocity;
+                targetVelocity.y = 0; //исключаем вертикальную компоненту
+                aimPoint = target.transform.position + targetVelocity * approachTime; //первое приближение
 
-            distance = Vector3.Distance(this.gameObject.transform.position, aimPoint); //расстояние до точки первого приближения
-            approachTime = distance / averageRoundSpeed;
-            targetVelocity = target.GetComponent<NavMeshAgent>().velocity;
-            targetVelocity.y = 0;
-            aimPoint = target.transform.position + targetVelocity * approachTime * 1.1f; //второе приближение
+                distance = Vector3.Distance(this.gameObject.transform.position, aimPoint); //расстояние до точки первого приближения
+                approachTime = distance / averageRoundSpeed;
+                targetVelocity = target.GetComponent<NavMeshAgent>().velocity;
+                targetVelocity.y = 0;
+                aimPoint = target.transform.position + targetVelocity * approachTime * 1.1f; //второе приближение
 
-            //distance = Vector3.Distance(this.gameObject.transform.position, aimPoint);
-            //approachTime = distance / averageRoundSpeed;
-            //aimPoint = target.transform.position + target.GetComponent<NavMeshAgent>().velocity * approachTime; //третье приближение
+                //distance = Vector3.Distance(this.gameObject.transform.position, aimPoint);
+                //approachTime = distance / averageRoundSpeed;
+                //aimPoint = target.transform.position + target.GetComponent<NavMeshAgent>().velocity * approachTime; //третье приближение
 
-            Quaternion targetRotation = Quaternion.LookRotation((aimPoint - this.transform.position).normalized, new Vector3(0, 1, 0)); //донаводка
-            this.transform.rotation = Quaternion.Slerp(this.transform.rotation, targetRotation, Time.deltaTime * 10);
+                Quaternion targetRotation = Quaternion.LookRotation((aimPoint - this.transform.position).normalized, new Vector3(0, 1, 0)); //донаводка
+                this.transform.rotation = Quaternion.Slerp(this.transform.rotation, targetRotation, Time.deltaTime * 10);
+            }
             if ((ammo > 0) && (cooldown <= 0))
             {
                 //Debug.Log("Fire");

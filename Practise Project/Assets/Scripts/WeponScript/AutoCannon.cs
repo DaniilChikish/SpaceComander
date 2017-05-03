@@ -20,16 +20,39 @@ namespace PracticeProject
             dispersion = 0.08f;
             shildBlinkTime = 0.1f;
             averageRoundSpeed = 130;
-
+            PreAiming = true;
             switch (AmmoType)
             {
+                case ShellLineType.Solid:
+                    {
+                        ShellLine = new ShellType[5];
+                        ShellLine[0] = ShellType.Solid;
+                        ShellLine[1] = ShellType.Solid;
+                        ShellLine[2] = ShellType.Solid;
+                        ShellLine[3] = ShellType.Solid;
+                        ShellLine[4] = ShellType.SolidAP;
+                        averageRoundSpeed = 133.33f;
+                        break;
+                    }
+                case ShellLineType.Camorus:
+                    {
+                        ShellLine = new ShellType[5];
+                        ShellLine[0] = ShellType.Camorous;
+                        ShellLine[1] = ShellType.Camorous;
+                        ShellLine[2] = ShellType.Camorous;
+                        ShellLine[3] = ShellType.Camorous;
+                        ShellLine[4] = ShellType.CamorousAP;
+                        averageRoundSpeed = 148.15f;
+                        break;
+                    }
                 case ShellLineType.ArmorPenetration:
                     {
-                        ShellLine = new ShellType[3];
-                        ShellLine[0] = ShellType.Subcaliber;
-                        ShellLine[1] = ShellType.CamorousAP;
-                        ShellLine[2] = ShellType.SolidAP;
-                        averageRoundSpeed = 121.81f;
+                        ShellLine = new ShellType[4];
+                        ShellLine[0] = ShellType.SolidAP;
+                        ShellLine[1] = ShellType.Subcaliber;
+                        ShellLine[2] = ShellType.CamorousAP;
+                        ShellLine[3] = ShellType.SolidAP;
+                        averageRoundSpeed = 113.58f;
                         break;
                     }
                 case ShellLineType.ShildOwerheat:
@@ -46,12 +69,13 @@ namespace PracticeProject
                     }
                 case ShellLineType.QuickShell:
                     {
-                        ShellLine = new ShellType[4];
-                        ShellLine[0] = ShellType.Camorous;
-                        ShellLine[1] = ShellType.Solid;
-                        ShellLine[2] = ShellType.Camorous;
-                        ShellLine[3] = ShellType.Subcaliber;
-                        averageRoundSpeed = 151.85f;
+                        ShellLine = new ShellType[5];
+                        ShellLine[0] = ShellType.Solid;
+                        ShellLine[1] = ShellType.Camorous;
+                        ShellLine[2] = ShellType.Solid;
+                        ShellLine[3] = ShellType.Camorous;
+                        ShellLine[4] = ShellType.Subcaliber;
+                        averageRoundSpeed = 148.14f;
                         break;
                     }
                 case ShellLineType.Explosive:
@@ -68,12 +92,12 @@ namespace PracticeProject
                     {
                         ShellLine = new ShellType[6];
                         ShellLine[0] = ShellType.Solid;
-                        ShellLine[1] = ShellType.CamorousAP;
-                        ShellLine[2] = ShellType.SolidAP;
+                        ShellLine[1] = ShellType.Camorous;
+                        ShellLine[2] = ShellType.Solid;
                         ShellLine[3] = ShellType.Camorous;
-                        ShellLine[4] = ShellType.Subcaliber;
-                        ShellLine[5] = ShellType.HightExplosive;
-                        averageRoundSpeed = 124.91f;
+                        ShellLine[4] = ShellType.SolidAP;
+                        ShellLine[5] = ShellType.CamorousAP;
+                        averageRoundSpeed = 118.13f;
                         break;
                     }
             }

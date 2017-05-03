@@ -44,6 +44,7 @@ namespace PracticeProject
                             multiplicator = (Mathf.Sin((difference / 1.4f) + 0.5f) + 1f) * 0.6f;
                         else
                             multiplicator = 0.0f;
+                        if (!owner.ShieldOwerheat) multiplicator = multiplicator * 0.3f;//(1 - owner.ShieldForce / owner.ShieldMaxCampacity);
                         this.hitpoints -= collision.gameObject.GetComponent<IShell>().Damage * multiplicator;
                         break;
                     }
@@ -51,12 +52,13 @@ namespace PracticeProject
                     {
                         hitCount += 3;
                         float difference = collision.gameObject.GetComponent<IEnergy>().ArmorPiersing - energyResist;
-                        if (difference > 0.5)
+                        if (difference > 0.6)
                             multiplicator = 1f;
-                        else if (difference > -3)
+                        else if (difference > -2.8)
                             multiplicator = (Mathf.Sin((difference / 1.1f) + 1f) + 1f) * 0.5f;
                         else
                             multiplicator = 0.0f;
+                        if (!owner.ShieldOwerheat) multiplicator = multiplicator * 0.3f;
                         this.hitpoints -= collision.gameObject.GetComponent<IEnergy>().Damage * multiplicator;
                         break;
                     }

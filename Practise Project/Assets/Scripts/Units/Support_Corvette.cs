@@ -97,7 +97,7 @@ namespace PracticeProject
     }
     public class Repairing : IImpact
     {
-        public string ImpactName { get { return "Repairing"; } }
+        public string Name { get { return "Repairing"; } }
         private float ttl;
         private float repairSpeed;
         private SpaceShip owner;
@@ -174,12 +174,12 @@ namespace PracticeProject
         }
         public override string ToString()
         {
-            return ImpactName;
+            return Name;
         }
     }
     public class Reloading : IImpact
     {
-        public string ImpactName { get { return "Reloading"; } }
+        public string Name { get { return "Reloading"; } }
         private float ttl;
         private SpaceShip owner;
         public Reloading(SpaceShip owner, float time)
@@ -202,7 +202,7 @@ namespace PracticeProject
         }
         public override string ToString()
         {
-            return ImpactName;
+            return Name;
         }
     }
 }

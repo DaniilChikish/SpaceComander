@@ -15,8 +15,8 @@ namespace PracticeProject
         protected void Start()       {        }
         public void StatUp(EnergyType type)
         {
-            damage = 20f; // + 20 along second
-            speed = 70;
+            damage = 10f; // + 10 along second
+            speed = 50;
             ttl = 8f;
             liveTime = ttl;
             armorPiersing = 2;

@@ -13,6 +13,8 @@ namespace PracticeProject
         private float cooldownForsage;
         private float cooldownShieldBooster;
         private bool idleFulag;
+        private float cooldovnCannonVolley;
+
         protected override void StatsUp()
         {
             type = UnitClass.Figther;
@@ -37,10 +39,12 @@ namespace PracticeProject
                 cooldownForsage -= Time.deltaTime;
             if (cooldownShieldBooster > 0)
                 cooldownShieldBooster -= Time.deltaTime;
+            if (cooldovnCannonVolley > 0)
+                cooldovnCannonVolley -= Time.deltaTime;
         }
         protected override bool RoleFunction()
         {
-            return ShieldBooster();
+            return (ShieldBooster()||Forsage()||CannonVolley());
         }
         protected override bool SelfDefenceFunction()
         {
@@ -158,10 +162,23 @@ namespace PracticeProject
             }
             else return false;
         }
+        protected bool CannonVolley()
+        {
+            if (cooldovnCannonVolley <= 0)
+            {
+                if (CurrentTarget != null)
+                {
+                    Gunner.Volley(new SpaceShip[] { CurrentTarget }, 0);
+                    cooldovnCannonVolley = 20;
+                    return true;
+                }
+            }
+            return false;
+        }
     }
     public class ForsageImpact : IImpact
     {
-        public string ImpactName { get { return "WarpImpact"; } }
+        public string Name { get { return "WarpImpact"; } }
         float ttl;
         SpaceShip owner;
         private float ownerSpeedPrev;
@@ -169,11 +186,11 @@ namespace PracticeProject
         {
             this.owner = owner;
             ownerSpeedPrev = owner.Speed;
-            if (owner.Impacts.Exists(x => x.ImpactName == this.ImpactName))
+            if (owner.Impacts.Exists(x => x.Name == this.Name))
                 ttl = 0;
             else
             {
-                if (owner.Impacts.Exists(x => x.ImpactName == "TrusterInhibitorImpact"))
+                if (owner.Impacts.Exists(x => x.Name == "TrusterInhibitorImpact"))
                     ttl = 0;
                 else
                 {
@@ -197,7 +214,7 @@ namespace PracticeProject
     }
     public class ShieldBoosterImpact : IImpact
     {
-        public string ImpactName { get { return "ShieldBoosterImpact"; } }
+        public string Name { get { return "ShieldBoosterImpact"; } }
         float ttl;
         SpaceShip owner;
         private float ownerShieldMaxPowerPrew;
@@ -205,18 +222,18 @@ namespace PracticeProject
         public ShieldBoosterImpact(SpaceShip owner, float time)
         {
             this.owner = owner;
-            ownerShieldMaxPowerPrew = owner.ShieldMaxPower;
+            ownerShieldMaxPowerPrew = owner.ShieldMaxCampacity;
             ownerShieldRechargingPrew = owner.ShieldRecharging;
-            if (owner.Impacts.Exists(x => x.ImpactName == this.ImpactName))
+            if (owner.Impacts.Exists(x => x.Name == this.Name))
                 ttl = 0;
             else
             {
-                if (owner.Impacts.Exists(x => x.ImpactName == "ShieldInhibitorImpact"))
+                if (owner.Impacts.Exists(x => x.Name == "ShieldInhibitorImpact"))
                     ttl = 0;
                 else
                 {
                     ttl = time;
-                    owner.ShieldMaxPower = owner.ShieldMaxPower * 4;
+                    owner.ShieldMaxCampacity = owner.ShieldMaxCampacity * 4;
                     owner.ShieldRecharging = owner.ShieldRecharging * 2;
                 }
             }
@@ -230,7 +247,7 @@ namespace PracticeProject
 
         public void CompleteImpact()
         {
-            owner.ShieldMaxPower = ownerShieldMaxPowerPrew;
+            owner.ShieldMaxCampacity = ownerShieldMaxPowerPrew;
             owner.ShieldRecharging = ownerShieldRechargingPrew;
             owner.Impacts.Remove(this);
         }

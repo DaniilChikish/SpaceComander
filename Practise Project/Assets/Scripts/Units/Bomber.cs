@@ -14,7 +14,7 @@ namespace PracticeProject
             radarRange = 300; //set in child
             radarPover = 1;
             speed = 6.5f; //set in child
-            stealthness = 0.5f; //set in child
+            stealthness = 0.7f; //set in child
             radiolink = 2.5f;
             StrategicLoad = TorpedoType.Nuke;
             EnemySortDelegate = BomberSortEnemys;
