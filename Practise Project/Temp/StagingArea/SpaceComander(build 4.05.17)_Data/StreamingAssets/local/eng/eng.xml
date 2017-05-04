@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<SerializeDataOfStringString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <keys>
+    <string>Yes</string>
+    <string>No</string>
+    <string>Back</string>
+    <string>Cuntinue</string>
+    <string>Pause</string>
+    <string>Play</string>
+    <string>Options</string>
+    <string>About game</string>
+    <string>Quit</string>
+    <string>Start level</string>
+    <string>Level</string>
+    <string>Mission</string>
+    <string>Briefing</string>
+    <string>Targets</string>
+    <string>Quit_question</string>
+    <string>Restart</string>
+    <string>Restart_question</string>
+    <string>Restart_discription</string>
+    <string>Exit mission</string>
+    <string>ExitMission_question</string>
+    <string>ExitMission_discription</string>
+    <string>Development</string>
+    <string>Develop_content</string>
+    <string>Story</string>
+    <string>Story_content</string>
+    <string>Developer page</string>
+    <string>Mision1_name</string>
+  </keys>
+  <values>
+    <string>Yes</string>
+    <string>No</string>
+    <string>Back</string>
+    <string>Cuntinue</string>
+    <string>Pause</string>
+    <string>Play</string>
+    <string>Options</string>
+    <string>About game</string>
+    <string>Quit</string>
+    <string>Start level</string>
+    <string>Level</string>
+    <string>Mission</string>
+    <string>Briefing</string>
+    <string>Targets</string>
+    <string>Running in fear?</string>
+    <string>Restart</string>
+    <string>Restart mission?</string>
+    <string>Do you think you'll do better from the beginning?</string>
+    <string>Exit mission</string>
+    <string>Are you deserting?</string>
+    <string>Another time, you'll have to start the mission from the beginning.</string>
+    <string>Development</string>
+    <string>Designer - Jogo Deus;\r\nScripting - Jogo Deus;\r\nModeling - Jogo Deus;\r\nTexturing - Open source;\r\nMusic - Open source.</string>
+    <string>Story</string>
+    <string>   Year 2406'.\r\nIn deep space beyond the boundaries of the jurisdiction of the galactic government the struggle of conglomerates for resource - rich planets reaches astronomical proportions. Their interests are defended by huge space fleets of mercenaries. The object of the dispute was the planet Glies-876-d. It is' a harsh and dangerous world unsuitable for life but hiding endless minerals in it'.</string>
+    <string>Developer page</string>
+    <string>Mission 1: \"Find and destroy\"</string>
+  </values>
+</SerializeDataOfStringString>

@@ -47,9 +47,9 @@ namespace PracticeProject
             Vector2 W8x6 = UIUtil.GetWindow(8, 6);
             Vector2 W6x2 = UIUtil.GetWindow(6, 2);
             Vector2 W6x2f5 = UIUtil.GetWindow(6, 2.5f);
-            Windows[0] = new UIWindowInfo(new Rect(new Vector2((Screen.width - W4x4.x) / 2, 100), W4x4));//main
-            Windows[1] = new UIWindowInfo(new Rect(new Vector2((Screen.width - W6x2f5.x) / 2, 200), W6x2f5));//question
-            Windows[2] = new UIWindowInfo(new Rect(new Vector2((Screen.width - W8x6.x) / 2, 50), W8x6));//options
+            Windows[0] = new UIWindowInfo(new Rect(new Vector2((Screen.width - W4x4.x) / 2, ((Screen.height - W4x4.y) / 2)), W4x4));//main
+            Windows[1] = new UIWindowInfo(new Rect(new Vector2((Screen.width - W6x2f5.x) / 2, ((Screen.height - W6x2f5.y) / 2)), W6x2f5));//question
+            Windows[2] = new UIWindowInfo(new Rect(new Vector2((Screen.width - W8x6.x) / 2, ((Screen.height - W8x6.y) / 2)), W8x6));//options
             Windows[3] = new UIWindowInfo(new Rect(new Vector2((Screen.width - W6x2.x) / 2, (Screen.height - W6x2.y) / 2 + 100), W6x2));//victory
             //
 
@@ -224,14 +224,14 @@ namespace PracticeProject
 
             GUI.BeginGroup(new Rect(Windows[windowID].CenterX - 170, 100, 340, 55));
             UIUtil.Label(new Rect(120, 0, 100, 20), Global.Texts["Sound"]);
-            fBuffer = GUI.HorizontalSlider(new Rect(0, 40, 340, 13), Global.SoundLevel, 0.0f, 0.2f);
+            fBuffer = GUI.HorizontalSlider(new Rect(0, 40, 340, 13), Global.SoundLevel, 0.0f, 1f);
             if (Global.SoundLevel != fBuffer)
                 Global.SoundLevel = fBuffer;
             GUI.EndGroup();
 
             GUI.BeginGroup(new Rect(Windows[windowID].CenterX - 170, 165, 340, 55));
             UIUtil.Label(new Rect(120, 0, 100, 20), Global.Texts["Music"]);
-            fBuffer = GUI.HorizontalSlider(new Rect(0, 40, 340, 13), Global.MusicLevel, 0.0f, 0.2f);
+            fBuffer = GUI.HorizontalSlider(new Rect(0, 40, 340, 13), Global.MusicLevel, 0.0f, 1f);
             if (Global.MusicLevel != fBuffer)
                 Global.MusicLevel = fBuffer;
             GUI.EndGroup();

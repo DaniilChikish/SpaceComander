@@ -2260,7 +2260,7 @@ namespace PracticeProject
     {
         public Transform target;// цель для ракеты       
         //public GameObject Blast;// префаб взрыва   
-        protected MissileType type;        
+        protected MissileType type;
         protected float Speed;// скорость ракеты           
         public float DropImpulse;//импульс сброса          
         protected float TurnSpeed;// скорость поворота ракеты            
@@ -2320,15 +2320,27 @@ namespace PracticeProject
         {
             switch (collision.gameObject.tag)
             {
-                case "Shell":
+                case "Unit":
+                    {
+                        if (lt > explosionTime / 20)
+                            Arm();
+                        break;
+                    }
+                default:
                     {
                         Arm();
                         break;
                     }
-                case "Unit":
+            }
+        }
+        private void OnTriggerStay(Collider collision)
+        {
+            switch (collision.gameObject.tag)
+            {
+                case "Explosion":
                     {
                         if (lt > explosionTime / 20)
-                            Explode();
+                            Arm();
                         break;
                     }
             }

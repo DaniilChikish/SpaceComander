@@ -12,7 +12,7 @@ namespace PracticeProject
             Speed = 40f;
             DropImpulse = 150f;
             TurnSpeed = 8;
-            explosionTime = 25f;
+            explosionTime = 35f;
             AimCone = 30;
             gameObject.GetComponent<Rigidbody>().AddForce(-transform.up * DropImpulse, ForceMode.Impulse);
             lt = 0;
