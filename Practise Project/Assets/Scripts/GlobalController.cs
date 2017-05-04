@@ -160,7 +160,7 @@ namespace PracticeProject
         {
             XmlSerializer formatter = new XmlSerializer(typeof(SerializeSettings));
             // получаем поток, куда будем записывать сериализованный объект
-            using (FileStream fs = new FileStream(Application.streamingAssetsPath + "\\settings.dat", FileMode.OpenOrCreate))
+            using (FileStream fs = new FileStream(Application.streamingAssetsPath + "\\settings.dat", FileMode.Create))
             {
                 formatter.Serialize(fs, settings);
             }
