@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-namespace PracticeProject
+namespace SpaceCommander
 {
     public class Railgun : Weapon {
         public override void StatUp()

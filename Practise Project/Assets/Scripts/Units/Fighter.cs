@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-namespace PracticeProject
+namespace SpaceCommander
 {
     public class Fighter : SpaceShip
     {
@@ -124,7 +124,7 @@ namespace PracticeProject
             if (cooldownForsage <= 0)
             {
                 cooldownForsage = 20f;
-                this.Impacts.Add(new ForsageImpact(this));
+                this.MakeImpact(new ForsageImpact(this));
                 return true;
             }
             else return false;
@@ -156,7 +156,7 @@ namespace PracticeProject
         {
             if (cooldownShieldBooster <= 0 && !shield.isOwerheat && targetStatus == TargetStateType.InPrimaryRange)
             {
-                this.Impacts.Add(new ShieldBoosterImpact(this, 5f));
+                this.MakeImpact(new ShieldBoosterImpact(this, 5f));
                 cooldownShieldBooster = 15;
                 return true;
             }
@@ -168,7 +168,7 @@ namespace PracticeProject
             {
                 if (CurrentTarget != null)
                 {
-                    Gunner.Volley(new SpaceShip[] { CurrentTarget }, 0);
+                    Gunner.Volley(0);
                     cooldovnCannonVolley = 20;
                     return true;
                 }
@@ -186,11 +186,11 @@ namespace PracticeProject
         {
             this.owner = owner;
             ownerSpeedPrev = owner.Speed;
-            if (owner.Impacts.Exists(x => x.Name == this.Name))
+            if (owner.HaveImpact(this.Name))
                 ttl = 0;
             else
             {
-                if (owner.Impacts.Exists(x => x.Name == "TrusterInhibitorImpact"))
+                if (owner.HaveImpact("TrusterInhibitorImpact"))
                     ttl = 0;
                 else
                 {
@@ -209,7 +209,7 @@ namespace PracticeProject
         public void CompleteImpact()
         {
             owner.Speed = ownerSpeedPrev;
-            owner.Impacts.Remove(this);
+            owner.RemoveImpact(this);
         }
     }
     public class ShieldBoosterImpact : IImpact
@@ -224,11 +224,11 @@ namespace PracticeProject
             this.owner = owner;
             ownerShieldMaxPowerPrew = owner.ShieldMaxCampacity;
             ownerShieldRechargingPrew = owner.ShieldRecharging;
-            if (owner.Impacts.Exists(x => x.Name == this.Name))
+            if (owner.HaveImpact(this.Name))
                 ttl = 0;
             else
             {
-                if (owner.Impacts.Exists(x => x.Name == "ShieldInhibitorImpact"))
+                if (owner.HaveImpact("ShieldInhibitorImpact"))
                     ttl = 0;
                 else
                 {
@@ -249,7 +249,7 @@ namespace PracticeProject
         {
             owner.ShieldMaxCampacity = ownerShieldMaxPowerPrew;
             owner.ShieldRecharging = ownerShieldRechargingPrew;
-            owner.Impacts.Remove(this);
+            owner.RemoveImpact(this);
         }
     }
 }

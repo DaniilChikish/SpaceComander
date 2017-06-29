@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace PracticeProject
+namespace SpaceCommander
 {
 
     public class HUDBase : MonoBehaviour

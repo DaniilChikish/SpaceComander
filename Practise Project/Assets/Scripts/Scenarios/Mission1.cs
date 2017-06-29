@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 
-namespace PracticeProject
+namespace SpaceCommander
 {
     public class Mission1 : Scenario
     {

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-namespace PracticeProject
+namespace SpaceCommander
 {
     public class Scout : SpaceShip
     {
@@ -168,14 +168,14 @@ namespace PracticeProject
         {
             if (cooldownRadarBooster <= 0)
             {
-                this.Impacts.Add(new RadarBoosterImpact(this, 4f));
+                this.MakeImpact(new RadarBoosterImpact(this, 4f));
                 cooldownRadarBooster = 8;
                 return true;
             }
             else if (cooldownRadarBooster < 4)
             {
                 foreach (SpaceShip x in allies)
-                    x.Impacts.Add(new RadarBoosterImpact(x, 0.5f));
+                    x.MakeImpact(new RadarBoosterImpact(x, 0.5f));
                 return false;
             }
             return false;
@@ -185,7 +185,7 @@ namespace PracticeProject
             if (cooldownWarp <= 0)
             {
                 cooldownWarp = 15f;
-                this.Impacts.Add(new WarpImpact(this));
+                this.MakeImpact(new WarpImpact(this));
                 return true;
             }
             else return false;
@@ -203,11 +203,11 @@ namespace PracticeProject
             this.owner = owner;
             ownerSpeedPrev = owner.Speed;
             ownerMassPrev = owner.GetComponent<Rigidbody>().mass;
-            if (owner.Impacts.Exists(x => x.Name == this.Name))
+            if (owner.HaveImpact(this.Name))
                 ttl = 0;
             else
             {
-                if (owner.Impacts.Exists(x => x.Name == "TrusterInhibitorImpact"))
+                if (owner.HaveImpact("TrusterInhibitorImpact"))
                     ttl = 0;
                 else
                 {
@@ -228,7 +228,7 @@ namespace PracticeProject
         {
             owner.Speed = ownerSpeedPrev;
             owner.GetComponent<Rigidbody>().mass = ownerMassPrev;
-            owner.Impacts.Remove(this);
+            owner.RemoveImpact(this);
         }
     }
     public class RadarBoosterImpact : IImpact
@@ -242,11 +242,11 @@ namespace PracticeProject
         {
             this.owner = owner;
             ownerRadarRangePrev = owner.RadarRange;
-            if (owner.Impacts.Exists(x => x.Name == this.Name))
+            if (owner.HaveImpact(this.Name))
                 return;//ttl = 0;
             else
             {
-                if (owner.Impacts.Exists(x => x.Name == "RadarInhibitorImpact"))
+                if (owner.HaveImpact("RadarInhibitorImpact"))
                     return;//ttl = 0;
                 else
                 {
@@ -266,7 +266,7 @@ namespace PracticeProject
         public void CompleteImpact()
         {
             if (Act) owner.RadarRange = ownerRadarRangePrev;
-            owner.Impacts.Remove(this);
+            owner.RemoveImpact(this);
         }
     }
 }

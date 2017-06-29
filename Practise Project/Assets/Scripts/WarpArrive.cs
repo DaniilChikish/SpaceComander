@@ -6,7 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace PracticeProject
+namespace SpaceCommander
 {
     class WarpArrive : MonoBehaviour
     {

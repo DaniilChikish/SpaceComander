@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace PracticeProject
+namespace SpaceCommander
 {
     public class ECM : SpaceShip
     {
@@ -108,9 +108,9 @@ namespace PracticeProject
                 {
                     enemy.CurrentTarget = null;
                     if (cooldownWeaponInhibitor < 0)
-                        enemy.Impacts.Add(new TrusterInhibitorImpact(enemy, 0.2f));
+                        enemy.MakeImpact(new TrusterInhibitorImpact(enemy, 0.2f));
                     if (cooldownRadarInhibitor < 0)
-                        enemy.Impacts.Add(new TrusterInhibitorImpact(enemy, 2f));
+                        enemy.MakeImpact(new TrusterInhibitorImpact(enemy, 2f));
                 }
             }
             capByTarget.Sort(delegate (SpaceShip x, SpaceShip y) { return EnemySortDelegate(x.GetComponent<IUnit>(), y.GetComponent<IUnit>()); });
@@ -151,7 +151,7 @@ namespace PracticeProject
         {
             if (cooldownWeaponInhibitor <= 0 && target != null)
             {
-                target.Impacts.Add(new TrusterInhibitorImpact(target, 4f));
+                target.MakeImpact(new TrusterInhibitorImpact(target, 4f));
                 cooldownWeaponInhibitor = 10f;
                 return true;
             }
@@ -161,7 +161,7 @@ namespace PracticeProject
         {
             if (cooldownRadarInhibitor <= 0 && target != null)
             {
-                target.Impacts.Add(new RadarInhibitorImpact(target, 8f));
+                target.MakeImpact(new RadarInhibitorImpact(target, 8f));
                 cooldownRadarInhibitor = 8f;
                 return true;
             }
@@ -179,11 +179,11 @@ namespace PracticeProject
         {
             this.owner = owner;
             ownerSpeedPrev = owner.Speed;
-            if (owner.Impacts.Exists(x => x.Name == this.Name))
+            if (owner.HaveImpact(this.Name))
                 ttl = 0;
             else
             {
-                if (owner.Impacts.Exists(x => x.Name == "WarpImpact"))
+                if (owner.HaveImpact("WarpImpact"))
                     ttl = 0;
                 else
                 {
@@ -202,7 +202,7 @@ namespace PracticeProject
         public void CompleteImpact()
         {
             if (Act) owner.Speed = ownerSpeedPrev;
-            owner.Impacts.Remove(this);
+            owner.RemoveImpact(this);
         }
         public override string ToString()
         {
@@ -220,11 +220,11 @@ namespace PracticeProject
         {
             this.owner = owner;
             ownerRadarRangePrev = owner.RadarRange;
-            if (owner.Impacts.Exists(x => x.Name == this.Name))
+            if (owner.HaveImpact(this.Name))
                 ttl = 0;
             else
             {
-                if (owner.Impacts.Exists(x => x.Name == "RadarBoosterImpact"))
+                if (owner.HaveImpact("RadarBoosterImpact"))
                     ttl = 0;
                 else
                 {
@@ -244,7 +244,7 @@ namespace PracticeProject
         public void CompleteImpact()
         {
             if (Act) owner.RadarRange = ownerRadarRangePrev;
-            owner.Impacts.Remove(this);
+            owner.RemoveImpact(this);
         }
     }
 }

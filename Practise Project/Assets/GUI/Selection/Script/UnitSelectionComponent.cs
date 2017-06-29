@@ -4,7 +4,7 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-namespace PracticeProject
+namespace SpaceCommander
 {
     public class UnitSelectionComponent : MonoBehaviour
     {

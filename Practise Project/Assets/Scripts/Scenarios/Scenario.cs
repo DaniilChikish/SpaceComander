@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace PracticeProject
+namespace SpaceCommander
 {
     public abstract class Scenario : MonoBehaviour
     {

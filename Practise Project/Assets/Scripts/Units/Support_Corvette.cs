@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-namespace PracticeProject
+namespace SpaceCommander
 {
     public class Support_Corvette : SpaceShip
     {
@@ -55,7 +55,7 @@ namespace PracticeProject
             {
                 if (Health < MaxHealth * 0.4)
                 {
-                    this.Impacts.Add(new Repairing(this, 10));
+                    this.MakeImpact(new Repairing(this, 10));
                     cooldownRepairBot = 15;
                     return true;
                 }
@@ -64,7 +64,7 @@ namespace PracticeProject
                     {
                         if ((Vector3.Distance(x.transform.position, this.transform.position) < radarRange * 0.2) && (x.Health < x.MaxHealth * 0.7))
                         {
-                            x.Impacts.Add(new Repairing(x, 10));
+                            x.MakeImpact(new Repairing(x, 10));
                             cooldownRepairBot = 5;
                             return true;
                         }
@@ -78,7 +78,7 @@ namespace PracticeProject
             {
                 if (this.NeedReloading)
                 {
-                    this.Impacts.Add(new Reloading(this, 0));
+                    this.MakeImpact(new Reloading(this, 0));
                     cooldownReloadBot = 20;
                     return true;
                 }
@@ -86,7 +86,7 @@ namespace PracticeProject
                 {
                     if ((Vector3.Distance(x.transform.position, this.transform.position) < radarRange * 0.4) && (x.NeedReloading))
                     {
-                        x.Impacts.Add(new Reloading(x, 0));
+                        x.MakeImpact(new Reloading(x, 0));
                         cooldownReloadBot = 20;
                         return true;
                     }
@@ -170,7 +170,7 @@ namespace PracticeProject
         }
         public void CompleteImpact()
         {
-            owner.Impacts.Remove(this);
+            owner.RemoveImpact(this);
         }
         public override string ToString()
         {
@@ -198,7 +198,7 @@ namespace PracticeProject
         public void CompleteImpact()
         {
             owner.ReloadWeapons();
-            owner.Impacts.Remove(this);
+            owner.RemoveImpact(this);
         }
         public override string ToString()
         {

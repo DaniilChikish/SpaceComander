@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace PracticeProject
+namespace SpaceCommander
 {
     public class Bait : SpaceShip
     {
@@ -14,9 +14,9 @@ namespace PracticeProject
             speed = 10; //set in child
             stealthness = 1f; //set in child
             radiolink = 2f;
-            movementAiEnabled = false;
+            movementAiEnabled = true;
             combatAIEnabled = false;
-            selfDefenceModuleEnabled = false;
+            selfDefenceModuleEnabled = true;
             roleModuleEnabled = false;
         }
         protected override void DecrementCounters()

@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+//using SpaceCommander.Units;
 
-namespace PracticeProject
+namespace SpaceCommander
 {
     class Base : MonoBehaviour
     {

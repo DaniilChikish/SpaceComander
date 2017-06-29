@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace PracticeProject
+namespace SpaceCommander
 {
     class RepairDock : MonoBehaviour
     {
@@ -17,7 +17,7 @@ namespace PracticeProject
             {
                 SpaceShip x = other.GetComponent<SpaceShip>();
                 if (x.Health != x.MaxHealth)
-                    x.Impacts.Add(new FullRepairing(x, 0));
+                    x.MakeImpact(new FullRepairing(x, 0));
             }
         }
         protected void OnTriggerStay(Collider other)
@@ -89,7 +89,7 @@ namespace PracticeProject
                         break;
                     }
             }
-            if (owner.Impacts.Exists(x => x.Name == this.Name))
+            if (owner.HaveImpact(this.Name))
                 repairSpeed = 0;
             else
             {
@@ -108,7 +108,7 @@ namespace PracticeProject
         {
             owner.movementAiEnabled = ownerMovementAiEnabledPrev;
             Debug.Log(owner.name + " full repaering complete");
-            owner.Impacts.Remove(this);
+            owner.RemoveImpact(this);
             owner.ResetStats();
         }
         public override string ToString()

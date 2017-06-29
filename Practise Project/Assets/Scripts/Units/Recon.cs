@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace PracticeProject
+namespace SpaceCommander
 {
     public class Recon : SpaceShip
     {
@@ -140,7 +140,7 @@ namespace PracticeProject
         {
             if (cooldownShieldStunner <= 0f && target != null)
             {
-                target.Impacts.Add(new ShildStunImpact(target, 5f));
+                target.MakeImpact(new ShildStunImpact(target, 5f));
                 cooldownShieldStunner = 15f;
                 return true;
             }
@@ -176,11 +176,11 @@ namespace PracticeProject
 
             this.owner = owner;
             ownerShildRechargingPrev = owner.ShieldRecharging;
-            if (owner.Impacts.Exists(x => x.Name == this.Name))
+            if (owner.HaveImpact(this.Name))
                 ttl = 0;
             else
             {
-                if (owner.Impacts.Exists(x => x.Name == "ShildBoosterImpact"))
+                if (owner.HaveImpact("ShildBoosterImpact"))
                     ttl = 0;
                 else
                 {
@@ -200,7 +200,7 @@ namespace PracticeProject
         public void CompleteImpact()
         {
             if (Act) owner.ShieldRecharging = ownerShildRechargingPrev;
-            owner.Impacts.Remove(this);
+            owner.RemoveImpact(this);
         }
         public override string ToString()
         {

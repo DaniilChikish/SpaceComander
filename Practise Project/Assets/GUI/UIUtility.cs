@@ -4,7 +4,7 @@ using UnityEngine;
 //using UnityEditor;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
-namespace PracticeProject
+namespace SpaceCommander
 {
     public class UIWindowInfo
     {

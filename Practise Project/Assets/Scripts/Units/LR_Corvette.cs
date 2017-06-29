@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-namespace PracticeProject
+namespace SpaceCommander
 {
     public class LR_Corvette : SpaceShip
     {
@@ -76,7 +76,7 @@ namespace PracticeProject
         {
             if ((cooldownReloadBot <= 0) && (this.NeedReloading))
             {
-                this.Impacts.Add(new Reloading(this, 0));
+                this.MakeImpact(new Reloading(this, 0));
                 cooldownReloadBot = 10;
                 return true;
             }
@@ -86,7 +86,7 @@ namespace PracticeProject
         {
             if ((cooldownRepairBot <= 0) && (Health<MaxHealth*0.5))
             {
-                this.Impacts.Add(new Repairing(this, 10));
+                this.MakeImpact(new Repairing(this, 10));
                 cooldownRepairBot = 20;
                 return true;
             }

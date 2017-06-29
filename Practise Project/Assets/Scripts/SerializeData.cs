@@ -5,7 +5,7 @@ using System.IO;
 using System.Xml.Serialization;
 using System;
 
-namespace PracticeProject
+namespace SpaceCommander
 {
     [Serializable]
     public class SerializeData<TKey, TValue>: ISerializationCallbackReceiver 

@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 
-namespace PracticeProject
+namespace SpaceCommander
 {
     public class Mission2 : Scenario
     {

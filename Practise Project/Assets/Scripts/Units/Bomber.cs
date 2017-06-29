@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace PracticeProject
+namespace SpaceCommander
 {
     public class Bomber : SpaceShip
     {
@@ -69,13 +69,13 @@ namespace PracticeProject
             {
                 if (CurrentTarget != null && (CurrentTarget.Type == UnitClass.LR_Corvette || CurrentTarget.Type == UnitClass.Guard_Corvette || CurrentTarget.Type == UnitClass.Support_Corvette))
                 {
-                    Gunner.Volley(new SpaceShip[] { CurrentTarget }, 1);
+                    Gunner.Volley(1);
                     cooldovnRocketVolley = 30;
                     return true;
                 }
                 else if (enemys.Count > 0)
                 {
-                    Gunner.Volley(enemys.ToArray(), 0);
+                    Gunner.Volley(0);
                     cooldovnRocketVolley = 40;
                     return true;
                 }
