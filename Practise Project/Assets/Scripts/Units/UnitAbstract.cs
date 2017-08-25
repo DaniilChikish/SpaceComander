@@ -47,6 +47,7 @@ namespace SpaceCommander
         public bool isSelected;
         public Vector3 Anchor;
         //GUI
+        public HUDBase hud;
         public Texture enemyIcon;
         public Texture aliesIcon;
         public Texture selectedIcon;
@@ -122,6 +123,7 @@ namespace SpaceCommander
             aiStatus = UnitStateType.Waiting;
             unitName = type.ToString();
             Global = FindObjectOfType<GlobalController>();
+            hud = FindObjectOfType<HUDBase>();
             Global.unitList.Add(this);
             Anchor = this.transform.position;
             //
@@ -298,6 +300,9 @@ namespace SpaceCommander
         protected abstract void DecrementLocalCounters();
         protected void OnGUI()
         {
+            //GUI.skin = hud.Skin;
+            //if (Global.StaticProportion && hud.scale != 1)
+            //    GUI.matrix = Matrix4x4.Scale(Vector3.one * hud.scale);
             Vector3 crd = Camera.main.WorldToScreenPoint(transform.position);
             crd.y = Screen.height - crd.y;
             if (team == Global.playerArmy)

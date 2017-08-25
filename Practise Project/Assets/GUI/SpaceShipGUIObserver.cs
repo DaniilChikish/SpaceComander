@@ -8,7 +8,7 @@ using DeusUtility.UI;
 
 namespace SpaceCommander
 {
-    public enum ObserverMode { Empty, Selected, Full}
+    public enum ObserverMode { None, Half, Full}
     public class SpaceShipGUIObserver : MonoBehaviour
     {
         //public Texture2D healthPanel;
@@ -16,10 +16,11 @@ namespace SpaceCommander
         //public Texture2D healthBarFill;
         //public Texture2D shieldBarBack;
         //public Texture2D shieldBarFill;
-        public Image ShieldBar;
-        public Text ShieldCount;
-        public Image HealthBar;
-        public Text HealthCount;
+        private const float MovDuratuon = 0.8f;
+        private Image ShieldBar;
+        private Text ShieldCount;
+        private Image HealthBar;
+        private Text HealthCount;
         public Texture2D slotBack;
         public Texture2D slotOverlay;
         public Texture2D slotCooldown;
@@ -31,9 +32,20 @@ namespace SpaceCommander
         private HUDBase hud;
         private GlobalController Global;
         public GUIStyle localStyle;
-        public GameObject canvas;
+        private float statusBackCount;
+        private float previevBackCount;
+        private GameObject canvas;
+        private GameObject status;
+        private GameObject previev;
+        private GameObject spellPanel;
+        private ObserverMode mode;
+        private bool StatusIsOpen;
+        private bool PrevievIsOpen;
+        private float openedY;
         private void OnEnable()
         {
+            StatusIsOpen = true;
+            PrevievIsOpen = true;
             hud = FindObjectOfType<HUDBase>();
             Global = FindObjectOfType<GlobalController>();
             localStyle = new GUIStyle();
@@ -43,6 +55,10 @@ namespace SpaceCommander
             localStyle.padding.left = 10;
             localStyle.padding.right = 10;
             canvas = GameObject.Find("Canvas");
+            status = GameObject.Find("StatusPanel");
+            openedY = status.transform.position.y;
+            previev = GameObject.Find("UnitPreviewPanel");
+            spellPanel = GameObject.Find("SpellButtons");
             ShieldBar = GameObject.Find("ShieldBar").GetComponent<Image>();
             ShieldCount = GameObject.Find("ShieldCount").GetComponent<Text>();
             HealthBar = GameObject.Find("HealthBar").GetComponent<Image>();
@@ -51,28 +67,111 @@ namespace SpaceCommander
         public void SetObservable(ISpaceShipObservable observable)
         {
             this.observable = observable;
+            mode = ObserverMode.Half;
+            statusBackCount = MovDuratuon;
         }
         private void Update()
         {
             if (Global.selectedList.Count == 1)
+            {
                 observable = Global.selectedList[0];
-            else observable = null;
+                if (false)//observable status under hand control
+                {
+                    mode = ObserverMode.Full;
+                    if (PrevievIsOpen && previevBackCount <= 0)
+                    {
+                        previevBackCount = MovDuratuon;
+                        PrevievIsOpen = false;
+                    }
+                }
+                else
+                {
+                    mode = ObserverMode.Half;
+                    if (!PrevievIsOpen && previevBackCount <= 0)
+                    {
+                        previevBackCount = MovDuratuon;
+                        PrevievIsOpen = true;
+                    }
+                }
+                if (!StatusIsOpen && statusBackCount <= 0)
+                {
+                    statusBackCount = MovDuratuon;
+                    StatusIsOpen = true;
+                }
+            }
+            else
+            {
+                observable = null;
+                mode = ObserverMode.None;
+                if (StatusIsOpen && statusBackCount <= 0)
+                {
+                    statusBackCount = MovDuratuon;
+                    StatusIsOpen = false;
+                }
+                if (PrevievIsOpen && previevBackCount <= 0)
+                {
+                    previevBackCount = MovDuratuon;
+                    PrevievIsOpen = false;
+                }
+            }
+            if (mode == ObserverMode.None)
+            {
+                if (statusBackCount > 0)
+                {
+                    statusBackCount -= Time.deltaTime;
+                    float speedFactor = Mathf.Cos((MovDuratuon - statusBackCount) * Mathf.PI * 2 / MovDuratuon + Mathf.PI) + 1;
+                    float statusSpeedMotion = status.GetComponent<RectTransform>().rect.height*hud.scale / MovDuratuon * speedFactor;
+                    status.transform.Translate(0, -statusSpeedMotion * Time.deltaTime, 0);
+                }
+            }
+            else
+            {
+                if (statusBackCount > 0)
+                {
+                    statusBackCount -= Time.deltaTime;
+                    float speedFactor = Mathf.Cos((MovDuratuon - statusBackCount) * Mathf.PI * 2 / MovDuratuon + Mathf.PI) + 1;
+                    float statusSpeedMotion = status.GetComponent<RectTransform>().rect.height * hud.scale / MovDuratuon * speedFactor;
+                    status.transform.Translate(0, statusSpeedMotion * Time.deltaTime, 0);
+                }
+            }
+            if (mode == ObserverMode.Half)
+            {
+                if (previevBackCount > 0)
+                {
+                    previevBackCount -= Time.deltaTime;
+                    float speedFactor = Mathf.Cos((MovDuratuon - previevBackCount) * Mathf.PI * 2 / MovDuratuon + Mathf.PI) + 1;
+                    float previevSpeedMotion = previev.GetComponent<RectTransform>().rect.height * hud.scale / MovDuratuon * speedFactor;
+                    previev.transform.Translate(-previevSpeedMotion * Time.deltaTime, 0, 0);
+                }
+            }
+            else
+            {
+                if (previevBackCount > 0)
+                {
+                    previevBackCount -= Time.deltaTime;
+                    float speedFactor = Mathf.Cos((MovDuratuon - previevBackCount) * Mathf.PI * 2 / MovDuratuon + Mathf.PI) + 1;
+                    float previevSpeedMotion = previev.GetComponent<RectTransform>().rect.height * hud.scale / MovDuratuon * speedFactor;
+                    previev.transform.Translate(previevSpeedMotion * Time.deltaTime, 0, 0);
+                }
+            }
         }
         private void OnGUI()
         {
             GUI.skin = hud.Skin;
             if (Global.StaticProportion && hud.scale != 1)
                 GUI.matrix = Matrix4x4.Scale(Vector3.one * hud.scale);
-            if (observable != null)
+            if (mode != ObserverMode.None)
             {
-                canvas.SetActive(true);
                 //modules
                 if (observable.Module != null && observable.Module.Length > 0)
                 {
                     int i = 0;
                     foreach (SpellModule m in observable.Module)
                     {
-                        Rect spellRect = UIUtil.GetRect(new Vector2(68, 68), PositionAnchor.LeftDown, hud.mainRect.size, new Vector2(300 + 74 * i, -10));
+                        float xPos = -(74 * (observable.Module.Length-1))/2 + (74 * i);
+                        float yPos = ((openedY * hud.scale - status.transform.position.y) - 10);
+                        Rect spellRect = UIUtil.GetRect(new Vector2(68, 68), PositionAnchor.Down, hud.mainRect.size, new Vector2(xPos, yPos));
+                        Rect spellOver = UIUtil.GetRect(new Vector2(48, 48), PositionAnchor.Down, hud.mainRect.size, new Vector2(xPos, yPos - 10));
                         float current;
                         Texture2D spellIcon;
                         if (m.GetType() == typeof(MissileTrapLauncher))
@@ -86,19 +185,19 @@ namespace SpaceCommander
                                 {
                                     current = 1 - (m.BackCount / m.ActiveTime);
                                     GUI.Button(spellRect, spellIcon, localStyle);
-                                    GUI.DrawTexture(spellRect, ProgressUpdate(current, slotActive));
+                                    GUI.DrawTexture(spellOver, ProgressUpdate(current, slotActive));
                                     break;
                                 }
                             case SpellModuleState.Cooldown:
                                 {
-                                    current = m.BackCount / m.CoolingTime;
+                                    current = 1 - (m.BackCount / m.CoolingTime);
                                     GUI.Button(spellRect, spellIcon, localStyle);
-                                    GUI.DrawTexture(spellRect, ProgressUpdate(current, slotCooldown)); break;
+                                    GUI.DrawTexture(spellOver, ProgressUpdate(current, slotCooldown)); break;
                                 }
                             case SpellModuleState.Ready:
                                 {
                                     current = 0f;
-                                    if (GUI.Button(spellRect, spellIcon, localStyle))
+                                    if (GUI.Button(spellRect, spellIcon, localStyle) && mode == ObserverMode.Full)
                                         m.Enable();
                                     //GUI.DrawTexture(spellRect, ProgressUpdate(current, slotActive));
                                     break;
@@ -123,7 +222,6 @@ namespace SpaceCommander
                     //GUI.EndGroup();
                 }
             }
-            else canvas.SetActive(false);
         }
         Texture2D ProgressUpdate(float progress, Texture2D tex)
         {
