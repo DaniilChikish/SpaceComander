@@ -6,7 +6,7 @@ using System.Collections;
 using UnityEngine;
 using System.IO;
 
-namespace SpaceCommander
+namespace SpaceCommander.Scenarios
 {
     public class Mission1 : Scenario
     {
@@ -18,7 +18,7 @@ namespace SpaceCommander
             //File.WriteAllText("mission1.brif", "Kill them all!");
             Global = FindObjectOfType<GlobalController>();
             //Debug.Log("Scenario started");
-            Name = Global.Texts["Mision1_name"];
+            Name = Global.Texts("Mision1_name");
             string path = Application.streamingAssetsPath + "\\local";
             switch (Global.Localisation)
             {
@@ -44,7 +44,7 @@ namespace SpaceCommander
         {
             int alies = 0;
             int enemy = 0;
-            foreach (IUnit x in Global.unitList)
+            foreach (Unit x in Global.unitList)
             {
                 if (x.Team == Global.playerArmy)
                     alies++;

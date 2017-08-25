@@ -111,10 +111,26 @@ namespace SpaceCommander
             float multiplicator;
             switch (trigger.gameObject.tag)
             {
+                case "Energy":
+                    {
+                        hitCount += 3;
+                        float difference = trigger.gameObject.GetComponent<IEnergy>().ArmorPiersing - energyResist;
+                        if (difference > 0.5)
+                            multiplicator = 1f;
+                        else if (difference > -3)
+                            multiplicator = (Mathf.Sin((difference / 1.1f) + 1f) + 1f) * 0.5f;
+                        else
+                            multiplicator = 0.0f;
+                        this.hitpoints -= trigger.gameObject.GetComponent<IEnergy>().Damage * multiplicator * Time.deltaTime;
+                        break;
+                    }
                 case "Explosion":
                     {
-                        multiplicator = (1 - blastResist) * Mathf.Pow(((-Vector3.Distance(this.gameObject.transform.position, trigger.gameObject.transform.position) + trigger.gameObject.GetComponent<Explosion>().MaxRadius) * 0.01f), (1 / 3));
-                        this.hitpoints -= trigger.gameObject.GetComponent<Explosion>().Damage * multiplicator;
+                        if (Vector3.Distance(trigger.transform.position, this.transform.position) < trigger.gameObject.GetComponent<Explosion>().MaxRadius)
+                        {
+                            multiplicator = (1 - blastResist) * (trigger.gameObject.GetComponent<Explosion>().MaxRadius - Vector3.Distance(trigger.transform.position, this.transform.position)) / trigger.gameObject.GetComponent<Explosion>().MaxRadius;
+                            this.hitpoints -= trigger.gameObject.GetComponent<Explosion>().Damage * multiplicator;
+                        }
                         break;
                     }
             }

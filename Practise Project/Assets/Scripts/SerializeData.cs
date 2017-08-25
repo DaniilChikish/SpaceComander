@@ -48,8 +48,7 @@ namespace SpaceCommander
     public class SerializeSettings
     {
         public Languages localisation;
-        public float screenExpWidth;
-        public float screenExpHeight;
+        public bool staticProportion;
         public float soundLevel;
         public float musicLevel;
     }

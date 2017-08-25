@@ -11,6 +11,7 @@ namespace SpaceCommander
         bool isSelecting = false;
         Vector3 mousePosition1;
         public GameObject destanationMarkerPrefab;
+        public GameObject attackMarkerPrefab;
         HUDUnitPrew UnitPrew;
         GlobalController Global;
         private void Start()
@@ -24,20 +25,43 @@ namespace SpaceCommander
             // If we press the left mouse button, begin selection and remember the location of the mouse
             if (Input.GetMouseButtonDown(0))
             {
-                isSelecting = true;
-                mousePosition1 = Input.mousePosition;
-
-                foreach (var selectableObject in FindObjectsOfType<SpaceShip>())
+                bool singleFinded = false;
+                RaycastHit hit;
+                if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 10000))
                 {
-                    if (selectableObject.isSelected == true)
+                    SpaceShip unknownUnit = null;
+                    Collider[] unknownColiders = Physics.OverlapSphere(hit.point, 10);
+                    foreach (Collider x in unknownColiders)
                     {
-                        selectableObject.gameObject.GetComponent<SpaceShip>().SelectUnit(false);
-                        //Destroy(selectableObject.selectionCircle.gameObject);
-                        //selectableObject.selectionCircle = null;
+                        unknownUnit = x.transform.GetComponentInParent<SpaceShip>();
+                        if (unknownUnit != null && unknownUnit.Team == Global.playerArmy)
+                        {
+                            singleFinded = true;
+                            unknownUnit.SelectUnit(true);
+                            UnitPrew.Enabled = true;
+                            Global.selectedList.Clear();
+                            Global.selectedList.Add(unknownUnit);
+                            break;
+                        }
                     }
                 }
-                UnitPrew.Enabled = false;
-                Global.selectedList.Clear();
+                if (!singleFinded)
+                {
+                    isSelecting = true;
+                    mousePosition1 = Input.mousePosition;
+
+                    foreach (var selectableObject in FindObjectsOfType<SpaceShip>())
+                    {
+                        if (selectableObject.isSelected == true)
+                        {
+                            selectableObject.gameObject.GetComponent<SpaceShip>().SelectUnit(false);
+                            //Destroy(selectableObject.selectionCircle.gameObject);
+                            //selectableObject.selectionCircle = null;
+                        }
+                    }
+                    UnitPrew.Enabled = false;
+                    Global.selectedList.Clear();
+                }
             }
             // If we let go of the left mouse button, end selection
             if (Input.GetMouseButtonUp(0))
@@ -45,7 +69,7 @@ namespace SpaceCommander
                 var selectedObjects = new List<SpaceShip>();
                 foreach (var selectableObject in FindObjectsOfType<SpaceShip>())
                 {
-                    if ((FindObjectsOfType<GlobalController>()[0].playerArmy == selectableObject.GetComponent<SpaceShip>().Team) &&
+                    if ((Global.playerArmy == selectableObject.GetComponent<SpaceShip>().Team) &&
                         (IsWithinSelectionBounds(selectableObject.gameObject)))
                     {
                         selectedObjects.Add(selectableObject);
@@ -64,10 +88,9 @@ namespace SpaceCommander
             // Highlight all objects within the selection box
             if (isSelecting)
             {
-
                 foreach (var selectableObject in FindObjectsOfType<SpaceShip>())
                 {
-                    if ((FindObjectsOfType<GlobalController>()[0].playerArmy == selectableObject.GetComponent<SpaceShip>().Team) && 
+                    if ((Global.playerArmy == selectableObject.GetComponent<SpaceShip>().Team) && 
                         IsWithinSelectionBounds(selectableObject.gameObject))
                     {
                         if (selectableObject.isSelected == false)
@@ -81,15 +104,33 @@ namespace SpaceCommander
             if (Input.GetMouseButtonDown(1))
             {
                 //Debug.Log("MouseButtonDown(1)");
-                RaycastHit hit;
-                if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 10000))
+                if (Global.selectedList.Count > 0)
                 {
-                    SendTo(hit.point);
-                    Instantiate(destanationMarkerPrefab, hit.point, new Quaternion());
+                    RaycastHit hit;
+                    if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 10000))
+                    {
+                        Unit unknownUnit = null;
+                        Collider[] unknownColiders = Physics.OverlapSphere(hit.point, 10);
+                        foreach (Collider x in unknownColiders)
+                        {
+                            unknownUnit = x.transform.GetComponentInParent<Unit>();
+                            if (unknownUnit != null && unknownUnit.Team != Global.playerArmy)
+                            {
+                                Instantiate(attackMarkerPrefab, unknownUnit.transform.position, new Quaternion(), unknownUnit.transform);
+                                foreach (SpaceShip y in Global.selectedList)
+                                    y.AttackThat(unknownUnit);
+                                break;
+                            }
+                        }
+                        if (unknownUnit == null)
+                        {
+                            SendTo(hit.point);
+                            Instantiate(destanationMarkerPrefab, hit.point, new Quaternion());
+                        }
+                    }
                 }
             }
         }
-
         private void SendTo(Vector3 destination)
         {
             //Debug.Log("SendTo...");
@@ -109,7 +150,7 @@ namespace SpaceCommander
                 return false;
 
             var camera = Camera.main;
-            var viewportBounds = Utils.GetViewportBounds(camera, mousePosition1, Input.mousePosition);
+            var viewportBounds = SelectionUtils.GetViewportBounds(camera, mousePosition1, Input.mousePosition);
             return viewportBounds.Contains(camera.WorldToViewportPoint(gameObject.transform.position));
         }
 
@@ -118,9 +159,9 @@ namespace SpaceCommander
             if (isSelecting)
             {
                 // Create a rect from both mouse positions
-                var rect = Utils.GetScreenRect(mousePosition1, Input.mousePosition);
-                Utils.DrawScreenRect(rect, new Color(0.8f, 0.8f, 0.95f, 0.25f));
-                Utils.DrawScreenRectBorder(rect, 2, new Color(0.8f, 0.8f, 0.95f));
+                var rect = SelectionUtils.GetScreenRect(mousePosition1, Input.mousePosition);
+                SelectionUtils.DrawScreenRect(rect, new Color(0.8f, 0.8f, 0.95f, 0.25f));
+                SelectionUtils.DrawScreenRectBorder(rect, 2, new Color(0.8f, 0.8f, 0.95f));
             }
         }
     }

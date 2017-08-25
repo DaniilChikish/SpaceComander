@@ -9,6 +9,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.SceneManagement;
 //using SpaceCommander.Units;
+using DeusUtility.Random;
 
 namespace SpaceCommander
 {
@@ -32,33 +33,44 @@ namespace SpaceCommander
         public GameObject LaserBeam;
         public GameObject PlasmaSphere;
         public GameObject Missile;
+        public GameObject MissileTrap;
         public GameObject Torpedo;
         public GameObject ExplosiveBlast;
         public GameObject NukeBlast;
         public GameObject ShipDieBlast;
-		public double[] RandomNormalPool;
-		public double RandomNormalAverage;
-		//public double[] RandomExponentPool;
-		private float randomPoolBackCoount;
+        public double[] RandomNormalPool;
+        public double RandomNormalAverage;
+        //public double[] RandomExponentPool;
+        private float randomPoolBackCoount;
         //settings
         private SerializeSettings settings;
         public bool SettingsSaved;
         public Languages Localisation { get { return settings.localisation; } set { SettingsSaved = false; settings.localisation = value; } }
         public float SoundLevel { get { return settings.soundLevel; } set { SettingsSaved = false; settings.soundLevel = value; } }
         public float MusicLevel { get { return settings.musicLevel; } set { SettingsSaved = false; settings.musicLevel = value; } }
-        public Vector2 Resolution {
-            get { return new Vector2(settings.screenExpWidth, settings.screenExpHeight); }
-            set { SettingsSaved = false; settings.screenExpWidth = value.x; settings.screenExpHeight = value.y; }
+        public bool StaticProportion
+        {
+            get { return settings.staticProportion; }
+            set { SettingsSaved = false; settings.staticProportion = value; }
         }
         //texts
-        public Dictionary<string,string> Texts;
+        private Dictionary<string, string> localTexts;
+        public string Texts(string key)
+        {
+            if (localTexts.ContainsKey(key))
+                return localTexts[key];
+            else return key;
+        }
         private Scenario Mission;
-        public string MissionName { get
+        public string MissionName
+        {
+            get
             {
                 if (Mission != null)
                     return Mission.Name;
                 else return SceneManager.GetActiveScene().name;
-            } }
+            }
+        }
         public string MissionBrief
         {
             get
@@ -91,6 +103,7 @@ namespace SpaceCommander
         {
             settings = new SerializeSettings();
             settings.localisation = Languages.English;
+            settings.staticProportion = true;
             settings.musicLevel = 100;
             settings.soundLevel = 100;
             SaveSettings();
@@ -127,7 +140,7 @@ namespace SpaceCommander
             serialeze.Data.Add("string3_key", "string3_value");
             serialeze.OnBeforeSerialize();
             // передаем в конструктор тип класса
-            XmlSerializer formatter = new XmlSerializer(typeof(SerializeData<string,string>));
+            XmlSerializer formatter = new XmlSerializer(typeof(SerializeData<string, string>));
             // получаем поток, куда будем записывать сериализованный объект
             using (FileStream fs = new FileStream(Application.streamingAssetsPath + "\\temp.xml", FileMode.OpenOrCreate))
             {
@@ -167,12 +180,12 @@ namespace SpaceCommander
             SerializeData<string, string> serialeze = (SerializeData<string, string>)formatter.Deserialize(fs);
             serialeze.OnAfterDeserialize();
             Debug.Log(serialeze.ToString());
-            Texts = new Dictionary<string, string>();
-            Texts = serialeze.Data;
+            localTexts = new Dictionary<string, string>();
+            localTexts = serialeze.Data;
         }
 
         public void Update()
-		{
+        {
             if (randomPoolBackCoount < 0)
             {
                 RandomNormalPool = Randomizer.Normal(1, 1, 128, 0, 128);
@@ -180,8 +193,8 @@ namespace SpaceCommander
                 //RandomExponentPool = Randomizer.Exponential(7, 128, 0, 128);
                 randomPoolBackCoount = 10;
             }
-            else randomPoolBackCoount -= Time.deltaTime;           
-		}
+            else randomPoolBackCoount -= Time.deltaTime;
+        }
         public int CheckVictory()
         {
             if (Mission != null)
@@ -190,7 +203,7 @@ namespace SpaceCommander
             {
                 int alies = 0;
                 int enemy = 0;
-                foreach (IUnit x in unitList)
+                foreach (Unit x in unitList)
                 {
                     if (x.Team == this.playerArmy)
                         alies++;
@@ -211,7 +224,8 @@ namespace SpaceCommander
         private NavMeshAgent walkerAgent;
         private Queue<Vector3> path; //очередь путевых точек
         public Vector3 Velocity { get { return walkerAgent.velocity; } }
-        public int PathPoints {
+        public int PathPoints
+        {
             get
             {
                 if ((walkerAgent.pathEndPosition - walkerTransform.position).magnitude < 1)
@@ -242,7 +256,7 @@ namespace SpaceCommander
                     //backCount = Vector3.Distance(walker.transform.position, path.Peek()) / (walker.GetComponent<NavMeshAgent>().speed*0.9f);
                     walkerAgent.SetDestination(path.Dequeue());
                 }
-                if (path.Count == 1&& (walkerAgent.pathEndPosition - walkerTransform.position).magnitude < 1)
+                if (path.Count == 1 && (walkerAgent.pathEndPosition - walkerTransform.position).magnitude < 1)
                 {
                     //backCount = Vector3.Distance(walker.transform.position, path.Peek()) / (walker.GetComponent<NavMeshAgent>().speed * 0.9f);
                     walkerAgent.SetDestination(path.Dequeue());
@@ -296,7 +310,8 @@ namespace SpaceCommander
         private IWeapon[][] weapons;
         public SpaceShip owner;
         private float turnSpeed;
-        private Transform targetTransform;
+        private Unit target;
+        private float targetLockdownCount;
         //private Vector3 oldTargetPosition;
         //private Vector3 aimPoint; //точка сведения
         private ForceShield shield;
@@ -304,7 +319,7 @@ namespace SpaceCommander
         private int[] indexWeapons;
         //private float averageRoundSpeed;
         //private float averageRange;
-
+        public Unit Target { get { return target; } }
         public ShootController(SpaceShip body)
         {
             this.owner = body;
@@ -326,7 +341,7 @@ namespace SpaceCommander
             shield = body.GetShieldRef;
             //Debug.Log("Gunner online");
         }
-        public bool ShootHim(SpaceShip target, int slot)
+        public bool ShootHim(int slot)
         {
             if (synchWeapons[slot] <= 0)
             {
@@ -335,10 +350,10 @@ namespace SpaceCommander
                 {
                     if (indexWeapons[slot] >= weapons[slot].Length)
                         indexWeapons[slot] = 0;
-                    if (weapons[slot][indexWeapons[slot]].Cooldown <= 0)
+                    if (weapons[slot][indexWeapons[slot]].IsReady)
                     {
                         shield.Blink(weapons[slot][indexWeapons[slot]].ShildBlink);
-                        synchWeapons[slot] = this.weapons[slot][0].CoolingTime / this.weapons[slot].Length;
+                        synchWeapons[slot] = (60f / this.weapons[slot][0].Firerate) / this.weapons[slot].Length;
                         bool output = weapons[slot][indexWeapons[slot]].Fire();
                         indexWeapons[slot]++;
                         return output;
@@ -352,15 +367,14 @@ namespace SpaceCommander
         {
             if (indexWeapons[slot] >= weapons[slot].Length)
                 indexWeapons[slot] = 0;
-            if (synchWeapons[slot] <= 0 && weapons[slot][indexWeapons[slot]].Cooldown <= 0)
+            if (synchWeapons[slot] <= 0 && weapons[slot][indexWeapons[slot]].IsReady)
             {
                 int i = 0;
                 shield.Blink(weapons[slot][indexWeapons[slot]].ShildBlink);
-                synchWeapons[slot] = this.weapons[slot][0].CoolingTime / this.weapons[slot].Length;
+                synchWeapons[slot] = 60f / this.weapons[slot][0].Firerate;
                 indexWeapons[slot]++;
                 for (i = 0; i < weapons[slot].Length; i++)
                 {
-                    weapons[slot][i].InstantCool();
                     weapons[slot][i].Fire();
                 }
                 return true;
@@ -372,53 +386,46 @@ namespace SpaceCommander
             for (int slot = 0; slot < weapons.Length; slot++)
                 if (synchWeapons[slot] > 0)
                     synchWeapons[slot] -= Time.deltaTime;
-            if (owner.NeedReloading == false)
-                CheckWeapons();
-            if (targetTransform != null)
+            if (target != null)
             {
+                targetLockdownCount -= Time.deltaTime;
                 //Debug.Log("target - " + Target.transform.position);
                 //Debug.Log("aim - " + aimPoint);
                 //наведение на цель
-                Quaternion targetRotation = Quaternion.LookRotation((targetTransform.position - owner.transform.position).normalized * turnSpeed, new Vector3(0, 1, 0));
-                owner.transform.rotation = Quaternion.Slerp(owner.transform.rotation, targetRotation, Time.deltaTime * turnSpeed * 0.2f);
+                if ((target.transform.position - owner.transform.position).normalized != Vector3.zero)
+                {
+                    Quaternion targetRotation = Quaternion.LookRotation((target.transform.position - owner.transform.position).normalized * turnSpeed, new Vector3(0, 1, 0));
+                    owner.transform.rotation = Quaternion.Slerp(owner.transform.rotation, targetRotation, Time.deltaTime * turnSpeed * 0.2f);
+                }
             }
         }
-        public bool SetAim(IUnit target)
+
+        public bool SetAim(Unit target, bool immediately, float lockdown)
         {
-            if (targetTransform == null)
+            if (this.target == null || targetLockdownCount < 0 || immediately)
             {
-                targetTransform = target.ObjectTransform;
+                this.target = target;
+                targetLockdownCount = lockdown;
                 for (int j = 0; j < weapons.Length; j++)
-                for (int i = 0; i < weapons[j].Length; i++)
-                {
+                    for (int i = 0; i < weapons[j].Length; i++)
+                    {
                         weapons[j][i].Target = target;
-                }
-                    //Debug.Log("set target - " + Target.transform.position);
-                    //Debug.Log("set aim - " + oldTargetPosition);
-                    return true;
+                    }
+                //Debug.Log("set target - " + Target.transform.position);
+                //Debug.Log("set aim - " + oldTargetPosition);
+                return true;
             }
             else return false;
         }
         public bool ResetAim()
         {
-            targetTransform = null;
-            return true;
-        }
-        public void CheckWeapons()
-        {
-            //Debug.Log("_" + weapons.Length);
-            for (int i = 0; i < weapons.Length; i++)
-            {
-                //Debug.Log(i +"-" + weapons.Length);
-                for (int j = 0; j < weapons[i].Length; j++)
+            this.target = null;
+            for (int j = 0; j < weapons.Length; j++)
+                for (int i = 0; i < weapons[j].Length; i++)
                 {
-                    if (weapons[i][j].Ammo <= 0)
-                    {
-                        owner.NeedReloading = true;
-                        return;
-                    }
+                    weapons[j][i].Target = null;
                 }
-            }
+            return true;
         }
         public void ReloadWeapons()
         {
@@ -433,27 +440,30 @@ namespace SpaceCommander
             return weapons[slot][0].Range;
         }
     }
-    public abstract class Weapon : MonoBehaviour, IWeapon
+    public abstract class Weapon: MonoBehaviour, IWeapon
     {
-        protected IUnit target;
-        public IUnit Target { set { target = value; } get { return target; } }
+        protected WeaponType type;
         protected GlobalController Global;
-        protected float range;
-        //protected int maxAmmo;
-        protected int ammo;
-        protected float coolingTime;
-        protected float cooldown;
+        protected Unit target;
+        public Unit Target { set { target = value; } get { return target; } }
         protected float dispersion; //dafault 0;
         protected float shildBlinkTime; //default 0.01
         protected float averageRoundSpeed; //default 1000;
+        protected int firerate;
+
         protected bool PreAiming;
+        protected float range;
+
+        protected float backount;
+
         public float Range { get { return range; } }
         public float RoundSpeed { get { return averageRoundSpeed; } }
-        public int Ammo { get { return ammo; } }
-        public float Cooldown { get { return cooldown; } }
         public float Dispersion { get { return dispersion; } }
-        public float CoolingTime { get { return coolingTime; } }
         public float ShildBlink { get { return shildBlinkTime; } }
+
+        public WeaponType Type { get { return type; } }
+
+        public int Firerate { get { return firerate; } }
 
         protected void Start()
         {
@@ -464,79 +474,135 @@ namespace SpaceCommander
         }
         public abstract void StatUp();
         // Update is called once per frame
-        public void Update()
+        public virtual void Update()
         {
-            if (cooldown > 0)
-                cooldown -= Time.deltaTime;
-            if (PreAiming)
+            if (PreAiming) Preaiming();
+            if (backount > 0)
+                backount -= Time.deltaTime;
+            UpdateLocal();
+        }
+        protected virtual void UpdateLocal()
+        { }
+        private void Preaiming()
+        {
+            float angel = Vector3.Angle(this.transform.forward, this.gameObject.GetComponentInParent<Transform>().forward);
+            if (angel < 5 && target != null)
             {
-                float angel = Vector3.Angle(this.transform.forward, this.gameObject.GetComponentInParent<Transform>().forward);
-                if (angel < 5)
+                try
                 {
-                    try
-                    {
-                        if (target != null && target.ObjectTransform != null)
-                        {
-                            float distance;
-                            float approachTime;
-                            Vector3 aimPoint = target.ObjectTransform.position;
-                            //Debug.Log(target.GetComponent<NavMeshAgent>().velocity);
+                    float distance;
+                    float approachTime;
+                    Vector3 aimPoint = target.transform.position;
+                    //Debug.Log(target.GetComponent<NavMeshAgent>().velocity);
 
-                            distance = Vector3.Distance(this.gameObject.transform.position, aimPoint); //расстояние до цели
-                            approachTime = distance / averageRoundSpeed;
-                            Vector3 targetVelocity = target.Velocity;
-                            targetVelocity.y = 0; //исключаем вертикальную компоненту
-                            aimPoint = target.ObjectTransform.position + targetVelocity * approachTime; //первое приближение
+                    distance = Vector3.Distance(this.gameObject.transform.position, aimPoint); //расстояние до цели
+                    approachTime = distance / averageRoundSpeed;
+                    Vector3 targetVelocity = target.Velocity;
+                    targetVelocity.y = 0; //исключаем вертикальную компоненту
+                    aimPoint = target.transform.position + targetVelocity * approachTime; //первое приближение
 
-                            distance = Vector3.Distance(this.gameObject.transform.position, aimPoint); //расстояние до точки первого приближения
-                            approachTime = distance / averageRoundSpeed;
-                            targetVelocity = target.Velocity;
-                            targetVelocity.y = 0;
-                            aimPoint = target.ObjectTransform.position + targetVelocity * approachTime * 1.01f; //второе приближение
+                    distance = Vector3.Distance(this.gameObject.transform.position, aimPoint); //расстояние до точки первого приближения
+                    approachTime = distance / averageRoundSpeed;
+                    targetVelocity = target.Velocity;
+                    targetVelocity.y = 0;
+                    aimPoint = target.transform.position + targetVelocity * approachTime * 1.01f; //второе приближение
 
-                            //distance = Vector3.Distance(this.gameObject.transform.position, aimPoint);
-                            //approachTime = distance / averageRoundSpeed;
-                            //aimPoint = target.transform.position + target.GetComponent<NavMeshAgent>().velocity * approachTime; //третье приближение
+                    //distance = Vector3.Distance(this.gameObject.transform.position, aimPoint);
+                    //approachTime = distance / averageRoundSpeed;
+                    //aimPoint = target.transform.position + target.GetComponent<NavMeshAgent>().velocity * approachTime; //третье приближение
 
-                            Quaternion targetRotation = Quaternion.LookRotation((aimPoint - this.transform.position).normalized, new Vector3(0, 1, 0)); //донаводка
-                            this.transform.rotation = Quaternion.Slerp(this.transform.rotation, targetRotation, Time.deltaTime * 10);
-                        }
-                    }
-                    catch (MissingReferenceException)
-                    {
-                        target = null;
-                    }
+                    Quaternion targetRotation = Quaternion.LookRotation((aimPoint - this.transform.position).normalized, new Vector3(0, 1, 0)); //донаводка
+                    this.transform.rotation = Quaternion.Slerp(this.transform.rotation, targetRotation, Time.deltaTime * 6);
                 }
-                else
+                catch (MissingReferenceException)
                 {
-                    Quaternion targetRotation = Quaternion.LookRotation(this.gameObject.GetComponentInParent<Transform>().forward, new Vector3(0, 1, 0)); //возврат
-                    this.transform.rotation = Quaternion.Slerp(this.transform.rotation, targetRotation, Time.deltaTime * 7);
+                    target = null;
                 }
             }
-        }
-        public void Reset()
-        {
-            Start();
-            cooldown = coolingTime * 10;
-        }
-        public void InstantCool()
-        {
-            cooldown = 0;
-        }
-        public bool Fire()
-        {
-            if ((ammo > 0) && (cooldown <= 0))
+            else
             {
-                //Debug.Log("Fire");
+                Quaternion targetRotation = Quaternion.LookRotation(this.gameObject.GetComponentInParent<Transform>().forward, new Vector3(0, 1, 0)); //возврат
+                this.transform.rotation = Quaternion.Slerp(this.transform.rotation, targetRotation, Time.deltaTime * 7);
+            }
+        }
+        public abstract void Reset();
+        public abstract bool IsReady { get; }
+        public abstract bool Fire();
+        protected abstract void Shoot(Transform target);
+    }
+    public abstract class RoundWeapon : Weapon
+    {
+        protected float reloadingTime;
+        protected int ammo;
+        protected int ammoCampacity; 
+        public override bool Fire()
+        {
+            if (IsReady)
+            {
                 this.GetComponentInChildren<ParticleSystem>().Play();
-                Shoot(target.ObjectTransform);
+                Shoot(target.transform);
+                ammo--;
+                backount = 60f / Firerate;
                 return true;
-                //cooldown = coolingTime; !set in children
-                //ammo--; !set in children
             }
             else return false;
         }
-        protected abstract void Shoot(Transform target);
+        public override void Update()
+        {
+            base.Update();
+            if (ammo <= 0 && backount <= 0)
+            {
+                ammo = ammoCampacity;
+                backount = reloadingTime;
+            }
+        }
+        public override bool IsReady
+        {
+            get
+            {
+                return (ammo > 0 && backount <= 0);
+            }
+        }
+        public override void Reset()
+        {
+            ammo = ammoCampacity;
+            backount = 0;
+        }
+    }
+    public abstract class EnergyWeapon : Weapon
+    {
+        protected float heat;
+        protected float maxHeat;
+        protected bool overheat;
+        public override bool Fire()
+        {
+            if (IsReady)
+            {
+                this.GetComponentInChildren<ParticleSystem>().Play();
+                Shoot(target.transform);
+                heat++;
+                backount = 60f / Firerate;
+                return true;
+            }
+            else return false;
+        }
+        public override void Update()
+        {
+            base.Update();
+            if (heat > 0)
+            {
+                heat -= Time.deltaTime;
+                if (heat > maxHeat)
+                    overheat = true;
+            }
+            else overheat = false;
+        }
+        public override bool IsReady { get { return (!overheat && backount <= 0); } }
+        public override void Reset()
+        {
+            heat = 0;
+            backount = 0;
+        }
     }
     public abstract class Round : MonoBehaviour
     {
@@ -544,6 +610,7 @@ namespace SpaceCommander
         protected float damage;
         protected float armorPiersing;
         protected float ttl;
+
         public float Speed { get { return speed; } }
         public float Damage { get { return damage; } }
         public float ArmorPiersing { get { return armorPiersing; } }
@@ -562,7 +629,7 @@ namespace SpaceCommander
             if (ttl > 0)
                 ttl -= Time.deltaTime;
             else
-                Explode();
+                Destroy();
         }
         protected virtual void OnCollisionEnter(Collision collision)
         {
@@ -570,12 +637,12 @@ namespace SpaceCommander
             {
                 case "Unit":
                     {
-                        Explode();
+                        Destroy();
                         break;
                     }
             }
         }
-        protected abstract void Explode();
+        protected abstract void Destroy();
     }
     public abstract class SelfguidedMissile : MonoBehaviour
     {
@@ -592,7 +659,7 @@ namespace SpaceCommander
         protected bool isArmed;
 
         public abstract void Start();
-        public void Update()
+        private void Update()
         {
             if (isArmed)
             {
@@ -614,9 +681,21 @@ namespace SpaceCommander
                     Quaternion targetRotation = Quaternion.LookRotation(target.position - this.transform.position, new Vector3(0, 1, 0));
                     this.transform.rotation = Quaternion.Slerp(this.transform.rotation, targetRotation, Time.deltaTime * TurnSpeed);
                     // угол между направлением на цель и направлением ракеты порядок имеет значение.
-                    if (Vector3.Angle(target.transform.position - this.transform.position, this.transform.forward) > AimCone)
-                        target = null;
+                    Weapons.MissileTrap[] traps = FindObjectsOfType<Weapons.MissileTrap>();
+                    if (traps.Length > 0)
+                    {
+                        foreach (Weapons.MissileTrap x in traps)
+                        {
+                            if (Vector3.Angle(x.transform.position - this.transform.position, this.transform.forward) < AimCone)
+                            {
+                                target = null;
+                                break;
+                            }
+                        }
+                    }
                 }
+                if (target != null && Vector3.Angle(target.transform.position - this.transform.position, this.transform.forward) > AimCone)
+                    target = null;
                 //Debug.Log(gameObject.GetComponent<Rigidbody>().velocity.magnitude);
 
                 //полет по прямой
@@ -736,182 +815,6 @@ namespace SpaceCommander
         public virtual bool Allies(Army army)
         {
             return (Team == army);
-        }
-    }
-    public static class Randomizer
-    {
-        public static double[] Uniform(int minValue, int maxValue, int Count)
-        {
-            double[] Out = new double[Count];
-            for (int i = 0; i < Count; i++)
-            {
-                Out[i] = Uniform(minValue, maxValue);
-            }
-            return Out;
-        }
-        public static double[] Exponential(double Rate, int Count, int minValue, int maxValue)
-        {
-            double[] stairWidth = new double[257];
-            double[] stairHeight = new double[256];
-            const double x1 = 7.69711747013104972;
-            const double A = 3.9496598225815571993e-3; /// area under rectangle
-
-            setupExpTables(ref stairWidth, ref stairHeight, x1, A);
-
-            double[] Out = new double[Count];
-            for (int i = 0; i < Count; i++)
-            {
-                Out[i] = Exponential(Rate, stairWidth, stairHeight, x1, minValue, maxValue);
-            }
-
-            return Out;
-        }
-        public static double[] Normal(double Mu, double Sigma, int Count, int minValue, int maxValue)
-        {
-            double[] stairWidth = new double[257];
-            double[] stairHeight = new double[256];
-            const double x1 = 3.6541528853610088;
-            const double A = 4.92867323399e-3; /// area under rectangle
-
-            setupNormalTables(ref stairWidth, ref stairHeight, x1, A);
-
-            double[] Out = new double[Count];
-            for (int i = 0; i < Count; i++)
-            {
-                Out[i] = Mu + NormalZiggurat(stairWidth, stairHeight, x1, minValue, maxValue) * Sigma;
-            }
-
-            return Out;
-        }
-
-        private static double Uniform(double A, double B)
-        {
-            return A + RandomDouble() * (B - A);// maxValue;
-        }
-        private static double MagiсUniform(double A, double B)
-        {
-            return A + RandomMagiсInt() * (B - A) / 256;
-        }
-
-        private static void setupExpTables(ref double[] stairWidth, ref double[] stairHeight, double x1, double A)
-        {
-            // coordinates of the implicit rectangle in base layer
-            stairHeight[0] = Math.Exp(-x1);
-            stairWidth[0] = A / stairHeight[0];
-            // implicit value for the top layer
-            stairWidth[256] = 0;
-            for (int i = 1; i <= 255; ++i)
-            {
-                // such x_i that f(x_i) = y_{i-1}
-                stairWidth[i] = -Math.Log(stairHeight[i - 1]);
-                stairHeight[i] = stairHeight[i - 1] + A / stairWidth[i];
-            }
-        }
-        private static void setupNormalTables(ref double[] stairWidth, ref double[] stairHeight, double x1, double A)
-        {
-            // coordinates of the implicit rectangle in base layer
-            stairHeight[0] = Math.Exp(-.5 * x1 * x1);
-            stairWidth[0] = A / stairHeight[0];
-            // implicit value for the top layer
-            stairWidth[256] = 0;
-            for (int i = 1; i <= 255; ++i)
-            {
-                // such x_i that f(x_i) = y_{i-1}
-                stairWidth[i] = Math.Sqrt(-2 * Math.Log(stairHeight[i - 1]));
-                stairHeight[i] = stairHeight[i - 1] + A / stairWidth[i];
-            }
-        }
-
-        private static double ExpZiggurat(double[] stairWidth, double[] stairHeight, double x1, int minValue, int maxValue)
-        {
-            int iter = 0;
-            do
-            {
-                int stairId = RandomInt() & 255;
-                double x = Uniform(0, stairWidth[stairId]); // get horizontal coordinate
-                if (x < stairWidth[stairId + 1]) /// if we are under the upper stair - accept
-                    return x;
-                if (stairId == 0) // if we catch the tail
-                    return x1 + ExpZiggurat(stairWidth, stairHeight, x1, minValue, maxValue);
-                if (Uniform(stairHeight[stairId - 1], stairHeight[stairId]) < Math.Exp(-x)) // if we are under the curve - accept
-                    return x;
-                // rejection - go back
-            } while (++iter <= 1e9); // one billion should be enough to be sure there is a bug
-            return double.NaN; // fail due to some error
-        }
-        private static double NormalZiggurat(double[] stairWidth, double[] stairHeight, double x1, int minValue, int maxValue)
-        {
-            int iter = 0;
-            do
-            {
-                int B = RandomMagiсInt();
-                int stairId = B & 255;
-                double x = MagiсUniform(0, stairWidth[stairId]); // get horizontal coordinate
-                if (x < stairWidth[stairId + 1])
-                    return ((int)B > 0) ? x : -x;
-                if (stairId == 0) // handle the base layer
-                {
-                    double z = -1;
-                    double y;
-                    if (z > 0) // we don't have to generate another exponential variable as we already have one
-                    {
-                        x = Exponential(x1, stairWidth, stairHeight, x1, minValue, maxValue);
-                        z -= 0.5 * x * x;
-                    }
-                    if (z <= 0) // if previous generation wasn't successful
-                    {
-                        do
-                        {
-                            x = Exponential(x1, stairWidth, stairHeight, x1, minValue, maxValue);
-                            y = Exponential(1, stairWidth, stairHeight, x1, minValue, maxValue);
-                            z = y - 0.5 * x * x; // we storage this value as after acceptance it becomes exponentially distributed
-                        } while (z <= 0);
-                    }
-                    x += x1;
-                    return ((int)B > 0) ? x : -x;
-                }
-                // handle the wedges of other stairs
-                if (MagiсUniform(stairHeight[stairId - 1], stairHeight[stairId]) < Math.Exp(-.5 * x * x))
-                    return ((int)B > 0) ? x : -x;
-            } while (++iter <= 1e9); /// one billion should be enough
-            return double.NaN; /// fail due to some error
-        }
-        private static double Exponential(double Rate, double[] stairWidth, double[] stairHeight, double x1, int minValue, int maxValue)
-        {
-            return ExpZiggurat(stairWidth, stairHeight, x1, minValue, maxValue) / Rate;
-        }
-        private static double RandomDouble()
-        {
-            System.Security.Cryptography.RNGCryptoServiceProvider rand = new System.Security.Cryptography.RNGCryptoServiceProvider();
-            const int BUF_LENGTH = 1;
-            byte[] buf = new byte[BUF_LENGTH];
-            rand.GetBytes(buf);
-            double Out = 0;
-            foreach (byte x in buf)
-                Out += x / 256.0;
-            return Out;
-        }
-        private static int RandomInt()
-        {
-            System.Security.Cryptography.RNGCryptoServiceProvider rand = new System.Security.Cryptography.RNGCryptoServiceProvider();
-            const int BUF_LENGTH = 1;
-            byte[] buf = new byte[BUF_LENGTH];
-            rand.GetBytes(buf);
-            int Out = 0;
-            foreach (byte x in buf)
-                Out += x;
-            return Out / BUF_LENGTH;
-        }
-        private static int RandomMagiсInt()
-        {
-            System.Security.Cryptography.RNGCryptoServiceProvider rand = new System.Security.Cryptography.RNGCryptoServiceProvider();
-            const int BUF_LENGTH = 256;
-            byte[] buf = new byte[BUF_LENGTH];
-            rand.GetBytes(buf);
-            int Out = 0;
-            foreach (byte x in buf)
-                Out += x;
-            return Out / BUF_LENGTH;
         }
     }
 }

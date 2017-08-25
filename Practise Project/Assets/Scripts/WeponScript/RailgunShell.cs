@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace SpaceCommander
+namespace SpaceCommander.Weapons
 {
-    public class RailgunShell : Round, IShell
+    public class RailgunShell : Round
     {
         private Rigidbody body;
-        ShellType type;
-        public void StatUp(ShellType type)
+        public void StatUp()
         {
             this.speed = 300f;
             this.damage = 200f;
@@ -24,9 +23,9 @@ namespace SpaceCommander
             if (ttl > 0)
                 ttl -= Time.deltaTime;
             else
-                Explode();
+                Destroy();
         }
-        protected override void Explode()
+        protected override void Destroy()
         {
             Destroy(this.gameObject);
         }

@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-namespace SpaceCommander
+namespace SpaceCommander.Weapons
 {
     public class PlazmaSphere : Round, IEnergy
     {
@@ -24,16 +24,16 @@ namespace SpaceCommander
         }
         public new void Update()
         {
-            gameObject.GetComponent<Rigidbody>().AddForce(transform.forward * Speed, ForceMode.Force);
 
-            if (target != null && ttl < liveTime * 0.9)
+            if (target != null)
             {
                 transform.localScale += new Vector3(ScaleSpeed, ScaleSpeed, ScaleSpeed);
-                Quaternion targetRotation = Quaternion.LookRotation(target.position - this.transform.position, new Vector3(0, 1, 0));
-                this.transform.rotation = Quaternion.Slerp(this.transform.rotation, targetRotation, Time.deltaTime * TurnSpeed);
+                gameObject.GetComponent<Rigidbody>().AddForce((target.position - this.transform.position).normalized * Speed, ForceMode.Force);
             }
+            else
+                gameObject.GetComponent<Rigidbody>().AddForce(transform.forward * Speed, ForceMode.Force);
             if (ttl < 0 || damage < 1)
-                Explode();
+                Destroy();
             else
                 ttl -= Time.deltaTime;
         }
@@ -61,7 +61,7 @@ namespace SpaceCommander
             this.target = target;
         }
 
-        protected override void Explode()
+        protected override void Destroy()
         {
             Destroy(this.gameObject);
         }

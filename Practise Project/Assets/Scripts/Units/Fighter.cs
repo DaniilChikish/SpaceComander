@@ -3,54 +3,39 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using DeusUtility.Random;
 
-namespace SpaceCommander
+
+namespace SpaceCommander.Units
 {
     public class Fighter : SpaceShip
     {
-        //private float cooldownInhibitor;
-        private float cooldownMissileInhibitor;//Make private after debug;
-        private float cooldownForsage;
-        private float cooldownShieldBooster;
+
         private bool idleFulag;
-        private float cooldovnCannonVolley;
+
 
         protected override void StatsUp()
         {
             type = UnitClass.Figther;
-            radarRange = 300; //set in child
-            radarPover = 1;
+            radarRange = 350; //set in child
+            radarPover = 0.8f;
             speed = 9; //set in child
             stealthness = 0.5f; //set in child
             radiolink = 1.5f;
+            module = new SpellModule[2];
+            module[0] = new MissileTrapLauncher(this);
+            module[1] = new Jammer(this);
             EnemySortDelegate = FigtherSortEnemys;
             AlliesSortDelegate = ReconSortEnemys;
         }
+
         protected override void Explosion()
         {
             GameObject blast = Instantiate(Global.ShipDieBlast, gameObject.transform.position, gameObject.transform.rotation);
             blast.GetComponent<Explosion>().StatUp(BlastType.SmallShip);
         }
-        protected override void DecrementCounters()
+        protected override void DecrementLocalCounters()
         {
-            if (cooldownMissileInhibitor > 0)
-                cooldownMissileInhibitor -= Time.deltaTime;
-            if (cooldownForsage > 0)
-                cooldownForsage -= Time.deltaTime;
-            if (cooldownShieldBooster > 0)
-                cooldownShieldBooster -= Time.deltaTime;
-            if (cooldovnCannonVolley > 0)
-                cooldovnCannonVolley -= Time.deltaTime;
-        }
-        protected override bool RoleFunction()
-        {
-            return (ShieldBooster()||Forsage()||CannonVolley());
-        }
-        protected override bool SelfDefenceFunction()
-        {
-            SelfDefenceFunctionBase();
-            MissileGuidanceInhibitor();
-            return true;
         }
         //AI logick
         protected override bool AttackManeuver()
@@ -63,13 +48,14 @@ namespace SpaceCommander
                     }
                 case TargetStateType.InPrimaryRange:
                     {
+                        UseModule(new SpellFunction[] { SpellFunction.Self, SpellFunction.Buff });
+                        UseModule(new SpellFunction[] { SpellFunction.Attack, SpellFunction.Buff });
                         return Evasion(CurrentTarget.transform.right);
                     }
                 case TargetStateType.InSecondaryRange:
                     {
-                        if (ShieldBooster())
-                            return Rush();
-                        else return ToPrimaryDistance();
+                        UseModule(new SpellFunction[] { SpellFunction.Self, SpellFunction.Defence });
+                        return ToPrimaryDistance();
                     }
                 case TargetStateType.BehindABarrier:
                     {
@@ -119,63 +105,8 @@ namespace SpaceCommander
             aiStatus = UnitStateType.UnderControl;
             Driver.MoveToQueue(destination);
         }
-        private bool Forsage()
-        {
-            if (cooldownForsage <= 0)
-            {
-                cooldownForsage = 20f;
-                this.MakeImpact(new ForsageImpact(this));
-                return true;
-            }
-            else return false;
-        }
-        private bool MissileGuidanceInhibitor()
-        {
-            if (cooldownMissileInhibitor <= 0)
-            {
-                GameObject[] missiles = GameObject.FindGameObjectsWithTag("Missile");
-                if (missiles.Length > 0)
-                    foreach (GameObject x in missiles)
-                    {
-                        if (x.GetComponent<SelfguidedMissile>().target == gameObject.transform)
-                        {
-                            float distance = Vector3.Distance(x.transform.position, this.transform.position);
-                            float multiplicator = Mathf.Pow(((-distance + (RadarRange * 0.5f)) * 0.02f), (1 / 3));
-                            if (Randomizer.Uniform(0, 100, 1)[0] < 70 * multiplicator)
-                            {
-                                x.GetComponent<SelfguidedMissile>().target = null;
-                                cooldownMissileInhibitor = 8;
-                                return true;
-                            }
-                        }
-                    }
-            }
-            return false;
-        }
-        private bool ShieldBooster()
-        {
-            if (cooldownShieldBooster <= 0 && !shield.isOwerheat && targetStatus == TargetStateType.InPrimaryRange)
-            {
-                this.MakeImpact(new ShieldBoosterImpact(this, 5f));
-                cooldownShieldBooster = 15;
-                return true;
-            }
-            else return false;
-        }
-        protected bool CannonVolley()
-        {
-            if (cooldovnCannonVolley <= 0)
-            {
-                if (CurrentTarget != null)
-                {
-                    Gunner.Volley(0);
-                    cooldovnCannonVolley = 20;
-                    return true;
-                }
-            }
-            return false;
-        }
     }
+
     public class ForsageImpact : IImpact
     {
         public string Name { get { return "WarpImpact"; } }
@@ -222,7 +153,7 @@ namespace SpaceCommander
         public ShieldBoosterImpact(SpaceShip owner, float time)
         {
             this.owner = owner;
-            ownerShieldMaxPowerPrew = owner.ShieldMaxCampacity;
+            ownerShieldMaxPowerPrew = owner.ShieldCampacity;
             ownerShieldRechargingPrew = owner.ShieldRecharging;
             if (owner.HaveImpact(this.Name))
                 ttl = 0;
@@ -233,7 +164,7 @@ namespace SpaceCommander
                 else
                 {
                     ttl = time;
-                    owner.ShieldMaxCampacity = owner.ShieldMaxCampacity * 4;
+                    owner.ShieldCampacity = owner.ShieldCampacity * 4;
                     owner.ShieldRecharging = owner.ShieldRecharging * 2;
                 }
             }
@@ -247,7 +178,7 @@ namespace SpaceCommander
 
         public void CompleteImpact()
         {
-            owner.ShieldMaxCampacity = ownerShieldMaxPowerPrew;
+            owner.ShieldCampacity = ownerShieldMaxPowerPrew;
             owner.ShieldRecharging = ownerShieldRechargingPrew;
             owner.RemoveImpact(this);
         }

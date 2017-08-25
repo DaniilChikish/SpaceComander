@@ -14,14 +14,14 @@ namespace SpaceCommander
         public float firstBlinker;
         public float secondBlinker;
         MeshRenderer firstFieldRend;
-        MeshCollider firstFieldColl;
+        Collider firstFieldColl;
         MeshRenderer secondField;
         ParticleSystem shildCollaps;
         // Use this for initialization
         void Start()
         {
             firstFieldRend = this.transform.FindChild("FirstField").GetComponent<MeshRenderer>();
-            firstFieldColl = this.transform.FindChild("FirstField").GetComponent<MeshCollider>();
+            firstFieldColl = this.transform.FindChild("FirstField").GetComponent<Collider>();
             shildCollaps = this.transform.FindChild("FirstField").GetComponentInChildren<ParticleSystem>();
             secondField = this.transform.FindChild("SecondField").GetComponent<MeshRenderer>();
         }
@@ -79,6 +79,36 @@ namespace SpaceCommander
         //        }
         //    }
         //}
+        protected void OnTriggerEnter(Collider collision)
+        {
+
+            if (!isOwerheat)
+            {
+                switch (collision.gameObject.tag)
+                {
+                    case "Shell":
+                        {
+                            Rigidbody shell = collision.GetComponent<Rigidbody>();
+                            shell.velocity = shell.velocity / 2;
+                            break;
+                        }
+                    case "Energy":
+                        {
+                            break;
+                        }
+                    case "Missile":
+                        {
+                            collision.GetComponent<SelfguidedMissile>().Arm();
+                            break;
+                        }
+                    case "Explosion":
+                        {
+                            this.force = this.force - collision.gameObject.GetComponent<Explosion>().Damage * 0.01f;
+                            break;
+                        }
+                }
+            }
+        }
         protected void OnTriggerStay(Collider collision)
         {
 
@@ -89,10 +119,11 @@ namespace SpaceCommander
                     case "Shell":
                         {
                             Rigidbody shell = collision.GetComponent<Rigidbody>();
-                            this.force -= shell.mass * 1.5f;
+                            this.force -= shell.mass;
                             secondField.enabled = true;
                             secondBlinker = 0.5f;
-                            shell.AddForce((collision.transform.position-this.transform.position).normalized * Mathf.Sqrt(shell.mass * maxCampacity * 20), ForceMode.Impulse);//velocity = collision.GetComponent<Rigidbody>().velocity / 2;
+                            //shell.AddForce((collision.transform.position-this.transform.position).normalized * Mathf.Sqrt(shell.velocity.magnitude * maxCampacity), ForceMode.Impulse);//velocity = collision.GetComponent<Rigidbody>().velocity / 2;
+                            shell.velocity = shell.velocity / 2 + (collision.transform.position - this.transform.position).normalized * Mathf.Sqrt(shell.velocity.magnitude * maxCampacity);
                             break;
                         }
                     case "Energy":

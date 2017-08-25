@@ -1,10 +1,14 @@
 fileFormatVersion: 2
 guid: 655cfd4f8aedebb4ba6b96b39fbcf782
-timeCreated: 1490622307
+timeCreated: 1498838198
 licenseType: Free
 MonoImporter:
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - enemyIcon: {fileID: 2800000, guid: 50a85c75d7c7334488bfc44f6d85c972, type: 3}
+  - aliesIcon: {fileID: 2800000, guid: 5697f683d8b223b42a77ae128ccc48a9, type: 3}
+  - selectedIcon: {fileID: 2800000, guid: ffad81e5539b7de4e870eefcc9bcb88a, type: 3}
+  - CurrentTarget: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

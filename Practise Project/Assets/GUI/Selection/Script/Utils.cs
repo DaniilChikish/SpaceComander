@@ -5,7 +5,7 @@ using System.Text;
 using UnityEngine;
 namespace SpaceCommander
 {
-    public static class Utils
+    public static class SelectionUtils
     {
         static Texture2D _whiteTexture;
         public static Texture2D WhiteTexture
@@ -61,13 +61,13 @@ namespace SpaceCommander
         public static void DrawScreenRectBorder(Rect rect, float thickness, Color color)
         {
             // Top
-            Utils.DrawScreenRect(new Rect(rect.xMin, rect.yMin, rect.width, thickness), color);
+            SelectionUtils.DrawScreenRect(new Rect(rect.xMin, rect.yMin, rect.width, thickness), color);
             // Left
-            Utils.DrawScreenRect(new Rect(rect.xMin, rect.yMin, thickness, rect.height), color);
+            SelectionUtils.DrawScreenRect(new Rect(rect.xMin, rect.yMin, thickness, rect.height), color);
             // Right
-            Utils.DrawScreenRect(new Rect(rect.xMax - thickness, rect.yMin, thickness, rect.height), color);
+            SelectionUtils.DrawScreenRect(new Rect(rect.xMax - thickness, rect.yMin, thickness, rect.height), color);
             // Bottom
-            Utils.DrawScreenRect(new Rect(rect.xMin, rect.yMax - thickness, rect.width, thickness), color);
+            SelectionUtils.DrawScreenRect(new Rect(rect.xMin, rect.yMax - thickness, rect.width, thickness), color);
         }
     }
 }

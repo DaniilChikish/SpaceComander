@@ -2,25 +2,34 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DeusUtility.Random;
 
-namespace SpaceCommander
+
+namespace SpaceCommander.Units
 {
     public class ECM : SpaceShip
     {
         public bool jamming;//Make private after debug;
-        public override float Stealthness { get { if (jamming) return stealthness * 0.4f; else return stealthness; } }
-        public float cooldownJammer; //Make private after debug;
-        public float cooldownWeaponInhibitor;//Make private after debug;
-        public float cooldownMissileInhibitor;//Make private after debug;
-        public float cooldownRadarInhibitor;//Make private after debug;
+        public override Vector3 Velocity
+        {
+            get
+            {
+                if (jamming)
+                    return base.Velocity * Convert.ToSingle(Randomizer.Uniform(0, 100, 1)[0]) / 50;
+                else
+                    return base.Velocity;
+            }
+        }
+
+
         protected override void StatsUp()
         {
             type = UnitClass.ECM;
-            radarRange = 150; //set in child
-            radarPover = 2f;
+            radarRange = 400; //set in child
+            radarPover = 0.9f;
             speed = 9f; //set in child
             jamming = false;
-            stealthness = 0.4f; //set in child
+            stealthness = 0.6f; //set in child
             radiolink = 1.1f;
             EnemySortDelegate = EMCSortEnemys;
             AlliesSortDelegate = ScoutSortEnemys;
@@ -30,21 +39,20 @@ namespace SpaceCommander
             GameObject blast = Instantiate(Global.ShipDieBlast, gameObject.transform.position, gameObject.transform.rotation);
             blast.GetComponent<Explosion>().StatUp(BlastType.SmallShip);
         }
-        protected override void DecrementCounters()
+        protected override void DecrementLocalCounters()
         {
-            if (cooldownJammer > 0)
-                cooldownJammer -= Time.deltaTime;
-            if (jamming && cooldownJammer <= 0)
+            if (module != null && module.Length > 0)
             {
-                jamming = false;
-                cooldownJammer = 5;
+                foreach (SpellModule m in module)
+                {
+                    if (m.GetType() == typeof(Jammer) && m.State == SpellModuleState.Active)
+                    {
+                        jamming = true;
+                        break;
+                    }
+                    else jamming = false;
+                }
             }
-            if (cooldownWeaponInhibitor > 0)
-                cooldownWeaponInhibitor -= Time.deltaTime;
-            if (cooldownRadarInhibitor > 0)
-                cooldownRadarInhibitor -= Time.deltaTime;
-            if (cooldownMissileInhibitor > 0)
-                cooldownMissileInhibitor -= Time.deltaTime;
         }
         //AI logick
         protected override bool AttackManeuver()
@@ -53,22 +61,19 @@ namespace SpaceCommander
             {
                 case TargetStateType.Captured:
                     {
-                        if (RadarInhibitor(CurrentTarget))
-                            return Rush();
-                        else
-                            return ShortenDistance();
+                        UseModule(new SpellFunction[] { SpellFunction.Attack, SpellFunction.Debuff });
+                        return ShortenDistance();
                     }
                 case TargetStateType.InPrimaryRange:
                     {
+                        UseModule(new SpellFunction[] { SpellFunction.Attack });
+                        UseModule(new SpellFunction[] { SpellFunction.Self, SpellFunction.Buff });
                         return IncreaseDistance();
                     }
                 case TargetStateType.InSecondaryRange:
                     {
-
-                        if (WeaponInhibitor(CurrentTarget))
-                            return Rush();
-                        else
-                            return ShortenDistance();
+                        UseModule(new SpellFunction[] { SpellFunction.Attack, SpellFunction.Debuff });
+                        return ShortenDistance();
                     }
                 case TargetStateType.BehindABarrier:
                     {
@@ -78,173 +83,23 @@ namespace SpaceCommander
                     return false;
             }
         }
-        protected override bool RoleFunction()
-        {
-            if (CurrentTarget != null)
-            {
-                RadarInhibitor(CurrentTarget);
-                WeaponInhibitor(CurrentTarget);
-                return true;
-            }
-            else return false;
-        }
-        protected override bool SelfDefenceFunction()
-        {
-            SelfDefenceFunctionBase();
-            if (RadarWarningResiever() > 5)
-                Jammer();
-            MissileGuidanceInhibitor();
-            return true;
-        }
         protected override int RadarWarningResiever()
         {
             capByTarget.Clear();
             foreach (SpaceShip x in enemys)
             {
+                UseModule(new SpellFunction[] { SpellFunction.Enemy, SpellFunction.Debuff });
                 SpaceShip enemy = x.GetComponent<SpaceShip>();
-                if (enemy.CurrentTarget == this)
+                if (enemy.CurrentTarget != null && enemy.CurrentTarget.transform == this.transform)
                     capByTarget.Add(x);
                 if (jamming)
                 {
-                    enemy.CurrentTarget = null;
-                    if (cooldownWeaponInhibitor < 0)
-                        enemy.MakeImpact(new TrusterInhibitorImpact(enemy, 0.2f));
-                    if (cooldownRadarInhibitor < 0)
-                        enemy.MakeImpact(new TrusterInhibitorImpact(enemy, 2f));
+                    enemy.ResetTarget();
                 }
             }
-            capByTarget.Sort(delegate (SpaceShip x, SpaceShip y) { return EnemySortDelegate(x.GetComponent<IUnit>(), y.GetComponent<IUnit>()); });
+            capByTarget.Sort(delegate (Unit x, Unit y) { return EnemySortDelegate(x, y); });
             return capByTarget.Count;
         }
-        private void Jammer()
-        {
-            if (!jamming && cooldownJammer <= 0)
-            {
-                jamming = true;
-                cooldownJammer = 3f;
-            }
-        }
-        private bool MissileGuidanceInhibitor()
-        {
-            if (cooldownMissileInhibitor <= 0)
-            {
-                GameObject[] missiles = GameObject.FindGameObjectsWithTag("Missile");
-                if (missiles.Length > 0)
-                    foreach (GameObject x in missiles)
-                    {
-                        if (x.GetComponent<SelfguidedMissile>().target == gameObject.transform)
-                        {
-                            float distance = Vector3.Distance(x.transform.position, this.transform.position);
-                            float multiplicator = Mathf.Pow(((-distance + (RadarRange * 0.5f)) * 0.02f), (1 / 3));
-                            if (Randomizer.Uniform(0, 100, 1)[0] < 70 * multiplicator)
-                            {
-                                x.GetComponent<SelfguidedMissile>().target = null;
-                                cooldownMissileInhibitor = 3.5f;
-                                return true;
-                            }
-                        }
-                    }
-            }
-            return false;
-        }
-        private bool WeaponInhibitor(SpaceShip target)
-        {
-            if (cooldownWeaponInhibitor <= 0 && target != null)
-            {
-                target.MakeImpact(new TrusterInhibitorImpact(target, 4f));
-                cooldownWeaponInhibitor = 10f;
-                return true;
-            }
-            return false;
-        }
-        private bool RadarInhibitor(SpaceShip target)
-        {
-            if (cooldownRadarInhibitor <= 0 && target != null)
-            {
-                target.MakeImpact(new RadarInhibitorImpact(target, 8f));
-                cooldownRadarInhibitor = 8f;
-                return true;
-            }
-            return false;
-        }
-    }
-    public class TrusterInhibitorImpact : IImpact
-    {
-        public bool Act = false;
-        public string Name { get { return "TrusterInhibitorImpact"; } }
-        private float ttl;
-        private SpaceShip owner;
-        private float ownerSpeedPrev;
-        public TrusterInhibitorImpact(SpaceShip owner, float time)
-        {
-            this.owner = owner;
-            ownerSpeedPrev = owner.Speed;
-            if (owner.HaveImpact(this.Name))
-                ttl = 0;
-            else
-            {
-                if (owner.HaveImpact("WarpImpact"))
-                    ttl = 0;
-                else
-                {
-                    Act = true;
-                    ttl = time;
-                    owner.Speed = 0;
-                }
-            }
-        }
-        public void ActImpact()
-        {
-            if (ttl > 0)
-                ttl -= Time.deltaTime;
-            else CompleteImpact();
-        }
-        public void CompleteImpact()
-        {
-            if (Act) owner.Speed = ownerSpeedPrev;
-            owner.RemoveImpact(this);
-        }
-        public override string ToString()
-        {
-            return Name;
-        }
-    }
-    public class RadarInhibitorImpact : IImpact
-    {
-        public bool Act = false;
-        public string Name { get { return "RadarInhibitorImpact"; } }
-        float ttl;
-        SpaceShip owner;
-        private float ownerRadarRangePrev;
-        public RadarInhibitorImpact(SpaceShip owner, float time)
-        {
-            this.owner = owner;
-            ownerRadarRangePrev = owner.RadarRange;
-            if (owner.HaveImpact(this.Name))
-                ttl = 0;
-            else
-            {
-                if (owner.HaveImpact("RadarBoosterImpact"))
-                    ttl = 0;
-                else
-                {
-                    Act = true;
-                    ttl = time;
-                    owner.RadarRange = owner.RadarRange / 2;
-                }
-            }
-        }
-        public void ActImpact()
-        {
-            if (ttl > 0)
-                ttl -= Time.deltaTime;
-            else CompleteImpact();
-        }
 
-        public void CompleteImpact()
-        {
-            if (Act) owner.RadarRange = ownerRadarRangePrev;
-            owner.RemoveImpact(this);
-        }
     }
 }

@@ -7,15 +7,13 @@ using UnityEngine;
 
 namespace SpaceCommander
 {
-    public interface IUnit
+    public interface ISpaceShipObservable
     {
-        UnitClass Type { get; }
-        Army Team { get; }
-        Transform ObjectTransform { get; }
-        Vector3 Velocity { get; }
-        void MakeImpact(IImpact impact);
-        void MakeDamage(float damage);
-        void Die();
+        float Health { get; }
+        float MaxHealth { get; }
+        float ShieldForce { get; }
+        float ShieldCampacity { get; }
+        SpellModule[] Module { get; }
     }
     public interface IDriver
     {
@@ -30,27 +28,26 @@ namespace SpaceCommander
     }
     public interface IGunner
     {
+        Unit Target { get; }
         void Update();
-        bool SetAim(IUnit target);
-        bool ShootHim(SpaceShip target, int slot);
+        bool SetAim(Unit target, bool immediately, float lockdown);
+        bool ShootHim(int slot);
         bool Volley(int slot);
         bool ResetAim();
-        void ReloadWeapons();
         float GetRange(int slot);
     }
     public interface IWeapon
     {
-        IUnit Target { set; get; }
+        WeaponType Type { get; }
+        Unit Target { set; get; }
+        int Firerate { get; } //per minute
         float Range { get; }
         float RoundSpeed { get; }
-        int Ammo { get; }
-        float Cooldown { get; }
         float Dispersion { get; }
-        float CoolingTime { get; }
         float ShildBlink { get; }
+        bool IsReady { get; }
         void StatUp();
         void Reset();
-        void InstantCool();
         bool Fire();
     }
     public interface IShell
@@ -58,7 +55,7 @@ namespace SpaceCommander
         float Speed { get; }
         float Damage { get; }
         float ArmorPiersing { get; }
-        void StatUp(ShellType type);
+        void StatUp(float speed, float damage, float armorPiersing, float mass, bool canRicochet, GameObject explosionPrefab);
     }
     public interface IEnergy
     {

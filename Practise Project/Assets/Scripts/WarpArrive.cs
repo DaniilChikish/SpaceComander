@@ -5,6 +5,8 @@ using System.Text;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DeusUtility.UI;
+
 
 namespace SpaceCommander
 {
@@ -33,11 +35,9 @@ namespace SpaceCommander
         }
         private void OnGUI()
         {
-
             if (isArrive)
             {
-                GUI.skin = FindObjectOfType<HUDBase>().Skin;
-                UIUtil.Exclamation(new Rect(Screen.width / 2 - 100, 0, 200, 50), Global.Texts["Reinforcements arrive!"]);
+                FindObjectOfType<HUDBase>().ShowExclamation(Global.Texts("Reinforcements arrive!"));
             }
         }
 

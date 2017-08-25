@@ -3,14 +3,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using DeusUtility.UI;
 
 namespace SpaceCommander
 {
-
     public class HUDBase : MonoBehaviour
     {
         protected enum PauseWindow { Start, Main, Restart, Options, About, Quit, Victory, Defeat }
         private PauseWindow CurWin;
+        public Rect mainRect;
+        public Vector2 screenRatio;
+        public float scale;
         public GUISkin Skin;
         public Texture2D VictoryBanner;
         public Texture2D DefeatBanner;
@@ -43,14 +46,23 @@ namespace SpaceCommander
         void Update()
         {
             //
-            Vector2 W4x4 = UIUtil.GetWindow(4, 4);
-            Vector2 W8x6 = UIUtil.GetWindow(8, 6);
-            Vector2 W6x2 = UIUtil.GetWindow(6, 2);
-            Vector2 W6x2f5 = UIUtil.GetWindow(6, 2.5f);
-            Windows[0] = new UIWindowInfo(new Rect(new Vector2((Screen.width - W4x4.x) / 2, ((Screen.height - W4x4.y) / 2)), W4x4));//main
-            Windows[1] = new UIWindowInfo(new Rect(new Vector2((Screen.width - W6x2f5.x) / 2, ((Screen.height - W6x2f5.y) / 2)), W6x2f5));//question
-            Windows[2] = new UIWindowInfo(new Rect(new Vector2((Screen.width - W8x6.x) / 2, ((Screen.height - W8x6.y) / 2)), W8x6));//options
-            Windows[3] = new UIWindowInfo(new Rect(new Vector2((Screen.width - W6x2.x) / 2, (Screen.height - W6x2.y) / 2 + 100), W6x2));//victory
+            if (Global.StaticProportion)
+            {
+                scale = Screen.width / (1280f / 1f);
+                mainRect = new Rect(0, 0, Screen.width / scale, Screen.height / scale);
+            }
+            else
+                mainRect = new Rect(0, 0, Screen.width, Screen.height);
+
+
+            Vector2 W4x4 = new Vector2(400, 400);
+            Vector2 W8x6 = new Vector2(800, 600);
+            Vector2 W6x2 = new Vector2(600, 200);
+            Vector2 W6x2f5 = new Vector2(600, 250f);
+            Windows[0] = new UIWindowInfo(UIUtil.GetRect(W4x4, PositionAnchor.Center, mainRect.size));//main
+            Windows[1] = new UIWindowInfo(UIUtil.GetRect(W6x2f5, PositionAnchor.Center, mainRect.size));//question
+            Windows[2] = new UIWindowInfo(UIUtil.GetRect(W8x6, PositionAnchor.Center, mainRect.size));//options
+            Windows[3] = new UIWindowInfo(UIUtil.GetRect(W6x2, PositionAnchor.Center, mainRect.size, new Vector2(0, 120)));//victory
             //
 
             if (Input.GetKeyDown(KeyCode.Escape))
@@ -64,6 +76,8 @@ namespace SpaceCommander
         private void OnGUI()
         {
             GUI.skin = Skin;
+            if (Global.StaticProportion && scale != 1)
+                GUI.matrix = Matrix4x4.Scale(Vector3.one * scale);
             int victory = Global.CheckVictory();
             if (victory == 1)
                 Victory();
@@ -74,8 +88,7 @@ namespace SpaceCommander
                 DrawPauseButton();
                 if (Pause)
                 {
-                    GUI.skin = Skin;
-                    GUI.BeginGroup(new Rect(Screen.width / 2 - 100, Screen.height / 2 - 100, 100, 100));
+                    GUI.BeginGroup(mainRect);
                     switch (CurWin)
                     {
                         case PauseWindow.Main:
@@ -110,26 +123,26 @@ namespace SpaceCommander
                             }
                     }
                     GUI.EndGroup();
-                    UIUtil.Exclamation(new Rect(0, Screen.height - 70, 200, 50), "Jogo Deus");
-                    UIUtil.Exclamation(new Rect(Screen.width - 200, Screen.height - 70, 200, 50), "v. " + Application.version);
+                    UIUtil.Exclamation(UIUtil.GetRect(new Vector2(200, 50), PositionAnchor.LeftDown, mainRect.size), "Jogo Deus");
+                    UIUtil.Exclamation(UIUtil.GetRect(new Vector2(200, 50), PositionAnchor.RightDown, mainRect.size), "v. " + Application.version);
                 }
             }
         }
         private void Victory()
         {
             CurWin = PauseWindow.Victory;
-            GUI.DrawTexture(new Rect((Screen.width - VictoryBannerSize.x) / 2, (Screen.height - VictoryBannerSize.y) / 2 - 200, VictoryBannerSize.x, VictoryBannerSize.y), VictoryBanner);
+            GUI.DrawTexture(UIUtil.GetRect(VictoryBannerSize, PositionAnchor.Center, mainRect.size, new Vector2(0, -100)), VictoryBanner);
             GUI.Window(3, Windows[3].rect, DrawVictoryQW, "");
         }
         void DrawVictoryQW(int windowID)
         {
-            UIUtil.WindowTitle(Windows[windowID], Global.Texts["Good job!"]);
+            UIUtil.WindowTitle(Windows[windowID], Global.Texts("Good job!"));
             //UIUtil.Label(new Rect(50, 10, 180, 43), "Running in fear?");
-            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX + 10, 100, 180, 50), Global.Texts["Next mission"]))
+            if (UIUtil.ButtonBig(UIUtil.GetRect(new Vector2(180, 50), PositionAnchor.Down, Windows[windowID].rect.size, new Vector2(100, -50)), Global.Texts("Next mission")))
             {
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
             }
-            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - 190, 100, 180, 50), Global.Texts["Main menu"]))
+            if (UIUtil.ButtonBig(UIUtil.GetRect(new Vector2(180, 50), PositionAnchor.Down, Windows[windowID].rect.size, new Vector2(-100, -50)), Global.Texts("Main menu")))
             {
                 SceneManager.LoadScene(0);
             }
@@ -137,39 +150,39 @@ namespace SpaceCommander
         private void Defeat()
         {
             CurWin = PauseWindow.Defeat;
-            GUI.DrawTexture(new Rect((Screen.width - VictoryBannerSize.x) / 2, (Screen.height - VictoryBannerSize.y) / 2 - 200, VictoryBannerSize.x, VictoryBannerSize.y), DefeatBanner);
+            GUI.DrawTexture(UIUtil.GetRect(VictoryBannerSize, PositionAnchor.Center, mainRect.size, new Vector2(0, -100)), DefeatBanner);
             GUI.Window(3, Windows[3].rect, DrawDefeatQW, "");
         }
         void DrawDefeatQW(int windowID)
         {
-            UIUtil.WindowTitle(Windows[windowID], Global.Texts["You lose!"]);
+            UIUtil.WindowTitle(Windows[windowID], Global.Texts("You lose!"));
             //UIUtil.Label(new Rect(50, 10, 180, 43), "Running in fear?");
-            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX + 10, 100, 180, 50), Global.Texts["Restart"]))
+            if (UIUtil.ButtonBig(UIUtil.GetRect(new Vector2(180, 50), PositionAnchor.Down, Windows[windowID].rect.size, new Vector2(100, -50)), Global.Texts("Restart")))
             {
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
             }
-            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - 190, 100, 180, 50), Global.Texts["Main menu"]))
+            if (UIUtil.ButtonBig(UIUtil.GetRect(new Vector2(180, 50), PositionAnchor.Down, Windows[windowID].rect.size, new Vector2(-100, -50)), Global.Texts("Main menu")))
             {
                 SceneManager.LoadScene(0);
             }
         }
         private void DrawPauseW(int windowID)
         {
-            UIUtil.WindowTitle(Windows[windowID], Global.Texts["Pause"]);
+            UIUtil.WindowTitle(Windows[windowID], Global.Texts("Pause"));
             //GUI.color.a = window.UIAlpha;
-            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - 100, 100, 200, 50), Global.Texts["Restart"]))
+            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - 100, 100, 200, 50), Global.Texts("Restart")))
             {
                 CurWin = PauseWindow.Restart;
             }
-            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - 100, 150, 200, 50), Global.Texts["Options"]))
+            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - 100, 150, 200, 50), Global.Texts("Options")))
             {
                 CurWin = PauseWindow.Options;
             }
-            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - 100, 200, 200, 50), Global.Texts["Briefing"]))
+            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - 100, 200, 200, 50), Global.Texts("Briefing")))
             {
                 CurWin = PauseWindow.About;
             }
-            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - 100, 250, 200, 50), Global.Texts["Exit mission"]))
+            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - 100, 250, 200, 50), Global.Texts("Exit mission")))
             {
                 CurWin = PauseWindow.Quit;
             }
@@ -184,7 +197,7 @@ namespace SpaceCommander
                 if (UIUtil.Button(new Rect(pauseButtonBoxBorder.x, pauseButtonBoxBorder.y,
                     pauseButtonBoxSize.x - pauseButtonBoxBorder.x - pauseButtonBoxBorder.z,  //width
                     pauseButtonBoxSize.y - pauseButtonBoxBorder.y - pauseButtonBoxBorder.w), //height
-                    Global.Texts["Pause"]))
+                    Global.Texts("Pause")))
                 {
                     //Debug.Log("Pause");
                     Stop();
@@ -195,7 +208,7 @@ namespace SpaceCommander
                 if (UIUtil.Button(new Rect(pauseButtonBoxBorder.x, pauseButtonBoxBorder.y,
                     pauseButtonBoxSize.x - pauseButtonBoxBorder.x - pauseButtonBoxBorder.z,  //width
                     pauseButtonBoxSize.y - pauseButtonBoxBorder.y - pauseButtonBoxBorder.w), //height
-                    Global.Texts["Continue"]))
+                    Global.Texts("Continue")))
                 {
                     //Debug.Log("Continue");
                     Continue();
@@ -220,32 +233,51 @@ namespace SpaceCommander
         void DrawOptionsW(int windowID)
         {
             float fBuffer;
-            UIUtil.WindowTitle(Windows[windowID], Global.Texts["Options"]);
+            UIUtil.WindowTitle(Windows[windowID], Global.Texts("Options"));
 
             GUI.BeginGroup(new Rect(Windows[windowID].CenterX - 170, 100, 340, 55));
-            UIUtil.Label(new Rect(120, 0, 100, 20), Global.Texts["Sound"]);
+            UIUtil.Label(new Rect(120, 0, 100, 20), Global.Texts("Sound"));
             fBuffer = GUI.HorizontalSlider(new Rect(0, 40, 340, 13), Global.SoundLevel, 0.0f, 1f);
             if (Global.SoundLevel != fBuffer)
                 Global.SoundLevel = fBuffer;
             GUI.EndGroup();
 
             GUI.BeginGroup(new Rect(Windows[windowID].CenterX - 170, 165, 340, 55));
-            UIUtil.Label(new Rect(120, 0, 100, 20), Global.Texts["Music"]);
+            UIUtil.Label(new Rect(120, 0, 100, 20), Global.Texts("Music"));
             fBuffer = GUI.HorizontalSlider(new Rect(0, 40, 340, 13), Global.MusicLevel, 0.0f, 1f);
             if (Global.MusicLevel != fBuffer)
                 Global.MusicLevel = fBuffer;
             GUI.EndGroup();
 
+            if (Screen.width != 1280)
+            {
+                string[] radios = new string[2];
+                radios[0] = "Static size";
+                radios[1] = "Static proportion";
+                int screenRadioSelected;
+                if (Global.StaticProportion)
+                    screenRadioSelected = 1;
+                else screenRadioSelected = 0;
+                GUI.BeginGroup(UIUtil.GetRect(new Vector2(150, 110), PositionAnchor.RightDown, Windows[windowID].rect.size, new Vector2(-100, -100)));
+                UIUtil.Label(new Rect(0, 0, 150, 20), Global.Texts("UI scale"));
+                int screenRadioBuffer = UIUtil.ToggleList(new Rect(0, 40, 150, 74), screenRadioSelected, radios);
+                GUI.EndGroup();
+                if (screenRadioSelected != screenRadioBuffer)
+                {
+                    Global.StaticProportion = (screenRadioBuffer == 1);
+                }
+            }
+
             if (Global.SettingsSaved)
             {
-                if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - UIUtil.Scaled(100), Windows[windowID].Bottom - 100, UIUtil.Scaled(200), 50), Global.Texts["Back"]))
+                if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - UIUtil.Scaled(100), Windows[windowID].Bottom - 100, UIUtil.Scaled(200), 50), Global.Texts("Back")))
                 {
                     CurWin = PauseWindow.Main;
                 }
             }
             else
             {
-                if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - UIUtil.Scaled(100), Windows[windowID].Bottom - 100, UIUtil.Scaled(200), 50), Global.Texts["Save"]))
+                if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - UIUtil.Scaled(100), Windows[windowID].Bottom - 100, UIUtil.Scaled(200), 50), Global.Texts("Save")))
                 {
                     Global.SaveSettings();
                 }
@@ -254,12 +286,12 @@ namespace SpaceCommander
         void DrawAboutW(int windowID)
         {
             UIUtil.WindowTitle(Windows[windowID], Global.MissionName);
-            Vector2 W6x4 = UIUtil.GetWindow(6, 4);
+            Vector2 W6x4 = new Vector2(600, 400);
             GUI.BeginGroup(new Rect(new Vector2(Windows[windowID].CenterX - (W6x4.x / 2), 100), W6x4), GUI.skin.GetStyle("textContainer"));
-            UIUtil.TextContainerTitle(new Rect(27, 10, UIUtil.Scaled(220), 20), Global.Texts["Targets"]);
+            UIUtil.TextContainerTitle(new Rect(27, 10, UIUtil.Scaled(220), 20), Global.Texts("Targets"));
             UIUtil.TextContainerText(new Rect(27, 40, UIUtil.Scaled(546), 60), Global.MissionBrief);
             GUI.EndGroup();
-            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - UIUtil.Scaled(90), Windows[windowID].Bottom - 100, UIUtil.Scaled(180), 50), Global.Texts["Back"]))
+            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - UIUtil.Scaled(90), Windows[windowID].Bottom - 100, UIUtil.Scaled(180), 50), Global.Texts("Back")))
             {
                 CurWin = PauseWindow.Main;
             }
@@ -267,12 +299,12 @@ namespace SpaceCommander
         void DrawStartW(int windowID)
         {
             UIUtil.WindowTitle(Windows[windowID], Global.MissionName);
-            Vector2 W6x4 = UIUtil.GetWindow(6, 4);
+            Vector2 W6x4 = new Vector2(600, 400);
             GUI.BeginGroup(new Rect(new Vector2(Windows[windowID].CenterX - (W6x4.x / 2), 100), W6x4), GUI.skin.GetStyle("textContainer"));
-            UIUtil.TextContainerTitle(new Rect(27, 10, UIUtil.Scaled(220), 20), Global.Texts["Targets"]);
+            UIUtil.TextContainerTitle(new Rect(27, 10, UIUtil.Scaled(220), 20), Global.Texts("Targets"));
             UIUtil.TextContainerText(new Rect(27, 40, UIUtil.Scaled(546), 60), Global.MissionBrief);
             GUI.EndGroup();
-            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - UIUtil.Scaled(90), Windows[windowID].Bottom - 100, UIUtil.Scaled(180), 50), Global.Texts["Start"]))
+            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - UIUtil.Scaled(90), Windows[windowID].Bottom - 100, UIUtil.Scaled(180), 50), Global.Texts("Start")))
             {
                 CurWin = PauseWindow.Main;
                 Continue();
@@ -280,17 +312,7 @@ namespace SpaceCommander
         }
         void DrawRestartW(int windowID)
         {
-            //UIUtil.WindowTitle(Windows[windowID], "Restart mission?");
-            //UIUtil.Label(new Rect(100, 100, 400, 43), "Do you think you'll do better from the beginning?");
-            //if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX + 10, 150, 180, 50), "Yes"))
-            //{
-            //    SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-            //}
-            //if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - 190, 150, 180, 50), "No"))
-            //{
-            //    CurWin = PauseWindow.Main;
-            //}
-            int ansver = Question(windowID, Global.Texts["Restart_question"], Global.Texts["Restart_discription"], Global.Texts["Yes"], Global.Texts["No"]);
+            int ansver = Question(windowID, Global.Texts("Restart_question"), Global.Texts("Restart_discription"), Global.Texts("Yes"), Global.Texts("No"));
             if (ansver == 1)
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
             else if (ansver == -1)
@@ -298,17 +320,7 @@ namespace SpaceCommander
         }
         void DrawQuitW(int windowID)
         {
-            //UIUtil.WindowTitle(Windows[windowID], "Are you deserting?");
-            //UIUtil.Label(new Rect(100, 100, 400, 43), "Another time, you'll have to start the mission from the beginning.");
-            //if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX + 10, 150, 180, 50), "Yes"))
-            //{
-            //    Application.Quit();
-            //}
-            //if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - 190, 150, 180, 50), "No"))
-            //{
-            //    CurWin = PauseWindow.Main;
-            //}
-            int ansver = Question(windowID, Global.Texts["ExitMission_question"], Global.Texts["ExitMission_discription"], Global.Texts["Yes"], Global.Texts["No"]);
+            int ansver = Question(windowID, Global.Texts("ExitMission_question"), Global.Texts("ExitMission_discription"), Global.Texts("Yes"), Global.Texts("No"));
             if (ansver == 1)
                 SceneManager.LoadScene(0);
             else if (ansver == -1)
@@ -318,15 +330,22 @@ namespace SpaceCommander
         {
             UIUtil.WindowTitle(Windows[windowID], title);
             UIUtil.Label(new Rect(100, 100, UIUtil.Scaled(400), 43), text);
-            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX + UIUtil.Scaled(10), 150, UIUtil.Scaled(180), 50), var1))
+            if (UIUtil.ButtonBig(UIUtil.GetRect(new Vector2(180, 50), PositionAnchor.Down, Windows[windowID].rect.size, new Vector2(100, -50)), var1))
             {
                 return 1;
             }
-            if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - UIUtil.Scaled(190), 150, UIUtil.Scaled(180), 50), var2))
+            if (UIUtil.ButtonBig(UIUtil.GetRect(new Vector2(180, 50), PositionAnchor.Down, Windows[windowID].rect.size, new Vector2(-100, -50)), var2))
             {
                 return -1;
             }
             return 0;
+        }
+        public void ShowExclamation(string text)
+        {
+            GUI.skin = Skin;
+            if (Global.StaticProportion && scale != 1)
+                GUI.matrix = Matrix4x4.Scale(Vector3.one * scale);
+            UIUtil.Exclamation(UIUtil.GetRect(new Vector2(200, 50), PositionAnchor.Up, mainRect.size, new Vector2(0, 10)), text);
         }
     }
 }//

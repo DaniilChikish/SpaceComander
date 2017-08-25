@@ -18,7 +18,7 @@ namespace SpaceCommander
         {
             int alies = 0;
             int enemy = 0;
-            foreach (IUnit x in Global.unitList)
+            foreach (Unit x in Global.unitList)
             {
                 if (x.Team == Global.playerArmy)
                     alies++;

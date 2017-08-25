@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/Levels/Mission2.unity
+- path: Assets/MainPractiseScene.unity
   isLoaded: 1
   isActive: 1

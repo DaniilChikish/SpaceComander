@@ -1,12 +1,13 @@
 fileFormatVersion: 2
 guid: d1902720a1f82e5468cffbf4bf8a9724
-timeCreated: 1490636135
+timeCreated: 1498838416
 licenseType: Free
 MonoImporter:
   serializedVersion: 2
   defaultReferences:
-  - Selection: {fileID: 2800000, guid: 5f354476d5c711142a9ae0c0c687e1be, type: 3}
-  - DieBlast: {fileID: 1211626106991944, guid: f8a3017e78e32c34da4012387bdf7ac9, type: 2}
+  - enemyIcon: {fileID: 2800000, guid: 45e3d620c44109d4eb3e1e578af0ee0d, type: 3}
+  - aliesIcon: {fileID: 2800000, guid: 1860d34e1daeac3469da567d15b5fc11, type: 3}
+  - selectedIcon: {fileID: 2800000, guid: 2d20190d111ec7747a60111823e42480, type: 3}
   - CurrentTarget: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}

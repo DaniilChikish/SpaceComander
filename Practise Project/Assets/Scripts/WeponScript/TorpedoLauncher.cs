@@ -1,9 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-namespace SpaceCommander
+namespace SpaceCommander.Weapons
 {
-    public class TorpedoLauncher : Weapon
+    public class TorpedoLauncher : RoundWeapon
     {
         private SpaceShip owner;
         public TorpedoType AmmoType;
@@ -12,8 +12,8 @@ namespace SpaceCommander
             gameObject.GetComponent<MeshRenderer>().enabled = false;
             range = 350;
             ammo = 16;
-            coolingTime = 10f;
-            cooldown = 0;
+            firerate = 6;
+            reloadingTime = 45;
             dispersion = 3f;
             shildBlinkTime = 1f;
             owner = this.transform.GetComponentInParent<SpaceShip>();
@@ -23,18 +23,9 @@ namespace SpaceCommander
             GameObject torpedo;
             switch (AmmoType)
             {
-                case TorpedoType.Unitary:
-                    {
-                        ammo -= 1;
-                        cooldown = CoolingTime;
-                        torpedo = Instantiate(Global.Torpedo, gameObject.transform.position, transform.rotation);
-                        torpedo.AddComponent<UnitaryTorpedo>();
-                        break;
-                    }
                 case TorpedoType.Nuke:
                     {
                         ammo -= 4;
-                        cooldown = CoolingTime * 4;
                         torpedo = Instantiate(Global.Torpedo, gameObject.transform.position, transform.rotation);
                         torpedo.AddComponent<NukeTorpedo>();
                         break;
@@ -42,15 +33,14 @@ namespace SpaceCommander
                 case TorpedoType.Sprute:
                     {
                         ammo -= 2;
-                        cooldown = CoolingTime * 2;
                         torpedo = Instantiate(Global.Torpedo, gameObject.transform.position, transform.rotation);
                         torpedo.AddComponent<SpruteTorpedo>();
                         break;
                     }
+                case TorpedoType.Unitary:
                 default:
                     {
                         ammo -= 1;
-                        cooldown = CoolingTime;
                         torpedo = Instantiate(Global.Torpedo, gameObject.transform.position, transform.rotation);
                         torpedo.AddComponent<UnitaryTorpedo>();
                         break;

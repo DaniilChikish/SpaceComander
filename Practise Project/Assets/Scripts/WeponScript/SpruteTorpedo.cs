@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace SpaceCommander
+namespace SpaceCommander.Weapons
 {
     class SpruteTorpedo : Torpedo
     {

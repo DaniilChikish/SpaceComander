@@ -2,33 +2,32 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace SpaceCommander
+namespace SpaceCommander.Units
 {
     public class Bomber : SpaceShip
     {
         public TorpedoType StrategicLoad;
-        private float cooldovnRocketVolley;
         protected override void StatsUp()
         {
             type = UnitClass.Bomber;
             radarRange = 300; //set in child
-            radarPover = 1;
+            radarPover = 0.5f;
             speed = 6.5f; //set in child
-            stealthness = 0.7f; //set in child
+            stealthness = 0.4f; //set in child
             radiolink = 2.5f;
             StrategicLoad = TorpedoType.Nuke;
             EnemySortDelegate = BomberSortEnemys;
             AlliesSortDelegate = SupportCorvetteSortEnemys;
         }
+
         protected override void Explosion()
         {
             GameObject blast = Instantiate(Global.ShipDieBlast, gameObject.transform.position, gameObject.transform.rotation);
             blast.GetComponent<Explosion>().StatUp(BlastType.MediumShip);
         }
-        protected override void DecrementCounters()
+        protected override void DecrementLocalCounters()
         {
-            if (cooldovnRocketVolley > 0)
-                cooldovnRocketVolley -= Time.deltaTime;
+
         }
         protected override bool AttackManeuver()
         {
@@ -53,34 +52,6 @@ namespace SpaceCommander
                 default:
                     return false;
             }
-        }
-        protected override bool RoleFunction()
-        {
-            return RocketVolley();
-        }
-        protected override bool SelfDefenceFunction()
-        {
-            SelfDefenceFunctionBase();
-            return true;
-        }
-        protected bool RocketVolley()
-        {
-            if (cooldovnRocketVolley <= 0)
-            {
-                if (CurrentTarget != null && (CurrentTarget.Type == UnitClass.LR_Corvette || CurrentTarget.Type == UnitClass.Guard_Corvette || CurrentTarget.Type == UnitClass.Support_Corvette))
-                {
-                    Gunner.Volley(1);
-                    cooldovnRocketVolley = 30;
-                    return true;
-                }
-                else if (enemys.Count > 0)
-                {
-                    Gunner.Volley(0);
-                    cooldovnRocketVolley = 40;
-                    return true;
-                }
-            }
-            return false;
         }
     }
 }

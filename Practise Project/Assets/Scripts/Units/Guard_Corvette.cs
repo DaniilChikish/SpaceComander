@@ -2,15 +2,39 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Guard_Corvette : MonoBehaviour {
+namespace SpaceCommander.Units
+{
+    public class Guard_Corvette : SpaceShip
+    {
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+        private bool idleFulag;
+        protected override void StatsUp()
+        {
+            type = UnitClass.Guard_Corvette;
+            radarRange = 350; //set in child
+            radarPover = 0.8f;
+            speed = 4; //set in child
+            stealthness = 0.2f; //set in child
+            radiolink = 1f;
+            EnemySortDelegate = SupportCorvetteSortEnemys;
+            AlliesSortDelegate = SupportCorvetteSortEnemys;
+        }
+        protected override void Explosion()
+        {
+            GameObject blast = Instantiate(Global.ShipDieBlast, gameObject.transform.position, gameObject.transform.rotation);
+            blast.GetComponent<Explosion>().StatUp(BlastType.Corvette);
+        }
+        protected override void DecrementLocalCounters()
+        {
+
+        }
+        protected override bool IdleManeuverFunction()
+        {
+            idleFulag = !idleFulag;
+            if (idleFulag)
+                return PatroolLinePerpendicularly(150);
+            else return PatroolPoint();
+        }
+    }
 }
+    

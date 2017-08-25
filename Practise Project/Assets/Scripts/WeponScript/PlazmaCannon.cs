@@ -3,25 +3,25 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-namespace SpaceCommander
+using DeusUtility.Random;
+
+namespace SpaceCommander.Weapons
 {
-    public class PlazmaCannon : Weapon
+    public class PlazmaCannon : EnergyWeapon
     {
         public override void StatUp()
         {
             gameObject.GetComponent<MeshRenderer>().enabled = false;
-            range = 105;
-            ammo = 100; //2 Min
-            coolingTime = 1.5f; //30 DD, 33 DpS
-            cooldown = 0;
+            range = 125;
+            maxHeat = 100;
+            firerate = 60;
             dispersion = 5f;
-            shildBlinkTime = 0.5f;
+            shildBlinkTime = 0.05f;
             averageRoundSpeed = 60;
         }
         protected override void Shoot(Transform target)
         {
-            ammo -= 1;
-            cooldown = CoolingTime;
+            heat += 5;
             Quaternion direction = transform.rotation;
             double[] random = Randomizer.Normal(1, 1, 32, 0, 128);
             double[] randomOffset = Randomizer.Uniform(0, 100, 2);

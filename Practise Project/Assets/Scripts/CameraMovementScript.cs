@@ -34,26 +34,30 @@ namespace SpaceCommander
              * if (Input.GetKey(KeyCode.LeftArrow))
              *    player.transform.position -= player.transform.right * speed * Time.deltaTime;
              */
+            Vector3 newPosition = player.transform.position;
             if (Input.GetKey(KeyCode.W))
             {
-                player.transform.position += player.transform.forward * speed * (Time.deltaTime + holding / 4);
+                newPosition += player.transform.forward * speed * (Time.deltaTime + holding / 4);
                 if (holding<5) holding += Time.deltaTime;
             }
             if (Input.GetKey(KeyCode.S))
             {
-                player.transform.position += -player.transform.forward * speed * (Time.deltaTime + holding / 4);
+                newPosition += -player.transform.forward * speed * (Time.deltaTime + holding / 4);
                 if (holding < 5) holding += Time.deltaTime;
             }
             if (Input.GetKey(KeyCode.D))
             {
-                player.transform.position += player.transform.right * speed * (Time.deltaTime + holding / 4);
+                newPosition += player.transform.right * speed * (Time.deltaTime + holding / 4);
                 if (holding < 5) holding += Time.deltaTime;
             }
             if (Input.GetKey(KeyCode.A))
             {
-                player.transform.position += -player.transform.right * speed * (Time.deltaTime + holding / 4);
+                newPosition += -player.transform.right * speed * (Time.deltaTime + holding / 4);
                 if (holding < 5) holding += Time.deltaTime;
             }
+            if (newPosition.magnitude < 2500)
+                player.transform.position = newPosition;
+
             if (!(Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.A)))
                 if (holding > 0.00001f) holding = holding * 0.7f;
                 else holding = 0;

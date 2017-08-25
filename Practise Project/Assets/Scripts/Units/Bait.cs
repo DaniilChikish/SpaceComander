@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace SpaceCommander
+namespace SpaceCommander.Units
 {
     public class Bait : SpaceShip
     {
@@ -14,22 +14,13 @@ namespace SpaceCommander
             speed = 10; //set in child
             stealthness = 1f; //set in child
             radiolink = 2f;
-            movementAiEnabled = true;
+            movementAiEnabled = false;
             combatAIEnabled = false;
             selfDefenceModuleEnabled = true;
-            roleModuleEnabled = false;
         }
-        protected override void DecrementCounters()
+
+        protected override void DecrementLocalCounters()
         {
-        }
-        protected override bool RoleFunction()
-        {
-            return false;
-        }
-        protected override bool SelfDefenceFunction()
-        {
-            SelfDefenceFunctionBase();
-            return true;
         }
     }
 }

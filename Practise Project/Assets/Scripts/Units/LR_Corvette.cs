@@ -1,20 +1,19 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-namespace SpaceCommander
+namespace SpaceCommander.Units
 {
     public class LR_Corvette : SpaceShip
     {
-        private float cooldownReloadBot;
-        private float cooldownRepairBot;
+
         private bool idleFulag;
         protected override void StatsUp()
         {
             type = UnitClass.LR_Corvette;
-            radarRange = 350; //set in child
-            radarPover = 1;
+            radarRange = 450; //set in child
+            radarPover = 0.7f;
             speed = 5; //set in child
-            stealthness = 0.8f; //set in child
+            stealthness = 0.3f; //set in child
             radiolink = 2.5f;
             EnemySortDelegate = LRCorvetteSortEnemys;
             AlliesSortDelegate = SupportCorvetteSortEnemys;
@@ -24,12 +23,9 @@ namespace SpaceCommander
             GameObject blast = Instantiate(Global.ShipDieBlast, gameObject.transform.position, gameObject.transform.rotation);
             blast.GetComponent<Explosion>().StatUp(BlastType.Corvette);
         }
-        protected override void DecrementCounters()
+        protected override void DecrementLocalCounters()
         {
-            if (cooldownRepairBot > 0)
-                cooldownRepairBot -= Time.deltaTime;
-            if (cooldownReloadBot > 0)
-                cooldownReloadBot -= Time.deltaTime;
+
         }
         protected override bool AttackManeuver()
         {
@@ -61,36 +57,6 @@ namespace SpaceCommander
             if (idleFulag)
                 return PatroolLineParallel(150);
             else return PatroolLineParallel(50);
-        }
-
-        protected override bool RoleFunction()
-        {
-            return (SelfReloadBot()||SelfRepairBot());
-        }
-        protected override bool SelfDefenceFunction()
-        {
-            SelfDefenceFunctionBase();
-            return true;
-        }
-        private bool SelfReloadBot()
-        {
-            if ((cooldownReloadBot <= 0) && (this.NeedReloading))
-            {
-                this.MakeImpact(new Reloading(this, 0));
-                cooldownReloadBot = 10;
-                return true;
-            }
-            else return false;
-        }
-        private bool SelfRepairBot()
-        {
-            if ((cooldownRepairBot <= 0) && (Health<MaxHealth*0.5))
-            {
-                this.MakeImpact(new Repairing(this, 10));
-                cooldownRepairBot = 20;
-                return true;
-            }
-            else return false;
         }
     }
 }

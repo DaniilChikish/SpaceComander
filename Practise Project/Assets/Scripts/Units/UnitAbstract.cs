@@ -5,24 +5,51 @@ using System.Linq;
 using System.Text;
 using SpaceCommander;
 using UnityEngine.AI;
+using DeusUtility.Random;
 
 namespace SpaceCommander
 {
-    public delegate int SortSpaceShip(IUnit x, IUnit y);
-    public abstract class SpaceShip : MonoBehaviour, IUnit
+    public abstract class Unit : MonoBehaviour
+    {
+        protected UnitClass type;
+        protected string unitName;
+
+        public UnitClass Type { get { return type; } }
+        public string UnitName { get { return unitName; } }
+        public abstract Army Team { get; }
+        public abstract Unit CurrentTarget { get; }
+        public abstract float Speed { set; get; }
+        public abstract float Health { set; get; }
+        public abstract float MaxHealth { get; }
+
+        public abstract float ShellResist { get; }
+        public abstract float ShieldForce { set; get; }
+        public abstract float ShieldRecharging { set; get; }
+        public abstract float ShieldCampacity { set; get; }
+
+        public abstract float RadarRange { set; get; }
+        public abstract Vector3 Velocity { get; }
+        public abstract void MakeImpact(IImpact impact);
+        public abstract bool HaveImpact(string impactName);
+        public abstract void RemoveImpact(IImpact impact);
+        public abstract void MakeDamage(float damage);
+        public abstract void Die();
+        public abstract void ResetTarget();
+    }
+    public delegate int SortUnit(Unit x, Unit y);
+    public abstract class SpaceShip : Unit, ISpaceShipObservable
     {
         //base varibles
-        protected UnitClass type;
-        public UnitClass Type { get { return type; } }
         protected UnitStateType aiStatus;
         protected TargetStateType targetStatus;
         protected TacticSituation situation;
         public Army team;
         public bool isSelected;
-        public string UnitName;
-        private List<IImpact> impacts;
         public Vector3 Anchor;
-
+        //GUI
+        public Texture enemyIcon;
+        public Texture aliesIcon;
+        public Texture selectedIcon;
         //depend varibles
         protected float radiolink;
 
@@ -30,55 +57,61 @@ namespace SpaceCommander
         protected float radarRange; //set in child
         protected float radarPover; // default 1
         protected float speed; //set in child
-        public float Health { set { armor.hitpoints = value; } get { return armor.hitpoints; } }
-        public float ShellResist { /*set { armor.shellResist = value; }*/ get { return armor.shellResist; } }
-        public float MaxHealth { get { return armor.maxHitpoints; } }
+        //override properties
+        public override float Health { set { armor.hitpoints = value; } get { return armor.hitpoints; } }
+        public override float MaxHealth { get { return armor.maxHitpoints; } }
+        public override Army Team { get { return team; } }
+        public override Vector3 Velocity { get { return Driver.Velocity; } }
+        public override float Speed { set { speed = value; } get { return speed; } }
+        public override float RadarRange { set { radarRange = value; } get { return radarRange; } }
+        public override float ShieldForce { set { shield.force = value; } get { return shield.force; } }
+        public override float ShieldRecharging { set { shield.recharging = value; } get { return shield.recharging; } }
+        public override float ShieldCampacity { set { shield.maxCampacity = value; } get { return shield.maxCampacity; } }
+        public override Unit CurrentTarget { get { return Gunner.Target; } }
+        public override float ShellResist { /*set { armor.shellResist = value; }*/ get { return armor.shellResist; } }
+
+        //own properties
         public bool ShieldOwerheat { get { return shield.isOwerheat; } }
-        public float ShieldForce { set { shield.force = value; } get { return shield.force; } }
-        public float ShieldMaxCampacity { set { shield.maxCampacity = value; } get { return shield.maxCampacity; } }
-        public float ShieldRecharging { set { shield.recharging = value; } get { return shield.recharging; } }
-        public float RadarRange { set { radarRange = value; } get { return radarRange; } }
-        public virtual float Stealthness { get { return stealthness; } }
-        public float Speed { set { speed = value; } get { return speed; } }
-        public Vector3 Velocity { get { return Driver.Velocity; } }
-        public Army Team { get { return team; } }
-        public Transform ObjectTransform { get { if (this.gameObject != null) return this.gameObject.transform; else return null; } }
+        public float Stealthness { get { return stealthness; } set { stealthness = value; } }
+        public ForceShield GetShieldRef { get { return shield; } }
+        public SpellModule[] Module { get { return module; } }
+
+        //interface
+
         //modules
         public bool movementAiEnabled; // default true
         public bool combatAIEnabled;  // default true
         public bool selfDefenceModuleEnabled;  // default true
-        public bool roleModuleEnabled; // default true
         protected float stealthness; //set in child
         protected bool detected;
         public float cooldownDetected;
-        public bool NeedReloading;
         //controllers
+        protected bool ManualControl { set; get; }
         protected IDriver Driver;
         protected IGunner Gunner;
         protected GlobalController Global;
         protected Armor armor;
         protected ForceShield shield;
-        public ForceShield GetShieldRef { get { return shield; } }
+        private List<IImpact> impacts;
+        public SpellModule[] module;
         protected float synchAction;
         public float orderBackCount; //Make private after debug;
-        protected List<SpaceShip> enemys = new List<SpaceShip>();
-        protected List<SpaceShip> allies = new List<SpaceShip>();
-        public SpaceShip CurrentTarget;
-        protected List<SpaceShip> capByTarget;
+        protected List<Unit> enemys = new List<Unit>();
+        protected List<Unit> allies = new List<Unit>();
+        protected List<Unit> capByTarget;
         public string ManeuverName; //debug only
-        protected SortSpaceShip EnemySortDelegate;
-        protected SortSpaceShip AlliesSortDelegate;
+        public string GunnerTarget; //debug only
+        protected SortUnit EnemySortDelegate;
+        protected SortUnit AlliesSortDelegate;
         protected SquadStatus unitSquadStatus;
         protected SpaceShip[] Squad;
         public string[] ImpactList;
         //base interface
         protected void Start()//_______________________Start
         {
-            Debug.Log("Unit " + this.gameObject.name + " started");
             movementAiEnabled = true;
             combatAIEnabled = true;
             selfDefenceModuleEnabled = true;
-            roleModuleEnabled = true;
             EnemySortDelegate = SortEnemysBase;
             radarPover = 1;
             StatsUp();//
@@ -87,7 +120,7 @@ namespace SpaceCommander
             cooldownDetected = 0;
             //waitingBackCount = 0.2f;
             aiStatus = UnitStateType.Waiting;
-            UnitName = type.ToString();
+            unitName = type.ToString();
             Global = FindObjectOfType<GlobalController>();
             Global.unitList.Add(this);
             Anchor = this.transform.position;
@@ -95,10 +128,9 @@ namespace SpaceCommander
             armor = this.gameObject.GetComponent<Armor>();
             shield = this.gameObject.GetComponent<ForceShield>();
             //
-            Driver = new MovementController(this.gameObject);
             Gunner = new ShootController(this);
-            NeedReloading = false;
-            capByTarget = new List<SpaceShip>();
+            Driver = new MovementController(this.gameObject);
+            capByTarget = new List<Unit>();
             Squad = new SpaceShip[3];
             //List<SpaceShip> enemys = new List<SpaceShip>();
             //List<SpaceShip> allies = new List<SpaceShip>();
@@ -110,6 +142,8 @@ namespace SpaceCommander
 
             if (team == Global.playerArmy)
                 this.gameObject.transform.FindChild("MinimapPict").FindChild("AlliesMinimapPict").GetComponent<Renderer>().enabled = true;
+
+            Debug.Log("Unit " + this.gameObject.name + " started");
         }
         public void ResetStats()
         {
@@ -118,13 +152,16 @@ namespace SpaceCommander
         protected abstract void StatsUp();
         protected void Update()//______________________Update
         {
+            if (CurrentTarget != null)
+                GunnerTarget = CurrentTarget.ToString();
+            else GunnerTarget = "NULL";
             Driver.Update();
             Gunner.Update();
             //cooldowns
             DecrementBaseCounters();
-            DecrementCounters();
+            DecrementLocalCounters();
             //action
-            if (synchAction <= 0)
+            if (synchAction <= 0&&!ManualControl)
             {
                 synchAction = 0.05f;
                 if (movementAiEnabled)
@@ -160,8 +197,6 @@ namespace SpaceCommander
                             CombatManeuverFunction();
                             //RegroupingManeuver();
                         }
-                        if (roleModuleEnabled)
-                            RoleFunction();
                         if (selfDefenceModuleEnabled)
                             SelfDefenceFunction();
                     }
@@ -208,8 +243,6 @@ namespace SpaceCommander
                     if (combatAIEnabled)
                     {
                         CombatFunction();
-                        if (roleModuleEnabled)
-                            RoleFunction();
                         if (selfDefenceModuleEnabled)
                             SelfDefenceFunction();
                     }
@@ -240,6 +273,11 @@ namespace SpaceCommander
                 //this.gameObject.transform.FindChild("AlliesMinimapPict").GetComponent<Renderer>().enabled = false;
                 this.gameObject.transform.FindChild("MinimapPict").FindChild("EnemyMinimapPict").GetComponent<Renderer>().enabled = false;
             }
+            if (module != null && module.Length > 0)
+            {
+                for (int i = 0; i < module.Length; i++)
+                    module[i].Update();
+            }
             if (impacts.Count > 0)
             {
                 ImpactListUp();
@@ -257,7 +295,7 @@ namespace SpaceCommander
                 }
             }
         }
-        protected abstract void DecrementCounters();
+        protected abstract void DecrementLocalCounters();
         protected void OnGUI()
         {
             Vector3 crd = Camera.main.WorldToScreenPoint(transform.position);
@@ -275,12 +313,14 @@ namespace SpaceCommander
                     //style.fontStyle = FontStyle.Italic;
 
                     GUI.DrawTexture(new Rect(crd.x - Global.GUIFrameWidth / 2, crd.y - Global.GUIFrameOffset, Global.GUIFrameWidth, Global.GUIFrameHeight), Global.AlliesSelectedGUIFrame);
+                    GUI.DrawTexture(new Rect(crd.x - Global.GUIFrameWidth / 2, crd.y - Global.GUIFrameOffset - Global.GUIFrameHeight * 1.1f, Global.GUIFrameWidth, Global.GUIFrameHeight), selectedIcon);
                     GUI.Label(new Rect(crd.x - 120, crd.y - Global.NameFrameOffset, 240, 18), UnitName, style);
                 }
                 else
                 {
                     //Debug.Log("draw allies");
                     GUI.DrawTexture(new Rect(crd.x - Global.GUIFrameWidth / 2, crd.y - Global.GUIFrameOffset, Global.GUIFrameWidth, Global.GUIFrameHeight), Global.AlliesGUIFrame);
+                    GUI.DrawTexture(new Rect(crd.x - Global.GUIFrameWidth / 2, crd.y - Global.GUIFrameOffset - Global.GUIFrameHeight * 1.1f, Global.GUIFrameWidth, Global.GUIFrameHeight), aliesIcon);
                 }
             }
             else if (cooldownDetected > 0)
@@ -294,9 +334,18 @@ namespace SpaceCommander
                 //style.fontStyle = FontStyle.Italic;
 
                 GUI.DrawTexture(new Rect(crd.x - Global.GUIFrameWidth / 2, crd.y - Global.GUIFrameOffset, Global.GUIFrameWidth, Global.GUIFrameHeight), Global.EnemyGUIFrame);
+                GUI.DrawTexture(new Rect(crd.x - Global.GUIFrameWidth / 2, crd.y - Global.GUIFrameOffset - Global.GUIFrameHeight * 1.1f, Global.GUIFrameWidth, Global.GUIFrameHeight), enemyIcon);
                 //GUI.Label(new Rect(crd.x - 120, crd.y - Global.NameFrameOffset, 240, 18), UnitName, style);
             }
         }
+        //private void OnMouseDown()
+        //{
+        //    Debug.Log("Mouse down");
+        //    if (Input.GetKeyDown(KeyCode.Mouse0))
+        //        Debug.Log(" left");
+        //    if (Input.GetKeyDown(KeyCode.Mouse1))
+        //        Debug.Log(" right");
+        //}
         public void SelectUnit(bool isSelect)
         {
             if (isSelect)
@@ -311,24 +360,24 @@ namespace SpaceCommander
                 isSelected = false;
             }
         }
-        public virtual void MakeDamage(float damage)
+        public override void MakeDamage(float damage)
         {
             this.Health = this.Health - damage;
         }
-        public void MakeImpact(IImpact impact)
+        public override void MakeImpact(IImpact impact)
         {
             impacts.Add(impact);
         }
-        public bool HaveImpact(string impactName)
+        public override bool HaveImpact(string impactName)
         {
             if (this.impacts.Exists(x => x.Name == impactName)) return true;
             else return false;
         }
-        public void RemoveImpact(IImpact impact)
+        public override void RemoveImpact(IImpact impact)
         {
             impacts.Remove(impact);
         }
-        public void Die()//____________________________Die
+        public override void Die()//____________________________Die
         {
             shield.Owerheat();
             Explosion();
@@ -341,14 +390,6 @@ namespace SpaceCommander
             GameObject blast = Instantiate(Global.ShipDieBlast, gameObject.transform.position, gameObject.transform.rotation);
             blast.GetComponent<Explosion>().StatUp(BlastType.SmallShip);
         }
-        public void ReloadWeapons()
-        {
-            if (NeedReloading)
-            {
-                Gunner.ReloadWeapons();
-                NeedReloading = false;
-            }
-        }
 
         //AI logick
         protected bool CombatManeuverFunction()
@@ -357,14 +398,17 @@ namespace SpaceCommander
             {
                 case TacticSituation.Attack:
                     {
+                        UseModule(new SpellFunction[] { SpellFunction.Enemy, SpellFunction.Attack, SpellFunction.Buff });
                         return AttackManeuver();
                     }
                 case TacticSituation.Defense:
                     {
+                        UseModule(new SpellFunction[] { SpellFunction.Defence, SpellFunction.Self, SpellFunction.Buff });
                         return DefenseManeuver();
                     }
                 case TacticSituation.Retreat:
                     {
+                        UseModule(new SpellFunction[] { SpellFunction.Emergency, SpellFunction.Self, SpellFunction.Buff });
                         return RetreatManeuver();
                     }
                 default:
@@ -464,9 +508,9 @@ namespace SpaceCommander
                 {
                     bool output;
                     if (RadarWarningResiever() > 0)
-                        output = OpenFire(RetaliatoryCapture());//ответный захват
+                        output = OpenFire(RetaliatoryCapture(), 8);//ответный захват
                     else
-                        output = OpenFire(GetNearest());//огонь по ближайшей
+                        output = OpenFire(GetNearest(), 4);//огонь по ближайшей
                     CooperateFire();//целеуказание союзникам
                     return output;
                 }
@@ -477,7 +521,7 @@ namespace SpaceCommander
                     {
                         if (enemys[0] == null) enemys.Clear();
                         else
-                            return OpenFire(GetNearest());
+                            return OpenFire(GetNearest(), 2);
                     }
                     //переходим в ожидение
                     return false;
@@ -485,12 +529,12 @@ namespace SpaceCommander
             }
             else
             {
-                if (enemys.Count > 0 && EnemySortDelegate(CurrentTarget.GetComponent<IUnit>(), enemys[0].GetComponent<IUnit>()) == 1)
-                    CurrentTarget = enemys[0];
+                if (enemys.Count > 0 && EnemySortDelegate(CurrentTarget, enemys[0]) == 1)
+                    Gunner.SetAim(enemys[0], false, 4);
                 float distance = Vector3.Distance(this.transform.position, CurrentTarget.transform.position);
                 if (distance < RadarRange)
                 {
-                    bool output = OpenFire(CurrentTarget);
+                    bool output = OpenFire(CurrentTarget, 1);
                     CooperateFire();
                     return output;
                 }
@@ -498,11 +542,10 @@ namespace SpaceCommander
                 {
                     if (!TargetScouting())
                     {
-                        CurrentTarget = null;
                         Gunner.ResetAim();
                         return false;//переходим в ожидение
                     }
-                    else return OpenFire(CurrentTarget);
+                    else return OpenFire(CurrentTarget, 1);
                 }
             }
         }
@@ -574,6 +617,13 @@ namespace SpaceCommander
                 situation = TacticSituation.Defense;
         }
 
+        protected void UseModule(SpellFunction[] functions)
+        {
+            if (module != null && module.Length > 0)
+                foreach (SpellModule m in module)
+                        if (m.FunctionsIs(functions))
+                            m.EnableIfReady();
+        }
         //sevice function
         //base maneuvers
         protected bool PatroolPoint()
@@ -824,7 +874,7 @@ namespace SpaceCommander
                     if (distance < RadarRange * radiolink)
                     {
                         float multiplicator = Mathf.Pow(((-distance + RadarRange) * 0.02f), (1f / 5f)) * ((2f / (distance + 0.1f)) + 1);
-                        if (Randomizer.Uniform(0, 100, 1)[0] < unknown.Stealthness * radarPover * multiplicator * 100)
+                        if (radarPover * multiplicator > unknown.Stealthness)
                             if (!unknown.Allies(team))
                             {
                                 enemys.Add(unknown);
@@ -841,10 +891,10 @@ namespace SpaceCommander
                             }
                     }
                 }
-            enemys.Sort(delegate (SpaceShip x, SpaceShip y) { return EnemySortDelegate(x.GetComponent<IUnit>(), y.GetComponent<IUnit>()); });
-            allies.Sort(delegate (SpaceShip x, SpaceShip y) { return AlliesSortDelegate(x.GetComponent<IUnit>(), y.GetComponent<IUnit>()); });
+            enemys.Sort(delegate (Unit x, Unit y) { return EnemySortDelegate(x, y); });
+            allies.Sort(delegate (Unit x, Unit y) { return AlliesSortDelegate(x, y); });
         }
-        protected virtual GameObject ShortRangeRadar()
+        protected virtual GameObject AntiTorpedoRadar()
         {
             List<GameObject> hazard = new List<GameObject>();
             hazard.AddRange(GameObject.FindGameObjectsWithTag("Torpedo"));
@@ -853,7 +903,11 @@ namespace SpaceCommander
                 if (Vector3.Distance(x.transform.position, this.transform.position) < radarRange * 0.5 && !x.GetComponent<Torpedo>().Allies(team))
                     return x;
             }
-            hazard.Clear();
+            return null;
+        }
+        protected virtual GameObject AntiMissileRadar()
+        {
+            List<GameObject> hazard = new List<GameObject>();
             hazard.AddRange(GameObject.FindGameObjectsWithTag("Missile"));
             foreach (GameObject x in hazard)
             {
@@ -861,7 +915,9 @@ namespace SpaceCommander
                 {
                     float angel = Vector3.Angle(this.transform.position - x.transform.position, x.transform.forward);
                     if (angel < 10)
+                    {
                         return x;
+                    }
                 }
             }
             return null;
@@ -869,37 +925,43 @@ namespace SpaceCommander
         protected virtual int RadarWarningResiever()
         {
             capByTarget.Clear();
-            foreach (SpaceShip x in enemys)
+            foreach (Unit x in enemys)
             {
-                if (x.GetComponent<SpaceShip>().CurrentTarget == this)
+                if (x.CurrentTarget != null && x.CurrentTarget.transform == this.transform)
                     capByTarget.Add(x);
             }
-            capByTarget.Sort(delegate (SpaceShip x, SpaceShip y) { return EnemySortDelegate(x.GetComponent<IUnit>(), y.GetComponent<IUnit>()); });
+            capByTarget.Sort(delegate (Unit x, Unit y) { return EnemySortDelegate(x, y); });
             return capByTarget.Count;
         }
-        private int SortEnemysBase(IUnit x, IUnit y)
+        private int SortEnemysBase(Unit x, Unit y)
         {
-            if (Vector3.Distance(this.transform.position, x.ObjectTransform.position) > Vector3.Distance(this.transform.position, y.ObjectTransform.position))
+            if (Vector3.Distance(this.transform.position, x.transform.position) > Vector3.Distance(this.transform.position, y.transform.position))
                 return 1;
             else return -1;
         }
         public void ArmorCriticalAlarm()
-        { situation = TacticSituation.ExitTheBattle; }
+        {
+            UseModule(new SpellFunction[] { SpellFunction.Emergency, SpellFunction.Health });
+            situation = TacticSituation.ExitTheBattle;
+        }
         public void ShieldCriticalAlarm()
-        { situation = TacticSituation.Retreat; }
+        {
+            UseModule(new SpellFunction[] { SpellFunction.Emergency, SpellFunction.Shield });
+            situation = TacticSituation.Retreat;
+        }
 
         //combat
-        protected SpaceShip GetNearest()
+        protected Unit GetNearest()
         {
             return enemys[0];
         }
-        protected virtual SpaceShip RetaliatoryCapture()
+        protected virtual Unit RetaliatoryCapture()
         {
             return capByTarget[0];
         }
-        protected bool OpenFire(SpaceShip target)
+        protected bool OpenFire(Unit target, float lockdown)
         {
-            CurrentTarget = target;
+            Gunner.SetAim(target, false, lockdown);
             bool shot = false;
             float distance = Vector3.Distance(this.transform.position, CurrentTarget.transform.position);
             RaycastHit hit;
@@ -907,28 +969,74 @@ namespace SpaceCommander
             if (hit.transform == CurrentTarget.transform)
             {
                 targetStatus = TargetStateType.Captured;//наведение
-                Gunner.SetAim(CurrentTarget);
                 if (distance < Gunner.GetRange(1) && distance > 50)
                 {
                     targetStatus = TargetStateType.InSecondaryRange;
-                    shot = Gunner.ShootHim(CurrentTarget, 1);
+                    shot = Gunner.ShootHim(1);
                 }
                 if (distance < Gunner.GetRange(0))//выбор оружия
                 {
                     targetStatus = TargetStateType.InPrimaryRange;
-                    shot = Gunner.ShootHim(CurrentTarget, 0);
+                    shot = Gunner.ShootHim(0);
                 }
             }
             else targetStatus = TargetStateType.BehindABarrier;
             return shot;
         } //_________OpenFire
-        protected abstract bool RoleFunction();
-        protected abstract bool SelfDefenceFunction();
-        protected bool SelfDefenceFunctionBase()
+        public override void ResetTarget()
         {
-            GameObject hazard = ShortRangeRadar();
+            Gunner.ResetAim();
+        }
+        protected virtual void SelfDefenceFunction()
+        {
+            MissileProtection();
+            TorpedoProtection();
+            UseModule(new SpellFunction[] {SpellFunction.Defence, SpellFunction.Self });
+        }
+        protected bool MissileProtection()
+        {
+            GameObject hazard = AntiMissileRadar();
             if (hazard != null)
             {
+                if (module!=null&&module.Length>0)
+                {
+                    foreach (SpellModule m in module)
+                    {
+                        if (m.GetType() == typeof(MissileTrapLauncher))
+                        {
+                            m.EnableIfReady();
+                            break;
+                        }
+                    }
+                }
+                HazardEvasion(hazard);
+                return true;
+            }
+            else return false;
+        }
+        protected bool TorpedoProtection()
+        {
+            GameObject hazard = AntiTorpedoRadar();
+            if (hazard != null)
+            {
+                if (module != null && module.Length > 0)
+                {
+                    //foreach (SpellModule m in module)
+                    //{
+                    //    if (m.GetType() == typeof(MissileTrapLauncher))
+                    //    {
+                    //        m.EnableIfReady();
+                    //        break;
+                    //    }
+                    //}
+                }
+                HazardEvasion(hazard);
+                return true;
+            }
+            else return false;
+        }
+        protected void HazardEvasion(GameObject hazard)
+        {
                 if (situation == TacticSituation.SectorСlear)
                 {
                     Driver.ClearQueue();
@@ -941,11 +1049,7 @@ namespace SpaceCommander
                     aiStatus = UnitStateType.MoveAI;
                     Evasion(hazard.transform.right);
                 }
-                return true;
-            }
-            else return false;
         }
-
         //group interaction
         public virtual bool Allies(Army army)
         {
@@ -956,9 +1060,9 @@ namespace SpaceCommander
             }
             return (team == army);
         }
-        protected List<SpaceShip> RequestScout()
+        protected List<Unit> RequestScout()
         {
-            List<SpaceShip> enemys = new List<SpaceShip>();
+            List<Unit> enemys = new List<Unit>();
             foreach (SpaceShip x in allies)
             {
                 if (x.Ping(this.transform.position))
@@ -966,11 +1070,11 @@ namespace SpaceCommander
             }
             return enemys;
         }
-        public SpaceShip[] GetEnemys()
+        public Unit[] GetEnemys()
         {
             return enemys.ToArray();
         }
-        public SpaceShip[] GetAllies()
+        public Unit[] GetAllies()
         {
             return allies.ToArray();
         }
@@ -982,8 +1086,8 @@ namespace SpaceCommander
         }
         protected bool TargetScouting()
         {
-            List<SpaceShip> scoutingenemys = RequestScout();
-            return scoutingenemys.Exists(x => CurrentTarget);
+            List<Unit> scoutingenemys = RequestScout();
+            return scoutingenemys.Contains(CurrentTarget);
         }
         protected void CooperateFire()
         {
@@ -995,10 +1099,10 @@ namespace SpaceCommander
                 }
             }
         }
-        public void GetFireSupport(SpaceShip Target)
+        public void GetFireSupport(Unit Target)
         {
-            if (Target != this)
-                CurrentTarget = Target;
+            if (Target.transform != this.transform)
+                Gunner.SetAim(Target, true, 2);
         }
         //
         protected void FormSquad()
@@ -1071,8 +1175,8 @@ namespace SpaceCommander
             }
             return null;
         }
-        //
-        protected int EMCSortEnemys(IUnit x, IUnit y)
+        // sort functions
+        protected int EMCSortEnemys(Unit x, Unit y)
         {
             int xPriority;
             int yPriority;
@@ -1132,8 +1236,8 @@ namespace SpaceCommander
                         break;
                     }
             }
-            float xDictance = Vector3.Distance(this.transform.position, x.ObjectTransform.position);
-            float yDistance = Vector3.Distance(this.transform.position, y.ObjectTransform.position);
+            float xDictance = Vector3.Distance(this.transform.position, x.transform.position);
+            float yDistance = Vector3.Distance(this.transform.position, y.transform.position);
             if ((xDictance - yDistance) > -100 && (xDictance - yDistance) < 100)
             { } //приоритет не меняется
             else
@@ -1147,7 +1251,7 @@ namespace SpaceCommander
                 return -1;
             else return 1;
         }
-        protected int ScoutSortEnemys(IUnit x, IUnit y)
+        protected int ScoutSortEnemys(Unit x, Unit y)
         {
             int xPriority;
             int yPriority;
@@ -1207,8 +1311,8 @@ namespace SpaceCommander
                         break;
                     }
             }
-            float xDictance = Vector3.Distance(this.transform.position, x.ObjectTransform.position);
-            float yDistance = Vector3.Distance(this.transform.position, y.ObjectTransform.position);
+            float xDictance = Vector3.Distance(this.transform.position, x.transform.position);
+            float yDistance = Vector3.Distance(this.transform.position, y.transform.position);
             if ((xDictance - yDistance) > -100 && (xDictance - yDistance) < 100)
             { } //приоритет не меняется
             else
@@ -1222,7 +1326,7 @@ namespace SpaceCommander
                 return -1;
             else return 1;
         }
-        protected int ReconSortEnemys(IUnit x, IUnit y)
+        protected int ReconSortEnemys(Unit x, Unit y)
         {
             int xPriority;
             int yPriority;
@@ -1282,8 +1386,8 @@ namespace SpaceCommander
                         break;
                     }
             }
-            float xDictance = Vector3.Distance(this.transform.position, x.ObjectTransform.position);
-            float yDistance = Vector3.Distance(this.transform.position, y.ObjectTransform.position);
+            float xDictance = Vector3.Distance(this.transform.position, x.transform.position);
+            float yDistance = Vector3.Distance(this.transform.position, y.transform.position);
             if ((xDictance - yDistance) > -100 && (xDictance - yDistance) < 100)
             { } //приоритет не меняется
             else
@@ -1297,7 +1401,7 @@ namespace SpaceCommander
                 return -1;
             else return 1;
         }
-        protected int FigtherSortEnemys(IUnit x, IUnit y)
+        protected int FigtherSortEnemys(Unit x, Unit y)
         {
             int xPriority;
             int yPriority;
@@ -1357,8 +1461,8 @@ namespace SpaceCommander
                         break;
                     }
             }
-            float xDictance = Vector3.Distance(this.transform.position, x.ObjectTransform.position);
-            float yDistance = Vector3.Distance(this.transform.position, y.ObjectTransform.position);
+            float xDictance = Vector3.Distance(this.transform.position, x.transform.position);
+            float yDistance = Vector3.Distance(this.transform.position, y.transform.position);
             if ((xDictance - yDistance) > -100 && (xDictance - yDistance) < 100)
             { } //приоритет не меняется
             else
@@ -1372,7 +1476,7 @@ namespace SpaceCommander
                 return -1;
             else return 1;
         }
-        protected int BomberSortEnemys(IUnit x, IUnit y)
+        protected int BomberSortEnemys(Unit x, Unit y)
         {
             int xPriority;
             int yPriority;
@@ -1394,6 +1498,11 @@ namespace SpaceCommander
                         break;
                     }
                 case UnitClass.LR_Corvette: //жертва
+                    {
+                        xPriority = 10;
+                        break;
+                    }
+                case UnitClass.Turret: //жертва
                     {
                         xPriority = 10;
                         break;
@@ -1436,6 +1545,11 @@ namespace SpaceCommander
                         yPriority = 10;
                         break;
                     }
+                case UnitClass.Turret: //жертва
+                    {
+                        yPriority = 10;
+                        break;
+                    }
                 case UnitClass.Bomber: //паритет
                     {
                         yPriority = 5;
@@ -1452,8 +1566,8 @@ namespace SpaceCommander
                         break;
                     }
             }
-            float xDictance = Vector3.Distance(this.transform.position, x.ObjectTransform.position);
-            float yDistance = Vector3.Distance(this.transform.position, y.ObjectTransform.position);
+            float xDictance = Vector3.Distance(this.transform.position, x.transform.position);
+            float yDistance = Vector3.Distance(this.transform.position, y.transform.position);
             if ((xDictance - yDistance) > -300 && (xDictance - yDistance) < 300)
             { } //приоритет не меняется
             else
@@ -1467,7 +1581,7 @@ namespace SpaceCommander
                 return -1;
             else return 1;
         }
-        protected int LRCorvetteSortEnemys(IUnit x, IUnit y)
+        protected int LRCorvetteSortEnemys(Unit x, Unit y)
         {
             int xPriority;
             int yPriority;
@@ -1537,8 +1651,8 @@ namespace SpaceCommander
                         break;
                     }
             }
-            float xDictance = Vector3.Distance(this.transform.position, x.ObjectTransform.position);
-            float yDistance = Vector3.Distance(this.transform.position, y.ObjectTransform.position);
+            float xDictance = Vector3.Distance(this.transform.position, x.transform.position);
+            float yDistance = Vector3.Distance(this.transform.position, y.transform.position);
             if ((xDictance - yDistance) > -300 && (xDictance - yDistance) < 300)
             { } //приоритет не меняется
             else
@@ -1552,7 +1666,7 @@ namespace SpaceCommander
                 return -1;
             else return 1;
         }
-        protected int SupportCorvetteSortEnemys(IUnit x, IUnit y)
+        protected int SupportCorvetteSortEnemys(Unit x, Unit y)
         {
             int xPriority;
             int yPriority;
@@ -1622,8 +1736,8 @@ namespace SpaceCommander
                         break;
                     }
             }
-            float xDictance = Vector3.Distance(this.transform.position, x.ObjectTransform.position);
-            float yDistance = Vector3.Distance(this.transform.position, y.ObjectTransform.position);
+            float xDictance = Vector3.Distance(this.transform.position, x.transform.position);
+            float yDistance = Vector3.Distance(this.transform.position, y.transform.position);
             if ((xDictance - yDistance) > -300 && (xDictance - yDistance) < 300)
             { } //приоритет не меняется
             else
@@ -1649,6 +1763,14 @@ namespace SpaceCommander
             orderBackCount += Vector3.Distance(this.transform.position, destination) / (this.GetComponent<NavMeshAgent>().speed * 0.9f);
             aiStatus = UnitStateType.UnderControl;
             Driver.MoveToQueue(destination);
+        }
+        public virtual void AttackThat(Unit target)
+        {
+            if (target.transform != this.transform)
+            {
+                Gunner.ResetAim();
+                Gunner.SetAim(target, true, 64);
+            }
         }
     }
 }
