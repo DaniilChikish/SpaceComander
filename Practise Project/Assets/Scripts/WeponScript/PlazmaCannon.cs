@@ -11,6 +11,7 @@ namespace SpaceCommander.Weapons
     {
         public override void StatUp()
         {
+            type = WeaponType.Plazma;
             gameObject.GetComponent<MeshRenderer>().enabled = false;
             range = 125;
             maxHeat = 100;

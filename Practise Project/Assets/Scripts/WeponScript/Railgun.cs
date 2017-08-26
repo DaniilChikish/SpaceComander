@@ -20,7 +20,6 @@ namespace SpaceCommander.Weapons
         protected override void Shoot(Transform target)
         {
             Quaternion direction = transform.rotation;
-
             GameObject shell = Instantiate(Global.RailgunShell, gameObject.transform.position, direction);
             shell.GetComponent<RailgunShell>().StatUp();
         }

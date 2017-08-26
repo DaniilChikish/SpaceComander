@@ -14,6 +14,9 @@ namespace SpaceCommander
         float ShieldForce { get; }
         float ShieldCampacity { get; }
         SpellModule[] Module { get; }
+        IWeapon[] PrimaryWeapon { get; }
+        IWeapon[] SecondaryWeapon { get; }
+        bool ManualControl { get; set; }
     }
     public interface IDriver
     {
@@ -28,6 +31,7 @@ namespace SpaceCommander
     }
     public interface IGunner
     {
+        IWeapon[][] Weapon { get; }
         Unit Target { get; }
         void Update();
         bool SetAim(Unit target, bool immediately, float lockdown);
@@ -45,6 +49,9 @@ namespace SpaceCommander
         float RoundSpeed { get; }
         float Dispersion { get; }
         float ShildBlink { get; }
+        float BackCounter { get; }
+        float ShootCounter { get; }
+        float MaxShootCounter { get; }
         bool IsReady { get; }
         void StatUp();
         void Reset();

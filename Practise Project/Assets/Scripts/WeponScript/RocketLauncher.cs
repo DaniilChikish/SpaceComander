@@ -8,10 +8,13 @@ namespace SpaceCommander.Weapons
         public MissileType AmmoType;
         public override void StatUp()
         {
+            type = WeaponType.Missile;
             gameObject.GetComponent<MeshRenderer>().enabled = false;
             range = 250;
-            ammo = 40;
+            ammo = 20;
+            ammoCampacity = 20;
             firerate = 15;
+            reloadingTime = 45;
             dispersion = 6f;
             shildBlinkTime = 0.8f;
         }

@@ -6,6 +6,7 @@ using System.Text;
 using SpaceCommander;
 using UnityEngine.AI;
 using DeusUtility.Random;
+using DeusUtility.UI;
 
 namespace SpaceCommander
 {
@@ -78,7 +79,8 @@ namespace SpaceCommander
         public SpellModule[] Module { get { return module; } }
 
         //interface
-
+        public IWeapon[] PrimaryWeapon { get { return Gunner.Weapon[0]; } }
+        public IWeapon[] SecondaryWeapon { get { return Gunner.Weapon[1]; } }
         //modules
         public bool movementAiEnabled; // default true
         public bool combatAIEnabled;  // default true
@@ -87,7 +89,7 @@ namespace SpaceCommander
         protected bool detected;
         public float cooldownDetected;
         //controllers
-        protected bool ManualControl { set; get; }
+        public bool ManualControl { set; get; }
         protected IDriver Driver;
         protected IGunner Gunner;
         protected GlobalController Global;
@@ -163,7 +165,7 @@ namespace SpaceCommander
             DecrementBaseCounters();
             DecrementLocalCounters();
             //action
-            if (synchAction <= 0&&!ManualControl)
+            if (synchAction <= 0 && !ManualControl)
             {
                 synchAction = 0.05f;
                 if (movementAiEnabled)
@@ -300,48 +302,48 @@ namespace SpaceCommander
         protected abstract void DecrementLocalCounters();
         protected void OnGUI()
         {
-            //GUI.skin = hud.Skin;
-            //if (Global.StaticProportion && hud.scale != 1)
-            //    GUI.matrix = Matrix4x4.Scale(Vector3.one * hud.scale);
             Vector3 crd = Camera.main.WorldToScreenPoint(transform.position);
             crd.y = Screen.height - crd.y;
+            Vector2 texSize = new Vector2(Global.AlliesGUIFrame.width, Global.AlliesGUIFrame.height) * hud.scale;
+            float frameX = crd.x - texSize.x / 2f;
+            float frameY = crd.y - texSize.y / 2f;
+            float iconY = frameY - texSize.y * 1.1f;
+            GUIStyle style = new GUIStyle();
+            style.fontSize = 12;
+            //style.font = GuiProcessor.getI.rusfont;
+            style.normal.textColor = Color.red;
+            style.alignment = TextAnchor.MiddleCenter;
+            //style.fontStyle = FontStyle.Italic;
+            Texture frameToDraw = null;
+            Texture iconToDraw = null;
             if (team == Global.playerArmy)
             {
                 if (isSelected)
                 {
-                    //Debug.Log("draw selected");
-                    GUIStyle style = new GUIStyle();
-                    style.fontSize = 12;
-                    //style.font = GuiProcessor.getI.rusfont;
                     style.normal.textColor = Color.cyan;
-                    style.alignment = TextAnchor.MiddleCenter;
-                    //style.fontStyle = FontStyle.Italic;
 
-                    GUI.DrawTexture(new Rect(crd.x - Global.GUIFrameWidth / 2, crd.y - Global.GUIFrameOffset, Global.GUIFrameWidth, Global.GUIFrameHeight), Global.AlliesSelectedGUIFrame);
-                    GUI.DrawTexture(new Rect(crd.x - Global.GUIFrameWidth / 2, crd.y - Global.GUIFrameOffset - Global.GUIFrameHeight * 1.1f, Global.GUIFrameWidth, Global.GUIFrameHeight), selectedIcon);
+                    frameToDraw = Global.AlliesSelectedGUIFrame;
+                    iconToDraw = selectedIcon;
                     GUI.Label(new Rect(crd.x - 120, crd.y - Global.NameFrameOffset, 240, 18), UnitName, style);
                 }
                 else
                 {
-                    //Debug.Log("draw allies");
-                    GUI.DrawTexture(new Rect(crd.x - Global.GUIFrameWidth / 2, crd.y - Global.GUIFrameOffset, Global.GUIFrameWidth, Global.GUIFrameHeight), Global.AlliesGUIFrame);
-                    GUI.DrawTexture(new Rect(crd.x - Global.GUIFrameWidth / 2, crd.y - Global.GUIFrameOffset - Global.GUIFrameHeight * 1.1f, Global.GUIFrameWidth, Global.GUIFrameHeight), aliesIcon);
+                    frameToDraw = Global.AlliesGUIFrame;
+                    iconToDraw = aliesIcon;
                 }
             }
             else if (cooldownDetected > 0)
             {
-                //Debug.Log("draw enemy");
-                GUIStyle style = new GUIStyle();
-                style.fontSize = 12;
-                //style.font = GuiProcessor.getI.rusfont;
                 style.normal.textColor = Color.red;
-                style.alignment = TextAnchor.MiddleCenter;
-                //style.fontStyle = FontStyle.Italic;
 
-                GUI.DrawTexture(new Rect(crd.x - Global.GUIFrameWidth / 2, crd.y - Global.GUIFrameOffset, Global.GUIFrameWidth, Global.GUIFrameHeight), Global.EnemyGUIFrame);
-                GUI.DrawTexture(new Rect(crd.x - Global.GUIFrameWidth / 2, crd.y - Global.GUIFrameOffset - Global.GUIFrameHeight * 1.1f, Global.GUIFrameWidth, Global.GUIFrameHeight), enemyIcon);
+                frameToDraw = Global.EnemyGUIFrame;
+                iconToDraw = enemyIcon;
                 //GUI.Label(new Rect(crd.x - 120, crd.y - Global.NameFrameOffset, 240, 18), UnitName, style);
             }
+            if (frameToDraw != null)
+                GUI.DrawTexture(new Rect(new Vector2(frameX, frameY), texSize), frameToDraw);
+            if (iconToDraw != null)
+                GUI.DrawTexture(new Rect(new Vector2(frameX, iconY), texSize), iconToDraw);
         }
         //private void OnMouseDown()
         //{

@@ -23,9 +23,9 @@ namespace SpaceCommander
         public Texture AlliesSelectedGUIFrame;
         public Texture AlliesGUIFrame;
         public Texture EnemyGUIFrame;
-        public float GUIFrameWidth;
-        public float GUIFrameHeight;
-        public float GUIFrameOffset;
+        //public float GUIFrameWidth;
+        //public float GUIFrameHeight;
+        //public float GUIFrameOffset;
         public GameObject UnitaryShell;
         public AudioClip CannonShootSound;
         public GameObject ShellBlast;
@@ -320,6 +320,7 @@ namespace SpaceCommander
         //private float averageRoundSpeed;
         //private float averageRange;
         public Unit Target { get { return target; } }
+        public IWeapon[][] Weapon { get { return weapons; } }
         public ShootController(SpaceShip body)
         {
             this.owner = body;
@@ -440,7 +441,7 @@ namespace SpaceCommander
             return weapons[slot][0].Range;
         }
     }
-    public abstract class Weapon: MonoBehaviour, IWeapon
+    public abstract class Weapon : MonoBehaviour, IWeapon
     {
         protected WeaponType type;
         protected GlobalController Global;
@@ -454,12 +455,13 @@ namespace SpaceCommander
         protected bool PreAiming;
         protected float range;
 
-        protected float backount;
+        protected float backCount;
 
         public float Range { get { return range; } }
         public float RoundSpeed { get { return averageRoundSpeed; } }
         public float Dispersion { get { return dispersion; } }
         public float ShildBlink { get { return shildBlinkTime; } }
+        public float BackCounter { get { return backCount; } }
 
         public WeaponType Type { get { return type; } }
 
@@ -477,8 +479,8 @@ namespace SpaceCommander
         public virtual void Update()
         {
             if (PreAiming) Preaiming();
-            if (backount > 0)
-                backount -= Time.deltaTime;
+            if (backCount > 0)
+                backCount -= Time.deltaTime;
             UpdateLocal();
         }
         protected virtual void UpdateLocal()
@@ -527,6 +529,8 @@ namespace SpaceCommander
         }
         public abstract void Reset();
         public abstract bool IsReady { get; }
+        public abstract float ShootCounter { get; }
+        public abstract float MaxShootCounter { get; }
         public abstract bool Fire();
         protected abstract void Shoot(Transform target);
     }
@@ -534,7 +538,7 @@ namespace SpaceCommander
     {
         protected float reloadingTime;
         protected int ammo;
-        protected int ammoCampacity; 
+        protected int ammoCampacity;
         public override bool Fire()
         {
             if (IsReady)
@@ -542,7 +546,7 @@ namespace SpaceCommander
                 this.GetComponentInChildren<ParticleSystem>().Play();
                 Shoot(target.transform);
                 ammo--;
-                backount = 60f / Firerate;
+                backCount = 60f / Firerate;
                 return true;
             }
             else return false;
@@ -550,23 +554,25 @@ namespace SpaceCommander
         public override void Update()
         {
             base.Update();
-            if (ammo <= 0 && backount <= 0)
+            if (ammo <= 0 && backCount <= 0)
             {
                 ammo = ammoCampacity;
-                backount = reloadingTime;
+                backCount = reloadingTime;
             }
         }
         public override bool IsReady
         {
             get
             {
-                return (ammo > 0 && backount <= 0);
+                return (ammo > 0 && backCount <= 0);
             }
         }
+        public override float ShootCounter { get { return ammo; } }
+        public override float MaxShootCounter { get { return ammoCampacity; } }
         public override void Reset()
         {
             ammo = ammoCampacity;
-            backount = 0;
+            backCount = 0;
         }
     }
     public abstract class EnergyWeapon : Weapon
@@ -581,7 +587,7 @@ namespace SpaceCommander
                 this.GetComponentInChildren<ParticleSystem>().Play();
                 Shoot(target.transform);
                 heat++;
-                backount = 60f / Firerate;
+                backCount = 60f / Firerate;
                 return true;
             }
             else return false;
@@ -597,11 +603,13 @@ namespace SpaceCommander
             }
             else overheat = false;
         }
-        public override bool IsReady { get { return (!overheat && backount <= 0); } }
+        public override bool IsReady { get { return (!overheat && backCount <= 0); } }
+        public override float ShootCounter { get { return heat; } }
+        public override float MaxShootCounter { get { return maxHeat; } }
         public override void Reset()
         {
             heat = 0;
-            backount = 0;
+            backCount = 0;
         }
     }
     public abstract class Round : MonoBehaviour

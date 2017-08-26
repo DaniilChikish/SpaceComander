@@ -12,6 +12,7 @@ namespace SpaceCommander.Weapons
         private int bucksotRate;
         public override void StatUp()
         {
+            type = WeaponType.Cannon;
             gameObject.GetComponent<MeshRenderer>().enabled = false;
             range = 150;
             dispersion = 0.7f;
@@ -26,7 +27,6 @@ namespace SpaceCommander.Weapons
         }
         protected override void Shoot(Transform target)
         {
-            ammo -= 1;
             for (int i = 0; i < bucksotRate; i++)
             {
                 Quaternion direction = transform.rotation;

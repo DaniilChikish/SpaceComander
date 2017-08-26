@@ -111,7 +111,6 @@ namespace SpaceCommander
         }
         protected void OnTriggerStay(Collider collision)
         {
-
             if (!isOwerheat)
             {
                 switch (collision.gameObject.tag)

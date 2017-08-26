@@ -29,6 +29,7 @@ namespace SpaceCommander
                 RaycastHit hit;
                 if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 10000))
                 {
+                    Debug.Log("hit " + hit.transform.name + " - " + hit.transform.tag);
                     SpaceShip unknownUnit = null;
                     Collider[] unknownColiders = Physics.OverlapSphere(hit.point, 10);
                     foreach (Collider x in unknownColiders)
@@ -45,7 +46,7 @@ namespace SpaceCommander
                         }
                     }
                 }
-                if (!singleFinded)
+                if (!singleFinded&& !UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
                 {
                     isSelecting = true;
                     mousePosition1 = Input.mousePosition;

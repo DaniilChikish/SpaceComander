@@ -14,6 +14,7 @@ namespace SpaceCommander.Weapons
 
         public override void StatUp()
         {
+            type = WeaponType.Laser;
             //gameObject.GetComponent<MeshRenderer>().enabled = false;
             range = 350;
             dispersion = 0.00001f;//exponential
@@ -52,7 +53,7 @@ namespace SpaceCommander.Weapons
             }
             else beam.SetActive(false);
         }
-        public override bool IsReady { get { return (!overheat && backount <= 0 &&!beam.activeInHierarchy); } }
+        public override bool IsReady { get { return (!overheat && backCount <= 0 &&!beam.activeInHierarchy); } }
 
         protected override void Shoot(Transform target)
         {

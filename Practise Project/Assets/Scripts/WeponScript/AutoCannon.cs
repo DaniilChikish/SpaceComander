@@ -14,6 +14,7 @@ namespace SpaceCommander.Weapons
         public int shellPosition;
         public override void StatUp()
         {
+            type = WeaponType.Cannon;
             gameObject.GetComponent<MeshRenderer>().enabled = false;
             range = 200;
             ammoCampacity = 250; //~2 Min
@@ -86,7 +87,6 @@ namespace SpaceCommander.Weapons
         }
         protected override void Shoot(Transform target)
         {
-            ammo -= 1;
             Quaternion direction = transform.rotation;
             double[] randomOffset = Randomizer.Uniform(0, 100, 2);
             if (randomOffset[0] > 50)

@@ -9,11 +9,12 @@ namespace SpaceCommander.Weapons
         public TorpedoType AmmoType;
         public override void StatUp()
         {
+            type = WeaponType.Torpedo;
             gameObject.GetComponent<MeshRenderer>().enabled = false;
             range = 350;
             ammo = 16;
             firerate = 6;
-            reloadingTime = 45;
+            reloadingTime = 60;
             dispersion = 3f;
             shildBlinkTime = 1f;
             owner = this.transform.GetComponentInParent<SpaceShip>();
