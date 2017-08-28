@@ -52,6 +52,7 @@ namespace SpaceCommander
         private ObserverMode mode;
         private float statusOpenedY;
         private float previevOpenedX;
+        private RTS_Cam.RTS_Camera maincam;
 
         private void OnEnable()
         {
@@ -59,6 +60,7 @@ namespace SpaceCommander
             statusIsOpen = true;
             previevCount = MovDuratuon;
             previevIsOpen = true;
+            maincam = FindObjectOfType<RTS_Cam.RTS_Camera>();
             hud = FindObjectOfType<HUDBase>();
             Global = FindObjectOfType<GlobalController>();
             localStyle = new GUIStyle();
@@ -201,6 +203,7 @@ namespace SpaceCommander
                     SetObservable(Global.selectedList[0]);
                 if (observable.ManualControl)//observable status under manual control
                 {
+                    maincam.TargetFollow = observable.GetTransform();
                     mode = ObserverMode.Full;
                     if (previevIsOpen)
                     {
@@ -209,6 +212,7 @@ namespace SpaceCommander
                 }
                 else
                 {
+                    maincam.TargetFollow = null;
                     mode = ObserverMode.Half;
                     if (!previevIsOpen)
                     {
@@ -227,6 +231,7 @@ namespace SpaceCommander
                     observable.ManualControl = false;
                     ButtonOn();
                 }
+                maincam.TargetFollow = null;
                 observable = null;
                 mode = ObserverMode.None;
                 if (statusIsOpen)
@@ -329,7 +334,7 @@ namespace SpaceCommander
                             case SpellModuleState.Ready:
                                 {
                                     current = 0f;
-                                    if (GUI.Button(spellRect, spellIcon, localStyle) && mode == ObserverMode.Full)
+                                    if (GUI.Button(spellRect, spellIcon, localStyle))
                                         m.Enable();
                                     //GUI.DrawTexture(spellRect, ProgressUpdate(current, slotActive));
                                     break;
@@ -422,13 +427,23 @@ namespace SpaceCommander
         {
             if (mode == ObserverMode.Half)
             {
-                observable.ManualControl = true;
+                if (observable != null)
+                {
+                    observable.ManualControl = true;
+                    observable.GetTransform().gameObject.AddComponent<ShipManualController>();
+                }
+                FindObjectOfType<UnitSelectionComponent>().enabled = false;
                 mode = ObserverMode.Full;
                 ButtonOff();
             }
             else
             {
-                observable.ManualControl = false;
+                if (observable != null)
+                {
+                    observable.ManualControl = false;
+                    Destroy(observable.GetTransform().gameObject.GetComponent<ShipManualController>());
+                }
+                FindObjectOfType<UnitSelectionComponent>().enabled = true;
                 mode = ObserverMode.Half;
                 ButtonOn();
             }

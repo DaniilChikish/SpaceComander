@@ -81,6 +81,10 @@ namespace SpaceCommander
         //interface
         public IWeapon[] PrimaryWeapon { get { return Gunner.Weapon[0]; } }
         public IWeapon[] SecondaryWeapon { get { return Gunner.Weapon[1]; } }
+        public Transform GetTransform()
+        {
+            return this.gameObject.transform;
+        }
         //modules
         public bool movementAiEnabled; // default true
         public bool combatAIEnabled;  // default true

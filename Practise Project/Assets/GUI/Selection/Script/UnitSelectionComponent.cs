@@ -12,11 +12,9 @@ namespace SpaceCommander
         Vector3 mousePosition1;
         public GameObject destanationMarkerPrefab;
         public GameObject attackMarkerPrefab;
-        HUDUnitPrew UnitPrew;
         GlobalController Global;
         private void Start()
         {
-            UnitPrew = FindObjectOfType<HUDUnitPrew>();
             Global = FindObjectOfType<GlobalController>();
         }
         void Update()
@@ -38,10 +36,9 @@ namespace SpaceCommander
                         if (unknownUnit != null && unknownUnit.Team == Global.playerArmy)
                         {
                             singleFinded = true;
+                            ClearSelected();
+                            //Global.selectedList.Add(unknownUnit);
                             unknownUnit.SelectUnit(true);
-                            UnitPrew.Enabled = true;
-                            Global.selectedList.Clear();
-                            Global.selectedList.Add(unknownUnit);
                             break;
                         }
                     }
@@ -50,18 +47,7 @@ namespace SpaceCommander
                 {
                     isSelecting = true;
                     mousePosition1 = Input.mousePosition;
-
-                    foreach (var selectableObject in FindObjectsOfType<SpaceShip>())
-                    {
-                        if (selectableObject.isSelected == true)
-                        {
-                            selectableObject.gameObject.GetComponent<SpaceShip>().SelectUnit(false);
-                            //Destroy(selectableObject.selectionCircle.gameObject);
-                            //selectableObject.selectionCircle = null;
-                        }
-                    }
-                    UnitPrew.Enabled = false;
-                    Global.selectedList.Clear();
+                    ClearSelected();
                 }
             }
             // If we let go of the left mouse button, end selection
@@ -97,7 +83,6 @@ namespace SpaceCommander
                         if (selectableObject.isSelected == false)
                         {
                             selectableObject.gameObject.GetComponent<SpaceShip>().SelectUnit(true);
-                            UnitPrew.Enabled = true;
                         }
                     }
                 }
@@ -132,6 +117,19 @@ namespace SpaceCommander
                 }
             }
         }
+
+        private void ClearSelected()
+        {
+            foreach (var selectableObject in Global.selectedList)
+            {
+                if (selectableObject.isSelected == true)
+                {
+                    selectableObject.gameObject.GetComponent<SpaceShip>().SelectUnit(false);
+                }
+            }
+            Global.selectedList.Clear();
+        }
+
         private void SendTo(Vector3 destination)
         {
             //Debug.Log("SendTo...");

@@ -17,6 +17,7 @@ namespace SpaceCommander
         IWeapon[] PrimaryWeapon { get; }
         IWeapon[] SecondaryWeapon { get; }
         bool ManualControl { get; set; }
+        Transform GetTransform();
     }
     public interface IDriver
     {
