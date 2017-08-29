@@ -19,6 +19,8 @@ namespace SpaceCommander
         public List<SpaceShip> selectedList; // спиков выделенных объектов
         public Army playerArmy;
         //selection
+        public Texture aimPointTexture;
+
         public float NameFrameOffset;
         public Texture AlliesSelectedGUIFrame;
         public Texture AlliesGUIFrame;
@@ -346,7 +348,9 @@ namespace SpaceCommander
         {
             if (synchWeapons[slot] <= 0)
             {
-                float angel = Vector3.Angle(target.transform.position - owner.transform.position, owner.transform.forward);
+                float angel;
+                if (target != null) angel = Vector3.Angle(target.transform.position - owner.transform.position, owner.transform.forward);
+                else angel = 0;
                 if (angel < weapons[slot][0].Dispersion * 5 || angel < 10)
                 {
                     if (indexWeapons[slot] >= weapons[slot].Length)
@@ -387,7 +391,7 @@ namespace SpaceCommander
             for (int slot = 0; slot < weapons.Length; slot++)
                 if (synchWeapons[slot] > 0)
                     synchWeapons[slot] -= Time.deltaTime;
-            if (target != null)
+            if (!owner.ManualControl&& target != null)
             {
                 targetLockdownCount -= Time.deltaTime;
                 //Debug.Log("target - " + Target.transform.position);
@@ -487,7 +491,7 @@ namespace SpaceCommander
         { }
         private void Preaiming()
         {
-            float angel = Vector3.Angle(this.transform.forward, this.gameObject.GetComponentInParent<Transform>().forward);
+            float angel = Vector3.Angle(this.transform.forward, this.gameObject.GetComponentInParent<Unit>().transform.forward);
             if (angel < 5 && target != null)
             {
                 try
@@ -514,7 +518,7 @@ namespace SpaceCommander
                     //aimPoint = target.transform.position + target.GetComponent<NavMeshAgent>().velocity * approachTime; //третье приближение
 
                     Quaternion targetRotation = Quaternion.LookRotation((aimPoint - this.transform.position).normalized, new Vector3(0, 1, 0)); //донаводка
-                    this.transform.rotation = Quaternion.Slerp(this.transform.rotation, targetRotation, Time.deltaTime * 6);
+                    this.transform.rotation = Quaternion.RotateTowards(this.transform.rotation, targetRotation, Time.deltaTime * 5);
                 }
                 catch (MissingReferenceException)
                 {
@@ -523,8 +527,8 @@ namespace SpaceCommander
             }
             else
             {
-                Quaternion targetRotation = Quaternion.LookRotation(this.gameObject.GetComponentInParent<Transform>().forward, new Vector3(0, 1, 0)); //возврат
-                this.transform.rotation = Quaternion.Slerp(this.transform.rotation, targetRotation, Time.deltaTime * 7);
+                Quaternion targetRotation = Quaternion.Euler(Vector3.zero);//возврат
+                this.transform.localRotation = Quaternion.RotateTowards(this.transform.localRotation, targetRotation, Time.deltaTime * 6);
             }
         }
         public abstract void Reset();
@@ -544,7 +548,9 @@ namespace SpaceCommander
             if (IsReady)
             {
                 this.GetComponentInChildren<ParticleSystem>().Play();
-                Shoot(target.transform);
+                if (target != null)
+                    Shoot(target.transform);
+                else Shoot(null);
                 ammo--;
                 backCount = 60f / Firerate;
                 return true;
@@ -568,7 +574,7 @@ namespace SpaceCommander
             }
         }
         public override float ShootCounter { get { return ammo; } }
-        public override float MaxShootCounter { get { return ammoCampacity; } }
+        public override float MaxShootCounter { get { return reloadingTime; } }
         public override void Reset()
         {
             ammo = ammoCampacity;
@@ -585,7 +591,9 @@ namespace SpaceCommander
             if (IsReady)
             {
                 this.GetComponentInChildren<ParticleSystem>().Play();
-                Shoot(target.transform);
+                if (target != null)
+                    Shoot(target.transform);
+                else Shoot(null);
                 heat++;
                 backCount = 60f / Firerate;
                 return true;
@@ -762,6 +770,8 @@ namespace SpaceCommander
     {
         protected GlobalController Global;
         public Vector3 target;
+        public Vector3 midPoint;
+        public bool midPassed;
         public Army Team;
         public float Speed;// скорость ракеты      
         public float TurnSpeed;// скорость поворота ракеты            
@@ -771,21 +781,28 @@ namespace SpaceCommander
         protected abstract void Start();
         public virtual void Update()
         {
+            if (Vector3.Distance(this.transform.position, midPoint) < 1)
+                midPassed = true;
+
             if (Vector3.Distance(this.transform.position, target) < explosionRange)
                 Explode();
             else
                 lt += Time.deltaTime;
             if (lt > 0.5)//задержка старта
             {
-                if (target != Vector3.zero)//контроль курса
-                {
-                    Quaternion targetRotation = Quaternion.LookRotation(target - this.transform.position, new Vector3(0, 1, 0));
-                    this.transform.rotation = Quaternion.Slerp(this.transform.rotation, targetRotation, Time.deltaTime * TurnSpeed);
-                }
+                Quaternion targetRotation = Quaternion.Euler(0, this.transform.rotation.eulerAngles.y, 0);//контроль курса
+                if (!midPassed && midPoint != Vector3.zero)
+                    targetRotation = Quaternion.LookRotation(midPoint - this.transform.position, new Vector3(0, 1, 0));
+                else if (target != Vector3.zero)
+                    targetRotation = Quaternion.LookRotation(target - this.transform.position, new Vector3(0, 1, 0));
+
+                this.transform.rotation = Quaternion.Slerp(this.transform.rotation, targetRotation, Time.deltaTime * TurnSpeed);
                 //полет по прямой
                 float multiplicator = Mathf.Pow((lt * 0.5f), (1f / 8f)) * 0.7f;
                 gameObject.GetComponent<Rigidbody>().velocity = transform.forward * Speed * multiplicator;//AddForce(transform.forward * Speed * multiplicator, ForceMode.Acceleration);
             }
+            else if (lt > 20)
+                Explode();
         }
         public virtual void Explode()
         {
@@ -804,6 +821,12 @@ namespace SpaceCommander
                             Explode();
                         break;
                     }
+                case "Terrain":
+                    {
+                        if (lt > 1)
+                            Explode();
+                        break;
+                    }
                 case "Unit":
                     {
                         if (Vector3.Distance(this.transform.position, target) < explosionRange * 0.1)
@@ -815,6 +838,10 @@ namespace SpaceCommander
         public virtual void SetTarget(Vector3 target)
         {
             this.target = target;
+        }
+        public virtual void SetMidpoint(Vector3 target)
+        {
+            this.midPoint = target;
         }
         public virtual void SetTeam(Army allies)
         {

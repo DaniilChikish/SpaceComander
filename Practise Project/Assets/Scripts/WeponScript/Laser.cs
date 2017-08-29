@@ -28,7 +28,7 @@ namespace SpaceCommander.Weapons
         }
         protected override void UpdateLocal()
         {
-            if (impulseBackount > 0 && target !=null)
+            if (impulseBackount > 0)
             {
                 this.GetComponentInChildren<ParticleSystem>().Play();
                 heat += Time.deltaTime * 0.7f;

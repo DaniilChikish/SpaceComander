@@ -46,7 +46,12 @@ namespace SpaceCommander.Weapons
                 case MissileType.Bombardier:
                     {
                         GameObject torpedo = Instantiate(FindObjectsOfType<GlobalController>()[0].Missile, gameObject.transform.position, transform.rotation);
-                        torpedo.AddComponent<BombardierMissile>().SetTarget(target.position);                       
+                        if (target != null)
+                            torpedo.AddComponent<BombardierMissile>().SetTarget(target.position);
+                        else
+                            torpedo.AddComponent<BombardierMissile>().SetTarget(this.transform.GetComponentInParent<Unit>().transform.position + this.transform.GetComponentInParent<Unit>().transform.forward * Range);
+                        torpedo.GetComponent<Torpedo>().SetMidpoint(this.transform.GetComponentInParent<Unit>().transform.position + this.transform.GetComponentInParent<Unit>().transform.forward * 100);
+                        torpedo.tag = "Torpedo";
                         break;
                     }
             }

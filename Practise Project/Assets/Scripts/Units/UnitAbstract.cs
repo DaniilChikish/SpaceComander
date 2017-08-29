@@ -63,7 +63,10 @@ namespace SpaceCommander
         public override float Health { set { armor.hitpoints = value; } get { return armor.hitpoints; } }
         public override float MaxHealth { get { return armor.maxHitpoints; } }
         public override Army Team { get { return team; } }
-        public override Vector3 Velocity { get { return Driver.Velocity; } }
+        public override Vector3 Velocity { get {
+                if (ManualControl) return this.gameObject.GetComponent<Rigidbody>().velocity;
+                else return Driver.Velocity;
+            } }
         public override float Speed { set { speed = value; } get { return speed; } }
         public override float RadarRange { set { radarRange = value; } get { return radarRange; } }
         public override float ShieldForce { set { shield.force = value; } get { return shield.force; } }
@@ -94,8 +97,9 @@ namespace SpaceCommander
         public float cooldownDetected;
         //controllers
         public bool ManualControl { set; get; }
-        protected IDriver Driver;
-        protected IGunner Gunner;
+        public IDriver Driver;
+        protected IGunner gunner;
+        public IGunner Gunner { get { return gunner; } }
         protected GlobalController Global;
         protected Armor armor;
         protected ForceShield shield;
@@ -136,7 +140,7 @@ namespace SpaceCommander
             armor = this.gameObject.GetComponent<Armor>();
             shield = this.gameObject.GetComponent<ForceShield>();
             //
-            Gunner = new ShootController(this);
+            gunner = new ShootController(this);
             Driver = new MovementController(this.gameObject);
             capByTarget = new List<Unit>();
             Squad = new SpaceShip[3];
@@ -169,7 +173,11 @@ namespace SpaceCommander
             DecrementBaseCounters();
             DecrementLocalCounters();
             //action
-            if (synchAction <= 0 && !ManualControl)
+            if (ManualControl)
+            {
+                Scan();
+            }
+            else if (synchAction <= 0)
             {
                 synchAction = 0.05f;
                 if (movementAiEnabled)

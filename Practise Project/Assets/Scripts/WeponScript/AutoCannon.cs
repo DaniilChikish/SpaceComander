@@ -21,7 +21,7 @@ namespace SpaceCommander.Weapons
             ammo = ammoCampacity;
             firerate = 300;
             reloadingTime = 20;
-            dispersion = 0.3f;
+            dispersion = 0.15f;
             shildBlinkTime = 0.1f;
             averageRoundSpeed = 130;
             PreAiming = true;
@@ -106,7 +106,6 @@ namespace SpaceCommander.Weapons
             GameObject explosionPrefab = null;
             switch (ShellLine[shellPosition])
             {
-
                 case SmallShellType.SemiShell:
                     {
                         speed = 130f;

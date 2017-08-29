@@ -203,7 +203,16 @@ namespace SpaceCommander
                     SetObservable(Global.selectedList[0]);
                 if (observable.ManualControl)//observable status under manual control
                 {
-                    maincam.TargetFollow = observable.GetTransform();
+                    //maincam.TargetFollow = observable.GetTransform().GetComponent<Unit>();
+                    //maincam.mode = RTS_Cam.CamMode.ThirthPerson;
+                    maincam.enabled = false;
+                    FindObjectOfType<UnityStandardAssets.Cameras.AutoCam>().enabled = true;
+                    if (observable.Type == UnitClass.LR_Corvette || observable.Type == UnitClass.Guard_Corvette || observable.Type == UnitClass.Support_Corvette)
+                        FindObjectOfType<UnityStandardAssets.Cameras.AutoCam>().targetOffset = new Vector3(0, 10, -15);
+                    else if (observable.Type == UnitClass.Figther || observable.Type == UnitClass.Command || observable.Type == UnitClass.Bomber)
+                        FindObjectOfType<UnityStandardAssets.Cameras.AutoCam>().targetOffset = new Vector3(0, 5, -10);
+                    else FindObjectOfType<UnityStandardAssets.Cameras.AutoCam>().targetOffset = new Vector3(0, 1, -5);
+                    FindObjectOfType<UnityStandardAssets.Cameras.AutoCam>().SetTarget(observable.GetTransform());
                     mode = ObserverMode.Full;
                     if (previevIsOpen)
                     {
@@ -212,7 +221,10 @@ namespace SpaceCommander
                 }
                 else
                 {
-                    maincam.TargetFollow = null;
+                    maincam.enabled = true;
+                    FindObjectOfType<UnityStandardAssets.Cameras.AutoCam>().enabled = false;
+                    maincam.TargetFollow = observable.GetTransform().GetComponent<Unit>();
+                    maincam.mode = RTS_Cam.CamMode.Folloving;
                     mode = ObserverMode.Half;
                     if (!previevIsOpen)
                     {
@@ -233,6 +245,9 @@ namespace SpaceCommander
                 }
                 maincam.TargetFollow = null;
                 observable = null;
+                maincam.enabled = true;
+                FindObjectOfType<UnityStandardAssets.Cameras.AutoCam>().enabled = false;
+                maincam.mode = RTS_Cam.CamMode.Free;
                 mode = ObserverMode.None;
                 if (statusIsOpen)
                 {
@@ -369,7 +384,7 @@ namespace SpaceCommander
                             if (observable.PrimaryWeapon[i].BackCounter < (60f / observable.PrimaryWeapon[i].Firerate))
                                 PrimaryCooldown[i].fillAmount = observable.PrimaryWeapon[i].BackCounter / (60f / observable.PrimaryWeapon[i].Firerate);
                             else
-                                PrimaryCooldown[i].fillAmount = observable.PrimaryWeapon[i].BackCounter / 60f;
+                                PrimaryCooldown[i].fillAmount = observable.PrimaryWeapon[i].BackCounter / observable.PrimaryWeapon[i].MaxShootCounter;
                         }
                         PrimaryCounters[i].text = Mathf.RoundToInt(observable.PrimaryWeapon[i].ShootCounter).ToString();
                     }
@@ -382,7 +397,7 @@ namespace SpaceCommander
                             if (observable.SecondaryWeapon[i].BackCounter < (60f / observable.SecondaryWeapon[i].Firerate))
                                 SecondaryCooldown[i].fillAmount = observable.SecondaryWeapon[i].BackCounter / (60f / observable.SecondaryWeapon[i].Firerate);
                             else
-                                SecondaryCooldown[i].fillAmount = observable.SecondaryWeapon[i].BackCounter / (60f / observable.SecondaryWeapon[i].Firerate) * 2;
+                                SecondaryCooldown[i].fillAmount = observable.SecondaryWeapon[i].BackCounter / observable.SecondaryWeapon[i].MaxShootCounter;
                         }
                         SecondaryCounters[i].text = Mathf.RoundToInt(observable.SecondaryWeapon[i].ShootCounter).ToString();
                     }

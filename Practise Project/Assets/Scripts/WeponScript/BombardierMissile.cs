@@ -12,7 +12,7 @@ namespace SpaceCommander.Weapons
             TurnSpeed = 5f;// скорость поворота ракеты            
             DropImpulse = 200f;//импульс сброса                  
             explosionRange = 1f; //расстояние детонации
-            gameObject.GetComponent<Rigidbody>().AddForce(-transform.up * DropImpulse, ForceMode.Impulse);
+            gameObject.GetComponent<Rigidbody>().AddForce(transform.forward * DropImpulse, ForceMode.Impulse);
             Global = FindObjectOfType<GlobalController>();
             lt = 0;
         }

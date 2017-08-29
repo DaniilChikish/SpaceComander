@@ -44,10 +44,14 @@ namespace SpaceCommander.Weapons
                         ammo -= 1;
                         torpedo = Instantiate(Global.Torpedo, gameObject.transform.position, transform.rotation);
                         torpedo.AddComponent<UnitaryTorpedo>();
+                        torpedo.GetComponent<Torpedo>().SetMidpoint(this.transform.GetComponentInParent<Unit>().transform.position + this.transform.GetComponentInParent<Unit>().transform.forward * 100);
                         break;
                     }
             }
-            torpedo.GetComponent<Torpedo>().SetTarget(target.position);
+            if (target != null)
+                torpedo.GetComponent<Torpedo>().SetTarget(target.position);
+            else
+                torpedo.GetComponent<Torpedo>().SetTarget(this.transform.GetComponentInParent<Unit>().transform.position + this.transform.GetComponentInParent<Unit>().transform.forward * Range);
             torpedo.GetComponent<Torpedo>().SetTeam(owner.Team);
         }
     }

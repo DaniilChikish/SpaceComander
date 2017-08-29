@@ -81,7 +81,7 @@ namespace RTS_Cam
             }
 
             GUILayout.Label("Follow target", EditorStyles.boldLabel);
-            camera.TargetFollow = EditorGUILayout.ObjectField("Target to follow: ", camera.TargetFollow, typeof(Transform)) as Transform;
+            camera.TargetFollow = EditorGUILayout.ObjectField("Target to follow: ", camera.TargetFollow, typeof(SpaceCommander.Unit)) as SpaceCommander.Unit;
             camera.targetOffset = EditorGUILayout.Vector3Field("Target offset: ", camera.targetOffset);
             camera.followingSpeed = EditorGUILayout.FloatField("Following speed: ", camera.followingSpeed);
         }

@@ -9,6 +9,7 @@ namespace SpaceCommander
 {
     public interface ISpaceShipObservable
     {
+        UnitClass Type { get; }
         float Health { get; }
         float MaxHealth { get; }
         float ShieldForce { get; }

@@ -10,8 +10,9 @@ namespace SpaceCommander.Weapons
             gameObject.GetComponent<MeshRenderer>().enabled = false;
             range = 500;
             ammo = 15; //1.5 Min
+            ammoCampacity = 15;
             firerate = 10;//200 DD, 40 DpS
-            reloadingTime = 30;
+            reloadingTime = 45;
             dispersion = 0.0f;
             shildBlinkTime = 0.05f;
             averageRoundSpeed = 300;
