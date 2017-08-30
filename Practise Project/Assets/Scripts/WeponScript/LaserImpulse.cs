@@ -25,19 +25,19 @@ namespace SpaceCommander.Weapons
             {
                 case EnergyType.RedRay:
                     {
-                        damage = 30;
+                        damage = 10;
                         armorPiersing = 4;
                         break;
                     }
                 case EnergyType.GreenRay:
                     {
-                        damage = 60;
+                        damage = 20;
                         armorPiersing = 2;
                         break;
                     }
                 case EnergyType.BlueRay:
                     {
-                        damage = 75;
+                        damage = 25;
                         armorPiersing = 1;
                         break;
                     }

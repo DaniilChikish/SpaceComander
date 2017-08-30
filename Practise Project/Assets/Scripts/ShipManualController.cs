@@ -12,41 +12,82 @@ namespace SpaceCommander
 {
     class ShipManualController : MonoBehaviour
     {
-        private SpaceShip owner;
+        public float guiTexOffsetY;
+        public SpaceShip owner;
         private Rigidbody body;
         private GlobalController Global;
-        private RTS_Cam.RTS_Camera folowCam;
+        public enum AimStateType { Default, Locking, Locked}
+        private const float lockdownDuration = 1.5f;
+        private float lockdownCount;
+        private Unit targetBuffer;
+        public Unit TargetBuffer
+        {
+            set
+            {
+                targetBuffer = value;
+                if (value != null)
+                {
+                    lockdownCount = lockdownDuration;
+                    aimState = AimStateType.Locking;
+                }
+                else aimState = AimStateType.Default;
+            }
+            get { return targetBuffer; }
+        }
+        private int targetQinuePosition;
+        public Texture DefaultMainAim;
+        public Texture TargetFrame;
+        public Texture LockingAimFirst;
+        public Texture LockingAimSecond;
+        private bool firstLookingTexture;
+        private float lockingTextureSwichCoutn;
+        public Texture LockedAim;
+        public Texture TargetDott;
+        public Texture FireAim;
+        //private RTS_Cam.RTS_Camera folowCam;
+        public AimStateType aimState;
+
         public bool tridimensional;
-        public float mainThrust;
-        public float verticalShiftThrust;
-        public float horisontalShiftThrust;
-        public float turnSpeed;
-        public string thrustAxis = "Thrust";
-        public string horizontalShiftAxis = "HorizontalShift";
-        public string verticalShiftAxis = "VerticalShift";
-        public string primaryWeaponAxis = "PrimaryWeapon";
-        public string secondaryWeaponAxis = "SecondaryWeapon";
+        private float mainThrust;
+        private float verticalShiftThrust;
+        private float horisontalShiftThrust;
+        private float turnSpeed;
+
+        //controlAxis;
+        private string thrustAxis = "Thrust";
+        private string horizontalShiftAxis = "HorizontalShift";
+        private string verticalShiftAxis = "VerticalShift";
+        private string pitchAxis = "Pitch";
+        private string yawAxis = "Yaw";
+        private string rollAxis = "Roll";
+        private string primaryWeaponAxis = "PrimaryWeapon";
+        private string secondaryWeaponAxis = "SecondaryWeapon";
+        private string lockTargetAxis = "LockTarget";
+        private string swithTargetAxis = "SwitchTarget";
 
         private void OnEnable()
         {
             Global = FindObjectOfType<GlobalController>();
-            this.gameObject.GetComponent<NavMeshAgent>().enabled = false;
+            owner.gameObject.GetComponent<NavMeshAgent>().enabled = false;
             tridimensional = false;
-            owner = this.gameObject.GetComponent<SpaceShip>();
             owner.Gunner.ResetAim();
-            body = this.gameObject.GetComponent<Rigidbody>();
+            body = owner.gameObject.GetComponent<Rigidbody>();
             turnSpeed = owner.Speed * 5.5f;
-            folowCam = FindObjectOfType<RTS_Cam.RTS_Camera>();
-            folowCam.followingSpeed = owner.Speed * 5f;
+            //folowCam = FindObjectOfType<RTS_Cam.RTS_Camera>();
+            //folowCam.followingSpeed = owner.Speed * 5f;
         }
         private void OnDisable()
         {
-            this.gameObject.GetComponent<NavMeshAgent>().enabled = true;
+            owner.gameObject.GetComponent<NavMeshAgent>().enabled = true;
+            TargetBuffer = null;
         }
         private void Update()
         {
             Fire();
+
+            TagetLockdown();
         }
+
 
         private void Fire()
         {
@@ -55,14 +96,156 @@ namespace SpaceCommander
             if (Input.GetAxis(secondaryWeaponAxis) != 0)
                 owner.Gunner.ShootHim(1);
         }
+
+        private void TagetLockdown()
+        {
+            if (Input.GetAxis(lockTargetAxis) > 0 && (lockdownCount < lockdownDuration * 0.8))//lock target
+            {
+                //if (aimState == AimStateType.Default) 
+                //{
+                    Vector3 enemyPos;
+                    Vector3 aim = Camera.main.WorldToScreenPoint(owner.transform.position + owner.transform.forward * (owner.Gunner.Weapon[0][0].Range + owner.Gunner.Weapon[1][0].Range) / 2);
+                    float minDistance = 100000;
+                    int enemyIndex = 0;
+                    Unit[] enemys = owner.GetEnemys();
+                    float dist;
+                    for (int i = 0; i < enemys.Length; i++)
+                    {
+                        enemyPos = Camera.main.WorldToScreenPoint(enemys[i].transform.position);
+                    enemyPos.z = 0;
+                        dist = Vector3.Distance(aim, enemyPos);
+                        if (dist < minDistance)
+                        {
+                            minDistance = dist;
+                            enemyIndex = i;
+                        }
+                    }
+                    TargetBuffer = enemys[enemyIndex];
+                //}
+                //else //reset target
+                //{
+                //    aimState = AimStateType.Default;
+                //    owner.Gunner.ResetAim();
+                //}
+            }
+            else if (Input.GetAxis(swithTargetAxis) > 0 && (lockdownCount < lockdownDuration * 0.8))
+            {
+                Unit[] enemys = owner.GetEnemys();
+                if (enemys.Length > 0)
+                {
+                    targetQinuePosition++;
+                    if (targetQinuePosition >= enemys.Length)
+                        targetQinuePosition = 0;
+                    TargetBuffer = enemys[targetQinuePosition];
+                }
+            }
+
+            switch (aimState)
+            {
+                case AimStateType.Default:
+                    {
+                        break;
+                    }
+                case AimStateType.Locked:
+                    {
+                        if (owner.Gunner.Target != TargetBuffer)
+                            owner.Gunner.SetAim(TargetBuffer, true, 0);
+                        else if (!TargetInSight())
+                            TargetBuffer = null;
+                        break;
+                    }
+                case AimStateType.Locking:
+                    {
+                        if (lockdownCount <= 0)
+                        {
+                            aimState = AimStateType.Locked;
+                        }
+                        else lockdownCount -= Time.deltaTime;
+
+                        if (lockingTextureSwichCoutn <= 0)
+                        {
+                            firstLookingTexture = !firstLookingTexture;
+                            lockingTextureSwichCoutn = (lockdownCount / lockdownDuration) * 0.5f;
+                        }
+                        else lockingTextureSwichCoutn -= Time.deltaTime;
+                        break;
+                    }
+            }
+
+        }
+        private bool TargetInSight()
+        {
+            if (TargetBuffer == null)
+                return false;
+            float distance = Vector3.Distance(owner.transform.position, TargetBuffer.transform.position);
+            if (distance < owner.RadarRange)
+                return true;
+            else
+            {
+                if (!owner.TargetScouting())
+                    return false;//переходим в ожидение
+                else return true;
+            }
+        }
         private void OnGUI()
         {
-            Vector3 crd = Camera.main.WorldToScreenPoint(transform.position + transform.forward * 100);
+            //mainAimPoint
+            Vector3 crd = Camera.main.WorldToScreenPoint(owner.transform.position + owner.transform.forward * (owner.Gunner.Weapon[0][0].Range + owner.Gunner.Weapon[1][0].Range) / 2);
             crd.y = Screen.height - crd.y;
-            Vector2 texSize = new Vector2(Global.aimPointTexture.width, Global.aimPointTexture.height);
-            float frameX = crd.x - texSize.x / 2f;
-            float frameY = crd.y - texSize.y / 2f;
-            GUI.DrawTexture(new Rect(new Vector2(frameX, frameY), texSize), Global.aimPointTexture);
+            Vector2 texSize = new Vector2(DefaultMainAim.width, DefaultMainAim.height);
+            float texXPos = crd.x - texSize.x / 2f;
+            float texYPos = crd.y - texSize.y / 2f + guiTexOffsetY;
+            Texture aimTexture = DefaultMainAim;
+
+            switch (aimState)
+            {
+                case AimStateType.Default:
+                    {
+                        aimTexture = DefaultMainAim;
+                        break;
+                    }
+                case AimStateType.Locked:
+                    {
+                        aimTexture = LockedAim;
+                        break;
+                    }
+                case AimStateType.Locking:
+                    {
+                        if (firstLookingTexture)
+                            aimTexture = LockingAimFirst;
+                        else
+                            aimTexture = LockingAimSecond;
+                        break;
+                    }
+            }
+            GUI.DrawTexture(new Rect(new Vector2(texXPos, texYPos), texSize), aimTexture);
+
+            //current target point
+            if (TargetBuffer != null)
+            {
+                crd = Camera.main.WorldToScreenPoint(TargetBuffer.transform.position);
+                crd.y = Screen.height - crd.y;
+                texSize = new Vector2(TargetDott.width, TargetDott.height);
+                texXPos = crd.x - texSize.x / 2f;
+                texYPos = crd.y - texSize.y / 2f + guiTexOffsetY;
+                if (aimState == AimStateType.Locked)
+                    GUI.DrawTexture(new Rect(new Vector2(texXPos, texYPos), texSize), FireAim);
+                else
+                    GUI.DrawTexture(new Rect(new Vector2(texXPos, texYPos), texSize), TargetDott);
+
+            }
+
+            //locked Aim
+            texSize = new Vector2(TargetFrame.width, TargetFrame.height);
+
+            foreach (Unit x in owner.GetEnemys())
+            {
+                crd = Camera.main.WorldToScreenPoint(x.transform.position);
+                crd.y = Screen.height - crd.y;
+                texXPos = crd.x - texSize.x / 2f;
+                texYPos = crd.y - texSize.y / 2f + guiTexOffsetY;
+                GUI.DrawTexture(new Rect(new Vector2(texXPos, texYPos), texSize), TargetFrame);
+            }
         }
 
         private void FixedUpdate()
@@ -122,26 +305,36 @@ namespace SpaceCommander
         {
             var rot = new Vector3(0f, 0f, 0f);
             // rotates Left
-            if (Input.GetAxis("Mouse X") < 0 || Input.GetKey(KeyCode.LeftArrow))
+            if (Input.GetAxis(yawAxis) < 0)
             {
                 rot.y -= 1;
             }
             // rotates Left
-            if (Input.GetAxis("Mouse X") > 0 || Input.GetKey(KeyCode.RightArrow))
+            if (Input.GetAxis(yawAxis) > 0 || Input.GetKey(KeyCode.RightArrow))
             {
                 rot.y += 1;
             }
             if (tridimensional)
             {
                 // rotates Up
-                if (Input.GetAxis("Mouse Y") < 0)
+                if (Input.GetAxis(pitchAxis) < 0)
                 {
                     rot.x -= 1;
                 }
                 // rotates Down
-                if (Input.GetAxis("Mouse Y") > 0)
+                if (Input.GetAxis(pitchAxis) > 0)
                 {
                     rot.x += 1;
+                }
+                // roll left
+                if (Input.GetAxis(rollAxis) < 0)
+                {
+                    rot.z -= 1;
+                }
+                // roll right
+                if (Input.GetAxis(rollAxis) > 0)
+                {
+                    rot.z += 1;
                 }
             }
 
@@ -150,13 +343,13 @@ namespace SpaceCommander
         private void Stabilisation()
         {
             Quaternion rotDest = Quaternion.Euler(0, transform.rotation.eulerAngles.y, 0);
-            if (Quaternion.Angle(this.transform.rotation, rotDest) > 1)
-                transform.rotation = Quaternion.RotateTowards(this.transform.rotation, rotDest, Time.deltaTime * turnSpeed * 2.7f);
-            else this.transform.rotation = rotDest;
+            if (Quaternion.Angle(owner.transform.rotation, rotDest) > 1)
+                owner.transform.rotation = Quaternion.RotateTowards(owner.transform.rotation, rotDest, Time.deltaTime * turnSpeed * 2.7f);
+            else owner.transform.rotation = rotDest;
 
-            Vector3 targetPos = this.transform.position;
+            Vector3 targetPos = owner.transform.position;
             targetPos.y = 0;
-            this.transform.position = Vector3.MoveTowards(this.transform.position, targetPos, Time.deltaTime * owner.Speed * 20);
+            owner.transform.position = Vector3.MoveTowards(owner.transform.position, targetPos, Time.deltaTime * owner.Speed * 20);
         }
     }
 }

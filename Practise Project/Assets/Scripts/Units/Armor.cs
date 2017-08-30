@@ -62,6 +62,19 @@ namespace SpaceCommander
                         this.hitpoints -= collision.gameObject.GetComponent<IEnergy>().Damage * multiplicator;
                         break;
                     }
+                case "Unit":
+                    {
+                        Unit uncknown = collision.gameObject.GetComponent<Unit>();
+                        Vector3 kick = Vector3.Project(uncknown.Velocity, (uncknown.transform.position - this.transform.position).normalized);
+                        this.hitpoints -= kick.magnitude * (uncknown.GetComponent<Rigidbody>().mass / this.GetComponent<Rigidbody>().mass);
+                        break;
+                    }
+                case "Terrain":
+                    {
+                        Vector3 kick = Vector3.Project(owner.Velocity, (this.transform.position-collision.gameObject.transform.position).normalized);
+                        this.hitpoints -= kick.magnitude * (this.GetComponent<Rigidbody>().mass/10000);
+                        break;
+                    }
             }
         }
         protected void OnCollisionStay(Collision collision)

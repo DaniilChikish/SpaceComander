@@ -19,9 +19,6 @@ namespace SpaceCommander
         public List<SpaceShip> selectedList; // спиков выделенных объектов
         public Army playerArmy;
         //selection
-        public Texture aimPointTexture;
-
-        public float NameFrameOffset;
         public Texture AlliesSelectedGUIFrame;
         public Texture AlliesGUIFrame;
         public Texture EnemyGUIFrame;
@@ -391,7 +388,7 @@ namespace SpaceCommander
             for (int slot = 0; slot < weapons.Length; slot++)
                 if (synchWeapons[slot] > 0)
                     synchWeapons[slot] -= Time.deltaTime;
-            if (!owner.ManualControl&& target != null)
+            if (!owner.ManualControl && target != null)
             {
                 targetLockdownCount -= Time.deltaTime;
                 //Debug.Log("target - " + Target.transform.position);
@@ -829,7 +826,7 @@ namespace SpaceCommander
                     }
                 case "Unit":
                     {
-                        if (Vector3.Distance(this.transform.position, target) < explosionRange * 0.1)
+                        if (lt > 1.5)
                             Explode();
                         break;
                     }

@@ -28,8 +28,18 @@ namespace SpaceCommander
         public Texture2D MissoleTrapSpellIcon;
         public Texture2D JammerSpellIcon;
         public Texture2D DefaultSpellIcon;
-        public Texture CanonWeapon;
-        public Texture MissileWeapon;
+        //weapon
+        public Texture CanonIcon;
+        public Texture AutocannonIcon;
+        public Texture ShotCannonIcon;
+        public Texture RailgunIcon;
+        public Texture RailmortarIcon;
+        public Texture LaserIcon;
+        public Texture PlasmaIcon;
+        public Texture MagnetoIcon;
+        public Texture MissileIcon;
+        public Texture TorpedoIcon;
+
         public ISpaceShipObservable observable;
         private HUDBase hud;
         private GlobalController Global;
@@ -97,41 +107,16 @@ namespace SpaceCommander
                 }
                 //create new children
                 GameObject newChild;
-                Texture newTexture = this.CanonWeapon;
+                Texture newTexture;
 
                 PrimaryCooldown = new Image[observable.PrimaryWeapon.Length];
                 PrimaryCounters = new Text[observable.PrimaryWeapon.Length];
                 for (int i = 0; i < observable.PrimaryWeapon.Length; i++)
                 {
                     newChild = Instantiate(primOrigin, new Vector3(primOrigin.transform.position.x + 100 * i, primOrigin.transform.position.y, primOrigin.transform.position.z), primOrigin.transform.rotation, primaryWeaponSlot.transform);
-                    switch (observable.PrimaryWeapon[i].Type)
-                    {
-                        case WeaponType.Cannon:
-                            {
-                                newTexture = this.CanonWeapon;
-                                break;
-                            }
-                        case WeaponType.Laser:
-                            {
-                                newTexture = this.CanonWeapon;
-                                break;
-                            }
-                        case WeaponType.Missile:
-                            {
-                                newTexture = this.CanonWeapon;
-                                break;
-                            }
-                        case WeaponType.Plazma:
-                            {
-                                newTexture = this.CanonWeapon;
-                                break;
-                            }
-                        case WeaponType.Torpedo:
-                            {
-                                newTexture = this.MissileWeapon;
-                                break;
-                            }
-                    }
+
+                    newTexture = IconOf(observable.PrimaryWeapon[i].Type);
+
                     newChild.GetComponent<RawImage>().enabled = true;
                     newChild.transform.FindChild("Icon").GetComponent<RawImage>().texture = newTexture;
                     newChild.transform.FindChild("Icon").GetComponent<RawImage>().enabled = true;
@@ -155,34 +140,9 @@ namespace SpaceCommander
                     for (int i = 0; i < observable.SecondaryWeapon.Length; i++)
                     {
                         newChild = Instantiate(secOrigin, new Vector3(secOrigin.transform.position.x + 100 * i, secOrigin.transform.position.y, secOrigin.transform.position.z), secOrigin.transform.rotation, secondaryWeaponSlot.transform);
-                        switch (observable.SecondaryWeapon[i].Type)
-                        {
-                            case WeaponType.Cannon:
-                                {
-                                    newTexture = this.CanonWeapon;
-                                    break;
-                                }
-                            case WeaponType.Laser:
-                                {
-                                    newTexture = this.CanonWeapon;
-                                    break;
-                                }
-                            case WeaponType.Missile:
-                                {
-                                    newTexture = this.MissileWeapon;
-                                    break;
-                                }
-                            case WeaponType.Plazma:
-                                {
-                                    newTexture = this.CanonWeapon;
-                                    break;
-                                }
-                            case WeaponType.Torpedo:
-                                {
-                                    newTexture = this.MissileWeapon;
-                                    break;
-                                }
-                        }
+
+                        newTexture = IconOf(observable.SecondaryWeapon[i].Type);
+
                         newChild.GetComponent<RawImage>().enabled = true;
                         newChild.transform.FindChild("Icon").GetComponent<RawImage>().texture = newTexture;
                         newChild.transform.FindChild("Icon").GetComponent<RawImage>().enabled = true;
@@ -195,6 +155,56 @@ namespace SpaceCommander
                 }
             }
         }
+
+        private Texture IconOf(WeaponType type)
+        {
+            switch (type)
+            {
+
+                case WeaponType.Autocannon:
+                    {
+                        return this.AutocannonIcon;
+                    }
+                case WeaponType.ShootCannon:
+                    {
+                        return this.ShotCannonIcon;
+                    }
+                case WeaponType.Railgun:
+                    {
+                        return this.RailgunIcon;
+                    }
+                case WeaponType.Railmortar:
+                    {
+                        return this.RailmortarIcon;
+                    }
+                case WeaponType.Laser:
+                    {
+                        return this.LaserIcon;
+                    }
+                case WeaponType.Plazma:
+                    {
+                        return this.PlasmaIcon;
+                    }
+                case WeaponType.MagnetohydrodynamicGun:
+                    {
+                        return this.MagnetoIcon;
+                    }
+                case WeaponType.Missile:
+                    {
+                        return this.MissileIcon;
+                    }
+                case WeaponType.Torpedo:
+                    {
+                        return this.TorpedoIcon;
+                    }
+                case WeaponType.Cannon:
+                default:
+                    {
+                        return this.CanonIcon;
+                    }
+            }
+        }
+
         private void Update()
         {
             if (Global.selectedList.Count == 1)
@@ -205,14 +215,6 @@ namespace SpaceCommander
                 {
                     //maincam.TargetFollow = observable.GetTransform().GetComponent<Unit>();
                     //maincam.mode = RTS_Cam.CamMode.ThirthPerson;
-                    maincam.enabled = false;
-                    FindObjectOfType<UnityStandardAssets.Cameras.AutoCam>().enabled = true;
-                    if (observable.Type == UnitClass.LR_Corvette || observable.Type == UnitClass.Guard_Corvette || observable.Type == UnitClass.Support_Corvette)
-                        FindObjectOfType<UnityStandardAssets.Cameras.AutoCam>().targetOffset = new Vector3(0, 10, -15);
-                    else if (observable.Type == UnitClass.Figther || observable.Type == UnitClass.Command || observable.Type == UnitClass.Bomber)
-                        FindObjectOfType<UnityStandardAssets.Cameras.AutoCam>().targetOffset = new Vector3(0, 5, -10);
-                    else FindObjectOfType<UnityStandardAssets.Cameras.AutoCam>().targetOffset = new Vector3(0, 1, -5);
-                    FindObjectOfType<UnityStandardAssets.Cameras.AutoCam>().SetTarget(observable.GetTransform());
                     mode = ObserverMode.Full;
                     if (previevIsOpen)
                     {
@@ -222,7 +224,9 @@ namespace SpaceCommander
                 else
                 {
                     maincam.enabled = true;
+                    FindObjectOfType<UnitSelectionComponent>().enabled = true;
                     FindObjectOfType<UnityStandardAssets.Cameras.AutoCam>().enabled = false;
+                    FindObjectOfType<ShipManualController>().enabled = false;
                     maincam.TargetFollow = observable.GetTransform().GetComponent<Unit>();
                     maincam.mode = RTS_Cam.CamMode.Folloving;
                     mode = ObserverMode.Half;
@@ -247,7 +251,9 @@ namespace SpaceCommander
                 observable = null;
                 maincam.enabled = true;
                 FindObjectOfType<UnityStandardAssets.Cameras.AutoCam>().enabled = false;
+                FindObjectOfType<ShipManualController>().enabled = false;
                 maincam.mode = RTS_Cam.CamMode.Free;
+                FindObjectOfType<UnitSelectionComponent>().enabled = true;
                 mode = ObserverMode.None;
                 if (statusIsOpen)
                 {
@@ -445,7 +451,16 @@ namespace SpaceCommander
                 if (observable != null)
                 {
                     observable.ManualControl = true;
-                    observable.GetTransform().gameObject.AddComponent<ShipManualController>();
+                    maincam.enabled = false;
+                    FindObjectOfType<UnityStandardAssets.Cameras.AutoCam>().enabled = true;
+                    if (observable.Type == UnitClass.LR_Corvette || observable.Type == UnitClass.Guard_Corvette || observable.Type == UnitClass.Support_Corvette)
+                        FindObjectOfType<UnityStandardAssets.Cameras.AutoCam>().targetOffset = new Vector3(0, 10, -15);
+                    else if (observable.Type == UnitClass.Figther || observable.Type == UnitClass.Command || observable.Type == UnitClass.Bomber)
+                        FindObjectOfType<UnityStandardAssets.Cameras.AutoCam>().targetOffset = new Vector3(0, 5, -10);
+                    else FindObjectOfType<UnityStandardAssets.Cameras.AutoCam>().targetOffset = new Vector3(0, 1, -5);
+                    FindObjectOfType<UnityStandardAssets.Cameras.AutoCam>().SetTarget(observable.GetTransform());
+                    FindObjectOfType<ShipManualController>().owner = observable.GetTransform().GetComponent<SpaceShip>();
+                    FindObjectOfType<ShipManualController>().enabled = true;
                 }
                 FindObjectOfType<UnitSelectionComponent>().enabled = false;
                 mode = ObserverMode.Full;
@@ -456,7 +471,6 @@ namespace SpaceCommander
                 if (observable != null)
                 {
                     observable.ManualControl = false;
-                    Destroy(observable.GetTransform().gameObject.GetComponent<ShipManualController>());
                 }
                 FindObjectOfType<UnitSelectionComponent>().enabled = true;
                 mode = ObserverMode.Half;

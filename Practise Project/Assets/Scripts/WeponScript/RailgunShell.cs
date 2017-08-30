@@ -12,7 +12,7 @@ namespace SpaceCommander.Weapons
         {
             this.speed = 300f;
             this.damage = 200f;
-            this.armorPiersing = 6f;
+            this.armorPiersing = 5f;
             this.ttl = 5f;
             body = this.GetComponent<Rigidbody>();
             body.mass = 40f;

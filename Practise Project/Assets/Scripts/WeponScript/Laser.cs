@@ -20,7 +20,7 @@ namespace SpaceCommander.Weapons
             dispersion = 0.00001f;//exponential
             shildBlinkTime = 0.05f;
             averageRoundSpeed = 1000000;
-            maxHeat = 20;
+            maxHeat = 10;
             firerate = 6000;
             PreAiming = true;
             beam = gameObject.transform.GetChild(0).gameObject;
