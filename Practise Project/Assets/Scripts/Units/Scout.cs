@@ -21,6 +21,11 @@ namespace SpaceCommander.Units
             radiolink = 1.5f;
             EnemySortDelegate = ScoutSortEnemys;
             AlliesSortDelegate = ReconSortEnemys;
+
+            module = new SpellModule[3];
+            module[0] = new MissileTrapLauncher(this);
+            module[1] = new RadarBooster(this);
+            module[2] = new Warp(this);
         }
         protected override void Explosion()
         {

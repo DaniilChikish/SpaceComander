@@ -92,8 +92,8 @@ namespace SpaceCommander
             Global = GameObject.FindObjectOfType<GlobalController>();
             backCount = 0;
             type = SpellType.LongAction;
-            coolingTime = 10;
-            activeTime = 3;
+            coolingTime = 100;
+            activeTime = 30;
             state = SpellModuleState.Ready;
             function.Add(SpellFunction.Self);
             function.Add(SpellFunction.Defence);
@@ -109,7 +109,7 @@ namespace SpaceCommander
         {
             base.Enable();
             ownerStealthnessBefore = owner.Stealthness;
-            owner.Stealthness = owner.Stealthness * 1.5f;
+            owner.Stealthness = owner.Stealthness * 3.5f;
             foreach (SpaceShip x in Global.unitList)
             {
                 if ((Vector3.Distance(x.transform.position, owner.transform.position) < owner.RadarRange / 2) && (x.CurrentTarget != null && x.CurrentTarget.transform == owner.transform))
@@ -129,8 +129,8 @@ namespace SpaceCommander
         {
             backCount = 0;
             type = SpellType.LongAction;
-            coolingTime = 30;
-            activeTime = 5;
+            coolingTime = 60;
+            activeTime = 15;
             state = SpellModuleState.Ready;
             function.Add(SpellFunction.Self);
             function.Add(SpellFunction.Buff);
@@ -218,8 +218,8 @@ namespace SpaceCommander
         {
             backCount = 0;
             type = SpellType.LongAction;
-            coolingTime = 20;
-            activeTime = 4;
+            coolingTime = 30;
+            activeTime = 5;
             state = SpellModuleState.Ready;
             function.Add(SpellFunction.Self);
             function.Add(SpellFunction.Buff);
@@ -288,8 +288,8 @@ namespace SpaceCommander
             Global = GameObject.FindObjectOfType<GlobalController>();
             backCount = 0;
             type = SpellType.LongAction;
-            coolingTime = 30;
-            activeTime = 15;
+            coolingTime = 60;
+            activeTime = 20;
             state = SpellModuleState.Ready;
             function.Add(SpellFunction.Self);
             function.Add(SpellFunction.Allies);
@@ -583,8 +583,8 @@ namespace SpaceCommander
         {
             backCount = 0;
             type = SpellType.LongAction;
-            coolingTime = 45;
-            activeTime = 5;
+            coolingTime = 120;
+            activeTime = 3;
             state = SpellModuleState.Ready;
             function.Add(SpellFunction.Self);
             function.Add(SpellFunction.Emergency);
@@ -601,7 +601,7 @@ namespace SpaceCommander
         }
         public override void Enable()
         {
-            repairSpeed = owner.MaxHealth / 10f;
+            repairSpeed = owner.MaxHealth / 5f;
         }
 
         protected override void Act()
@@ -616,7 +616,7 @@ namespace SpaceCommander
         {
             backCount = 0;
             type = SpellType.LongAction;
-            coolingTime = 45;
+            coolingTime = 90;
             activeTime = 5;
             state = SpellModuleState.Ready;
             function.Add(SpellFunction.Self);

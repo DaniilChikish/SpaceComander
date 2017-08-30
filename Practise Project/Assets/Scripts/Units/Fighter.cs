@@ -22,11 +22,14 @@ namespace SpaceCommander.Units
             speed = 9; //set in child
             stealthness = 0.5f; //set in child
             radiolink = 1.5f;
-            module = new SpellModule[2];
-            module[0] = new MissileTrapLauncher(this);
-            module[1] = new Jammer(this);
+
             EnemySortDelegate = FigtherSortEnemys;
             AlliesSortDelegate = ReconSortEnemys;
+
+            module = new SpellModule[3];
+            module[0] = new MissileTrapLauncher(this);
+            module[1] = new Jammer(this);
+            module[2] = new EmergencyShieldRecharging(this);
         }
 
         protected override void Explosion()

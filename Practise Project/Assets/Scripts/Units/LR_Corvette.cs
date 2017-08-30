@@ -17,6 +17,9 @@ namespace SpaceCommander.Units
             radiolink = 2.5f;
             EnemySortDelegate = LRCorvetteSortEnemys;
             AlliesSortDelegate = SupportCorvetteSortEnemys;
+
+            module = new SpellModule[1];
+            module[0] = new EmergencySelfRapairing(this);
         }
         protected override void Explosion()
         {

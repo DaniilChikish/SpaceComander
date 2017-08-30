@@ -18,6 +18,9 @@ namespace SpaceCommander.Units
             StrategicLoad = TorpedoType.Nuke;
             EnemySortDelegate = BomberSortEnemys;
             AlliesSortDelegate = SupportCorvetteSortEnemys;
+
+            module = new SpellModule[1];
+            module[0] = new MissileTrapLauncher(this);
         }
 
         protected override void Explosion()

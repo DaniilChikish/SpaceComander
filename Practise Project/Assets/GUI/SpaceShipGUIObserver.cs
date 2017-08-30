@@ -21,13 +21,7 @@ namespace SpaceCommander
         private Text ShieldCount;
         private Image HealthBar;
         private Text HealthCount;
-        public Texture2D slotBack;
-        public Texture2D slotOverlay;
-        public Texture2D slotCooldown;
-        public Texture2D slotActive;
-        public Texture2D MissoleTrapSpellIcon;
-        public Texture2D JammerSpellIcon;
-        public Texture2D DefaultSpellIcon;
+
         //weapon
         public Texture CanonIcon;
         public Texture AutocannonIcon;
@@ -39,6 +33,18 @@ namespace SpaceCommander
         public Texture MagnetoIcon;
         public Texture MissileIcon;
         public Texture TorpedoIcon;
+        //Module
+        public Texture2D DefaultSpellIcon;
+        public Texture2D MissoleTrapSpellIcon;
+        public Texture2D JammerSpellIcon;
+        public Texture TransponderSpellIcon;
+        public Texture WarpSpellIcon;
+        public Texture RadarBoosterSpellIcon;
+        public Texture TrusterStunnerSpellIcon;
+        public Texture ShieldStunnerSpellIcon;
+        public Texture EmergencySelfRapairingSpellIcon;
+        public Texture EmergencyShieldRechargingSpellIcon;
+
 
         public ISpaceShipObservable observable;
         private HUDBase hud;
@@ -59,10 +65,13 @@ namespace SpaceCommander
         private Text[] PrimaryCounters;
         private Image[] SecondaryCooldown;
         private Text[] SecondaryCounters;
+        private Image[] moduleCooldown;
+        private Image[] moduleActive;
         private ObserverMode mode;
         private float statusOpenedY;
         private float previevOpenedX;
         private RTS_Cam.RTS_Camera maincam;
+
 
         private void OnEnable()
         {
@@ -73,12 +82,6 @@ namespace SpaceCommander
             maincam = FindObjectOfType<RTS_Cam.RTS_Camera>();
             hud = FindObjectOfType<HUDBase>();
             Global = FindObjectOfType<GlobalController>();
-            localStyle = new GUIStyle();
-            localStyle.normal.background = slotBack;
-            localStyle.padding.top = 10;
-            localStyle.padding.bottom = 10;
-            localStyle.padding.left = 10;
-            localStyle.padding.right = 10;
             canvas = GameObject.Find("Canvas");
             status = GameObject.Find("StatusPanel");
             statusOpenedY = status.transform.position.y;
@@ -154,6 +157,51 @@ namespace SpaceCommander
                     }
                 }
             }
+            //module observ
+            {
+                GameObject modulOrigin = spellPanel.transform.GetChild(0).gameObject;
+                int i = 0;
+                //destroy children
+                for (i = spellPanel.transform.childCount - 1; i >= 0; i--)
+                {
+                    Destroy(spellPanel.transform.GetChild(i).gameObject);
+                }
+                //create new children
+                GameObject newChild;
+                Texture newTexture;
+
+                moduleCooldown = new Image[observable.Module.Length];
+                moduleActive = new Image[observable.Module.Length];
+                float xPos;
+                for (i = 0; i < observable.Module.Length; i++)
+                {
+                    xPos = -(80 * (observable.Module.Length - 1)) / 2 + (80 * i);
+                    newChild = Instantiate(modulOrigin, Vector3.zero, modulOrigin.transform.rotation, spellPanel.transform);
+
+                    newChild.transform.localPosition = new Vector3(xPos, modulOrigin.transform.localPosition.y, modulOrigin.transform.localPosition.z);
+
+                    newTexture = IconOf(observable.Module[i].GetType());
+
+                    newChild.GetComponent<Image>().enabled = true;
+                    newChild.transform.FindChild("Icon").GetComponent<RawImage>().texture = newTexture;
+                    newChild.transform.FindChild("Icon").GetComponent<RawImage>().enabled = true;
+
+                    newChild.GetComponent<Button>().enabled = true;
+                    newChild.GetComponent<Button>().onClick.RemoveAllListeners();
+                    AddListener(newChild.GetComponent<Button>(), i);
+                    //UnityEngine.Events.UnityAction action = () => { this.ActiveModule((int)i); };
+                    //newChild.GetComponent<Button>().onClick.AddListener(action);
+
+                    moduleActive[i] = newChild.transform.FindChild("ActiveOverlay").GetComponent<Image>();
+                    moduleActive[i].enabled = true;
+                    moduleCooldown[i] = newChild.transform.FindChild("CooldownOverlay").GetComponent<Image>();
+                    moduleCooldown[i].enabled = true;
+                }
+            }
+        }
+        private void AddListener(Button but, int param)
+        {
+            but.onClick.AddListener(delegate () { ActiveModule((int)param); });
         }
 
         private Texture IconOf(WeaponType type)
@@ -203,6 +251,28 @@ namespace SpaceCommander
                         return this.CanonIcon;
                     }
             }
+        }
+        private Texture IconOf(Type type)
+        {
+            if (type == typeof(MissileTrapLauncher))
+                return MissoleTrapSpellIcon;
+            else if (type == typeof(Jammer))
+                return JammerSpellIcon;
+            else if (type == typeof(Transponder))
+                return TransponderSpellIcon;
+            else if (type == typeof(Warp))
+                return WarpSpellIcon;
+            else if (type == typeof(RadarBooster))
+                return RadarBoosterSpellIcon;
+            else if (type == typeof(ShieldStunner))
+                return ShieldStunnerSpellIcon;
+            else if (type == typeof(TrusterStunner))
+                return TrusterStunnerSpellIcon;
+            else if (type == typeof(EmergencySelfRapairing))
+                return EmergencySelfRapairingSpellIcon;
+            else if (type == typeof(EmergencyShieldRecharging))
+                return EmergencyShieldRechargingSpellIcon;
+            else return DefaultSpellIcon;
         }
 
         private void Update()
@@ -323,45 +393,34 @@ namespace SpaceCommander
                 //modules
                 if (observable.Module != null && observable.Module.Length > 0)
                 {
-                    int i = 0;
-                    foreach (SpellModule m in observable.Module)
+                    for (int i = 0; i < observable.Module.Length; i++)
                     {
-                        float xPos = -(74 * (observable.Module.Length - 1)) / 2 + (74 * i);
-                        float yPos = ((statusOpenedY * hud.scale - status.transform.position.y) - 10);
-                        Rect spellRect = UIUtil.GetRect(new Vector2(68, 68), PositionAnchor.Down, hud.mainRect.size, new Vector2(xPos, yPos));
-                        Rect spellOver = UIUtil.GetRect(new Vector2(48, 48), PositionAnchor.Down, hud.mainRect.size, new Vector2(xPos, yPos - 10));
                         float current;
-                        Texture2D spellIcon;
-                        if (m.GetType() == typeof(MissileTrapLauncher))
-                            spellIcon = MissoleTrapSpellIcon;
-                        else if (m.GetType() == typeof(Jammer))
-                            spellIcon = JammerSpellIcon;
-                        else spellIcon = DefaultSpellIcon;
-                        switch (m.State)
+
+                        switch (observable.Module[i].State)
                         {
                             case SpellModuleState.Active:
                                 {
-                                    current = 1 - (m.BackCount / m.ActiveTime);
-                                    GUI.Button(spellRect, spellIcon, localStyle);
-                                    GUI.DrawTexture(spellOver, ProgressUpdate(current, slotActive));
+                                    current = 1 - (observable.Module[i].BackCount / observable.Module[i].ActiveTime);
+                                    moduleActive[i].fillAmount = current;
+                                    moduleCooldown[i].fillAmount = 0;
                                     break;
                                 }
                             case SpellModuleState.Cooldown:
                                 {
-                                    current = 1 - (m.BackCount / m.CoolingTime);
-                                    GUI.Button(spellRect, spellIcon, localStyle);
-                                    GUI.DrawTexture(spellOver, ProgressUpdate(current, slotCooldown)); break;
+                                    current = observable.Module[i].BackCount / observable.Module[i].CoolingTime;
+                                    moduleActive[i].fillAmount = 0;
+                                    moduleCooldown[i].fillAmount = current;
+                                    break;
                                 }
                             case SpellModuleState.Ready:
                                 {
                                     current = 0f;
-                                    if (GUI.Button(spellRect, spellIcon, localStyle))
-                                        m.Enable();
-                                    //GUI.DrawTexture(spellRect, ProgressUpdate(current, slotActive));
+                                    moduleActive[i].fillAmount = 0;
+                                    moduleCooldown[i].fillAmount = 0;
                                     break;
                                 }
                         }
-                        i++;
                     }
                 }
                 //health
@@ -409,6 +468,11 @@ namespace SpaceCommander
                     }
                 }
             }
+        }
+        public void ActiveModule(int index)
+        {
+            if (observable != null && index < observable.Module.Length && observable.Module[index].State == SpellModuleState.Ready)
+                observable.Module[index].Enable();
         }
         Texture2D ProgressUpdate(float progress, Texture2D tex)
         {
