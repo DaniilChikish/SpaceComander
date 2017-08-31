@@ -401,7 +401,7 @@ namespace SpaceCommander
                         {
                             case SpellModuleState.Active:
                                 {
-                                    current = 1 - (observable.Module[i].BackCount / observable.Module[i].ActiveTime);
+                                    current = observable.Module[i].BackCount / observable.Module[i].ActiveTime;
                                     moduleActive[i].fillAmount = current;
                                     moduleCooldown[i].fillAmount = 0;
                                     break;
@@ -472,7 +472,7 @@ namespace SpaceCommander
         public void ActiveModule(int index)
         {
             if (observable != null && index < observable.Module.Length && observable.Module[index].State == SpellModuleState.Ready)
-                observable.Module[index].Enable();
+                observable.Module[index].EnableIfReady();
         }
         Texture2D ProgressUpdate(float progress, Texture2D tex)
         {

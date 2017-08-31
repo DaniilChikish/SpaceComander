@@ -7,6 +7,7 @@ namespace SpaceCommander.Weapons
     public class Railgun : RoundWeapon {
         public override void StatUp()
         {
+            type = WeaponType.Railgun;
             gameObject.GetComponent<MeshRenderer>().enabled = false;
             range = 500;
             ammo = 15; //1.5 Min

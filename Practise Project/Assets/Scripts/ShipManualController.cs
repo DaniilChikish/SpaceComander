@@ -84,7 +84,7 @@ namespace SpaceCommander
         private void Update()
         {
             Fire();
-
+            ActivateModule();
             TagetLockdown();
         }
 
@@ -151,7 +151,10 @@ namespace SpaceCommander
                         if (owner.Gunner.Target != TargetBuffer)
                             owner.Gunner.SetAim(TargetBuffer, true, 0);
                         else if (!TargetInSight())
+                        {
                             TargetBuffer = null;
+                            owner.Gunner.ResetAim();
+                        }
                         break;
                     }
                 case AimStateType.Locking:
@@ -186,6 +189,20 @@ namespace SpaceCommander
                     return false;//переходим в ожидение
                 else return true;
             }
+        }
+
+        private void ActivateModule()
+        {
+            if (Input.GetKeyDown(KeyCode.Alpha1) && owner.Module[0] != null && owner.Module[0].State == SpellModuleState.Ready)
+                owner.Module[0].EnableIfReady();
+            if (Input.GetKeyDown(KeyCode.Alpha2) && owner.Module[1] != null && owner.Module[1].State == SpellModuleState.Ready)
+                owner.Module[1].EnableIfReady();
+            if (Input.GetKeyDown(KeyCode.Alpha3) && owner.Module[2] != null && owner.Module[2].State == SpellModuleState.Ready)
+                owner.Module[2].EnableIfReady();
+            if (Input.GetKeyDown(KeyCode.Alpha4) && owner.Module[3] != null && owner.Module[3].State == SpellModuleState.Ready)
+                owner.Module[3].EnableIfReady();
+            if (Input.GetKeyDown(KeyCode.Alpha5) && owner.Module[4] != null && owner.Module[4].State == SpellModuleState.Ready)
+                owner.Module[4].EnableIfReady();
         }
         private void OnGUI()
         {

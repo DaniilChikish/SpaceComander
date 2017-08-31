@@ -722,7 +722,7 @@ namespace SpaceCommander
         protected abstract void Explode();
         public void Arm()
         {
-            if (!isArmed && lt > 1.5)
+            if (!isArmed && lt > 2.5)
             {
                 isArmed = true;
                 detonateTimer = 0.2f;

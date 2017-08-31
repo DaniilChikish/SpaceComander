@@ -143,6 +143,7 @@ namespace SpaceCommander
         }
         public override void Enable()
         {
+            base.Enable();
         }
 
         protected override void Act()
@@ -378,7 +379,7 @@ namespace SpaceCommander
         {
             if (state == SpellModuleState.Ready)
             {
-                if (owner.CurrentTarget.ShieldForce > 50)
+                if (owner.CurrentTarget != null && owner.CurrentTarget.ShieldForce > 50)
                     Enable();
             }
         }
@@ -593,7 +594,9 @@ namespace SpaceCommander
         public override void EnableIfReady()
         {
             if (owner.Health < owner.MaxHealth * 0.4f)
-                base.EnableIfReady();
+                if (state == SpellModuleState.Ready)
+                    Enable();
+            //base.EnableIfReady();
         }
         protected override void Disable()
         {
@@ -601,6 +604,7 @@ namespace SpaceCommander
         }
         public override void Enable()
         {
+            base.Enable();
             repairSpeed = owner.MaxHealth / 5f;
         }
 
@@ -634,6 +638,7 @@ namespace SpaceCommander
         }
         public override void Enable()
         {
+            base.Enable();
             rechargingSpeed = owner.ShieldCampacity / 10f;
         }
 

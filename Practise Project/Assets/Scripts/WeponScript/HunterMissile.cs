@@ -10,7 +10,7 @@ namespace SpaceCommander.Weapons
         {
             type = MissileType.Hunter;
             Speed = 40f;
-            DropImpulse = 150f;
+            DropImpulse = 400f;
             TurnSpeed = 8;
             explosionTime = 35f;
             AimCone = 30;

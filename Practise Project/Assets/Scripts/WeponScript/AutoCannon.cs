@@ -14,7 +14,7 @@ namespace SpaceCommander.Weapons
         public int shellPosition;
         public override void StatUp()
         {
-            type = WeaponType.Cannon;
+            type = WeaponType.Autocannon;
             gameObject.GetComponent<MeshRenderer>().enabled = false;
             range = 200;
             ammoCampacity = 250; //~2 Min

@@ -12,7 +12,7 @@ namespace SpaceCommander.Weapons
         private int bucksotRate;
         public override void StatUp()
         {
-            type = WeaponType.Cannon;
+            type = WeaponType.ShootCannon;
             gameObject.GetComponent<MeshRenderer>().enabled = false;
             range = 150;
             dispersion = 0.7f;

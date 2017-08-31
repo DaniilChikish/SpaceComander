@@ -48,7 +48,7 @@ namespace SpaceCommander.Weapons
                 case MediumShellType.Camorous:
                     {
                         speed = 110f;
-                        damage = 35f;
+                        damage = 45f;
                         armorPiersing = 3f;
                         mass = 5f;
                         explosionPrefab = Global.ShellBlast;
