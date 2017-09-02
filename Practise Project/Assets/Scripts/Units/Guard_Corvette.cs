@@ -13,11 +13,14 @@ namespace SpaceCommander.Units
             type = UnitClass.Guard_Corvette;
             radarRange = 350; //set in child
             radarPover = 0.8f;
-            speed = 4; //set in child
+            speed = 6; //set in child
             stealthness = 0.2f; //set in child
             radiolink = 1f;
             EnemySortDelegate = SupportCorvetteSortEnemys;
             AlliesSortDelegate = SupportCorvetteSortEnemys;
+
+            module = new SpellModule[1];
+            module[0] = new EmergencySelfRapairing(this);
         }
         protected override void Explosion()
         {

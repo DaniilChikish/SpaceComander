@@ -5,7 +5,6 @@ namespace SpaceCommander.Weapons
 {
     public class CannonShell : Round, IShell
     {
-        protected bool canRicochet;
         protected bool explosive;
         protected GameObject explosionPrefab;
         public void StatUp(float speed, float damage, float armorPiersing, float mass, bool canRicochet, GameObject explosionPrefab)
@@ -27,8 +26,12 @@ namespace SpaceCommander.Weapons
         protected override void Destroy()
         {
             if (explosive)
-            Instantiate(explosionPrefab, gameObject.transform.position, gameObject.transform.rotation);
-
+            {
+                GameObject blast = Instantiate(explosionPrefab, gameObject.transform.position, gameObject.transform.rotation);
+                if (GetComponent<Rigidbody>().mass >= 10)
+                    blast.GetComponent<Explosion>().StatUp(BlastType.ExplosiveShell);
+                else blast.GetComponent<Explosion>().StatUp(BlastType.Shell);
+            }
             Destroy(this.gameObject);
         }
         protected override void OnCollisionEnter(Collision collision)

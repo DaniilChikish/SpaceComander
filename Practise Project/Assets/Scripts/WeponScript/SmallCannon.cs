@@ -17,7 +17,7 @@ namespace SpaceCommander.Weapons
             range = 250;
             dispersion = 0.05f;
             shildBlinkTime = 0.1f;
-            firerate = 150;
+            firerate = 200;
             ammoCampacity = 100;
             ammo = ammoCampacity;
             reloadingTime = 10;

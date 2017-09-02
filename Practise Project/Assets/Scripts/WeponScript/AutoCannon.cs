@@ -17,11 +17,11 @@ namespace SpaceCommander.Weapons
             type = WeaponType.Autocannon;
             gameObject.GetComponent<MeshRenderer>().enabled = false;
             range = 200;
-            ammoCampacity = 250; //~2 Min
+            ammoCampacity = 200; //~2 Min
             ammo = ammoCampacity;
-            firerate = 300;
+            firerate = 350;
             reloadingTime = 20;
-            dispersion = 0.15f;
+            dispersion = 0.2f;
             shildBlinkTime = 0.1f;
             averageRoundSpeed = 130;
             PreAiming = true;

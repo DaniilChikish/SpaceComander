@@ -63,7 +63,7 @@ namespace SpaceCommander
                 case BlastType.ExplosiveShell:
                     {
                         maxRadius = 5f;
-                        damage = 40;
+                        damage = 50;
                         break;
                     }
                 default:

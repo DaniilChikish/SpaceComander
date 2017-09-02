@@ -44,7 +44,7 @@ namespace SpaceCommander
                             multiplicator = (Mathf.Sin((difference / 1.4f) + 0.5f) + 1f) * 0.6f;
                         else
                             multiplicator = 0.0f;
-                        if (!owner.ShieldOwerheat) multiplicator = multiplicator * 0.3f;//(1 - owner.ShieldForce / owner.ShieldMaxCampacity);
+                        if (!owner.ShieldOwerheat) multiplicator = multiplicator * (1 - owner.ShieldForce / owner.ShieldCampacity);
                         this.hitpoints -= collision.gameObject.GetComponent<IShell>().Damage * multiplicator;
                         break;
                     }
@@ -139,9 +139,16 @@ namespace SpaceCommander
                     }
                 case "Explosion":
                     {
-                        if (Vector3.Distance(trigger.transform.position, this.transform.position) < trigger.gameObject.GetComponent<Explosion>().MaxRadius)
+                        float sizeFactor = 0;
+                        if (owner.Type == UnitClass.LR_Corvette)
+                            sizeFactor = 10;
+                        else if (owner.Type == UnitClass.Guard_Corvette || owner.Type == UnitClass.Support_Corvette)
+                            sizeFactor = 5;
+                        if (Vector3.Distance(trigger.transform.position, this.transform.position) < trigger.gameObject.GetComponent<Explosion>().MaxRadius + sizeFactor)
                         {
-                            multiplicator = (1 - blastResist) * (trigger.gameObject.GetComponent<Explosion>().MaxRadius - Vector3.Distance(trigger.transform.position, this.transform.position)) / trigger.gameObject.GetComponent<Explosion>().MaxRadius;
+                            multiplicator = (1 - blastResist) * (trigger.gameObject.GetComponent<Explosion>().MaxRadius + sizeFactor - Vector3.Distance(trigger.transform.position, this.transform.position)) / trigger.gameObject.GetComponent<Explosion>().MaxRadius;
+                            if (multiplicator > 1) multiplicator = 1;
+                            if (multiplicator < 0) multiplicator = 0;
                             this.hitpoints -= trigger.gameObject.GetComponent<Explosion>().Damage * multiplicator;
                         }
                         break;

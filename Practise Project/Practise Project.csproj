@@ -13,11 +13,13 @@
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Unity Subset v3.5</TargetFrameworkProfile>
-    <CompilerResponseFile></CompilerResponseFile>
+    <CompilerResponseFile>
+    </CompilerResponseFile>
     <UnityProjectType>Game:1</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows:5</UnityBuildTarget>
     <UnityVersion>5.5.1f1</UnityVersion>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <LangVersion Condition=" '$(VisualStudioVersion)' != '10.0' ">4</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -132,6 +134,9 @@
     <Compile Include="Assets\Scripts\WeponScript\InterceptorMissile.cs" />
     <Compile Include="Assets\Scripts\WeponScript\Laser.cs" />
     <Compile Include="Assets\Scripts\WeponScript\LaserImpulse.cs" />
+    <Compile Include="Assets\Scripts\WeponScript\MagnetohydrodynamicCannon.cs" />
+    <Compile Include="Assets\Scripts\WeponScript\MagnetoMine.cs" />
+    <Compile Include="Assets\Scripts\WeponScript\MagnetoShell.cs" />
     <Compile Include="Assets\Scripts\WeponScript\MediumCannon.cs" />
     <Compile Include="Assets\Scripts\WeponScript\MetheorMissile.cs" />
     <Compile Include="Assets\Scripts\WeponScript\MissileTrap.cs" />
@@ -140,6 +145,7 @@
     <Compile Include="Assets\Scripts\WeponScript\PlazmaSphere.cs" />
     <Compile Include="Assets\Scripts\WeponScript\Railgun.cs" />
     <Compile Include="Assets\Scripts\WeponScript\RailgunShell.cs" />
+    <Compile Include="Assets\Scripts\WeponScript\Railmortar.cs" />
     <Compile Include="Assets\Scripts\WeponScript\RocketLauncher.cs" />
     <Compile Include="Assets\Scripts\WeponScript\SmallCannon.cs" />
     <Compile Include="Assets\Scripts\WeponScript\SpruteTorpedo.cs" />

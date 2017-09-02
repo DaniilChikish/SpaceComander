@@ -20,7 +20,7 @@ namespace SpaceCommander.Weapons
             dispersion = 0.00001f;//exponential
             shildBlinkTime = 0.05f;
             averageRoundSpeed = 1000000;
-            maxHeat = 10;
+            maxHeat = 100;
             firerate = 6000;
             PreAiming = true;
             beam = gameObject.transform.GetChild(0).gameObject;
@@ -31,7 +31,7 @@ namespace SpaceCommander.Weapons
             if (impulseBackount > 0)
             {
                 this.GetComponentInChildren<ParticleSystem>().Play();
-                heat += Time.deltaTime * 0.7f;
+                heat += Time.deltaTime * 25 * ((heat + 20) / maxHeat);
                 float dist = range;
                 RaycastHit[] hits = Physics.RaycastAll(this.transform.position, this.transform.forward);
                 foreach (RaycastHit x in hits)

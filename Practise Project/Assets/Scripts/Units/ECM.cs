@@ -34,7 +34,7 @@ namespace SpaceCommander.Units
             EnemySortDelegate = EMCSortEnemys;
             AlliesSortDelegate = ScoutSortEnemys;
 
-            module = new SpellModule[1];
+            module = new SpellModule[2];
             module[0] = new MissileTrapLauncher(this);
             module[1] = new Jammer(this);
         }

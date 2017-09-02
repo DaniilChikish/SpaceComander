@@ -103,30 +103,31 @@ namespace SpaceCommander
             {
                 //if (aimState == AimStateType.Default) 
                 //{
-                    Vector3 enemyPos;
-                    Vector3 aim = Camera.main.WorldToScreenPoint(owner.transform.position + owner.transform.forward * (owner.Gunner.Weapon[0][0].Range + owner.Gunner.Weapon[1][0].Range) / 2);
-                    float minDistance = 100000;
-                    int enemyIndex = 0;
-                    Unit[] enemys = owner.GetEnemys();
-                    float dist;
-                    for (int i = 0; i < enemys.Length; i++)
-                    {
-                        enemyPos = Camera.main.WorldToScreenPoint(enemys[i].transform.position);
+                Vector3 enemyPos;
+                Vector3 aim = Camera.main.WorldToScreenPoint(owner.transform.position + owner.transform.forward * (owner.Gunner.Weapon[0][0].Range + owner.Gunner.Weapon[1][0].Range) / 2);
+                aim.z = 0;
+                float minDistance = Screen.width / 4;
+                int enemyIndex = -1;
+                Unit[] enemys = owner.GetEnemys();
+                float dist;
+                for (int i = 0; i < enemys.Length; i++)
+                {
+                    enemyPos = Camera.main.WorldToScreenPoint(enemys[i].transform.position);
                     enemyPos.z = 0;
-                        dist = Vector3.Distance(aim, enemyPos);
-                        if (dist < minDistance)
-                        {
-                            minDistance = dist;
-                            enemyIndex = i;
-                        }
+                    dist = Vector3.Distance(aim, enemyPos);
+                    if (dist < minDistance)
+                    {
+                        minDistance = dist;
+                        enemyIndex = i;
                     }
+                }
+                if (enemyIndex != -1)
                     TargetBuffer = enemys[enemyIndex];
-                //}
-                //else //reset target
-                //{
-                //    aimState = AimStateType.Default;
-                //    owner.Gunner.ResetAim();
-                //}
+                else //reset target
+                {
+                    aimState = AimStateType.Default;
+                    owner.Gunner.ResetAim();
+                }
             }
             else if (Input.GetAxis(swithTargetAxis) > 0 && (lockdownCount < lockdownDuration * 0.8))
             {

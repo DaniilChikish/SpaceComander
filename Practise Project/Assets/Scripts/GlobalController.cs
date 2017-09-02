@@ -22,6 +22,9 @@ namespace SpaceCommander
         public Texture AlliesSelectedGUIFrame;
         public Texture AlliesGUIFrame;
         public Texture EnemyGUIFrame;
+        public Texture AlliesSelectedOutscreenPoint;
+        public Texture AlliesOutscreenPoint;
+        public Texture EnemyOutscreenPoint;
         //public float GUIFrameWidth;
         //public float GUIFrameHeight;
         //public float GUIFrameOffset;
@@ -34,6 +37,8 @@ namespace SpaceCommander
         public GameObject Missile;
         public GameObject MissileTrap;
         public GameObject Torpedo;
+        public GameObject MagMine;
+        public GameObject MagnetoShell;
         public GameObject ExplosiveBlast;
         public GameObject NukeBlast;
         public GameObject ShipDieBlast;
@@ -602,7 +607,7 @@ namespace SpaceCommander
             base.Update();
             if (heat > 0)
             {
-                heat -= Time.deltaTime;
+                heat -= Time.deltaTime * 4;
                 if (heat > maxHeat)
                     overheat = true;
             }
@@ -623,6 +628,7 @@ namespace SpaceCommander
         protected float damage;
         protected float armorPiersing;
         protected float ttl;
+        protected bool canRicochet;
 
         public float Speed { get { return speed; } }
         public float Damage { get { return damage; } }
@@ -641,7 +647,7 @@ namespace SpaceCommander
         {
             if (ttl > 0)
                 ttl -= Time.deltaTime;
-            else
+            else 
                 Destroy();
         }
         protected virtual void OnCollisionEnter(Collision collision)
@@ -650,7 +656,8 @@ namespace SpaceCommander
             {
                 case "Unit":
                     {
-                        Destroy();
+                        if (!canRicochet)
+                            Destroy();
                         break;
                     }
             }

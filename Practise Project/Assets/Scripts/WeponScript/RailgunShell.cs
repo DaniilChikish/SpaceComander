@@ -11,12 +11,13 @@ namespace SpaceCommander.Weapons
         public void StatUp()
         {
             this.speed = 300f;
-            this.damage = 200f;
-            this.armorPiersing = 5f;
+            this.damage = 500f;
+            this.armorPiersing = 6f;
             this.ttl = 5f;
             body = this.GetComponent<Rigidbody>();
             body.mass = 40f;
             body.AddForce(transform.forward * Speed, ForceMode.VelocityChange);
+            this.canRicochet = true;
         }
 
         public void StatUp(float speed, float damage, float armorPiersing, float mass, bool canRicochet, GameObject explosionPrefab)

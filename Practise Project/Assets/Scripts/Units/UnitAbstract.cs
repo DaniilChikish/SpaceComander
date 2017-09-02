@@ -49,6 +49,7 @@ namespace SpaceCommander
         public Vector3 Anchor;
         //GUI
         public HUDBase hud;
+        private ShipManualController manualController;
         public Texture enemyIcon;
         public Texture aliesIcon;
         public Texture selectedIcon;
@@ -147,6 +148,8 @@ namespace SpaceCommander
             //List<SpaceShip> enemys = new List<SpaceShip>();
             //List<SpaceShip> allies = new List<SpaceShip>();
             impacts = new List<IImpact>();
+
+            manualController = FindObjectOfType<ShipManualController>();
 
             this.gameObject.transform.FindChild("MinimapPict").FindChild("AlliesMinimapPict").GetComponent<Renderer>().enabled = false;
             this.gameObject.transform.FindChild("MinimapPict").FindChild("EnemyMinimapPict").GetComponent<Renderer>().enabled = false;
@@ -316,68 +319,133 @@ namespace SpaceCommander
         {
             if (!ManualControl)
             {
+                float border = 40;
+                bool outOfBorder = false;
+                bool outOfPlane = false;
                 Vector3 crd = Camera.main.WorldToScreenPoint(transform.position);
-                if (crd.z>=0)
+                float distance = Vector3.Distance(this.transform.position, Camera.main.transform.position);
+                crd.y = Screen.height - crd.y;
+
+                if (crd.x > Screen.width -40 || crd.x < 40 || crd.y > Screen.height -5 || crd.y < 40)
+                    outOfBorder = true;
+                if (crd.z < 0)
+                    outOfPlane = true;
+                //crd.z = 0;
+
+                if (outOfBorder || outOfPlane)
                 {
-                    crd.y = Screen.height - crd.y;
-                    Vector2 frameSize = new Vector2(Global.AlliesGUIFrame.width, Global.AlliesGUIFrame.height);// * hud.scale;
-                    Vector2 iconSize = new Vector2(aliesIcon.width, aliesIcon.height);// * hud.scale;
-                    float frameX;
-                    float frameY = crd.y - frameSize.y / 2f - 12;
-                    float iconX;
-                    float iconY;
+                    Vector3 center = new Vector3(Screen.width / 2, Screen.height / 2);
+                    Vector3 originC = crd - center;
+                    Vector3 vC = originC;
+                    float a = center.x - border;
+                    float b = center.y - border;
+                    float r = 0;
 
-                    if (true) //perspective
+                    //float comX = a, comY = b;
+
+                    if (vC.x < 0) vC.x = -vC.x;
+                    if (vC.y < 0) vC.y = -vC.y;
+                    if (vC.x / vC.y > a / b || vC.x / vC.y < -(a / b))
                     {
-                        float distance = Vector3.Distance(this.transform.position, Camera.main.transform.position);
-                        if (distance > 200)
-                        {
-                            frameSize = frameSize * (200 / distance);
-                            frameY = crd.y - frameSize.y / 2f - (12 * (200 / distance));
-                            iconSize = iconSize * (200 / distance);
-                        }
+                        r = vC.magnitude * a / vC.x;
                     }
-                    frameX = crd.x - frameSize.x / 2f;
-                    iconX = crd.x - iconSize.x / 2f;
-                    iconY = frameY - iconSize.y * 1.2f;
-                    GUIStyle style = new GUIStyle();
-                    style.fontSize = 12;
-                    //style.font = GuiProcessor.getI.rusfont;
-                    style.normal.textColor = Color.red;
-                    style.alignment = TextAnchor.MiddleCenter;
-                    //style.fontStyle = FontStyle.Italic;
-                    Texture frameToDraw = null;
-                    Texture iconToDraw = null;
-                    if (team == Global.playerArmy)
+                    else
                     {
-                        if (isSelected)
-                        {
-                            style.normal.textColor = Color.cyan;
+                        r = vC.magnitude * b / vC.y;
+                    }
+                    crd = center + originC.normalized * r;
 
-                            frameToDraw = Global.AlliesSelectedGUIFrame;
-                            iconToDraw = selectedIcon;
-                            GUI.Label(new Rect(crd.x - 120, crd.y - (frameSize.y / 2) * 1.1f, 240, 18), UnitName, style);
+                    if (manualController.enabled && true) //in hud elipse
+                    {
+                        crd = Camera.main.WorldToScreenPoint(transform.position);
+                        if (crd.x < 0)
+                        {
+                            crd.x = border;
                         }
                         else
+                        if (crd.x > Screen.width)
                         {
-                            frameToDraw = Global.AlliesGUIFrame;
-                            iconToDraw = aliesIcon;
+                            crd.x = Screen.width - border;
                         }
-                    }
-                    else if (cooldownDetected > 0)
-                    {
-                        style.normal.textColor = Color.red;
+                            crd.y = center.y + (b *(1- crd.z / distance));
 
-                        frameToDraw = Global.EnemyGUIFrame;
-                        iconToDraw = enemyIcon;
-                        //GUI.Label(new Rect(crd.x - 120, crd.y - Global.NameFrameOffset, 240, 18), UnitName, style);
                     }
-
-                    if (frameToDraw != null)
-                        GUI.DrawTexture(new Rect(new Vector2(frameX, frameY), frameSize), frameToDraw);
-                    if (iconToDraw != null)
-                        GUI.DrawTexture(new Rect(new Vector2(iconX, iconY), iconSize), iconToDraw);
                 }
+                if (outOfPlane)
+                {
+                    crd.x = Screen.width - crd.x;
+                    crd.y = Screen.height - border;
+                    outOfBorder = true;
+                }
+
+                Vector2 frameSize;
+                if (!outOfBorder) frameSize = new Vector2(Global.AlliesGUIFrame.width, Global.AlliesGUIFrame.height);// * hud.scale;
+                else frameSize = new Vector2(Global.AlliesOutscreenPoint.width, Global.AlliesOutscreenPoint.height);
+                Vector2 iconSize = new Vector2(aliesIcon.width, aliesIcon.height);// * hud.scale;
+                float frameX;
+                float frameY = crd.y - frameSize.y / 2f - 12;
+                float iconX;
+                float iconY;
+
+                if (!true || distance < 200) //perspective
+                    distance = 200;
+
+                frameSize = frameSize * (200 / distance);
+                frameY = crd.y - frameSize.y / 2f - (12 * (200 / distance));
+                iconSize = iconSize * (200 / distance);
+                frameX = crd.x - frameSize.x / 2f;
+                iconX = crd.x - iconSize.x / 2f;
+                if (!outOfBorder)
+                    iconY = frameY - iconSize.y * 1.2f;
+                else
+                    iconY = frameY - (iconSize.y - ((border + 20) * (200 / distance))) * 1.2f;
+                GUIStyle style = new GUIStyle();
+                style.fontSize = 12;
+                //style.font = GuiProcessor.getI.rusfont;
+                style.normal.textColor = Color.red;
+                style.alignment = TextAnchor.MiddleCenter;
+                //style.fontStyle = FontStyle.Italic;
+                Texture frameToDraw = null;
+                Texture iconToDraw = null;
+                if (team == Global.playerArmy)
+                {
+                    if (isSelected)
+                    {
+                        style.normal.textColor = Color.cyan;
+
+                        if (!outOfBorder&&!outOfPlane)
+                            frameToDraw = Global.AlliesSelectedGUIFrame;
+                        else
+                            frameToDraw = Global.AlliesSelectedOutscreenPoint;
+                        iconToDraw = selectedIcon;
+                        GUI.Label(new Rect(crd.x - 120, crd.y - (frameSize.y / 2) * 1.1f, 240, 18), UnitName, style);
+                    }
+                    else
+                    {
+                        if (!outOfBorder && !outOfPlane)
+                            frameToDraw = Global.AlliesGUIFrame;
+                        else
+                            frameToDraw = Global.AlliesOutscreenPoint;
+                        iconToDraw = aliesIcon;
+                    }
+                }
+                else if (cooldownDetected > 0)
+                {
+                    style.normal.textColor = Color.red;
+
+                    if (!outOfBorder && !outOfPlane)
+                        frameToDraw = Global.EnemyGUIFrame;
+                    else
+                        frameToDraw = Global.EnemyOutscreenPoint;
+                    iconToDraw = enemyIcon;
+                    //GUI.Label(new Rect(crd.x - 120, crd.y - Global.NameFrameOffset, 240, 18), UnitName, style);
+                }
+
+                if (frameToDraw != null)
+                    GUI.DrawTexture(new Rect(new Vector2(frameX, frameY), frameSize), frameToDraw);
+                if (iconToDraw != null)
+                    GUI.DrawTexture(new Rect(new Vector2(iconX, iconY), iconSize), iconToDraw);
+
             }
         }
         public void SelectUnit(bool isSelect)
