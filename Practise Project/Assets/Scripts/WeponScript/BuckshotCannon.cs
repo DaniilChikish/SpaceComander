@@ -45,7 +45,7 @@ namespace SpaceCommander.Weapons
                 bool canRicochet = true;
                 GameObject explosionPrefab = null;
                 speed = 100f;
-                damage = 30f;
+                damage = 5f;
                 armorPiersing = 1;
                 mass = 0.6f;
 

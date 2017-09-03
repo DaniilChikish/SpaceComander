@@ -11,7 +11,7 @@ namespace SpaceCommander.Units
             type = UnitClass.LR_Corvette;
             radarRange = 300; //set in child
             radarPover = 10;
-            speed = 10; //set in child
+            speedThrust = 10; //set in child
             stealthness = 1f; //set in child
             radiolink = 2f;
             movementAiEnabled = false;

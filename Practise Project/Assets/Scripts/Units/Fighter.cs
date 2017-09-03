@@ -17,9 +17,11 @@ namespace SpaceCommander.Units
         protected override void StatsUp()
         {
             type = UnitClass.Figther;
-            radarRange = 350; //set in child
+            radarRange = 550; //set in child
             radarPover = 0.8f;
-            speed = 9; //set in child
+            speedThrust = 9; //set in child
+            speedRotation = 11;
+            speedShift = 11;
             stealthness = 0.5f; //set in child
             radiolink = 1.5f;
 

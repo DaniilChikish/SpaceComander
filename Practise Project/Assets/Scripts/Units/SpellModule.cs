@@ -442,8 +442,8 @@ namespace SpaceCommander
         {
             backCount = 0;
             type = SpellType.Activated;
-            coolingTime = 30;
-            activeTime = 0;
+            coolingTime = 45;
+            activeTime = 1;
             state = SpellModuleState.Ready;
             function.Add(SpellFunction.Enemy);
             function.Add(SpellFunction.Attack);
@@ -463,7 +463,7 @@ namespace SpaceCommander
         public override void Enable()
         {
             base.Enable();
-            owner.CurrentTarget.MakeImpact(new TrusterStunImpact(owner.CurrentTarget, 3));
+            owner.CurrentTarget.MakeImpact(new TrusterStunImpact(owner.CurrentTarget, 10));
         }
 
         protected override void Act()
@@ -476,11 +476,15 @@ namespace SpaceCommander
         public string Name { get { return "TrusterInhibitorImpact"; } }
         private float ttl;
         private Unit owner;
-        private float ownerSpeedPrev;
+        private float ownerTrSpeedPrev;
+        private float ownerShSpeedPrev;
+        private float ownerRotSpeedPrev;
         public TrusterStunImpact(Unit owner, float time)
         {
             this.owner = owner;
-            ownerSpeedPrev = owner.Speed;
+            ownerTrSpeedPrev = owner.Speed;
+            ownerRotSpeedPrev = owner.RotationSpeed;
+            ownerShSpeedPrev = owner.ShiftSpeed;
             if (owner.HaveImpact(this.Name))
                 ttl = 0;
             else
@@ -490,8 +494,17 @@ namespace SpaceCommander
                 else
                 {
                     Act = true;
+                    UnityEngine.AI.NavMeshAgent agent = owner.transform.GetComponent<UnityEngine.AI.NavMeshAgent>();
+                    if (agent != null)
+                    {
+                        agent.speed = 0;
+                        agent.ResetPath();
+                        agent.velocity = Vector3.zero;
+                    }
                     ttl = time;
                     owner.Speed = 0;
+                    owner.RotationSpeed = owner.RotationSpeed * 0.4f;
+                    owner.ShiftSpeed = 0;
                 }
             }
         }
@@ -503,7 +516,12 @@ namespace SpaceCommander
         }
         public void CompleteImpact()
         {
-            if (Act) owner.Speed = ownerSpeedPrev;
+            if (Act)
+            {
+                owner.Speed = ownerTrSpeedPrev;
+                owner.RotationSpeed = ownerRotSpeedPrev;
+                owner.ShiftSpeed = ownerShSpeedPrev;
+            }
             owner.RemoveImpact(this);
         }
         public override string ToString()

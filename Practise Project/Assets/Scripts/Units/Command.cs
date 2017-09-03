@@ -13,9 +13,11 @@ namespace SpaceCommander.Units
         protected override void StatsUp()
         {
             type = UnitClass.Command;
-            radarRange = 500; //set in child
+            radarRange = 1000; //set in child
             radarPover = 0.8f;
-            speed = 12; //set in child
+            speedThrust = 10; //set in child
+            speedRotation = 11;
+            speedShift = 10;
             combatAIEnabled = true; //set in child
             selfDefenceModuleEnabled = true; //set in child
             jamming = false;

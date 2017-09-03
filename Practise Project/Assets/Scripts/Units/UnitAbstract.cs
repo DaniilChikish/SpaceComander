@@ -20,6 +20,8 @@ namespace SpaceCommander
         public abstract Army Team { get; }
         public abstract Unit CurrentTarget { get; }
         public abstract float Speed { set; get; }
+        public abstract float RotationSpeed { set; get; }
+        public abstract float ShiftSpeed { set; get; }
         public abstract float Health { set; get; }
         public abstract float MaxHealth { get; }
 
@@ -59,7 +61,9 @@ namespace SpaceCommander
         //constants
         protected float radarRange; //set in child
         protected float radarPover; // default 1
-        protected float speed; //set in child
+        protected float speedThrust; //set in child
+        protected float speedRotation;
+        protected float speedShift;
         //override properties
         public override float Health { set { armor.hitpoints = value; } get { return armor.hitpoints; } }
         public override float MaxHealth { get { return armor.maxHitpoints; } }
@@ -68,7 +72,9 @@ namespace SpaceCommander
                 if (ManualControl) return this.gameObject.GetComponent<Rigidbody>().velocity;
                 else return Driver.Velocity;
             } }
-        public override float Speed { set { speed = value; } get { return speed; } }
+        public override float Speed { set { speedThrust = value; } get { return speedThrust; } }
+        public override float RotationSpeed { set { speedRotation = value; } get { return speedRotation; } }
+        public override float ShiftSpeed { set { speedShift = value; } get { return speedShift; } }
         public override float RadarRange { set { radarRange = value; } get { return radarRange; } }
         public override float ShieldForce { set { shield.force = value; } get { return shield.force; } }
         public override float ShieldRecharging { set { shield.recharging = value; } get { return shield.recharging; } }

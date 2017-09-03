@@ -25,18 +25,21 @@ namespace SpaceCommander.Units
         protected override void StatsUp()
         {
             type = UnitClass.ECM;
-            radarRange = 400; //set in child
+            radarRange = 800; //set in child
             radarPover = 0.9f;
-            speed = 9f; //set in child
+            speedThrust = 11f; //set in child
+            speedRotation = 12;
+            speedShift = 11;
             jamming = false;
             stealthness = 0.6f; //set in child
             radiolink = 1.1f;
             EnemySortDelegate = EMCSortEnemys;
             AlliesSortDelegate = ScoutSortEnemys;
 
-            module = new SpellModule[2];
+            module = new SpellModule[3];
             module[0] = new MissileTrapLauncher(this);
             module[1] = new Jammer(this);
+            module[2] = new TrusterStunner(this);
         }
         protected override void Explosion()
         {

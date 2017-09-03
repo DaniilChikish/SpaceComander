@@ -12,9 +12,11 @@ namespace SpaceCommander.Units
         protected override void StatsUp()
         {
             type = UnitClass.Recon;
-            radarRange = 500; //set in child
+            radarRange = 700; //set in child
             radarPover = 0.8f;
-            speed = 8.5f; //set in child
+            speedThrust = 10f; //set in child
+            speedRotation = 15;
+            speedShift = 12;
             stealthness = 0.7f; //set in child
             radiolink = 1.5f;
             EnemySortDelegate = ReconSortEnemys;

@@ -15,14 +15,14 @@ namespace SpaceCommander.Weapons
             gameObject.GetComponent<MeshRenderer>().enabled = false;
             range = 125;
             maxHeat = 100;
-            firerate = 300;
+            firerate = 100;
             dispersion = 5f;
             shildBlinkTime = 0.05f;
             averageRoundSpeed = 60;
         }
         protected override void Shoot(Transform target)
         {
-            heat += 10 * ((heat + 10) / maxHeat);
+            heat += 40 * ((heat + 20) / maxHeat);
             Quaternion direction = transform.rotation;
             double[] random = Randomizer.Normal(1, 1, 32, 0, 128);
             double[] randomOffset = Randomizer.Uniform(0, 100, 2);

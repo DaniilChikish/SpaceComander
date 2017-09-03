@@ -14,18 +14,21 @@ namespace SpaceCommander.Units
         protected override void StatsUp()
         {
             type = UnitClass.Scout;
-            radarRange = 550; //set in child
+            radarRange = 1100; //set in child
             radarPover = 1f;
-            speed = 10; //set in child
+            speedThrust = 12; //set in child
+            speedRotation = 14;
+            speedShift = 12;
             stealthness = 0.7f; //set in child
             radiolink = 1.5f;
             EnemySortDelegate = ScoutSortEnemys;
             AlliesSortDelegate = ReconSortEnemys;
 
-            module = new SpellModule[3];
+            module = new SpellModule[4];
             module[0] = new MissileTrapLauncher(this);
-            module[1] = new RadarBooster(this);
-            module[2] = new Warp(this);
+            module[1] = new Jammer(this);
+            module[2] = new RadarBooster(this);
+            module[3] = new Warp(this);
         }
         protected override void Explosion()
         {

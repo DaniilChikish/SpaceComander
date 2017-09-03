@@ -51,8 +51,6 @@ namespace SpaceCommander
         private float mainThrust;
         private float verticalShiftThrust;
         private float horisontalShiftThrust;
-        private float turnSpeed;
-
         //controlAxis;
         private string thrustAxis = "Thrust";
         private string horizontalShiftAxis = "HorizontalShift";
@@ -72,7 +70,6 @@ namespace SpaceCommander
             tridimensional = false;
             owner.Gunner.ResetAim();
             body = owner.gameObject.GetComponent<Rigidbody>();
-            turnSpeed = owner.Speed * 5.5f;
             //folowCam = FindObjectOfType<RTS_Cam.RTS_Camera>();
             //folowCam.followingSpeed = owner.Speed * 5f;
         }
@@ -314,7 +311,7 @@ namespace SpaceCommander
                 if (horisontalShiftThrust < 0.0001 && horisontalShiftThrust > -0.0001) horisontalShiftThrust = 0;
                 if (horisontalShiftThrust < -1) horisontalShiftThrust = -1;
 
-                Vector3 shiftLocal = (this.transform.right * horisontalShiftThrust + this.transform.forward * mainThrust) * owner.Speed * 25;
+                Vector3 shiftLocal = (this.transform.right * horisontalShiftThrust * owner.ShiftSpeed + this.transform.forward * mainThrust * owner.Speed) * 25;
 
                 body.AddForce(shiftLocal, ForceMode.Acceleration);
             }
@@ -356,13 +353,13 @@ namespace SpaceCommander
                 }
             }
 
-            transform.Rotate(rot, turnSpeed * Time.deltaTime);
+            transform.Rotate(rot, owner.RotationSpeed * 5.5f * Time.deltaTime);
         }
         private void Stabilisation()
         {
             Quaternion rotDest = Quaternion.Euler(0, transform.rotation.eulerAngles.y, 0);
             if (Quaternion.Angle(owner.transform.rotation, rotDest) > 1)
-                owner.transform.rotation = Quaternion.RotateTowards(owner.transform.rotation, rotDest, Time.deltaTime * turnSpeed * 2.7f);
+                owner.transform.rotation = Quaternion.RotateTowards(owner.transform.rotation, rotDest, Time.deltaTime * owner.RotationSpeed * 6f);
             else owner.transform.rotation = rotDest;
 
             Vector3 targetPos = owner.transform.position;

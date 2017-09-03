@@ -10,9 +10,11 @@ namespace SpaceCommander.Units
         protected override void StatsUp()
         {
             type = UnitClass.Bomber;
-            radarRange = 300; //set in child
+            radarRange = 600; //set in child
             radarPover = 0.5f;
-            speed = 6.5f; //set in child
+            speedThrust = 7.5f; //set in child
+            speedRotation = 6;
+            speedShift = 6;
             stealthness = 0.4f; //set in child
             radiolink = 2.5f;
             StrategicLoad = TorpedoType.Nuke;

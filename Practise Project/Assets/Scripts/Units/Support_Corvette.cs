@@ -10,9 +10,11 @@ namespace SpaceCommander.Units
         protected override void StatsUp()
         {
             type = UnitClass.Support_Corvette;
-            radarRange = 300; //set in child
+            radarRange = 500; //set in child
             radarPover = 0.6f;
-            speed = 4; //set in child
+            speedThrust = 7; //set in child
+            speedRotation = 6;
+            speedShift = 6;
             stealthness = 0.1f; //set in child
             radiolink = 1f;
             EnemySortDelegate = SupportCorvetteSortEnemys;
