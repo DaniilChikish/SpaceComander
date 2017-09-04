@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: ae0dbee84698d364b99bcb9eb791e116
+timeCreated: 1504456249
+licenseType: Free
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - EMIExplosionPrefab: {fileID: 1619185683336690, guid: fc7169b45eb3d9b4ca34f77ec1794ea8,
+      type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

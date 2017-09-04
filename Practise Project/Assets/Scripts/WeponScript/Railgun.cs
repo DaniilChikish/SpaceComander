@@ -9,7 +9,7 @@ namespace SpaceCommander.Weapons
         {
             type = WeaponType.Railgun;
             gameObject.GetComponent<MeshRenderer>().enabled = false;
-            range = 500;
+            range = 1500;
             ammo = 15; //1.5 Min
             ammoCampacity = 15;
             firerate = 10;//200 DD, 40 DpS

@@ -7,9 +7,6 @@ namespace SpaceCommander.Units
 {
     public class Command : SpaceShip
     {
-        public bool jamming;//Make private after debug;
-        public new float Stealthness { get { if (jamming) return stealthness * 1.8f; else return stealthness; } }
-
         protected override void StatsUp()
         {
             type = UnitClass.Command;
@@ -20,16 +17,47 @@ namespace SpaceCommander.Units
             speedShift = 10;
             combatAIEnabled = true; //set in child
             selfDefenceModuleEnabled = true; //set in child
-            jamming = false;
             stealthness = 0.45f; //set in child
+
+            module = new SpellModule[2];
+            module[0] = new MissileTrapLauncher(this);
+            module[1] = new ShieldsBraker(this);
         }
         protected override void DecrementLocalCounters()
         {
         }
         //AI logick
-        //protected override bool ManeuverFunction()
-        //{
-        //    return false;
-        //}
+        protected override bool AttackManeuver()
+        {
+            if (allies.Count > 0)
+                UseModule(new SpellFunction[] { SpellFunction.Allies, SpellFunction.Buff });
+            if (CurrentTarget != null)
+                UseModule(new SpellFunction[] { SpellFunction.Enemy, SpellFunction.Debuff});
+
+            switch (targetStatus)
+            {
+                case TargetStateType.Captured:
+                    {
+                        UseModule(new SpellFunction[] { SpellFunction.Attack });
+                        return ToSecondaryDistance();
+                    }
+                case TargetStateType.InPrimaryRange:
+                    {
+                        UseModule(new SpellFunction[] { SpellFunction.Defence, SpellFunction.Buff });
+                        return IncreaseDistance();
+                    }
+                case TargetStateType.InSecondaryRange:
+                    {
+                        UseModule(new SpellFunction[] { SpellFunction.Attack, SpellFunction.Buff });
+                        return Evasion(CurrentTarget.transform.right);
+                    }
+                case TargetStateType.BehindABarrier:
+                    {
+                        return ToSecondaryDistance();
+                    }
+                default:
+                    return false;
+            }
+        }
     }
 }

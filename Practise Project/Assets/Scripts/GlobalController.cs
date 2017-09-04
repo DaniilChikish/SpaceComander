@@ -40,6 +40,7 @@ namespace SpaceCommander
         public GameObject MagMine;
         public GameObject MagnetoShell;
         public GameObject ExplosiveBlast;
+        public GameObject EMIExplosionPrefab;
         public GameObject NukeBlast;
         public GameObject ShipDieBlast;
         public double[] RandomNormalPool;

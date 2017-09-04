@@ -365,7 +365,7 @@ namespace SpaceCommander
             backCount = 0;
             type = SpellType.Activated;
             coolingTime = 30;
-            activeTime = 0;
+            activeTime = 1;
             state = SpellModuleState.Ready;
             function.Add(SpellFunction.Enemy);
             function.Add(SpellFunction.Shield);
@@ -748,4 +748,36 @@ namespace SpaceCommander
         }
     }
 
+    public class ShieldsBraker : SpellModule
+    {
+        public ShieldsBraker(SpaceShip owner) : base(owner)
+        {
+            backCount = 0;
+            type = SpellType.Activated;
+            coolingTime = 60;
+            activeTime = 1;
+            state = SpellModuleState.Ready;
+            function.Add(SpellFunction.Enemy);
+            function.Add(SpellFunction.Shield);
+            function.Add(SpellFunction.Attack);
+        }
+
+        public override void Enable()
+        {
+            //GlobalController Global = GameObject.FindObjectOfType<GlobalController>();
+            foreach (Unit x in owner.GetEnemys())
+            {
+                x.ShieldForce -= (x.ShieldCampacity / 2);
+            }
+            //Instantiate(Global.EMIExplosionPrefab, this.transform.position, this.transform.rotation);
+        }
+
+        protected override void Act()
+        {
+        }
+
+        protected override void Disable()
+        {
+        }
+    }
 }

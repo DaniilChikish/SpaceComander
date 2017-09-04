@@ -15,7 +15,7 @@ namespace SpaceCommander.Units
             get
             {
                 if (jamming)
-                    return base.Velocity * Convert.ToSingle(Randomizer.Uniform(0, 100, 1)[0]) / 50;
+                    return Vector3.zero;
                 else
                     return base.Velocity;
             }

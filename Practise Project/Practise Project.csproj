@@ -149,6 +149,7 @@
     <Compile Include="Assets\Scripts\WeponScript\Railmortar.cs" />
     <Compile Include="Assets\Scripts\WeponScript\RocketLauncher.cs" />
     <Compile Include="Assets\Scripts\WeponScript\SmallCannon.cs" />
+    <Compile Include="Assets\Scripts\WeponScript\ShieldBreakerTorpedo.cs" />
     <Compile Include="Assets\Scripts\WeponScript\SpruteTorpedo.cs" />
     <Compile Include="Assets\Scripts\WeponScript\TorpedoLauncher.cs" />
     <Compile Include="Assets\Scripts\WeponScript\UnitaryTorpedo.cs" />

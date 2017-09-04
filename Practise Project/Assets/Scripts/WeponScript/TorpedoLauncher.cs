@@ -11,7 +11,7 @@ namespace SpaceCommander.Weapons
         {
             type = WeaponType.Torpedo;
             gameObject.GetComponent<MeshRenderer>().enabled = false;
-            range = 350;
+            range = 1000;
             ammo = 4;
             firerate = 6;
             reloadingTime = 60;
@@ -38,12 +38,20 @@ namespace SpaceCommander.Weapons
                         torpedo.AddComponent<SpruteTorpedo>();
                         break;
                     }
+                case TorpedoType.ShieldsBreaker:
+                    {
+                        ammo -= 1;
+                        torpedo = Instantiate(Global.Torpedo, gameObject.transform.position, transform.rotation);
+                        torpedo.AddComponent<ShieldBreakerTorpedo>();
+                        break;
+                    }
                 case TorpedoType.Unitary:
                 default:
                     {
                         torpedo = Instantiate(Global.Torpedo, gameObject.transform.position, transform.rotation);
                         torpedo.AddComponent<UnitaryTorpedo>();
-                        torpedo.GetComponent<Torpedo>().SetMidpoint(this.transform.GetComponentInParent<Unit>().transform.position + this.transform.GetComponentInParent<Unit>().transform.forward * 100);
+                        if (target == null)
+                            torpedo.GetComponent<Torpedo>().SetMidpoint(this.transform.GetComponentInParent<Unit>().transform.position + this.transform.GetComponentInParent<Unit>().transform.forward * 100);
                         break;
                     }
             }

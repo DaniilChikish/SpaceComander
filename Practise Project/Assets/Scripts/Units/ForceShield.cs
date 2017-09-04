@@ -13,6 +13,7 @@ namespace SpaceCommander
         public float cooldownChield;
         public float firstBlinker;
         public float secondBlinker;
+        public float shootCount;
         MeshRenderer firstFieldRend;
         Collider firstFieldColl;
         MeshRenderer secondField;
@@ -29,6 +30,8 @@ namespace SpaceCommander
         // Update is called once per frame
         void Update()
         {
+            if (shootCount > 0)
+                shootCount = shootCount * 0.95f;
             if (force < 0 && !isOwerheat)
                 Owerheat();
             else if (cooldownChield <= 0 && secondBlinker <= 0 && force < maxCampacity)
@@ -90,6 +93,7 @@ namespace SpaceCommander
                         {
                             Rigidbody shell = collision.GetComponent<Rigidbody>();
                             shell.velocity = shell.velocity / 2;
+                            shootCount += 1 + (shell.mass * 0.2f);
                             break;
                         }
                     case "Energy":
@@ -118,7 +122,7 @@ namespace SpaceCommander
                     case "Shell":
                         {
                             Rigidbody shell = collision.GetComponent<Rigidbody>();
-                            this.force -= shell.mass;
+                            this.force -= shell.mass * (1 + shootCount / 8);
                             secondField.enabled = true;
                             secondBlinker = 0.5f;
                             //shell.AddForce((collision.transform.position-this.transform.position).normalized * Mathf.Sqrt(shell.velocity.magnitude * maxCampacity), ForceMode.Impulse);//velocity = collision.GetComponent<Rigidbody>().velocity / 2;
@@ -143,7 +147,7 @@ namespace SpaceCommander
                         }
                     case "Explosion":
                         {
-                            this.force = this.force - collision.gameObject.GetComponent<Explosion>().Damage * 0.01f;
+                            this.force = this.force - collision.gameObject.GetComponent<Explosion>().Damage * 0.1f * Time.deltaTime;
                             break;
                         }
                 }

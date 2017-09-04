@@ -47,7 +47,7 @@ namespace SpaceCommander.Weapons
                 speed = 100f;
                 damage = 5f;
                 armorPiersing = 1;
-                mass = 0.6f;
+                mass = 0.2f;
 
                 shell.GetComponent<IShell>().StatUp(speed, damage, armorPiersing, mass, canRicochet, explosionPrefab);
             }

@@ -19,6 +19,6 @@ namespace SpaceCommander
     public enum ShellLineType { Solid, ArmorPenetration, ShildOwerheat, Incendiary, Universal }
     public enum EnergyType { RedRay, GreenRay, BlueRay, Plazma }
     public enum MissileType { Hunter, Bombardier, Metheor, Interceptor }
-    public enum TorpedoType { Unitary, Nuke, Sprute }
+    public enum TorpedoType { Unitary, Nuke, Sprute, ShieldsBreaker }
     public enum BlastType { UnitaryTorpedo, Missile, NukeTorpedo, SmallShip, MediumShip, Corvette, Shell, ExplosiveShell }
 }

@@ -22,7 +22,7 @@ namespace SpaceCommander.Weapons
         }
         protected override void Shoot(Transform target)
         {
-            heat += 40 * ((heat + 20) / maxHeat);
+            heat += 5;
             Quaternion direction = transform.rotation;
             double[] random = Randomizer.Normal(1, 1, 32, 0, 128);
             double[] randomOffset = Randomizer.Uniform(0, 100, 2);
