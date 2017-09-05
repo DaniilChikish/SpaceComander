@@ -46,7 +46,7 @@ namespace SpaceCommander
     {
         WeaponType Type { get; }
         Unit Target { set; get; }
-        int Firerate { get; } //per minute
+        float Firerate { get; } //per minute
         float Range { get; }
         float RoundSpeed { get; }
         float Dispersion { get; }

@@ -28,10 +28,12 @@ namespace SpaceCommander.Units
             EnemySortDelegate = FigtherSortEnemys;
             AlliesSortDelegate = ReconSortEnemys;
 
-            module = new SpellModule[3];
+            module = new SpellModule[4];
             module[0] = new MissileTrapLauncher(this);
-            module[1] = new Jammer(this);
-            module[2] = new EmergencyShieldRecharging(this);
+            module[1] = new EmergencyShieldRecharging(this);
+            //module[2] = new AcceleratingCoils(this);
+            module[2] = new RechargeAcceleratorPassive(this);
+            module[3] = new ExtendedAmmoPack(this);
         }
 
         protected override void Explosion()
@@ -109,83 +111,6 @@ namespace SpaceCommander.Units
             orderBackCount += Vector3.Distance(this.transform.position, destination) / (this.GetComponent<NavMeshAgent>().speed * 0.9f);
             aiStatus = UnitStateType.UnderControl;
             Driver.MoveToQueue(destination);
-        }
-    }
-
-    public class ForsageImpact : IImpact
-    {
-        public string Name { get { return "WarpImpact"; } }
-        float ttl;
-        SpaceShip owner;
-        private float ownerSpeedPrev;
-        public ForsageImpact(SpaceShip owner)
-        {
-            this.owner = owner;
-            ownerSpeedPrev = owner.Speed;
-            if (owner.HaveImpact(this.Name))
-                ttl = 0;
-            else
-            {
-                if (owner.HaveImpact("TrusterInhibitorImpact"))
-                    ttl = 0;
-                else
-                {
-                    ttl = 15;
-                    owner.Speed = owner.Speed * 2;
-                }
-            }
-        }
-        public void ActImpact()
-        {
-            if (ttl > 0)
-                ttl -= Time.deltaTime;
-            else CompleteImpact();
-        }
-
-        public void CompleteImpact()
-        {
-            owner.Speed = ownerSpeedPrev;
-            owner.RemoveImpact(this);
-        }
-    }
-    public class ShieldBoosterImpact : IImpact
-    {
-        public string Name { get { return "ShieldBoosterImpact"; } }
-        float ttl;
-        SpaceShip owner;
-        private float ownerShieldMaxPowerPrew;
-        private float ownerShieldRechargingPrew;
-        public ShieldBoosterImpact(SpaceShip owner, float time)
-        {
-            this.owner = owner;
-            ownerShieldMaxPowerPrew = owner.ShieldCampacity;
-            ownerShieldRechargingPrew = owner.ShieldRecharging;
-            if (owner.HaveImpact(this.Name))
-                ttl = 0;
-            else
-            {
-                if (owner.HaveImpact("ShieldInhibitorImpact"))
-                    ttl = 0;
-                else
-                {
-                    ttl = time;
-                    owner.ShieldCampacity = owner.ShieldCampacity * 4;
-                    owner.ShieldRecharging = owner.ShieldRecharging * 2;
-                }
-            }
-        }
-        public void ActImpact()
-        {
-            if (ttl > 0)
-                ttl -= Time.deltaTime;
-            else CompleteImpact();
-        }
-
-        public void CompleteImpact()
-        {
-            owner.ShieldCampacity = ownerShieldMaxPowerPrew;
-            owner.ShieldRecharging = ownerShieldRechargingPrew;
-            owner.RemoveImpact(this);
         }
     }
 }

@@ -37,7 +37,7 @@ namespace SpaceCommander
                     {
                         hitCount += 1;
                         //Debug.Log(collision.gameObject.name + " hit " + owner.name);
-                        float difference = collision.gameObject.GetComponent<IShell>().ArmorPiersing - shellResist;
+                        float difference = collision.gameObject.GetComponent<IShell>().ArmorPiersing - owner.ShellResist;
                         if (difference > 1.5)
                             multiplicator = 1.2f;
                         else if (difference > -3)

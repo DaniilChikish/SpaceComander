@@ -12,16 +12,17 @@ namespace SpaceCommander.Weapons
         public ShellLineType AmmoType;
         public SmallShellType[] ShellLine;
         public int shellPosition;
+        private float heat;
         public override void StatUp()
         {
             type = WeaponType.Autocannon;
             gameObject.GetComponent<MeshRenderer>().enabled = false;
             range = 200;
             ammoCampacity = 200; //~2 Min
-            ammo = ammoCampacity;
-            firerate = 350;
+            ammo = AmmoCampacity;
+            firerate = 500;
             reloadingTime = 20;
-            dispersion = 0.2f;
+            dispersion = 0.05f;
             shildBlinkTime = 0.1f;
             averageRoundSpeed = 130;
             PreAiming = true;
@@ -85,18 +86,24 @@ namespace SpaceCommander.Weapons
             }
             shellPosition = 0;
         }
+        protected override void UpdateLocal()
+        {
+            if (heat > 0) heat = heat * 0.98f;
+        }
         protected override void Shoot(Transform target)
         {
+            heat += 1;
+            float localDisp = Dispersion + (Dispersion * heat / 1);
             Quaternion direction = transform.rotation;
             double[] randomOffset = Randomizer.Uniform(0, 100, 2);
             if (randomOffset[0] > 50)
-                direction.x = direction.x + (Convert.ToSingle(Global.RandomNormalPool[Convert.ToInt32(randomOffset[0])] - Convert.ToSingle(Global.RandomNormalAverage)) * dispersion);
+                direction.x = direction.x + (Convert.ToSingle(Global.RandomNormalPool[Convert.ToInt32(randomOffset[0])] - Convert.ToSingle(Global.RandomNormalAverage)) * localDisp);
             else
-                direction.x = direction.x + (Convert.ToSingle(Global.RandomNormalPool[Convert.ToInt32(randomOffset[0])] - Convert.ToSingle(Global.RandomNormalAverage)) * -dispersion);
+                direction.x = direction.x + (Convert.ToSingle(Global.RandomNormalPool[Convert.ToInt32(randomOffset[0])] - Convert.ToSingle(Global.RandomNormalAverage)) * -localDisp);
             if (randomOffset[1] > 50)
-                direction.y = direction.y + (Convert.ToSingle(Global.RandomNormalPool[Convert.ToInt32(randomOffset[1])] - Convert.ToSingle(Global.RandomNormalAverage)) * dispersion);
+                direction.y = direction.y + (Convert.ToSingle(Global.RandomNormalPool[Convert.ToInt32(randomOffset[1])] - Convert.ToSingle(Global.RandomNormalAverage)) * localDisp);
             else
-                direction.y = direction.y + (Convert.ToSingle(Global.RandomNormalPool[Convert.ToInt32(randomOffset[1])] - Convert.ToSingle(Global.RandomNormalAverage)) * -dispersion);
+                direction.y = direction.y + (Convert.ToSingle(Global.RandomNormalPool[Convert.ToInt32(randomOffset[1])] - Convert.ToSingle(Global.RandomNormalAverage)) * -localDisp);
             GameObject shell = Instantiate(Global.UnitaryShell, gameObject.transform.position, direction);
             if (shellPosition >= ShellLine.Length)
                 shellPosition = 0;
@@ -153,7 +160,7 @@ namespace SpaceCommander.Weapons
                     }
             }
 
-            shell.GetComponent<IShell>().StatUp(speed, damage, armorPiersing, mass, canRicochet, explosionPrefab);
+            shell.GetComponent<IShell>().StatUp(speed * (1 + RoundspeedMultiplacator), damage * (1 + DamageMultiplacator), armorPiersing * (1 + APMultiplacator), mass * (1 + ShellmassMultiplacator), canRicochet, explosionPrefab);
             shellPosition++;
         }
     }

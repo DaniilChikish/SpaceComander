@@ -21,9 +21,15 @@ namespace SpaceCommander.Weapons
         }
         protected override void Shoot(Transform target)
         {
+            float speed = 300f;
+            float damage = 500f;
+            float armorPiersing = 6f;
+            float mass = 40f;
+
             Quaternion direction = transform.rotation;
             GameObject shell = Instantiate(Global.RailgunShell, gameObject.transform.position, direction);
-            shell.GetComponent<RailgunShell>().StatUp();
+
+            shell.GetComponent<IShell>().StatUp(speed * (1 + RoundspeedMultiplacator), damage * (1 + DamageMultiplacator), armorPiersing * (1 + APMultiplacator), mass * (1 + ShellmassMultiplacator), true, null);
         }
     }
 }

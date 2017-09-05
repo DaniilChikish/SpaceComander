@@ -80,7 +80,7 @@ namespace SpaceCommander
             if (type == SpellType.Passive || (type == SpellType.LongAction && state == SpellModuleState.Active))
                 Act();
         }
-        protected abstract void Act();
+        protected virtual void Act() { }
         protected abstract void Disable();
     }
     public class Jammer : SpellModule
@@ -118,10 +118,6 @@ namespace SpaceCommander
                 }
             }
         }
-
-        protected override void Act()
-        {
-        }
     }
     public class Transponder : SpellModule
     {
@@ -144,10 +140,6 @@ namespace SpaceCommander
         public override void Enable()
         {
             base.Enable();
-        }
-
-        protected override void Act()
-        {
         }
     }
     public class MissileTrapLauncher : SpellModule
@@ -236,22 +228,16 @@ namespace SpaceCommander
             base.Enable();
             owner.MakeImpact(new WarpImpact(owner));
         }
-
-        protected override void Act()
-        {
-        }
     }
     public class WarpImpact : IImpact
     {
         public string Name { get { return "WarpImpact"; } }
         float ttl;
         SpaceShip owner;
-        private float ownerSpeedPrev;
         private float ownerMassPrev;
         public WarpImpact(SpaceShip owner)
         {
             this.owner = owner;
-            ownerSpeedPrev = owner.Speed;
             ownerMassPrev = owner.GetComponent<Rigidbody>().mass;
             if (owner.HaveImpact(this.Name))
                 ttl = 0;
@@ -262,7 +248,7 @@ namespace SpaceCommander
                 else
                 {
                     ttl = 4;
-                    owner.Speed = owner.Speed * 6;
+                    owner.SpeedMultiplicator += 6;
                     owner.GetComponent<Rigidbody>().mass = owner.GetComponent<Rigidbody>().mass / 10;
                 }
             }
@@ -276,7 +262,7 @@ namespace SpaceCommander
 
         public void CompleteImpact()
         {
-            owner.Speed = ownerSpeedPrev;
+            owner.SpeedMultiplicator -= 6;
             owner.GetComponent<Rigidbody>().mass = ownerMassPrev;
             owner.RemoveImpact(this);
         }
@@ -314,10 +300,6 @@ namespace SpaceCommander
                 }
             }
         }
-
-        protected override void Act()
-        {
-        }
     }
     public class RadarBoosterImpact : IImpact
     {
@@ -325,11 +307,9 @@ namespace SpaceCommander
         public string Name { get { return "RadarBoosterImpact"; } }
         float ttl;
         SpaceShip owner;
-        private float ownerRadarRangePrev;
         public RadarBoosterImpact(SpaceShip owner, float time)
         {
             this.owner = owner;
-            ownerRadarRangePrev = owner.RadarRange;
             if (owner.HaveImpact(this.Name))
                 return;//ttl = 0;
             else
@@ -340,7 +320,7 @@ namespace SpaceCommander
                 {
                     Act = true;
                     ttl = time;
-                    owner.RadarRange = owner.RadarRange * 2;
+                    owner.RadarRangeMultiplacator +=  1;
                 }
             }
         }
@@ -353,7 +333,7 @@ namespace SpaceCommander
 
         public void CompleteImpact()
         {
-            if (Act) owner.RadarRange = ownerRadarRangePrev;
+            if (Act) owner.RadarRangeMultiplacator -= 1;
             owner.RemoveImpact(this);
         }
     }
@@ -388,10 +368,6 @@ namespace SpaceCommander
             base.Enable();
             owner.CurrentTarget.MakeImpact(new ShildStunImpact(owner.CurrentTarget, 5));
         }
-
-        protected override void Act()
-        {
-        }
     }
     public class ShildStunImpact : IImpact
     {
@@ -415,7 +391,7 @@ namespace SpaceCommander
                     Act = true;
                     ttl = time;
                     owner.ShieldForce -= 25;
-                    owner.ShieldRecharging = -(owner.ShieldForce / (2 * time));
+                    owner.ShieldRechargingMultiplacator -= (1 + (owner.ShieldCampacity / 200));
                 }
             }
         }
@@ -427,7 +403,7 @@ namespace SpaceCommander
         }
         public void CompleteImpact()
         {
-            if (Act) owner.ShieldRecharging = ownerShildRechargingPrev;
+            if (Act) owner.ShieldRechargingMultiplacator += (1 + (owner.ShieldCampacity / 200));
             owner.RemoveImpact(this);
         }
         public override string ToString()
@@ -465,10 +441,6 @@ namespace SpaceCommander
             base.Enable();
             owner.CurrentTarget.MakeImpact(new TrusterStunImpact(owner.CurrentTarget, 10));
         }
-
-        protected override void Act()
-        {
-        }
     }
     public class TrusterStunImpact : IImpact
     {
@@ -476,15 +448,9 @@ namespace SpaceCommander
         public string Name { get { return "TrusterInhibitorImpact"; } }
         private float ttl;
         private Unit owner;
-        private float ownerTrSpeedPrev;
-        private float ownerShSpeedPrev;
-        private float ownerRotSpeedPrev;
         public TrusterStunImpact(Unit owner, float time)
         {
             this.owner = owner;
-            ownerTrSpeedPrev = owner.Speed;
-            ownerRotSpeedPrev = owner.RotationSpeed;
-            ownerShSpeedPrev = owner.ShiftSpeed;
             if (owner.HaveImpact(this.Name))
                 ttl = 0;
             else
@@ -502,9 +468,9 @@ namespace SpaceCommander
                         agent.velocity = Vector3.zero;
                     }
                     ttl = time;
-                    owner.Speed = 0;
-                    owner.RotationSpeed = owner.RotationSpeed * 0.4f;
-                    owner.ShiftSpeed = 0;
+                    owner.SpeedMultiplicator += (-1f);
+                    owner.RotationSpeedMultiplicator += (-0.9f);
+                    owner.ShiftSpeedMultiplicator += (-1f);
                 }
             }
         }
@@ -518,9 +484,9 @@ namespace SpaceCommander
         {
             if (Act)
             {
-                owner.Speed = ownerTrSpeedPrev;
-                owner.RotationSpeed = ownerRotSpeedPrev;
-                owner.ShiftSpeed = ownerShSpeedPrev;
+                owner.SpeedMultiplicator -= (-1f);
+                owner.RotationSpeedMultiplicator -= (-0.9f);
+                owner.ShiftSpeedMultiplicator -= (-1f);
             }
             owner.RemoveImpact(this);
         }
@@ -552,10 +518,6 @@ namespace SpaceCommander
             base.Enable();
             owner.CurrentTarget.MakeImpact(new RadarInhibitorImpact(owner.CurrentTarget, 10));
         }
-
-        protected override void Act()
-        {
-        }
     }
     public class RadarInhibitorImpact : IImpact
     {
@@ -578,7 +540,7 @@ namespace SpaceCommander
                 {
                     Act = true;
                     ttl = time;
-                    owner.RadarRange = owner.RadarRange / 2;
+                    owner.RadarRangeMultiplacator += (-0.6f);
                 }
             }
         }
@@ -591,7 +553,7 @@ namespace SpaceCommander
 
         public void CompleteImpact()
         {
-            if (Act) owner.RadarRange = ownerRadarRangePrev;
+            if (Act) owner.RadarRangeMultiplacator -= (-0.6f);
             owner.RemoveImpact(this);
         }
     }
@@ -747,7 +709,6 @@ namespace SpaceCommander
             return Name;
         }
     }
-
     public class ShieldsBraker : SpellModule
     {
         public ShieldsBraker(SpaceShip owner) : base(owner)
@@ -764,6 +725,7 @@ namespace SpaceCommander
 
         public override void Enable()
         {
+            base.Enable();
             //GlobalController Global = GameObject.FindObjectOfType<GlobalController>();
             foreach (Unit x in owner.GetEnemys())
             {
@@ -771,13 +733,301 @@ namespace SpaceCommander
             }
             //Instantiate(Global.EMIExplosionPrefab, this.transform.position, this.transform.rotation);
         }
-
-        protected override void Act()
+        protected override void Disable()
         {
+        }
+    }
+    public class AcceleratingCoils : SpellModule
+    {
+        public AcceleratingCoils(SpaceShip owner) : base(owner)
+        {
+            backCount = 0;
+            type = SpellType.Activated;
+            coolingTime = 90;
+            activeTime = 5;
+            state = SpellModuleState.Ready;
+            function.Add(SpellFunction.Self);
+            function.Add(SpellFunction.Buff);
+            function.Add(SpellFunction.Attack);
+        }
+        public override void Enable()
+        {
+            base.Enable();
+            Weapon[] weapons = owner.transform.GetComponentsInChildren<Weapon>();
+            foreach (Weapon x in weapons)
+                x.RoundspeedMultiplacator += 0.3f;
+        }
+
+        protected override void Disable()
+        {
+            Weapon[] weapons = owner.transform.GetComponentsInChildren<Weapon>();
+            foreach (Weapon x in weapons)
+                x.RoundspeedMultiplacator -= 0.3f;
+        }
+    }
+    public class AcceleratingCoilsPassive : SpellModule
+    {
+        public AcceleratingCoilsPassive(SpaceShip owner) : base(owner)
+        {
+            backCount = 0;
+            type = SpellType.Passive;
+            coolingTime = 0;
+            activeTime = 0;
+            state = SpellModuleState.Cooldown;
+            Weapon[] weapons = owner.transform.GetComponentsInChildren<Weapon>();
+            foreach (Weapon x in weapons)
+                x.RoundspeedMultiplacator += 0.1f;
+        }
+        public override void Enable()
+        {
+            base.Enable();
         }
 
         protected override void Disable()
         {
         }
     }
+    public class RechargeAcceleratorPassive : SpellModule
+    {
+        public RechargeAcceleratorPassive(SpaceShip owner) : base(owner)
+        {
+            backCount = 0;
+            type = SpellType.Passive;
+            coolingTime = 0;
+            activeTime = 0;
+            state = SpellModuleState.Cooldown;
+            RoundWeapon[] weapons = owner.transform.GetComponentsInChildren<RoundWeapon>();
+            foreach (RoundWeapon x in weapons)
+                x.ReloadMultiplacator += 0.15f;
+        }
+        public override void Enable()
+        {
+            base.Enable();
+        }
+
+        protected override void Disable()
+        {
+        }
+    }
+    public class ExtendedAmmoPack : SpellModule
+    {
+        public ExtendedAmmoPack(SpaceShip owner) : base(owner)
+        {
+            backCount = 0;
+            type = SpellType.Passive;
+            coolingTime = 0;
+            activeTime = 0;
+            state = SpellModuleState.Cooldown;
+            RoundWeapon[] weapons = owner.transform.GetComponentsInChildren<RoundWeapon>();
+            foreach (RoundWeapon x in weapons)
+            {
+                x.AmmocampacityMultiplacator += 0.5f;
+                x.Reset();
+            }
+        }
+        public override void Enable()
+        {
+            base.Enable();
+        }
+
+        protected override void Disable()
+        {
+        }
+    }
+    public class TeamSpirit : SpellModule
+    {
+        Unit[] alies;
+        public TeamSpirit(SpaceShip owner) : base(owner)
+        {
+            backCount = 0;
+            type = SpellType.Activated;
+            coolingTime = 120;
+            activeTime = 20;
+            state = SpellModuleState.Ready;
+            function.Add(SpellFunction.Allies);
+            function.Add(SpellFunction.Buff);
+            function.Add(SpellFunction.Attack);
+        }
+        public override void Enable()
+        {
+            base.Enable();
+            alies = owner.GetAllies();
+            List<Weapon> weapons = new List<Weapon>();
+            weapons.AddRange(owner.transform.GetComponentsInChildren<Weapon>());
+            owner.SpeedMultiplicator += 0.1f;
+            owner.RotationSpeedMultiplicator += 0.2f;
+            owner.ShieldRechargingMultiplacator += 0.5f;
+            foreach (Unit x in alies)
+            {
+                weapons.AddRange(x.transform.GetComponentsInChildren<Weapon>());
+                x.SpeedMultiplicator += 0.15f;
+                x.RotationSpeedMultiplicator += 0.2f;
+                x.ShieldRechargingMultiplacator += 0.5f;
+            }
+            foreach (Weapon x in weapons)
+            {
+                x.DamageMultiplacator += 0.1f;
+                x.FirerateMultiplacator += 0.3f;
+            }
+        }
+
+        protected override void Disable()
+        {
+            List<Weapon> weapons = new List<Weapon>();
+            weapons.AddRange(owner.transform.GetComponentsInChildren<Weapon>());
+            owner.SpeedMultiplicator -= 0.1f;
+            owner.RotationSpeedMultiplicator -= 0.2f;
+            owner.ShieldRechargingMultiplacator -= 0.5f;
+            foreach (Unit x in alies)
+            {
+                weapons.AddRange(x.transform.GetComponentsInChildren<Weapon>());
+                x.SpeedMultiplicator -= 0.15f;
+                x.RotationSpeedMultiplicator -= 0.2f;
+                x.ShieldRechargingMultiplacator -= 0.5f;
+            }
+            foreach (Weapon x in weapons)
+            {
+                x.DamageMultiplacator -= 0.1f;
+                x.FirerateMultiplacator -= 0.3f;
+            }
+        }
+    }
+    public class ForcedTargetDesignator : SpellModule
+    {
+        List<SpaceShip> alies;
+        public ForcedTargetDesignator(SpaceShip owner) : base(owner)
+        {
+            alies = new List<SpaceShip>();
+            backCount = 0;
+            type = SpellType.Activated;
+            coolingTime = 60;
+            activeTime = 15;
+            state = SpellModuleState.Ready;
+            function.Add(SpellFunction.Allies);
+            function.Add(SpellFunction.Buff);
+            function.Add(SpellFunction.Attack);
+        }
+        public override void Enable()
+        {
+            base.Enable();
+            GlobalController global = GameObject.FindObjectOfType<GlobalController>();
+            foreach (SpaceShip x in global.unitList)
+            {
+                if (x.Allies(owner.Team))
+                    alies.Add(x);
+            }
+            List<Weapon> weapons = new List<Weapon>();
+            owner.RotationSpeedMultiplicator += 0.3f;
+            foreach (SpaceShip x in alies)
+            {
+                weapons.AddRange(x.transform.GetComponentsInChildren<Weapon>());
+                x.RotationSpeedMultiplicator += 0.3f;
+                x.RadarRangeMultiplacator += 0.5f;
+                x.GetFireSupport(owner.CurrentTarget);
+            }
+            foreach (Weapon x in weapons)
+            {
+                x.RangeMultiplacator += 0.3f;
+                x.DispersionMultiplicator += (-0.5f);
+                x.APMultiplacator += 1.5f;
+            }
+        }
+
+        protected override void Disable()
+        {
+            GlobalController global = GameObject.FindObjectOfType<GlobalController>();
+            List<Weapon> weapons = new List<Weapon>();
+            weapons.AddRange(owner.transform.GetComponentsInChildren<Weapon>());
+            owner.RotationSpeedMultiplicator -= 0.3f;
+            foreach (SpaceShip x in alies)
+            {
+                weapons.AddRange(x.transform.GetComponentsInChildren<Weapon>());
+                x.RotationSpeedMultiplicator -= 0.3f;
+                x.RadarRangeMultiplacator -= 0.5f;
+            }
+            foreach (Weapon x in weapons)
+            {
+                x.RangeMultiplacator -= 0.3f;
+                x.DispersionMultiplicator -= (-0.5f);
+                x.APMultiplacator -= 1.5f;
+            }
+        }
+    }
+
+    //public class ForsageImpact : IImpact
+    //{
+    //    public string Name { get { return "WarpImpact"; } }
+    //    float ttl;
+    //    SpaceShip owner;
+    //    private float ownerSpeedPrev;
+    //    public ForsageImpact(SpaceShip owner)
+    //    {
+    //        this.owner = owner;
+    //        ownerSpeedPrev = owner.Speed;
+    //        if (owner.HaveImpact(this.Name))
+    //            ttl = 0;
+    //        else
+    //        {
+    //            if (owner.HaveImpact("TrusterInhibitorImpact"))
+    //                ttl = 0;
+    //            else
+    //            {
+    //                ttl = 15;
+    //                owner.Speed = owner.Speed * 2;
+    //            }
+    //        }
+    //    }
+    //    public void ActImpact()
+    //    {
+    //        if (ttl > 0)
+    //            ttl -= Time.deltaTime;
+    //        else CompleteImpact();
+    //    }
+
+    //    public void CompleteImpact()
+    //    {
+    //        owner.Speed = ownerSpeedPrev;
+    //        owner.RemoveImpact(this);
+    //    }
+    //}
+    //public class ShieldBoosterImpact : IImpact
+    //{
+    //    public string Name { get { return "ShieldBoosterImpact"; } }
+    //    float ttl;
+    //    SpaceShip owner;
+    //    private float ownerShieldMaxPowerPrew;
+    //    private float ownerShieldRechargingPrew;
+    //    public ShieldBoosterImpact(SpaceShip owner, float time)
+    //    {
+    //        this.owner = owner;
+    //        ownerShieldMaxPowerPrew = owner.ShieldCampacity;
+    //        ownerShieldRechargingPrew = owner.ShieldRecharging;
+    //        if (owner.HaveImpact(this.Name))
+    //            ttl = 0;
+    //        else
+    //        {
+    //            if (owner.HaveImpact("ShieldInhibitorImpact"))
+    //                ttl = 0;
+    //            else
+    //            {
+    //                ttl = time;
+    //                owner.ShieldCampacity = owner.ShieldCampacity * 4;
+    //                owner.ShieldRecharging = owner.ShieldRecharging * 2;
+    //            }
+    //        }
+    //    }
+    //    public void ActImpact()
+    //    {
+    //        if (ttl > 0)
+    //            ttl -= Time.deltaTime;
+    //        else CompleteImpact();
+    //    }
+
+    //    public void CompleteImpact()
+    //    {
+    //        owner.ShieldCampacity = ownerShieldMaxPowerPrew;
+    //        owner.ShieldRecharging = ownerShieldRechargingPrew;
+    //        owner.RemoveImpact(this);
+    //    }
+    //}
 }

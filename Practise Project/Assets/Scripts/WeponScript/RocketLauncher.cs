@@ -11,8 +11,8 @@ namespace SpaceCommander.Weapons
             type = WeaponType.Missile;
             gameObject.GetComponent<MeshRenderer>().enabled = false;
             range = 250;
-            ammo = 20;
             ammoCampacity = 20;
+            ammo = AmmoCampacity;
             firerate = 15;
             reloadingTime = 45;
             dispersion = 6f;

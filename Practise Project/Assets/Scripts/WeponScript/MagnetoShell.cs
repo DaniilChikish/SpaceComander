@@ -13,15 +13,28 @@ namespace SpaceCommander.Weapons
             this.speed = 600f;
             this.damage = 100f;
             this.armorPiersing = 9f;
+            body.mass = 20f;
+
             this.ttl = 2f;
             body = this.GetComponent<Rigidbody>();
-            body.mass = 20f;
             body.AddForce(transform.forward * Speed, ForceMode.VelocityChange);
         }
-
+        public override void Update()
+        {
+            damage = damage - (damage / 2 * Time.deltaTime);
+            body.mass = body.mass - (body.mass / 2 * Time.deltaTime);
+        }
         public void StatUp(float speed, float damage, float armorPiersing, float mass, bool canRicochet, GameObject explosionPrefab)
         {
-            StatUp();
+            this.speed = speed;
+            this.damage = damage;
+            this.armorPiersing = armorPiersing;
+            this.canRicochet = canRicochet;
+            this.ttl = 2f;
+            body = this.GetComponent<Rigidbody>();
+
+            body.mass = mass;
+            body.AddForce(transform.forward * Speed, ForceMode.VelocityChange);
         }
         protected override void Destroy()
         {

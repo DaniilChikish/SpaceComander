@@ -19,18 +19,27 @@ namespace SpaceCommander
         public string UnitName { get { return unitName; } }
         public abstract Army Team { get; }
         public abstract Unit CurrentTarget { get; }
-        public abstract float Speed { set; get; }
-        public abstract float RotationSpeed { set; get; }
-        public abstract float ShiftSpeed { set; get; }
+        public abstract float Speed {get; }
+        public float SpeedMultiplicator { set; get; }
+        public abstract float RotationSpeed {get; }
+        public float RotationSpeedMultiplicator { set; get; }
+        public abstract float ShiftSpeed {get; }
+        public float ShiftSpeedMultiplicator { set; get; }
         public abstract float Health { set; get; }
         public abstract float MaxHealth { get; }
+        public float MaxHealthMultiplacator { set; get; }
+
 
         public abstract float ShellResist { get; }
+        public float ResistMultiplacator { set; get; }
         public abstract float ShieldForce { set; get; }
-        public abstract float ShieldRecharging { set; get; }
-        public abstract float ShieldCampacity { set; get; }
+        public abstract float ShieldRecharging { get; }
+        public float ShieldRechargingMultiplacator { set; get; }
+        public abstract float ShieldCampacity {get; }
+        public float ShieldCampacityMultiplacator { set; get; }
 
-        public abstract float RadarRange { set; get; }
+        public abstract float RadarRange { get; }
+        public float RadarRangeMultiplacator { set; get; }
         public abstract Vector3 Velocity { get; }
         public abstract void MakeImpact(IImpact impact);
         public abstract bool HaveImpact(string impactName);
@@ -66,21 +75,21 @@ namespace SpaceCommander
         protected float speedShift;
         //override properties
         public override float Health { set { armor.hitpoints = value; } get { return armor.hitpoints; } }
-        public override float MaxHealth { get { return armor.maxHitpoints; } }
+        public override float MaxHealth { get { return armor.maxHitpoints * (1 + MaxHealthMultiplacator); } }
         public override Army Team { get { return team; } }
         public override Vector3 Velocity { get {
                 if (ManualControl) return this.gameObject.GetComponent<Rigidbody>().velocity;
                 else return Driver.Velocity;
             } }
-        public override float Speed { set { speedThrust = value; } get { return speedThrust; } }
-        public override float RotationSpeed { set { speedRotation = value; } get { return speedRotation; } }
-        public override float ShiftSpeed { set { speedShift = value; } get { return speedShift; } }
-        public override float RadarRange { set { radarRange = value; } get { return radarRange; } }
+        public override float Speed { get { return speedThrust * (1 + SpeedMultiplicator); } }
+        public override float RotationSpeed { get { return speedRotation * (1 + RotationSpeedMultiplicator); } }
+        public override float ShiftSpeed { get { return speedShift * (1 + ShiftSpeedMultiplicator); } }
+        public override float RadarRange { get { return radarRange * (1 + RadarRangeMultiplacator); } }
         public override float ShieldForce { set { shield.force = value; } get { return shield.force; } }
-        public override float ShieldRecharging { set { shield.recharging = value; } get { return shield.recharging; } }
-        public override float ShieldCampacity { set { shield.maxCampacity = value; } get { return shield.maxCampacity; } }
+        public override float ShieldRecharging { get { return shield.recharging * (1 + ShieldRechargingMultiplacator); } }
+        public override float ShieldCampacity { get { return shield.maxCampacity * (1+ShieldCampacityMultiplacator); } }
         public override Unit CurrentTarget { get { return Gunner.Target; } }
-        public override float ShellResist { /*set { armor.shellResist = value; }*/ get { return armor.shellResist; } }
+        public override float ShellResist { get { return armor.shellResist * (1 + ResistMultiplacator); } }
 
         //own properties
         public bool ShieldOwerheat { get { return shield.isOwerheat; } }
@@ -1210,7 +1219,7 @@ namespace SpaceCommander
         public void GetFireSupport(Unit Target)
         {
             if (Target.transform != this.transform)
-                Gunner.SetAim(Target, true, 2);
+                Gunner.SetAim(Target, true, 20);
         }
         //
         protected void FormSquad()

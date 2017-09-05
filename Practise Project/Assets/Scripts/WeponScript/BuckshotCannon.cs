@@ -19,7 +19,7 @@ namespace SpaceCommander.Weapons
             shildBlinkTime = 0.1f;
             firerate = 70;
             ammoCampacity = 50;
-            ammo = ammoCampacity;
+            ammo = AmmoCampacity;
             reloadingTime = 15;
             PreAiming = true;
             averageRoundSpeed = 100f;
@@ -32,13 +32,13 @@ namespace SpaceCommander.Weapons
                 Quaternion direction = transform.rotation;
                 double[] randomOffset = Randomizer.Uniform(10, 90, 2);
                 if (randomOffset[0] > 50)
-                    direction.x = direction.x + (Convert.ToSingle(Global.RandomNormalPool[Convert.ToInt32(randomOffset[0])] - Convert.ToSingle(Global.RandomNormalAverage)) * dispersion);
+                    direction.x = direction.x + (Convert.ToSingle(Global.RandomNormalPool[Convert.ToInt32(randomOffset[0])] - Convert.ToSingle(Global.RandomNormalAverage)) * Dispersion);
                 else
-                    direction.x = direction.x + (Convert.ToSingle(Global.RandomNormalPool[Convert.ToInt32(randomOffset[0])] - Convert.ToSingle(Global.RandomNormalAverage)) * -dispersion);
+                    direction.x = direction.x + (Convert.ToSingle(Global.RandomNormalPool[Convert.ToInt32(randomOffset[0])] - Convert.ToSingle(Global.RandomNormalAverage)) * -Dispersion);
                 if (randomOffset[1] > 50)
-                    direction.y = direction.y + (Convert.ToSingle(Global.RandomNormalPool[Convert.ToInt32(randomOffset[1])] - Convert.ToSingle(Global.RandomNormalAverage)) * dispersion);
+                    direction.y = direction.y + (Convert.ToSingle(Global.RandomNormalPool[Convert.ToInt32(randomOffset[1])] - Convert.ToSingle(Global.RandomNormalAverage)) * Dispersion);
                 else
-                    direction.y = direction.y + (Convert.ToSingle(Global.RandomNormalPool[Convert.ToInt32(randomOffset[1])] - Convert.ToSingle(Global.RandomNormalAverage)) * -dispersion);
+                    direction.y = direction.y + (Convert.ToSingle(Global.RandomNormalPool[Convert.ToInt32(randomOffset[1])] - Convert.ToSingle(Global.RandomNormalAverage)) * -Dispersion);
                 GameObject shell = Instantiate(Global.UnitaryShell, gameObject.transform.position, direction);
 
                 float speed, damage, armorPiersing, mass;
@@ -49,7 +49,7 @@ namespace SpaceCommander.Weapons
                 armorPiersing = 1;
                 mass = 0.2f;
 
-                shell.GetComponent<IShell>().StatUp(speed, damage, armorPiersing, mass, canRicochet, explosionPrefab);
+                shell.GetComponent<IShell>().StatUp(speed * (1 + RoundspeedMultiplacator), damage * (1 + DamageMultiplacator), armorPiersing * (1 + APMultiplacator), mass * (1 + ShellmassMultiplacator), canRicochet, explosionPrefab);
             }
         }
     }

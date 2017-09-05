@@ -14,7 +14,7 @@ namespace SpaceCommander.Weapons
             gameObject.GetComponent<MeshRenderer>().enabled = false;
             range = 150;
             ammoCampacity = 10;
-            ammo = ammoCampacity;
+            ammo = AmmoCampacity;
             firerate = 60;
             reloadingTime = 30;
             dispersion = 3f;
@@ -27,8 +27,7 @@ namespace SpaceCommander.Weapons
             Quaternion direction = transform.rotation;
             GameObject mine = Instantiate(Global.MagMine, gameObject.transform.position, direction);
             mine.GetComponent<MagnetoMine>().team = owner.team;
-            mine.GetComponent<Rigidbody>().AddForce(transform.forward * DropImpulse, ForceMode.Impulse);
-
+            mine.GetComponent<Rigidbody>().AddForce(transform.forward * DropImpulse * (1 + RangeMultiplacator), ForceMode.Impulse);
         }
     }
 }

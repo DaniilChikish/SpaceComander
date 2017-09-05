@@ -34,9 +34,9 @@ namespace SpaceCommander
         public Texture MissileIcon;
         public Texture TorpedoIcon;
         //Module
-        public Texture2D DefaultSpellIcon;
-        public Texture2D MissoleTrapSpellIcon;
-        public Texture2D JammerSpellIcon;
+        public Texture DefaultSpellIcon;
+        public Texture MissoleTrapSpellIcon;
+        public Texture JammerSpellIcon;
         public Texture TransponderSpellIcon;
         public Texture WarpSpellIcon;
         public Texture RadarBoosterSpellIcon;
@@ -44,7 +44,11 @@ namespace SpaceCommander
         public Texture ShieldStunnerSpellIcon;
         public Texture EmergencySelfRapairingSpellIcon;
         public Texture EmergencyShieldRechargingSpellIcon;
-
+        public Texture AcceleratingCoilsSpellIcon;
+        public Texture RechargeAcceleratorPassiveSpellIcon;
+        public Texture ExtendedAmmoPackSpellIcon;
+        public Texture TeamSpiritSpellIcon;
+        public Texture ForcedTargetDesignatorSpellIcon;
 
         public ISpaceShipObservable observable;
         private HUDBase hud;
@@ -272,6 +276,18 @@ namespace SpaceCommander
                 return EmergencySelfRapairingSpellIcon;
             else if (type == typeof(EmergencyShieldRecharging))
                 return EmergencyShieldRechargingSpellIcon;
+            else if (type == typeof(AcceleratingCoils))
+                return AcceleratingCoilsSpellIcon;
+            else if (type == typeof(RechargeAcceleratorPassive))
+                return RechargeAcceleratorPassiveSpellIcon;
+            else if (type == typeof(ExtendedAmmoPack))
+                return ExtendedAmmoPackSpellIcon;
+            else if (type == typeof(TeamSpirit))
+                return TeamSpiritSpellIcon;
+            else if (type == typeof(ForcedTargetDesignator))
+                return ForcedTargetDesignatorSpellIcon;
+        //    else if (type == typeof(type))
+        //        return SpellIcon;
             else return DefaultSpellIcon;
         }
 

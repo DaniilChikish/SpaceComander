@@ -36,10 +36,11 @@ namespace SpaceCommander.Units
             EnemySortDelegate = EMCSortEnemys;
             AlliesSortDelegate = ScoutSortEnemys;
 
-            module = new SpellModule[3];
+            module = new SpellModule[4];
             module[0] = new MissileTrapLauncher(this);
             module[1] = new Jammer(this);
             module[2] = new TrusterStunner(this);
+            module[3] = new ShieldsBraker(this);
         }
         protected override void Explosion()
         {

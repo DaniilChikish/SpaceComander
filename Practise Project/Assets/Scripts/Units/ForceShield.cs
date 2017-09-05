@@ -18,6 +18,8 @@ namespace SpaceCommander
         Collider firstFieldColl;
         MeshRenderer secondField;
         ParticleSystem shildCollaps;
+        private SpaceShip owner;
+
         // Use this for initialization
         void Start()
         {
@@ -25,6 +27,7 @@ namespace SpaceCommander
             firstFieldColl = this.transform.FindChild("FirstField").GetComponent<Collider>();
             shildCollaps = this.transform.FindChild("FirstField").GetComponentInChildren<ParticleSystem>();
             secondField = this.transform.FindChild("SecondField").GetComponent<MeshRenderer>();
+            owner = transform.GetComponentInParent<SpaceShip>();
         }
 
         // Update is called once per frame
@@ -34,9 +37,9 @@ namespace SpaceCommander
                 shootCount = shootCount * 0.95f;
             if (force < 0 && !isOwerheat)
                 Owerheat();
-            else if (cooldownChield <= 0 && secondBlinker <= 0 && force < maxCampacity)
+            else if (cooldownChield <= 0 && secondBlinker <= 0 && force < owner.ShieldCampacity)
             {
-                force += recharging * Time.deltaTime;
+                force += owner.ShieldRecharging * Time.deltaTime;
             }
             if (cooldownChield > 0)
                 cooldownChield -= Time.deltaTime;

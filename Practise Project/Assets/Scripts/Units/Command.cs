@@ -18,10 +18,15 @@ namespace SpaceCommander.Units
             combatAIEnabled = true; //set in child
             selfDefenceModuleEnabled = true; //set in child
             stealthness = 0.45f; //set in child
+            radiolink = 2.5f;
+            EnemySortDelegate = FigtherSortEnemys;
+            AlliesSortDelegate = ReconSortEnemys;
 
-            module = new SpellModule[2];
+            module = new SpellModule[4];
             module[0] = new MissileTrapLauncher(this);
-            module[1] = new ShieldsBraker(this);
+            module[1] = new EmergencyShieldRecharging(this);
+            module[2] = new ForcedTargetDesignator(this);
+            module[3] = new TeamSpirit(this);
         }
         protected override void DecrementLocalCounters()
         {

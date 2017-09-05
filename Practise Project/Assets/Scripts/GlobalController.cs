@@ -450,6 +450,13 @@ namespace SpaceCommander
     }
     public abstract class Weapon : MonoBehaviour, IWeapon
     {
+        public float DamageMultiplacator { set; get; }
+        public float FirerateMultiplacator { set; get; }
+        public float RangeMultiplacator { set; get; }
+        public float DispersionMultiplicator { set; get; }
+        public float RoundspeedMultiplacator { set; get; }
+        public float APMultiplacator { set; get; }
+
         protected WeaponType type;
         protected GlobalController Global;
         protected Unit target;
@@ -457,22 +464,22 @@ namespace SpaceCommander
         protected float dispersion; //dafault 0;
         protected float shildBlinkTime; //default 0.01
         protected float averageRoundSpeed; //default 1000;
-        protected int firerate;
+        protected float firerate;
 
         protected bool PreAiming;
         protected float range;
 
         protected float backCount;
 
-        public float Range { get { return range; } }
-        public float RoundSpeed { get { return averageRoundSpeed; } }
-        public float Dispersion { get { return dispersion; } }
+        public float Range { get { return range * (1 + RangeMultiplacator); } }
+        public float RoundSpeed { get { return averageRoundSpeed * (1 + RoundspeedMultiplacator); } }
+        public float Dispersion { get { return dispersion * (1 + DispersionMultiplicator); } }
         public float ShildBlink { get { return shildBlinkTime; } }
         public float BackCounter { get { return backCount; } }
 
         public WeaponType Type { get { return type; } }
 
-        public int Firerate { get { return firerate; } }
+        public float Firerate { get { return firerate * (1 + FirerateMultiplacator); } }
 
         protected void Start()
         {
@@ -505,13 +512,13 @@ namespace SpaceCommander
                     //Debug.Log(target.GetComponent<NavMeshAgent>().velocity);
 
                     distance = Vector3.Distance(this.gameObject.transform.position, aimPoint); //расстояние до цели
-                    approachTime = distance / averageRoundSpeed;
+                    approachTime = distance / RoundSpeed;
                     Vector3 targetVelocity = target.Velocity;
                     targetVelocity.y = 0; //исключаем вертикальную компоненту
                     aimPoint = target.transform.position + targetVelocity * approachTime; //первое приближение
 
                     distance = Vector3.Distance(this.gameObject.transform.position, aimPoint); //расстояние до точки первого приближения
-                    approachTime = distance / averageRoundSpeed;
+                    approachTime = distance / RoundSpeed;
                     targetVelocity = target.Velocity;
                     targetVelocity.y = 0;
                     aimPoint = target.transform.position + targetVelocity * approachTime * 1.01f; //второе приближение
@@ -543,9 +550,14 @@ namespace SpaceCommander
     }
     public abstract class RoundWeapon : Weapon
     {
+        public float ReloadMultiplacator { set; get; }
+        public float AmmocampacityMultiplacator { set; get; }
+        public float ShellmassMultiplacator { set; get; }
+
         protected float reloadingTime;
         protected int ammo;
         protected int ammoCampacity;
+        protected int AmmoCampacity { get { return Mathf.RoundToInt(ammoCampacity * (1 + AmmocampacityMultiplacator)); } }
         public override bool Fire()
         {
             if (IsReady)
@@ -565,8 +577,8 @@ namespace SpaceCommander
             base.Update();
             if (ammo <= 0 && backCount <= 0)
             {
-                ammo = ammoCampacity;
-                backCount = reloadingTime;
+                ammo = AmmoCampacity;
+                backCount = reloadingTime * (1 + ReloadMultiplacator);
             }
         }
         public override bool IsReady
@@ -577,15 +589,18 @@ namespace SpaceCommander
             }
         }
         public override float ShootCounter { get { return ammo; } }
-        public override float MaxShootCounter { get { return reloadingTime; } }
+        public override float MaxShootCounter { get { return reloadingTime * (1 + ReloadMultiplacator); } }
         public override void Reset()
         {
-            ammo = ammoCampacity;
+            ammo = AmmoCampacity;
             backCount = 0;
         }
     }
     public abstract class EnergyWeapon : Weapon
     {
+        protected float coolingMultiplacator;
+        protected float maxheatMultiplacator;
+
         protected float heat;
         protected float maxHeat;
         protected bool overheat;
@@ -608,7 +623,7 @@ namespace SpaceCommander
             base.Update();
             if (heat > 0)
             {
-                heat -= Time.deltaTime * 4;
+                heat -= Time.deltaTime * 4 * (1 + coolingMultiplacator);
                 if (heat > maxHeat)
                     overheat = true;
             }
@@ -616,7 +631,7 @@ namespace SpaceCommander
         }
         public override bool IsReady { get { return (!overheat && backCount <= 0); } }
         public override float ShootCounter { get { return heat; } }
-        public override float MaxShootCounter { get { return maxHeat; } }
+        public override float MaxShootCounter { get { return maxHeat * (1 + maxheatMultiplacator); } }
         public override void Reset()
         {
             heat = 0;
