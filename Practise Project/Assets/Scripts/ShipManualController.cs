@@ -16,6 +16,7 @@ namespace SpaceCommander
         public SpaceShip owner;
         private Rigidbody body;
         private GlobalController Global;
+        private HUDBase hud;
         public enum AimStateType { Default, Locking, Locked}
         private const float lockdownDuration = 1.5f;
         private float lockdownCount;
@@ -66,6 +67,7 @@ namespace SpaceCommander
         private void OnEnable()
         {
             Global = FindObjectOfType<GlobalController>();
+            hud = FindObjectOfType<HUDBase>();
             owner.gameObject.GetComponent<NavMeshAgent>().enabled = false;
             tridimensional = false;
             owner.Gunner.ResetAim();
@@ -204,10 +206,15 @@ namespace SpaceCommander
         }
         private void OnGUI()
         {
+            //GUI.skin = hud.Skin;
+            //if (Global.StaticProportion && hud.scale != 1)
+            //    GUI.matrix = Matrix4x4.Scale(Vector3.one * hud.scale);
+            float scaleLocal = hud.scale / 1.5f;
+
             //mainAimPoint
             Vector3 crd = Camera.main.WorldToScreenPoint(owner.transform.position + owner.transform.forward * (owner.Gunner.Weapon[0][0].Range + owner.Gunner.Weapon[1][0].Range) / 2);
             crd.y = Screen.height - crd.y;
-            Vector2 texSize = new Vector2(DefaultMainAim.width, DefaultMainAim.height);
+            Vector2 texSize = new Vector2(DefaultMainAim.width, DefaultMainAim.height) * scaleLocal;
             float texXPos = crd.x - texSize.x / 2f;
             float texYPos = crd.y - texSize.y / 2f + guiTexOffsetY;
             Texture aimTexture = DefaultMainAim;
@@ -233,20 +240,20 @@ namespace SpaceCommander
                         break;
                     }
             }
-            GUI.DrawTexture(new Rect(new Vector2(texXPos, texYPos), texSize), aimTexture);
+            GUI.DrawTexture(new Rect(new Vector2(texXPos, texYPos)*scaleLocal, texSize), aimTexture);
 
             //current target point
             if (TargetBuffer != null)
             {
                 crd = Camera.main.WorldToScreenPoint(TargetBuffer.transform.position);
                 crd.y = Screen.height - crd.y;
-                texSize = new Vector2(TargetDott.width, TargetDott.height);
+                texSize = new Vector2(TargetDott.width, TargetDott.height) * scaleLocal;
                 texXPos = crd.x - texSize.x / 2f;
                 texYPos = crd.y - texSize.y / 2f + guiTexOffsetY;
                 if (aimState == AimStateType.Locked)
-                    GUI.DrawTexture(new Rect(new Vector2(texXPos, texYPos), texSize), FireAim);
+                    GUI.DrawTexture(new Rect(new Vector2(texXPos, texYPos) * scaleLocal, texSize), FireAim);
                 else
-                    GUI.DrawTexture(new Rect(new Vector2(texXPos, texYPos), texSize), TargetDott);
+                    GUI.DrawTexture(new Rect(new Vector2(texXPos, texYPos) * scaleLocal, texSize), TargetDott);
 
             }
 

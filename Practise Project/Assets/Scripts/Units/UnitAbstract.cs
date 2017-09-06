@@ -194,6 +194,7 @@ namespace SpaceCommander
             if (ManualControl)
             {
                 Scan();
+                if (CurrentTarget != null) CooperateFire();
             }
             else if (synchAction <= 0)
             {
@@ -332,8 +333,13 @@ namespace SpaceCommander
         protected abstract void DecrementLocalCounters();
         protected void OnGUI()
         {
-            if (!ManualControl)
+            if (hud!=null&&!ManualControl)
             {
+                //GUI.skin = hud.Skin;
+                //if (Global.StaticProportion && hud.scale != 1)
+                //    GUI.matrix = Matrix4x4.Scale(Vector3.one * hud.scale);
+
+                float scaleLocal = hud.scale / 1.5f;
                 float border = 40;
                 bool outOfBorder = false;
                 bool outOfPlane = false;
@@ -405,17 +411,17 @@ namespace SpaceCommander
                 if (!true || distance < 200) //perspective
                     distance = 200;
 
-                frameSize = frameSize * (200 / distance);
-                frameY = crd.y - frameSize.y / 2f - (12 * (200 / distance));
-                iconSize = iconSize * (200 / distance);
+                frameSize = frameSize * (200 / distance) * scaleLocal;
+                frameY = crd.y - frameSize.y / 2f - (12 * (200 / distance) * scaleLocal);
+                iconSize = iconSize * (200 / distance) * scaleLocal;
                 frameX = crd.x - frameSize.x / 2f;
                 iconX = crd.x - iconSize.x / 2f;
                 if (!outOfBorder)
                     iconY = frameY - iconSize.y * 1.2f;
                 else
-                    iconY = frameY - (iconSize.y - ((border + 20) * (200 / distance))) * 1.2f;
+                    iconY = frameY - (iconSize.y - ((border + 20) * (200 / distance) * scaleLocal)) * 1.2f;
                 GUIStyle style = new GUIStyle();
-                style.fontSize = 12;
+                style.fontSize = Mathf.RoundToInt(12 * scaleLocal);
                 //style.font = GuiProcessor.getI.rusfont;
                 style.normal.textColor = Color.red;
                 style.alignment = TextAnchor.MiddleCenter;
@@ -1783,6 +1789,91 @@ namespace SpaceCommander
                 return -1;
             else return 1;
         }
+        protected int GuardCorvetteSortEnemys(Unit x, Unit y)
+        {
+            int xPriority;
+            int yPriority;
+            switch (x.Type)
+            {
+                case UnitClass.Command: //высший приоритет - командир
+                    {
+                        xPriority = 20;
+                        break;
+                    }
+                case UnitClass.Support_Corvette: //жертва
+                    {
+                        xPriority = 10;
+                        break;
+                    }
+                case UnitClass.Figther: //жертва
+                    {
+                        xPriority = 10;
+                        break;
+                    }
+                case UnitClass.Guard_Corvette: //паритет
+                    {
+                        xPriority = 5;
+                        break;
+                    }
+                case UnitClass.Bomber: //хищник
+                    {
+                        xPriority = -5;
+                        break;
+                    }
+                default:
+                    {
+                        xPriority = 0;
+                        break;
+                    }
+            }
+            switch (y.Type)
+            {
+                case UnitClass.Command: //высший приоритет - командир
+                    {
+                        yPriority = 20;
+                        break;
+                    }
+                case UnitClass.Support_Corvette: //жертва
+                    {
+                        yPriority = 10;
+                        break;
+                    }
+                case UnitClass.Figther: //жертва
+                    {
+                        yPriority = 10;
+                        break;
+                    }
+                case UnitClass.Guard_Corvette: //паритет
+                    {
+                        yPriority = 5;
+                        break;
+                    }
+                case UnitClass.Bomber: //хищник
+                    {
+                        yPriority = -5;
+                        break;
+                    }
+                default:
+                    {
+                        yPriority = 0;
+                        break;
+                    }
+            }
+            float xDictance = Vector3.Distance(this.transform.position, x.transform.position);
+            float yDistance = Vector3.Distance(this.transform.position, y.transform.position);
+            if ((xDictance - yDistance) > -300 && (xDictance - yDistance) < 300)
+            { } //приоритет не меняется
+            else
+            {
+                if (xDictance > yDistance)
+                    yPriority += 5;
+                else
+                    xPriority += 5;
+            }
+            if (xPriority > yPriority)
+                return -1;
+            else return 1;
+        }
         protected int SupportCorvetteSortEnemys(Unit x, Unit y)
         {
             int xPriority;
@@ -1845,6 +1936,101 @@ namespace SpaceCommander
                 case UnitClass.LR_Corvette: //хищник
                     {
                         yPriority = -5;
+                        break;
+                    }
+                default:
+                    {
+                        yPriority = 0;
+                        break;
+                    }
+            }
+            float xDictance = Vector3.Distance(this.transform.position, x.transform.position);
+            float yDistance = Vector3.Distance(this.transform.position, y.transform.position);
+            if ((xDictance - yDistance) > -300 && (xDictance - yDistance) < 300)
+            { } //приоритет не меняется
+            else
+            {
+                if (xDictance > yDistance)
+                    yPriority += 5;
+                else
+                    xPriority += 5;
+            }
+            if (xPriority > yPriority)
+                return -1;
+            else return 1;
+        }
+        protected int CommandSortEnemys(Unit x, Unit y)
+        {
+            int xPriority;
+            int yPriority;
+            switch (x.Type)
+            {
+                case UnitClass.Command: //высший приоритет - командир
+                    {
+                        xPriority = 20;
+                        break;
+                    }
+                case UnitClass.Support_Corvette:
+                    {
+                        xPriority = 10;
+                        break;
+                    }
+                case UnitClass.Figther:
+                    {
+                        xPriority = 10;
+                        break;
+                    }
+                case UnitClass.LR_Corvette: 
+                    {
+                        xPriority = 5;
+                        break;
+                    }
+                case UnitClass.Guard_Corvette: 
+                    {
+                        xPriority = 5;
+                        break;
+                    }
+                case UnitClass.Bomber: 
+                    {
+                        xPriority = 5;
+                        break;
+                    }
+                default:
+                    {
+                        xPriority = 0;
+                        break;
+                    }
+            }
+            switch (y.Type)
+            {
+                case UnitClass.Command: //высший приоритет - командир
+                    {
+                        yPriority = 20;
+                        break;
+                    }
+                case UnitClass.Support_Corvette:
+                    {
+                        yPriority = 10;
+                        break;
+                    }
+                case UnitClass.Figther:
+                    {
+                        yPriority = 10;
+                        break;
+                    }
+                case UnitClass.LR_Corvette:
+                    {
+                        yPriority = 5;
+                        break;
+                    }
+                case UnitClass.Guard_Corvette:
+                    {
+                        yPriority = 5;
+                        break;
+                    }
+                case UnitClass.Bomber:
+                    {
+                        yPriority = 5;
                         break;
                     }
                 default:

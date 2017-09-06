@@ -104,6 +104,7 @@ namespace SpaceCommander
         {
             this.observable = observable;
             mode = ObserverMode.Half;
+            float scaleLocal = hud.scale / 1.5f;
             //create primary weapon observ
             {
                 GameObject primOrigin = primaryWeaponSlot.transform.GetChild(0).gameObject;
@@ -120,7 +121,7 @@ namespace SpaceCommander
                 PrimaryCounters = new Text[observable.PrimaryWeapon.Length];
                 for (int i = 0; i < observable.PrimaryWeapon.Length; i++)
                 {
-                    newChild = Instantiate(primOrigin, new Vector3(primOrigin.transform.position.x + 100 * i, primOrigin.transform.position.y, primOrigin.transform.position.z), primOrigin.transform.rotation, primaryWeaponSlot.transform);
+                    newChild = Instantiate(primOrigin, new Vector3(primOrigin.transform.position.x + 100 * i * scaleLocal, primOrigin.transform.position.y, primOrigin.transform.position.z), primOrigin.transform.rotation, primaryWeaponSlot.transform);
 
                     newTexture = IconOf(observable.PrimaryWeapon[i].Type);
 
@@ -146,7 +147,7 @@ namespace SpaceCommander
                     SecondaryCounters = new Text[observable.SecondaryWeapon.Length];
                     for (int i = 0; i < observable.SecondaryWeapon.Length; i++)
                     {
-                        newChild = Instantiate(secOrigin, new Vector3(secOrigin.transform.position.x + 100 * i, secOrigin.transform.position.y, secOrigin.transform.position.z), secOrigin.transform.rotation, secondaryWeaponSlot.transform);
+                        newChild = Instantiate(secOrigin, new Vector3(secOrigin.transform.position.x + 100 * i * scaleLocal, secOrigin.transform.position.y, secOrigin.transform.position.z), secOrigin.transform.rotation, secondaryWeaponSlot.transform);
 
                         newTexture = IconOf(observable.SecondaryWeapon[i].Type);
 
@@ -401,9 +402,9 @@ namespace SpaceCommander
         }
         private void OnGUI()
         {
-            GUI.skin = hud.Skin;
-            if (Global.StaticProportion && hud.scale != 1)
-                GUI.matrix = Matrix4x4.Scale(Vector3.one * hud.scale);
+            //GUI.skin = hud.Skin;
+            //if (Global.StaticProportion && hud.scale != 1)
+            //    GUI.matrix = Matrix4x4.Scale(Vector3.one * hud.scale);
             if (mode != ObserverMode.None)
             {
                 //modules
