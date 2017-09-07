@@ -63,10 +63,10 @@ namespace DeusUtility.UI
         {
             return GetRatio(new Vector2(Screen.width, Screen.height));
         }
-        public static Vector2 GetRatio(Vector2 etalon)
+        public static Vector2 GetRatio(Vector2 rectSize)
         {
             Vector2 rectProp = new Vector2();
-            double ratio = etalon.x / etalon.y;
+            double ratio = rectSize.x / rectSize.y;
             {
                 if (Math.Round(ratio, 5) == 1.77778) // 16x9
                 {

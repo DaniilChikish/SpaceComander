@@ -4,5 +4,4 @@ using UnityEngine;
 
 namespace DeusUtility
 {
-    public enum Languages { English, Russian, Default };
 }
