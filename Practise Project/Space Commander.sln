@@ -1,13 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2015
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Practise Project.Plugins", "Practise Project.Plugins.csproj", "{972A4390-72D1-E11A-9BC4-8622941630DB}"
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Space Commander.Plugins", "Space Commander.Plugins.csproj", "{972A4390-72D1-E11A-9BC4-8622941630DB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Practise Project", "Practise Project.csproj", "{93C29301-D512-69DE-4433-02243F387B2F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Space Commander", "Space Commander.csproj", "{93C29301-D512-69DE-4433-02243F387B2F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Practise Project.Editor.Plugins", "Practise Project.Editor.Plugins.csproj", "{04F34A1F-BE3E-9AB0-0853-4B31B40A09E3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Space Commander.Editor.Plugins", "Space Commander.Editor.Plugins.csproj", "{04F34A1F-BE3E-9AB0-0853-4B31B40A09E3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Practise Project.Editor", "Practise Project.Editor.csproj", "{F4DCFD8E-3BA0-94A3-5FFB-4518360B9BCB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Space Commander.Editor", "Space Commander.Editor.csproj", "{F4DCFD8E-3BA0-94A3-5FFB-4518360B9BCB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

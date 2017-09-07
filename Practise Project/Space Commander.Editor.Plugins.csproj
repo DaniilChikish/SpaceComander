@@ -5,19 +5,21 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{F4DCFD8E-3BA0-94A3-5FFB-4518360B9BCB}</ProjectGuid>
+    <ProjectGuid>{04F34A1F-BE3E-9AB0-0853-4B31B40A09E3}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <AssemblyName>Assembly-CSharp-Editor</AssemblyName>
+    <AssemblyName>Assembly-CSharp-Editor-firstpass</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{E097FAD1-6243-4DAD-9C02-E9B9EFC3FFC1};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Unity Full v3.5</TargetFrameworkProfile>
-    <CompilerResponseFile></CompilerResponseFile>
-    <UnityProjectType>Editor:5</UnityProjectType>
+    <CompilerResponseFile>
+    </CompilerResponseFile>
+    <UnityProjectType>EditorPlugins:7</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows:5</UnityBuildTarget>
     <UnityVersion>5.5.1f1</UnityVersion>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <LangVersion Condition=" '$(VisualStudioVersion)' != '10.0' ">4</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -120,22 +122,17 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="Practise Project.Plugins.csproj">
+    <ProjectReference Include="Space Commander.Plugins.csproj">
       <Project>{972A4390-72D1-E11A-9BC4-8622941630DB}</Project>
-      <Name>Practise Project.Plugins</Name>
+      <Name>Space Commander.Plugins</Name>
     </ProjectReference>
-    <ProjectReference Include="Practise Project.csproj">
+    <ProjectReference Include="Space Commander.csproj">
       <Project>{93C29301-D512-69DE-4433-02243F387B2F}</Project>
-      <Name>Practise Project</Name>
-    </ProjectReference>
-    <ProjectReference Include="Practise Project.Editor.Plugins.csproj">
-      <Project>{04F34A1F-BE3E-9AB0-0853-4B31B40A09E3}</Project>
-      <Name>Practise Project.Editor.Plugins</Name>
+      <Name>Space Commander</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\RTS_Camera\Scripts\Editor\LayoutHelpers.cs" />
-    <Compile Include="Assets\RTS_Camera\Scripts\Editor\RTS_CameraEditor.cs" />
+    <Compile Include="Assets\Standard Assets\Editor\CrossPlatformInput\CrossPlatformInputInitialize.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Effects\Shaders\SFE_TransparentAntiRim.shader" />
