@@ -36,6 +36,7 @@ namespace SpaceCommander.Weapons
                         break;
                     }
                 case EnergyType.BlueRay:
+                default:
                     {
                         damage = 25;
                         armorPiersing = 1;

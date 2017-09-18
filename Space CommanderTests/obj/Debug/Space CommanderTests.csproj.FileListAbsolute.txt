@@ -6,12 +6,11 @@ D:\Archive\_Repository\ProfessionalPracticeProject\Space CommanderTests\bin\Debu
 D:\Archive\_Repository\ProfessionalPracticeProject\Space CommanderTests\bin\Debug\UnityEngine.UI.dll
 D:\Archive\_Repository\ProfessionalPracticeProject\Space CommanderTests\bin\Debug\Assembly-CSharp-firstpass.dll
 D:\Archive\_Repository\ProfessionalPracticeProject\Space CommanderTests\bin\Debug\UnityEditor.dll
-D:\Archive\_Repository\ProfessionalPracticeProject\Space CommanderTests\bin\Debug\Assembly-CSharp.pdb
 D:\Archive\_Repository\ProfessionalPracticeProject\Space CommanderTests\bin\Debug\UnityEngine.xml
-D:\Archive\_Repository\ProfessionalPracticeProject\Space CommanderTests\bin\Debug\UnityEngine.UI.xml
-D:\Archive\_Repository\ProfessionalPracticeProject\Space CommanderTests\bin\Debug\Assembly-CSharp-firstpass.pdb
 D:\Archive\_Repository\ProfessionalPracticeProject\Space CommanderTests\bin\Debug\UnityEditor.xml
 D:\Archive\_Repository\ProfessionalPracticeProject\Space CommanderTests\bin\Debug\ru\Microsoft.VisualStudio.QualityTools.UnitTestFramework.resources.dll
 D:\Archive\_Repository\ProfessionalPracticeProject\Space CommanderTests\obj\Debug\Space CommanderTests.csprojResolveAssemblyReference.cache
 D:\Archive\_Repository\ProfessionalPracticeProject\Space CommanderTests\obj\Debug\Space CommanderTests.dll
 D:\Archive\_Repository\ProfessionalPracticeProject\Space CommanderTests\obj\Debug\Space CommanderTests.pdb
+D:\Archive\_Repository\ProfessionalPracticeProject\Space CommanderTests\bin\Debug\Space CommanderTests.dll.CodeAnalysisLog.xml
+D:\Archive\_Repository\ProfessionalPracticeProject\Space CommanderTests\bin\Debug\Space CommanderTests.dll.lastcodeanalysissucceeded

@@ -1,0 +1,23 @@
+D:\Archive\_Repository\ProfessionalPracticeProject\Practise Project\Temp\UnityVS_bin\Debug\Assembly-CSharp.dll
+D:\Archive\_Repository\ProfessionalPracticeProject\Practise Project\Temp\UnityVS_bin\Debug\Assembly-CSharp.pdb
+D:\Archive\_Repository\ProfessionalPracticeProject\Practise Project\Temp\UnityVS_bin\Debug\UnityEditor.dll
+D:\Archive\_Repository\ProfessionalPracticeProject\Practise Project\Temp\UnityVS_bin\Debug\UnityEngine.Analytics.dll
+D:\Archive\_Repository\ProfessionalPracticeProject\Practise Project\Temp\UnityVS_bin\Debug\UnityEngine.dll
+D:\Archive\_Repository\ProfessionalPracticeProject\Practise Project\Temp\UnityVS_bin\Debug\UnityEngine.HoloLens.dll
+D:\Archive\_Repository\ProfessionalPracticeProject\Practise Project\Temp\UnityVS_bin\Debug\UnityEngine.Networking.dll
+D:\Archive\_Repository\ProfessionalPracticeProject\Practise Project\Temp\UnityVS_bin\Debug\UnityEngine.PlaymodeTestsRunner.dll
+D:\Archive\_Repository\ProfessionalPracticeProject\Practise Project\Temp\UnityVS_bin\Debug\UnityEngine.UI.dll
+D:\Archive\_Repository\ProfessionalPracticeProject\Practise Project\Temp\UnityVS_bin\Debug\UnityEngine.VR.dll
+D:\Archive\_Repository\ProfessionalPracticeProject\Practise Project\Temp\UnityVS_bin\Debug\UnityEngine.xml
+D:\Archive\_Repository\ProfessionalPracticeProject\Practise Project\Temp\UnityVS_bin\Debug\UnityEngine.UI.xml
+D:\Archive\_Repository\ProfessionalPracticeProject\Practise Project\Temp\UnityVS_bin\Debug\UnityEngine.Networking.xml
+D:\Archive\_Repository\ProfessionalPracticeProject\Practise Project\Temp\UnityVS_bin\Debug\UnityEngine.PlaymodeTestsRunner.xml
+D:\Archive\_Repository\ProfessionalPracticeProject\Practise Project\Temp\UnityVS_bin\Debug\UnityEngine.Analytics.xml
+D:\Archive\_Repository\ProfessionalPracticeProject\Practise Project\Temp\UnityVS_bin\Debug\UnityEngine.HoloLens.xml
+D:\Archive\_Repository\ProfessionalPracticeProject\Practise Project\Temp\UnityVS_bin\Debug\UnityEngine.VR.xml
+D:\Archive\_Repository\ProfessionalPracticeProject\Practise Project\Temp\UnityVS_bin\Debug\UnityEditor.xml
+D:\Archive\_Repository\ProfessionalPracticeProject\Practise Project\Temp\UnityVS_obj\Debug\Space Commander.csprojResolveAssemblyReference.cache
+D:\Archive\_Repository\ProfessionalPracticeProject\Practise Project\Temp\UnityVS_obj\Debug\Assembly-CSharp.dll
+D:\Archive\_Repository\ProfessionalPracticeProject\Practise Project\Temp\UnityVS_obj\Debug\Assembly-CSharp.pdb
+D:\Archive\_Repository\ProfessionalPracticeProject\Practise Project\Temp\UnityVS_bin\Debug\Assembly-CSharp.dll.CodeAnalysisLog.xml
+D:\Archive\_Repository\ProfessionalPracticeProject\Practise Project\Temp\UnityVS_bin\Debug\Assembly-CSharp.dll.lastcodeanalysissucceeded
