@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 namespace SpaceCommander.Weapons
 {
-    public class RocketLauncher : RoundWeapon
+    public class RocketLauncher : ShellWeapon
     {
         public MissileType AmmoType;
         public override void StatUp()
@@ -11,10 +11,10 @@ namespace SpaceCommander.Weapons
             type = WeaponType.Missile;
             gameObject.GetComponent<MeshRenderer>().enabled = false;
             range = 250;
-            ammoCampacity = 20;
+            ammoCampacity = 8;
             ammo = AmmoCampacity;
             firerate = 15;
-            reloadingTime = 45;
+            reloadingTime = 15;
             dispersion = 6f;
             shildBlinkTime = 0.8f;
         }
@@ -24,21 +24,18 @@ namespace SpaceCommander.Weapons
             {
                 case MissileType.Interceptor:
                     {
-                        ammo -= 3;
                         GameObject missile = Instantiate(FindObjectsOfType<GlobalController>()[0].Missile, gameObject.transform.position, transform.rotation);
                         missile.AddComponent<InterceptorMissile>().SetTarget(target);
                         break;
                     }
                 case MissileType.Hunter:
                     {
-                        ammo -= 1;
                         GameObject missile = Instantiate(FindObjectsOfType<GlobalController>()[0].Missile, gameObject.transform.position, transform.rotation);
                         missile.AddComponent<HunterMissile>().SetTarget(target);
                         break;
                     }
                 case MissileType.Metheor:
                     {
-                        ammo -= 1;
                         GameObject missile = Instantiate(FindObjectsOfType<GlobalController>()[0].Missile, gameObject.transform.position, transform.rotation);
                         missile.AddComponent<MetheorMissile>().SetTarget(target);
                         break;

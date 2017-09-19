@@ -125,7 +125,8 @@
     <Compile Include="Assets\Scripts\Utils\DeusUIUtility.cs" />
     <Compile Include="Assets\Scripts\Utils\DeusUtilityBase.cs" />
     <Compile Include="Assets\Scripts\WarpArrive.cs" />
-    <Compile Include="Assets\Scripts\WeponScript\AutoCannon.cs" />
+    <Compile Include="Assets\Scripts\WeponScript\Chaingun.cs" />
+    <Compile Include="Assets\Scripts\WeponScript\MachineCannon.cs" />
     <Compile Include="Assets\Scripts\WeponScript\BigCannon.cs" />
     <Compile Include="Assets\Scripts\WeponScript\BombardierMissile.cs" />
     <Compile Include="Assets\Scripts\WeponScript\AutoBuckshotCannon.cs" />

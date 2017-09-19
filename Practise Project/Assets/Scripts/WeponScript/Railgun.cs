@@ -4,16 +4,16 @@ using System.Collections.Generic;
 using UnityEngine;
 namespace SpaceCommander.Weapons
 {
-    public class Railgun : RoundWeapon {
+    public class Railgun : ShellWeapon {
         public override void StatUp()
         {
             type = WeaponType.Railgun;
             gameObject.GetComponent<MeshRenderer>().enabled = false;
             range = 1500;
-            ammo = 15; //1.5 Min
-            ammoCampacity = 15;
-            firerate = 10;//200 DD, 40 DpS
-            reloadingTime = 45;
+            ammoCampacity = 10;
+            ammo = AmmoCampacity;
+            firerate = 15;//200 DD, 40 DpS
+            reloadingTime = 10;
             dispersion = 0.0f;
             shildBlinkTime = 0.05f;
             averageRoundSpeed = 300;

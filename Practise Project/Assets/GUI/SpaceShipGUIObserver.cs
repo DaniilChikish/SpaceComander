@@ -214,7 +214,7 @@ namespace SpaceCommander
             switch (type)
             {
 
-                case WeaponType.Autocannon:
+                case WeaponType.MachineCannon:
                     {
                         return this.AutocannonIcon;
                     }
@@ -459,35 +459,43 @@ namespace SpaceCommander
                 {
                     for (int i = 0; i < observable.PrimaryWeapon.Length; i++)
                     {
-                        if (observable.PrimaryWeapon[i].Type == WeaponType.Laser || observable.PrimaryWeapon[i].Type == WeaponType.Plazma || observable.PrimaryWeapon[i].Type == WeaponType.MagnetohydrodynamicGun)
+                        if (observable.PrimaryWeapon[i].GetType() == typeof(EnergyWeapon))
                         {
                             float fill= observable.PrimaryWeapon[i].ShootCounter / observable.PrimaryWeapon[i].MaxShootCounter;
                             PrimaryCooldown[i].fillAmount = fill;
                             PrimaryCounters[i].color = new Color(255 * fill, 0, 255 * (1 - fill));
                         }
-                        else
+                        else if (observable.PrimaryWeapon[i].GetType() == typeof(MagWeapon))
                         {
                             if (observable.PrimaryWeapon[i].BackCounter < (60f / observable.PrimaryWeapon[i].Firerate))
                                 PrimaryCooldown[i].fillAmount = observable.PrimaryWeapon[i].BackCounter / (60f / observable.PrimaryWeapon[i].Firerate);
                             else
                                 PrimaryCooldown[i].fillAmount = observable.PrimaryWeapon[i].BackCounter / observable.PrimaryWeapon[i].MaxShootCounter;
                         }
+                        else
+                        {
+                                PrimaryCooldown[i].fillAmount = observable.PrimaryWeapon[i].BackCounter / observable.PrimaryWeapon[i].MaxShootCounter;
+                        }
                         PrimaryCounters[i].text = Mathf.RoundToInt(observable.PrimaryWeapon[i].ShootCounter).ToString();
                     }
                     for (int i = 0; i < observable.SecondaryWeapon.Length; i++)
                     {
-                        if (observable.SecondaryWeapon[i].Type == WeaponType.Laser || observable.SecondaryWeapon[i].Type == WeaponType.Plazma || observable.SecondaryWeapon[i].Type == WeaponType.MagnetohydrodynamicGun)
+                        if (observable.SecondaryWeapon[i].GetType() == typeof(EnergyWeapon))
                         {
                             float fill = observable.SecondaryWeapon[i].ShootCounter / observable.SecondaryWeapon[i].MaxShootCounter;
                             SecondaryCooldown[i].fillAmount = fill;
                             SecondaryCounters[i].color = new Color(255 * fill, 0, 255 * (1 - fill));
                         }
-                        else
+                        else if (observable.SecondaryWeapon[i].GetType() == typeof(MagWeapon))
                         {
                             if (observable.SecondaryWeapon[i].BackCounter < (60f / observable.SecondaryWeapon[i].Firerate))
                                 SecondaryCooldown[i].fillAmount = observable.SecondaryWeapon[i].BackCounter / (60f / observable.SecondaryWeapon[i].Firerate);
                             else
                                 SecondaryCooldown[i].fillAmount = observable.SecondaryWeapon[i].BackCounter / observable.SecondaryWeapon[i].MaxShootCounter;
+                        }
+                        else
+                        {
+                            SecondaryCooldown[i].fillAmount = observable.SecondaryWeapon[i].BackCounter / observable.SecondaryWeapon[i].MaxShootCounter;
                         }
                         SecondaryCounters[i].text = Mathf.RoundToInt(observable.SecondaryWeapon[i].ShootCounter).ToString();
                     }

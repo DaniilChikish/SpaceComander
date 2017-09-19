@@ -7,7 +7,7 @@ using DeusUtility.Random;
 
 namespace SpaceCommander.Weapons
 {
-    public class SmallCannon : RoundWeapon
+    public class SmallCannon : MagWeapon
     {
         public SmallShellType AmmoType;
         public override void StatUp()

@@ -796,8 +796,8 @@ namespace SpaceCommander
             coolingTime = 0;
             activeTime = 0;
             state = SpellModuleState.Cooldown;
-            RoundWeapon[] weapons = owner.transform.GetComponentsInChildren<RoundWeapon>();
-            foreach (RoundWeapon x in weapons)
+            MagWeapon[] weapons = owner.transform.GetComponentsInChildren<MagWeapon>();
+            foreach (MagWeapon x in weapons)
                 x.ReloadMultiplacator += 0.15f;
         }
         public override void Enable()
@@ -818,8 +818,8 @@ namespace SpaceCommander
             coolingTime = 0;
             activeTime = 0;
             state = SpellModuleState.Cooldown;
-            RoundWeapon[] weapons = owner.transform.GetComponentsInChildren<RoundWeapon>();
-            foreach (RoundWeapon x in weapons)
+            MagWeapon[] weapons = owner.transform.GetComponentsInChildren<MagWeapon>();
+            foreach (MagWeapon x in weapons)
             {
                 x.AmmocampacityMultiplacator += 0.5f;
                 x.Reset();

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 namespace SpaceCommander.Weapons
 {
-    public class Railmortar : RoundWeapon
+    public class Railmortar : MagWeapon
     {
         private SpaceShip owner;
         public float DropImpulse;

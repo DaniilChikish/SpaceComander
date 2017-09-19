@@ -548,7 +548,7 @@ namespace SpaceCommander
         public abstract bool Fire();
         protected abstract void Shoot(Transform target);
     }
-    public abstract class RoundWeapon : Weapon
+    public abstract class MagWeapon : Weapon
     {
         public float ReloadMultiplacator { set; get; }
         public float AmmocampacityMultiplacator { set; get; }
@@ -594,6 +594,57 @@ namespace SpaceCommander
         {
             ammo = AmmoCampacity;
             backCount = 0;
+        }
+    }
+    public abstract class ShellWeapon : Weapon
+    {
+        public float ReloadMultiplacator { set; get; }
+        public float AmmocampacityMultiplacator { set; get; }
+        public float ShellmassMultiplacator { set; get; }
+
+        protected float reloadingTime;
+        protected float reloadBackCount;
+        protected int ammo;
+        protected int ammoCampacity;
+        protected int AmmoCampacity { get { return Mathf.RoundToInt(ammoCampacity * (1 + AmmocampacityMultiplacator)); } }
+        public override bool Fire()
+        {
+            if (IsReady)
+            {
+                this.GetComponentInChildren<ParticleSystem>().Play();
+                if (target != null)
+                    Shoot(target.transform);
+                else Shoot(null);
+                ammo--;
+                reloadBackCount = 60f / Firerate;
+                return true;
+            }
+            else return false;
+        }
+        public override void Update()
+        {
+            base.Update();
+            if (ammo < AmmoCampacity && backCount <= 0)
+            {
+                ammo++;
+                backCount = reloadingTime * (1 + ReloadMultiplacator);
+            }
+            if (reloadBackCount > 0) reloadBackCount -= Time.deltaTime;
+        }
+        public override bool IsReady
+        {
+            get
+            {
+                return (ammo > 0 && reloadBackCount <= 0);
+            }
+        }
+        public override float ShootCounter { get { return ammo; } }
+        public override float MaxShootCounter { get { return reloadingTime * (1 + ReloadMultiplacator); } }
+        public override void Reset()
+        {
+            ammo = AmmoCampacity;
+            backCount = 0;
+            reloadBackCount = 0;
         }
     }
     public abstract class EnergyWeapon : Weapon

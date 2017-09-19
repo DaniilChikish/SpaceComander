@@ -7,7 +7,7 @@ using DeusUtility.Random;
 
 namespace SpaceCommander.Weapons
 {
-    public class BuckshotCannon : RoundWeapon
+    public class BuckshotCannon : MagWeapon
     {
         private int bucksotRate;
         public override void StatUp()

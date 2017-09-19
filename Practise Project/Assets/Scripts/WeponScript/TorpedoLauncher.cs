@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 namespace SpaceCommander.Weapons
 {
-    public class TorpedoLauncher : RoundWeapon
+    public class TorpedoLauncher : ShellWeapon
     {
         private SpaceShip owner;
         public TorpedoType AmmoType;
@@ -12,9 +12,10 @@ namespace SpaceCommander.Weapons
             type = WeaponType.Torpedo;
             gameObject.GetComponent<MeshRenderer>().enabled = false;
             range = 1000;
-            ammo = 4;
+            ammoCampacity = 4;
+            ammo = AmmoCampacity;
             firerate = 6;
-            reloadingTime = 60;
+            reloadingTime = 25;
             dispersion = 3f;
             shildBlinkTime = 1f;
             owner = this.transform.GetComponentInParent<SpaceShip>();
@@ -26,21 +27,18 @@ namespace SpaceCommander.Weapons
             {
                 case TorpedoType.Nuke:
                     {
-                        ammo -= 3;
                         torpedo = Instantiate(Global.Torpedo, gameObject.transform.position, transform.rotation);
                         torpedo.AddComponent<NukeTorpedo>();
                         break;
                     }
                 case TorpedoType.Sprute:
                     {
-                        ammo -= 1;
                         torpedo = Instantiate(Global.Torpedo, gameObject.transform.position, transform.rotation);
                         torpedo.AddComponent<SpruteTorpedo>();
                         break;
                     }
                 case TorpedoType.ShieldsBreaker:
                     {
-                        ammo -= 1;
                         torpedo = Instantiate(Global.Torpedo, gameObject.transform.position, transform.rotation);
                         torpedo.AddComponent<ShieldBreakerTorpedo>();
                         break;
