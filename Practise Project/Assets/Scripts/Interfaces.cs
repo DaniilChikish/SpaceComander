@@ -24,7 +24,6 @@ namespace SpaceCommander
     {
         Vector3 Velocity { get; }
         void Update();
-        void UpdateSpeed();
         bool MoveTo(Vector3 destination);
         bool MoveToQueue(Vector3 destination);
         void ClearQueue();

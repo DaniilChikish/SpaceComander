@@ -157,7 +157,8 @@ namespace SpaceCommander
             shield = this.gameObject.GetComponent<ForceShield>();
             //
             gunner = new ShootController(this);
-            Driver = new MovementController(this.gameObject);
+            //Driver = new NavmeshMovementController(this.gameObject);
+            Driver = new SpaceMovementController(this.gameObject);
             capByTarget = new List<Unit>();
             Squad = new SpaceShip[3];
             //List<SpaceShip> enemys = new List<SpaceShip>();
@@ -2057,12 +2058,16 @@ namespace SpaceCommander
         //remote control
         public virtual void SendTo(Vector3 destination)
         {
+            Debug.Log("SendTo " + destination);
+
             orderBackCount = Vector3.Distance(this.transform.position, destination) / (this.GetComponent<NavMeshAgent>().speed * 0.9f);
             aiStatus = UnitStateType.UnderControl;
             Driver.MoveTo(destination);
         }
         public virtual void SendToQueue(Vector3 destination)
         {
+            Debug.Log("SendTo " + destination);
+
             orderBackCount += Vector3.Distance(this.transform.position, destination) / (this.GetComponent<NavMeshAgent>().speed * 0.9f);
             aiStatus = UnitStateType.UnderControl;
             Driver.MoveToQueue(destination);

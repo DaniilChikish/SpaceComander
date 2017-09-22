@@ -69,7 +69,7 @@ namespace SpaceCommander
             Global = FindObjectOfType<GlobalController>();
             hud = FindObjectOfType<HUDBase>();
             owner.gameObject.GetComponent<NavMeshAgent>().enabled = false;
-            tridimensional = false;
+            //tridimensional = true;
             owner.Gunner.ResetAim();
             body = owner.gameObject.GetComponent<Rigidbody>();
             //folowCam = FindObjectOfType<RTS_Cam.RTS_Camera>();
@@ -280,87 +280,115 @@ namespace SpaceCommander
 
         private void Move()
         {
-            if (tridimensional)
-                throw new NotImplementedException();
-            else
+            float mainThrustLocal = Input.GetAxis(thrustAxis);
+            if (mainThrust <= 2.5 && mainThrust >= -1)
+                mainThrust += mainThrustLocal * Time.deltaTime;
+
+            if (mainThrustLocal == 0)
             {
-                float mainThrustLocal = Input.GetAxis(thrustAxis);
-                if (mainThrust <= 2.5 && mainThrust >= -1)
-                    mainThrust += mainThrustLocal * Time.deltaTime;
-
-                if (mainThrustLocal == 0)
-                {
-                    if (mainThrust <= 0.3 && mainThrust >= -0.3)
-                        mainThrust = mainThrust * 0.7f;
-                    else if (mainThrust > 0.3f)
-                        mainThrust -= Time.deltaTime * 0.3f;
-                    else if (mainThrust < -0.3f)
-                        mainThrust += Time.deltaTime * 0.5f;
-                }
-                if (mainThrust > 2.5) mainThrust = 2.5f;
-                if (mainThrust < 0.0001 && mainThrust > -0.0001) mainThrust = 0;
-                if (mainThrust < -1) mainThrust = -1;
-
-                float horisontalShiftLocal = Input.GetAxis(horizontalShiftAxis);
-                if (horisontalShiftThrust <= 1 && horisontalShiftThrust >= -1)
-                    horisontalShiftThrust += horisontalShiftLocal * Time.deltaTime;
-
-                if (horisontalShiftLocal == 0)
-                {
-                    if (horisontalShiftThrust <= 0.1 && horisontalShiftThrust >= -0.1)
-                        horisontalShiftThrust = horisontalShiftThrust * 0.7f;
-                    else if (horisontalShiftThrust > 0.1f)
-                        horisontalShiftThrust -= Time.deltaTime * 0.7f;
-                    else if (horisontalShiftThrust < -0.1f)
-                        horisontalShiftThrust += Time.deltaTime * 0.7f;
-                }
-                if (horisontalShiftThrust > 1) horisontalShiftThrust = 1;
-                if (horisontalShiftThrust < 0.0001 && horisontalShiftThrust > -0.0001) horisontalShiftThrust = 0;
-                if (horisontalShiftThrust < -1) horisontalShiftThrust = -1;
-
-                Vector3 shiftLocal = (this.transform.right * horisontalShiftThrust * owner.ShiftSpeed + this.transform.forward * mainThrust * owner.Speed) * 25;
-
-                body.AddForce(shiftLocal, ForceMode.Acceleration);
+                if (mainThrust <= 0.3 && mainThrust >= -0.3)
+                    mainThrust = mainThrust * 0.7f;
+                else if (mainThrust > 0.3f)
+                    mainThrust -= Time.deltaTime * 0.3f;
+                else if (mainThrust < -0.3f)
+                    mainThrust += Time.deltaTime * 0.5f;
             }
+            if (mainThrust > 2.5) mainThrust = 2.5f;
+            if (mainThrust < 0.0001 && mainThrust > -0.0001) mainThrust = 0;
+            if (mainThrust < -1) mainThrust = -1;
+
+            float horisontalShiftLocal = Input.GetAxis(horizontalShiftAxis);
+            if (horisontalShiftThrust <= 1 && horisontalShiftThrust >= -1)
+                horisontalShiftThrust += horisontalShiftLocal * Time.deltaTime;
+
+            if (horisontalShiftLocal == 0)
+            {
+                if (horisontalShiftThrust <= 0.1 && horisontalShiftThrust >= -0.1)
+                    horisontalShiftThrust = horisontalShiftThrust * 0.7f;
+                else if (horisontalShiftThrust > 0.1f)
+                    horisontalShiftThrust -= Time.deltaTime * 0.7f;
+                else if (horisontalShiftThrust < -0.1f)
+                    horisontalShiftThrust += Time.deltaTime * 0.7f;
+            }
+            if (horisontalShiftThrust > 1) horisontalShiftThrust = 1;
+            if (horisontalShiftThrust < 0.0001 && horisontalShiftThrust > -0.0001) horisontalShiftThrust = 0;
+            if (horisontalShiftThrust < -1) horisontalShiftThrust = -1;
+
+            if (tridimensional)
+            {
+                float vertikalShiftLocal = Input.GetAxis(verticalShiftAxis);
+                if (verticalShiftThrust <= 1 && verticalShiftThrust >= -1)
+                    verticalShiftThrust += vertikalShiftLocal * Time.deltaTime;
+
+                if (vertikalShiftLocal == 0)
+                {
+                    if (verticalShiftThrust <= 0.1 && verticalShiftThrust >= -0.1)
+                        verticalShiftThrust = verticalShiftThrust * 0.7f;
+                    else if (verticalShiftThrust > 0.1f)
+                        verticalShiftThrust -= Time.deltaTime * 0.7f;
+                    else if (verticalShiftThrust < -0.1f)
+                        verticalShiftThrust += Time.deltaTime * 0.7f;
+                }
+                if (verticalShiftThrust > 1) verticalShiftThrust = 1;
+                if (verticalShiftThrust < 0.0001 && verticalShiftThrust > -0.0001) verticalShiftThrust = 0;
+                if (verticalShiftThrust < -1) verticalShiftThrust = -1;
+            }
+            Vector3 shiftLocal = (owner.transform.right * horisontalShiftThrust * owner.ShiftSpeed + owner.transform.up * verticalShiftThrust * owner.ShiftSpeed + owner.transform.forward * mainThrust * owner.Speed) * 25;
+
+            body.AddForce(shiftLocal, ForceMode.Acceleration);
         }
+        //private void Rotate()
+        //{
+        //    var rot = new Vector3(0f, 0f, 0f);
+        //    // rotates Left
+        //    if (Input.GetAxis(yawAxis) < 0)
+        //    {
+        //        rot.y -= 1;
+        //    }
+        //    // rotates Left
+        //    if (Input.GetAxis(yawAxis) > 0)
+        //    {
+        //        rot.y += 1;
+        //    }
+        //    if (tridimensional)
+        //    {
+        //        // rotates Up
+        //        if (Input.GetAxis(pitchAxis) < 0)
+        //        {
+        //            rot.x -= 1;
+        //        }
+        //        // rotates Down
+        //        if (Input.GetAxis(pitchAxis) > 0)
+        //        {
+        //            rot.x += 1;
+        //        }
+        //        // roll left
+        //        if (Input.GetAxis(rollAxis) < 0)
+        //        {
+        //            rot.z -= 1;
+        //        }
+        //        // roll right
+        //        if (Input.GetAxis(rollAxis) > 0)
+        //        {
+        //            rot.z += 1;
+        //        }
+        //    }
+
+        //    transform.Rotate(rot, owner.RotationSpeed * 5.5f * Time.deltaTime);
+        //}
+
         private void Rotate()
         {
             var rot = new Vector3(0f, 0f, 0f);
-            // rotates Left
-            if (Input.GetAxis(yawAxis) < 0)
-            {
-                rot.y -= 1;
-            }
-            // rotates Left
-            if (Input.GetAxis(yawAxis) > 0 || Input.GetKey(KeyCode.RightArrow))
-            {
-                rot.y += 1;
-            }
+            rot.y += Input.GetAxis(yawAxis);
+
             if (tridimensional)
             {
-                // rotates Up
-                if (Input.GetAxis(pitchAxis) < 0)
-                {
-                    rot.x -= 1;
-                }
-                // rotates Down
-                if (Input.GetAxis(pitchAxis) > 0)
-                {
-                    rot.x += 1;
-                }
-                // roll left
-                if (Input.GetAxis(rollAxis) < 0)
-                {
-                    rot.z -= 1;
-                }
-                // roll right
-                if (Input.GetAxis(rollAxis) > 0)
-                {
-                    rot.z += 1;
-                }
+                rot.x -= Input.GetAxis(pitchAxis);
+                rot.z += Input.GetAxis(rollAxis);
             }
 
-            transform.Rotate(rot, owner.RotationSpeed * 5.5f * Time.deltaTime);
+            owner.transform.Rotate(rot, owner.RotationSpeed * 5.5f * Time.deltaTime);
         }
         private void Stabilisation()
         {

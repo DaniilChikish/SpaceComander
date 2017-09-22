@@ -222,7 +222,7 @@ namespace SpaceCommander
             }
         }
     }
-    public class MovementController : IDriver
+    public class NavmeshMovementController : IDriver
     {
         private SpaceShip walker;
         private Transform walkerTransform;
@@ -240,7 +240,7 @@ namespace SpaceCommander
         }
         public Vector3 NextPoint { get { if (PathPoints > 1) return walkerAgent.pathEndPosition; else return Vector3.zero; } }
         //public float backCount; //время обновления пути.
-        public MovementController(GameObject walker)
+        public NavmeshMovementController(GameObject walker)
         {
             this.walkerTransform = walker.transform;
             path = new Queue<Vector3>();
@@ -329,7 +329,7 @@ namespace SpaceCommander
         public ShootController(SpaceShip body)
         {
             this.owner = body;
-            turnSpeed = body.Speed * 0.5f;
+            turnSpeed = body.RotationSpeed * 5.5f;
             List<IWeapon[]> buffer = new List<IWeapon[]>();
             for (int i = 0; i < body.transform.childCount; i++)
             {
@@ -397,13 +397,14 @@ namespace SpaceCommander
             if (!owner.ManualControl && target != null)
             {
                 targetLockdownCount -= Time.deltaTime;
+                turnSpeed = owner.RotationSpeed * 5.5f;
                 //Debug.Log("target - " + Target.transform.position);
                 //Debug.Log("aim - " + aimPoint);
                 //наведение на цель
                 if ((target.transform.position - owner.transform.position).normalized != Vector3.zero)
                 {
-                    Quaternion targetRotation = Quaternion.LookRotation((target.transform.position - owner.transform.position).normalized * turnSpeed, new Vector3(0, 1, 0));
-                    owner.transform.rotation = Quaternion.Slerp(owner.transform.rotation, targetRotation, Time.deltaTime * turnSpeed * 0.2f);
+                    Quaternion targetRotation = Quaternion.LookRotation(target.transform.position - owner.transform.position, new Vector3(0, 1, 0));
+                    owner.transform.rotation = Quaternion.RotateTowards(owner.transform.rotation, targetRotation, Time.deltaTime * turnSpeed * 0.2f);
                 }
             }
         }
@@ -766,7 +767,7 @@ namespace SpaceCommander
                 if (target != null)//наведение
                 {
                     Quaternion targetRotation = Quaternion.LookRotation(target.position - this.transform.position, new Vector3(0, 1, 0));
-                    this.transform.rotation = Quaternion.Slerp(this.transform.rotation, targetRotation, Time.deltaTime * TurnSpeed);
+                    this.transform.rotation = Quaternion.RotateTowards(this.transform.rotation, targetRotation, Time.deltaTime * TurnSpeed);
                     // угол между направлением на цель и направлением ракеты порядок имеет значение.
                     Weapons.MissileTrap[] traps = FindObjectsOfType<Weapons.MissileTrap>();
                     if (traps.Length > 0)

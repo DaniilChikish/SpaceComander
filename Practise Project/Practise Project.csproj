@@ -116,6 +116,7 @@
     <Compile Include="Assets\Scripts\Units\LR_Corvette.cs" />
     <Compile Include="Assets\Scripts\Units\Recon.cs" />
     <Compile Include="Assets\Scripts\Units\Scout.cs" />
+    <Compile Include="Assets\Scripts\Units\SpaceMovementController.cs" />
     <Compile Include="Assets\Scripts\Units\SpellModule.cs" />
     <Compile Include="Assets\Scripts\Units\Support_Corvette.cs" />
     <Compile Include="Assets\Scripts\Units\UnitAbstract.cs" />
