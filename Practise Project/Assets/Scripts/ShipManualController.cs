@@ -69,6 +69,7 @@ namespace SpaceCommander
             Global = FindObjectOfType<GlobalController>();
             hud = FindObjectOfType<HUDBase>();
             owner.gameObject.GetComponent<NavMeshAgent>().enabled = false;
+            owner.SendTo(owner.transform.position);
             //tridimensional = true;
             owner.Gunner.ResetAim();
             body = owner.gameObject.GetComponent<Rigidbody>();

@@ -6,8 +6,11 @@ using UnityEngine;
 
 namespace SpaceCommander
 {
+    public enum DriverStatus { Movement, Waiting};
     class SpaceMovementController : IDriver
     {
+        private DriverStatus status;
+        public DriverStatus Status { get { return status; } }
         public bool tridimensional = true;
         public float gridStep = 5f;
         public float accurancy = 7f;
@@ -46,13 +49,14 @@ namespace SpaceCommander
         {
             if (path.Count > 0)
             {
-                if ((path.Last() - walkerTransform.position).magnitude < accurancy)
+                if ((path.Peek() - walkerTransform.position).magnitude < accurancy)
                 {
                     path.Dequeue();
                 }
                 MoveSimple();
                 Rotate();
             }
+            else status = DriverStatus.Waiting;
         }
         public bool MoveTo(Vector3 destination)
         {
@@ -62,10 +66,12 @@ namespace SpaceCommander
         public bool MoveToQueue(Vector3 destination)
         {
             Debug.Log("MoveTo " + destination);
-            if (Physics.Raycast(walkerTransform.position, (walkerTransform.position - destination), (walkerTransform.position - destination).magnitude))
+            status = DriverStatus.Movement;
+            if (!CanWalk(walkerTransform.position, destination))
             {
                 Debug.Log("Find barier, build path");
-                Vector3[] pathPoints = BuildPath(destination);
+                float accuracyFactor = (1 + (Vector3.Distance(walkerTransform.position, destination) / (accurancy * 10)));
+                Vector3[] pathPoints = BuildPath(destination, accuracyFactor);
                 if (pathPoints != null)
                 {
                     Debug.Log("Path created");
@@ -82,50 +88,55 @@ namespace SpaceCommander
             {
                 Debug.Log("Barier not finded");
                 path.Enqueue(destination);
+                return true;
             }
             return false;
         }
 
-        private Vector3[] BuildPath(Vector3 destination)
+        private Vector3[] BuildPath(Vector3 destination, float accuracyFactor)
         {
             // Шаг 1.
-            var closedSet = new List<PathNode>();
-            var openSet = new List<PathNode>();
+            List<PathNode> closedSet = new List<PathNode>();
+            List<PathNode> openSet = new List<PathNode>();
             int steps = 0;
+            Vector3 startPos;
+            if (path.Count > 0)
+                startPos = path.Last();
+            else
+                startPos = walkerTransform.position;
             // Шаг 2.
             PathNode startNode = new PathNode()
             {
-                Position = walkerTransform.position,
+                Position = startPos,
                 CameFrom = null,
                 PathLengthFromStart = 0,
                 HeuristicEstimatePathLength = GetHeuristicPathLength(walkerTransform.position, destination)
             };
             openSet.Add(startNode);
-            while (openSet.Count > 0 && steps < 1000000)
+            PathNode currentNode;
+            while (openSet.Count > 0 && steps < 1000)
             {
                 steps++;
                 // Шаг 3.
-                var currentNode = openSet.OrderBy(node =>
-                  node.EstimateFullPathLength).First();
+                currentNode = openSet.OrderBy(node => node.EstimateFullPathLength).First();
                 // Шаг 4.
-                if (currentNode.Position == destination)
+                if (Vector3.Distance(currentNode.Position, destination) <= accurancy * accuracyFactor)
                     return GetPathForNode(currentNode).ToArray();
                 // Шаг 5.
                 openSet.Remove(currentNode);
                 closedSet.Add(currentNode);
                 // Шаг 6.
-                foreach (var neighbourNode in GetNeighbours(currentNode, destination))
+                List<PathNode> neighbours = GetNeighbours(currentNode, destination, accuracyFactor);
+                foreach (PathNode neighbourNode in neighbours)
                 {
                     // Шаг 7.
                     if (closedSet.Count(node => node.Position == neighbourNode.Position) > 0)
                         continue;
-                    var openNode = openSet.FirstOrDefault(node =>
-                      node.Position == neighbourNode.Position);
+                    PathNode openNode = openSet.Find(node => node.Position == neighbourNode.Position);
                     // Шаг 8.
                     if (openNode == null)
                         openSet.Add(neighbourNode);
-                    else
-                      if (openNode.PathLengthFromStart > neighbourNode.PathLengthFromStart)
+                    else if (openNode.PathLengthFromStart > neighbourNode.PathLengthFromStart)
                     {
                         // Шаг 9.
                         openNode.CameFrom = currentNode;
@@ -142,65 +153,84 @@ namespace SpaceCommander
             return Mathf.Abs(from.x - to.x) + Math.Abs(from.y - to.y) + Math.Abs(from.z - to.z);
         }
 
-        private List<PathNode> GetNeighbours(PathNode pathNode, Vector3 goal)
+        private List<PathNode> GetNeighbours(PathNode pathNode, Vector3 destination, float accuracyFactor)
         {
             var result = new List<PathNode>();
+            float gridStepLocal = gridStep * accuracyFactor;
 
             // Соседними точками являются соседние по стороне клетки.
             Vector3[] neighbourPoints = new Vector3[26];
-            neighbourPoints[0] = new Vector3(pathNode.Position.x + gridStep, pathNode.Position.y - gridStep, pathNode.Position.z - gridStep);
-            neighbourPoints[1] = new Vector3(pathNode.Position.x + gridStep, pathNode.Position.y, pathNode.Position.z - gridStep);
-            neighbourPoints[2] = new Vector3(pathNode.Position.x + gridStep, pathNode.Position.y + gridStep, pathNode.Position.z - gridStep);
+            neighbourPoints[0] = new Vector3(pathNode.Position.x + gridStepLocal, pathNode.Position.y - gridStepLocal, pathNode.Position.z - gridStepLocal);
+            neighbourPoints[1] = new Vector3(pathNode.Position.x + gridStepLocal, pathNode.Position.y,            pathNode.Position.z - gridStepLocal);
+            neighbourPoints[2] = new Vector3(pathNode.Position.x + gridStepLocal, pathNode.Position.y + gridStepLocal, pathNode.Position.z - gridStepLocal);
 
-            neighbourPoints[3] = new Vector3(pathNode.Position.x + gridStep, pathNode.Position.y - gridStep, pathNode.Position.z);
-            neighbourPoints[4] = new Vector3(pathNode.Position.x + gridStep, pathNode.Position.y, pathNode.Position.z);
-            neighbourPoints[5] = new Vector3(pathNode.Position.x + gridStep, pathNode.Position.y + gridStep, pathNode.Position.z);
+            neighbourPoints[3] = new Vector3(pathNode.Position.x + gridStepLocal, pathNode.Position.y - gridStepLocal, pathNode.Position.z);
+            neighbourPoints[4] = new Vector3(pathNode.Position.x + gridStepLocal, pathNode.Position.y,            pathNode.Position.z);
+            neighbourPoints[5] = new Vector3(pathNode.Position.x + gridStepLocal, pathNode.Position.y + gridStepLocal, pathNode.Position.z);
 
-            neighbourPoints[6] = new Vector3(pathNode.Position.x + gridStep, pathNode.Position.y, pathNode.Position.z + gridStep);
-            neighbourPoints[7] = new Vector3(pathNode.Position.x + gridStep, pathNode.Position.y, pathNode.Position.z + gridStep);
-            neighbourPoints[8] = new Vector3(pathNode.Position.x + gridStep, pathNode.Position.y, pathNode.Position.z + gridStep);
+            neighbourPoints[6] = new Vector3(pathNode.Position.x + gridStepLocal, pathNode.Position.y - gridStepLocal, pathNode.Position.z + gridStepLocal);
+            neighbourPoints[7] = new Vector3(pathNode.Position.x + gridStepLocal, pathNode.Position.y,            pathNode.Position.z + gridStepLocal);
+            neighbourPoints[8] = new Vector3(pathNode.Position.x + gridStepLocal, pathNode.Position.y + gridStepLocal, pathNode.Position.z + gridStepLocal);
 
-            neighbourPoints[9] = new Vector3(pathNode.Position.x, pathNode.Position.y - gridStep, pathNode.Position.z - gridStep);
-            neighbourPoints[10] = new Vector3(pathNode.Position.x, pathNode.Position.y, pathNode.Position.z - gridStep);
-            neighbourPoints[11] = new Vector3(pathNode.Position.x + gridStep, pathNode.Position.y + gridStep, pathNode.Position.z - gridStep);
+            neighbourPoints[9] = new Vector3(pathNode.Position.x, pathNode.Position.y - gridStepLocal, pathNode.Position.z - gridStepLocal);
+            neighbourPoints[10] = new Vector3(pathNode.Position.x, pathNode.Position.y,           pathNode.Position.z - gridStepLocal);
+            neighbourPoints[11] = new Vector3(pathNode.Position.x + gridStepLocal, pathNode.Position.y + gridStepLocal, pathNode.Position.z - gridStepLocal);
 
-            neighbourPoints[12] = new Vector3(pathNode.Position.x, pathNode.Position.y - gridStep, pathNode.Position.z);
+            neighbourPoints[12] = new Vector3(pathNode.Position.x, pathNode.Position.y - gridStepLocal, pathNode.Position.z);
             //this pathNode
-            neighbourPoints[13] = new Vector3(pathNode.Position.x, pathNode.Position.y + gridStep, pathNode.Position.z);
+            neighbourPoints[13] = new Vector3(pathNode.Position.x, pathNode.Position.y + gridStepLocal, pathNode.Position.z);
 
-            neighbourPoints[14] = new Vector3(pathNode.Position.x, pathNode.Position.y, pathNode.Position.z + gridStep);
-            neighbourPoints[15] = new Vector3(pathNode.Position.x, pathNode.Position.y, pathNode.Position.z + gridStep);
-            neighbourPoints[16] = new Vector3(pathNode.Position.x, pathNode.Position.y, pathNode.Position.z + gridStep);
+            neighbourPoints[14] = new Vector3(pathNode.Position.x, pathNode.Position.y - gridStepLocal, pathNode.Position.z + gridStepLocal);
+            neighbourPoints[15] = new Vector3(pathNode.Position.x, pathNode.Position.y,            pathNode.Position.z + gridStepLocal);
+            neighbourPoints[16] = new Vector3(pathNode.Position.x, pathNode.Position.y + gridStepLocal, pathNode.Position.z + gridStepLocal);
 
-            neighbourPoints[17] = new Vector3(pathNode.Position.x - gridStep, pathNode.Position.y - gridStep, pathNode.Position.z - gridStep);
-            neighbourPoints[18] = new Vector3(pathNode.Position.x - gridStep, pathNode.Position.y, pathNode.Position.z - gridStep);
-            neighbourPoints[19] = new Vector3(pathNode.Position.x - gridStep, pathNode.Position.y + gridStep, pathNode.Position.z - gridStep);
+            neighbourPoints[17] = new Vector3(pathNode.Position.x - gridStepLocal, pathNode.Position.y - gridStepLocal, pathNode.Position.z - gridStepLocal);
+            neighbourPoints[18] = new Vector3(pathNode.Position.x - gridStepLocal, pathNode.Position.y,            pathNode.Position.z - gridStepLocal);
+            neighbourPoints[19] = new Vector3(pathNode.Position.x - gridStepLocal, pathNode.Position.y + gridStepLocal, pathNode.Position.z - gridStepLocal);
 
-            neighbourPoints[20] = new Vector3(pathNode.Position.x - gridStep, pathNode.Position.y - gridStep, pathNode.Position.z);
-            neighbourPoints[21] = new Vector3(pathNode.Position.x - gridStep, pathNode.Position.y, pathNode.Position.z);
-            neighbourPoints[22] = new Vector3(pathNode.Position.x - gridStep, pathNode.Position.y + gridStep, pathNode.Position.z);
+            neighbourPoints[20] = new Vector3(pathNode.Position.x - gridStepLocal, pathNode.Position.y - gridStepLocal, pathNode.Position.z);
+            neighbourPoints[21] = new Vector3(pathNode.Position.x - gridStepLocal, pathNode.Position.y,            pathNode.Position.z);
+            neighbourPoints[22] = new Vector3(pathNode.Position.x - gridStepLocal, pathNode.Position.y + gridStepLocal, pathNode.Position.z);
 
-            neighbourPoints[23] = new Vector3(pathNode.Position.x - gridStep, pathNode.Position.y, pathNode.Position.z + gridStep);
-            neighbourPoints[24] = new Vector3(pathNode.Position.x - gridStep, pathNode.Position.y, pathNode.Position.z + gridStep);
-            neighbourPoints[25] = new Vector3(pathNode.Position.x - gridStep, pathNode.Position.y, pathNode.Position.z + gridStep);
+            neighbourPoints[23] = new Vector3(pathNode.Position.x - gridStepLocal, pathNode.Position.y - gridStepLocal, pathNode.Position.z + gridStepLocal);
+            neighbourPoints[24] = new Vector3(pathNode.Position.x - gridStepLocal, pathNode.Position.y,            pathNode.Position.z + gridStepLocal);
+            neighbourPoints[25] = new Vector3(pathNode.Position.x - gridStepLocal, pathNode.Position.y + gridStepLocal, pathNode.Position.z + gridStepLocal);
 
+            //debug
+            GameObject worldpoint = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            worldpoint.GetComponent<SphereCollider>().enabled = false;
+            worldpoint.AddComponent<SelfDestructor>().ttl = 1f;
 
-            foreach (var point in neighbourPoints)
+            foreach (Vector3 point in neighbourPoints)
             {
+                //debug
+                GameObject.Instantiate(worldpoint, point, walkerTransform.rotation);
+
                 // Проверяем, что по клетке можно ходить.
-                if (FreeSpace(point))
+                if (!CanWalk(pathNode.Position, point))
                     continue;
                 // Заполняем данные для точки маршрута.
-                var neighbourNode = new PathNode()
+                PathNode neighbourNode = new PathNode()
                 {
                     Position = point,
                     CameFrom = pathNode,
                     PathLengthFromStart = pathNode.PathLengthFromStart + Vector3.Distance(pathNode.Position, point),
-                    HeuristicEstimatePathLength = GetHeuristicPathLength(point, goal)
+                    HeuristicEstimatePathLength = GetHeuristicPathLength(point, destination)
                 };
                 result.Add(neighbourNode);
             }
             return result;
+        }
+
+        private bool CanWalk(Vector3 position, Vector3 destination)
+        { 
+            RaycastHit[] hits = Physics.RaycastAll(position, (destination - position), (destination - position).magnitude); //9 is Terrain layer
+            for (int i = 0; i < hits.Length; i++)
+            {
+                if (hits[i].collider.tag == "Terrain")
+                    return false;
+            }
+            return true;
         }
 
         private bool FreeSpace(Vector3 point)
@@ -208,12 +238,20 @@ namespace SpaceCommander
             return (Physics.OverlapSphere(point, checkRadius).Length == 0);
         }
 
-        private static List<Vector3> GetPathForNode(PathNode pathNode)
+        private List<Vector3> GetPathForNode(PathNode pathNode)
         {
-            var result = new List<Vector3>();
-            var currentNode = pathNode;
+            List<Vector3> result = new List<Vector3>();
+            PathNode currentNode = pathNode;
+            //debug
+            GameObject worldpoint = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            worldpoint.GetComponent<SphereCollider>().enabled = false;
+            worldpoint.AddComponent<SelfDestructor>().ttl = 15f;
+
             while (currentNode != null)
             {
+                //debug
+                GameObject.Instantiate(worldpoint, currentNode.Position, walkerTransform.rotation);
+
                 result.Add(currentNode.Position);
                 currentNode = currentNode.CameFrom;
             }
@@ -310,8 +348,12 @@ namespace SpaceCommander
         {
             if (walker.Gunner.Target == null)
             {
-                Quaternion targetRotation = Quaternion.LookRotation(path.Peek() - walker.transform.position, new Vector3(0, 1, 0));
-                walker.transform.rotation = Quaternion.RotateTowards(walker.transform.rotation, targetRotation, Time.deltaTime * walker.RotationSpeed * 5.5f);
+                Vector3 targetDirection = path.Peek() - walker.transform.position;
+                if (targetDirection != Vector3.zero)
+                {
+                    Quaternion targetRotation = Quaternion.LookRotation(targetDirection, new Vector3(0, 1, 0));
+                    walker.transform.rotation = Quaternion.RotateTowards(walker.transform.rotation, targetRotation, Time.deltaTime * walker.RotationSpeed * 5.5f);
+                }
             }
         }
     }
@@ -332,6 +374,10 @@ namespace SpaceCommander
             {
                 return this.PathLengthFromStart + this.HeuristicEstimatePathLength;
             }
+        }
+        public override string ToString()
+        {
+            return Position.ToString();
         }
     }
 }

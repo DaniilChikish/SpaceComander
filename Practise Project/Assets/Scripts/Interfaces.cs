@@ -28,6 +28,7 @@ namespace SpaceCommander
         bool MoveToQueue(Vector3 destination);
         void ClearQueue();
         int PathPoints { get; }
+        DriverStatus Status { get; }
         Vector3 NextPoint { get; }
     }
     public interface IGunner

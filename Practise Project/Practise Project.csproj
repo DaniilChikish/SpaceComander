@@ -102,6 +102,7 @@
     <Compile Include="Assets\Scripts\Scenarios\Mission1.cs" />
     <Compile Include="Assets\Scripts\Scenarios\Mission2.cs" />
     <Compile Include="Assets\Scripts\Scenarios\Scenario.cs" />
+    <Compile Include="Assets\Scripts\SelfDestructor.cs" />
     <Compile Include="Assets\Scripts\SerializeData.cs" />
     <Compile Include="Assets\Scripts\ShipManualController.cs" />
     <Compile Include="Assets\Scripts\Units\Armor.cs" />

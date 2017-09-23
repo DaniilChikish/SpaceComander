@@ -224,6 +224,7 @@ namespace SpaceCommander
     }
     public class NavmeshMovementController : IDriver
     {
+        private DriverStatus status;
         private SpaceShip walker;
         private Transform walkerTransform;
         private NavMeshAgent walkerAgent;
@@ -238,6 +239,7 @@ namespace SpaceCommander
                 else return path.Count + 1;
             }
         }
+        public DriverStatus Status { get { return status; } }
         public Vector3 NextPoint { get { if (PathPoints > 1) return walkerAgent.pathEndPosition; else return Vector3.zero; } }
         //public float backCount; //время обновления пути.
         public NavmeshMovementController(GameObject walker)

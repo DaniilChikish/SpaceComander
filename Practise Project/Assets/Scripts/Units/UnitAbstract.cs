@@ -236,7 +236,7 @@ namespace SpaceCommander
                         if (selfDefenceModuleEnabled)
                             SelfDefenceFunction();
                     }
-                    if (Driver.PathPoints == 0)
+                    if (Driver.Status == DriverStatus.Waiting)
                         switch (aiStatus)
                         {
                             case UnitStateType.MoveAI:
@@ -985,7 +985,25 @@ namespace SpaceCommander
             }
             else return BackToAncour();
         }
-
+        private bool CanPatrool(Vector3[] path)
+        {
+            for (int i = 1; i < path.Length; i++)
+            {
+                if (!CanWalk(path[i - 1], path[i]))
+                    return false;
+            }
+            return true;
+        }
+        private bool CanWalk(Vector3 position, Vector3 destination)
+        {
+            RaycastHit[] hits = Physics.RaycastAll(position, (destination - position), (destination - position).magnitude); //9 is Terrain layer
+            for (int i = 0; i < hits.Length; i++)
+            {
+                if (hits[i].collider.tag == "Terrain")
+                    return false;
+            }
+            return true;
+        }
         //sensors
         protected void Scan() //___________Scan
         {
@@ -2058,19 +2076,25 @@ namespace SpaceCommander
         //remote control
         public virtual void SendTo(Vector3 destination)
         {
-            Debug.Log("SendTo " + destination);
-
-            orderBackCount = Vector3.Distance(this.transform.position, destination) / (this.GetComponent<NavMeshAgent>().speed * 0.9f);
+            //Debug.Log("Send To " + destination);
+            //orderBackCount = Vector3.Distance(this.transform.position, destination) / (this.GetComponent<NavMeshAgent>().speed * 0.9f);
             aiStatus = UnitStateType.UnderControl;
             Driver.MoveTo(destination);
         }
         public virtual void SendToQueue(Vector3 destination)
         {
-            Debug.Log("SendTo " + destination);
-
-            orderBackCount += Vector3.Distance(this.transform.position, destination) / (this.GetComponent<NavMeshAgent>().speed * 0.9f);
+            //Debug.Log("Add To Quenue " + destination);
+            //orderBackCount += Vector3.Distance(this.transform.position, destination) / (this.GetComponent<NavMeshAgent>().speed * 0.9f);
             aiStatus = UnitStateType.UnderControl;
             Driver.MoveToQueue(destination);
+        }
+        protected virtual void SendToQueue(Vector3[] path)
+        {
+            aiStatus = UnitStateType.UnderControl;
+            for (int i = 0; i < path.Length; i++)
+            {
+                Driver.MoveToQueue(path[i]);
+            }
         }
         public virtual void AttackThat(Unit target)
         {
