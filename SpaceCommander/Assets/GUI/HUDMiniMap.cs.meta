@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: b6ebd7f9ca23be34d9cf31083d22af60
+timeCreated: 1493463150
+licenseType: Free
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - Skin: {instanceID: 0}
+  - Background: {fileID: 2800000, guid: 9e6d99c33c4708a4db562725990497f8, type: 3}
+  - Map: {fileID: 8400000, guid: 100de01d260434e42b073eab8b78019c, type: 2}
+  - North: {fileID: 2800000, guid: af1f12a591294d04a80c58a96ae7890e, type: 3}
+  - East: {fileID: 2800000, guid: 7f5f568fa11b9d740b2e7e15644dc285, type: 3}
+  - West: {fileID: 2800000, guid: 02668d60660ed37459dd97f2b3127981, type: 3}
+  - South: {fileID: 2800000, guid: 471728c062ce76044a05ad2bbd15cfc6, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

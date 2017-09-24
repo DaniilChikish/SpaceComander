@@ -1,0 +1,44 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2015
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Space Commander.Plugins", "Space Commander.Plugins.csproj", "{FD2AA7FE-7183-DA10-7CFB-A24BAAB8FBFB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Space Commander", "Space Commander.csproj", "{E9BD1DA7-8EBC-DB6D-64A5-0BD6B27F2FBF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Space Commander.Editor.Plugins", "Space Commander.Editor.Plugins.csproj", "{668B82CE-E0CF-7A28-660E-1961FA946BCF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Space Commander.Editor", "Space Commander.Editor.csproj", "{6AC359B0-1336-B618-703B-1FC96153DCDB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Space CommanderTests", "..\Space CommanderTests\Space CommanderTests.csproj", "{F5515AEE-6DEF-4244-9B77-84D1591A3DA0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FD2AA7FE-7183-DA10-7CFB-A24BAAB8FBFB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD2AA7FE-7183-DA10-7CFB-A24BAAB8FBFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD2AA7FE-7183-DA10-7CFB-A24BAAB8FBFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD2AA7FE-7183-DA10-7CFB-A24BAAB8FBFB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E9BD1DA7-8EBC-DB6D-64A5-0BD6B27F2FBF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9BD1DA7-8EBC-DB6D-64A5-0BD6B27F2FBF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9BD1DA7-8EBC-DB6D-64A5-0BD6B27F2FBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9BD1DA7-8EBC-DB6D-64A5-0BD6B27F2FBF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{668B82CE-E0CF-7A28-660E-1961FA946BCF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{668B82CE-E0CF-7A28-660E-1961FA946BCF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{668B82CE-E0CF-7A28-660E-1961FA946BCF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{668B82CE-E0CF-7A28-660E-1961FA946BCF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6AC359B0-1336-B618-703B-1FC96153DCDB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6AC359B0-1336-B618-703B-1FC96153DCDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6AC359B0-1336-B618-703B-1FC96153DCDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6AC359B0-1336-B618-703B-1FC96153DCDB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F5515AEE-6DEF-4244-9B77-84D1591A3DA0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5515AEE-6DEF-4244-9B77-84D1591A3DA0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5515AEE-6DEF-4244-9B77-84D1591A3DA0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5515AEE-6DEF-4244-9B77-84D1591A3DA0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

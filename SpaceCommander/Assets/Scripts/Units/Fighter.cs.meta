@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 7a32580488542634abbb2759abe5b5b8
+timeCreated: 1498838301
+licenseType: Free
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - enemyIcon: {fileID: 2800000, guid: 9960ed343a455be49a007f15352a79af, type: 3}
+  - aliesIcon: {fileID: 2800000, guid: 2ba5f22af0916b94991c19dd12064165, type: 3}
+  - selectedIcon: {fileID: 2800000, guid: b7f140452ae80d7438b2d109cf820dd9, type: 3}
+  - CurrentTarget: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

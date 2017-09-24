@@ -57,7 +57,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Practise Project\Space Commander.csproj">
+    <ProjectReference Include="..\Space Commander\Space Commander.csproj">
       <Project>{93C29301-D512-69DE-4433-02243F387B2F}</Project>
       <Name>Space Commander</Name>
     </ProjectReference>
