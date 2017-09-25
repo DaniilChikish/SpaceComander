@@ -17,7 +17,7 @@ namespace SpaceCommander.Units
             radarRange = 1100; //set in child
             radarPover = 1f;
             speedThrust = 12; //set in child
-            speedRotation = 77;
+            speedRotation = 80;
             speedShift = 12;
             stealthness = 0.7f; //set in child
             radiolink = 1.5f;
@@ -99,13 +99,15 @@ namespace SpaceCommander.Units
         {
             UseModule(new SpellFunction[] { SpellFunction.Attack, SpellFunction.Buff });
             aiStatus = UnitStateType.UnderControl;
-            Driver.MoveTo(destination);
+            if (Driver.MoveTo(destination) && Team == Global.playerArmy)
+                Driver.BuildPathArrows();
         }
         public override void SendToQueue(Vector3 destination)
         {
             UseModule(new SpellFunction[] { SpellFunction.Attack, SpellFunction.Buff });
             aiStatus = UnitStateType.UnderControl;
-            Driver.MoveToQueue(destination);
+            if (Driver.MoveToQueue(destination) && Team == Global.playerArmy)
+                Driver.BuildPathArrows();
         }
     }
 }

@@ -5,6 +5,7 @@ using UnityEngine;
 namespace SpaceCommander.Weapons
 {
     public class Railgun : ShellWeapon {
+        float damageAccumulate =1;
         public override void StatUp()
         {
             type = WeaponType.Railgun;
@@ -12,17 +13,24 @@ namespace SpaceCommander.Weapons
             range = 1500;
             ammoCampacity = 10;
             ammo = AmmoCampacity;
-            firerate = 15;//200 DD, 40 DpS
+            firerate = 60;//200 DD, 40 DpS
             reloadingTime = 10;
             dispersion = 0.0f;
             shildBlinkTime = 0.05f;
             averageRoundSpeed = 300;
             PreAiming = true;
         }
+        protected override void UpdateLocal()
+        {
+            if (damageAccumulate < 4)
+            damageAccumulate += Time.deltaTime;
+            averageRoundSpeed = 200f * damageAccumulate / 2;
+        }
         protected override void Shoot(Transform target)
         {
-            float speed = 300f;
-            float damage = 500f;
+            float speed = 200f * damageAccumulate / 2;
+            float damage = 100f * damageAccumulate;
+            damageAccumulate = 1;
             float armorPiersing = 6f;
             float mass = 40f;
 

@@ -43,6 +43,7 @@ namespace SpaceCommander
         public GameObject EMIExplosionPrefab;
         public GameObject NukeBlast;
         public GameObject ShipDieBlast;
+        public GameObject pathArrow;
         public double[] RandomNormalPool;
         public double RandomNormalAverage;
         //public double[] RandomExponentPool;
@@ -310,6 +311,11 @@ namespace SpaceCommander
             walker.GetComponent<NavMeshAgent>().ResetPath();
             //backCount = 0;
             path.Clear();
+        }
+
+        public void BuildPathArrows()
+        {
+            throw new NotImplementedException();
         }
     }
     public class ShootController : IGunner

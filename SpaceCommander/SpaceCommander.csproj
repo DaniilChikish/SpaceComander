@@ -5,17 +5,17 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{04F34A1F-BE3E-9AB0-0853-4B31B40A09E3}</ProjectGuid>
+    <ProjectGuid>{93C29301-D512-69DE-4433-02243F387B2F}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <AssemblyName>Assembly-CSharp-Editor-firstpass</AssemblyName>
+    <AssemblyName>Assembly-CSharp</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{E097FAD1-6243-4DAD-9C02-E9B9EFC3FFC1};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Unity Full v3.5</TargetFrameworkProfile>
+    <TargetFrameworkProfile>Unity Subset v3.5</TargetFrameworkProfile>
     <CompilerResponseFile>
     </CompilerResponseFile>
-    <UnityProjectType>EditorPlugins:7</UnityProjectType>
+    <UnityProjectType>Game:1</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows:5</UnityBuildTarget>
     <UnityVersion>5.5.1f1</UnityVersion>
     <RootNamespace>
@@ -54,85 +54,109 @@
     <Reference Include="UnityEngine">
       <HintPath>Library\UnityAssemblies\UnityEngine.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEditor">
-      <HintPath>Library\UnityAssemblies\UnityEditor.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEditor.Advertisements">
-      <HintPath>Library\UnityAssemblies\UnityEditor.Advertisements.dll</HintPath>
-    </Reference>
-    <Reference Include="nunit.framework">
-      <HintPath>Library\UnityAssemblies\nunit.framework.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEditor.EditorTestsRunner">
-      <HintPath>Library\UnityAssemblies\UnityEditor.EditorTestsRunner.dll</HintPath>
-    </Reference>
     <Reference Include="UnityEngine.UI">
       <HintPath>Library\UnityAssemblies\UnityEngine.UI.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEditor.UI">
-      <HintPath>Library\UnityAssemblies\UnityEditor.UI.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.Networking">
       <HintPath>Library\UnityAssemblies\UnityEngine.Networking.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEditor.Networking">
-      <HintPath>Library\UnityAssemblies\UnityEditor.Networking.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEditor.PlaymodeTestsRunner">
-      <HintPath>Library\UnityAssemblies\UnityEditor.PlaymodeTestsRunner.dll</HintPath>
-    </Reference>
     <Reference Include="UnityEngine.PlaymodeTestsRunner">
       <HintPath>Library\UnityAssemblies\UnityEngine.PlaymodeTestsRunner.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEditor.TreeEditor">
-      <HintPath>Library\UnityAssemblies\UnityEditor.TreeEditor.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.Analytics">
       <HintPath>Library\UnityAssemblies\UnityEngine.Analytics.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEditor.Analytics">
-      <HintPath>Library\UnityAssemblies\UnityEditor.Analytics.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEditor.HoloLens">
-      <HintPath>Library\UnityAssemblies\UnityEditor.HoloLens.dll</HintPath>
-    </Reference>
     <Reference Include="UnityEngine.HoloLens">
       <HintPath>Library\UnityAssemblies\UnityEngine.HoloLens.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEditor.VR">
-      <HintPath>Library\UnityAssemblies\UnityEditor.VR.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.VR">
       <HintPath>Library\UnityAssemblies\UnityEngine.VR.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEditor.Graphs">
-      <HintPath>Library\UnityAssemblies\UnityEditor.Graphs.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEditor.Android.Extensions">
-      <HintPath>Library\UnityAssemblies\UnityEditor.Android.Extensions.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEditor.WindowsStandalone.Extensions">
-      <HintPath>Library\UnityAssemblies\UnityEditor.WindowsStandalone.Extensions.dll</HintPath>
-    </Reference>
-    <Reference Include="SyntaxTree.VisualStudio.Unity.Bridge">
-      <HintPath>Library\UnityAssemblies\SyntaxTree.VisualStudio.Unity.Bridge.dll</HintPath>
-    </Reference>
-    <Reference Include="Assembly-UnityScript">
-      <HintPath>Library\ScriptAssemblies\Assembly-UnityScript.dll</HintPath>
+    <Reference Include="UnityEditor">
+      <HintPath>Library\UnityAssemblies\UnityEditor.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="Space Commander.Plugins.csproj">
+    <ProjectReference Include="SpaceCommander.Plugins.csproj">
       <Project>{972A4390-72D1-E11A-9BC4-8622941630DB}</Project>
-      <Name>Space Commander.Plugins</Name>
-    </ProjectReference>
-    <ProjectReference Include="Space Commander.csproj">
-      <Project>{93C29301-D512-69DE-4433-02243F387B2F}</Project>
-      <Name>Space Commander</Name>
+      <Name>SpaceCommander.Plugins</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Standard Assets\Editor\CrossPlatformInput\CrossPlatformInputInitialize.cs" />
+    <Compile Include="Assets\GUI\HUDBase.cs" />
+    <Compile Include="Assets\GUI\HUDMiniMap.cs" />
+    <Compile Include="Assets\GUI\HUDUnitPrew.cs" />
+    <Compile Include="Assets\GUI\MainMenu.cs" />
+    <Compile Include="Assets\GUI\MoveTarget.cs" />
+    <Compile Include="Assets\GUI\Selection\Script\UnitSelectionComponent.cs" />
+    <Compile Include="Assets\GUI\Selection\Script\Utils.cs" />
+    <Compile Include="Assets\GUI\SpaceShipGUIObserver.cs" />
+    <Compile Include="Assets\RTS_Camera\Demo\DemoScene.cs" />
+    <Compile Include="Assets\RTS_Camera\Demo\TargetSelector.cs" />
+    <Compile Include="Assets\RTS_Camera\Scripts\RTS_Camera.cs" />
+    <Compile Include="Assets\Scripts\Base.cs" />
+    <Compile Include="Assets\Scripts\CameraMovementScript.cs" />
+    <Compile Include="Assets\Scripts\Enums.cs" />
+    <Compile Include="Assets\Scripts\Explosion.cs" />
+    <Compile Include="Assets\Scripts\GlobalController.cs" />
+    <Compile Include="Assets\Scripts\Interfaces.cs" />
+    <Compile Include="Assets\Scripts\OrbitalCamera.cs" />
+    <Compile Include="Assets\Scripts\RepairDock.cs" />
+    <Compile Include="Assets\Scripts\Scenarios\Mission1.cs" />
+    <Compile Include="Assets\Scripts\Scenarios\Mission2.cs" />
+    <Compile Include="Assets\Scripts\Scenarios\Scenario.cs" />
+    <Compile Include="Assets\Scripts\SelfDestructor.cs" />
+    <Compile Include="Assets\Scripts\SerializeData.cs" />
+    <Compile Include="Assets\Scripts\ShipManualController.cs" />
+    <Compile Include="Assets\Scripts\Units\Armor.cs" />
+    <Compile Include="Assets\Scripts\Units\Bait.cs" />
+    <Compile Include="Assets\Scripts\Units\Bomber.cs" />
+    <Compile Include="Assets\Scripts\Units\Command.cs" />
+    <Compile Include="Assets\Scripts\Units\ECM.cs" />
+    <Compile Include="Assets\Scripts\Units\Fighter.cs" />
+    <Compile Include="Assets\Scripts\Units\ForceShield.cs" />
+    <Compile Include="Assets\Scripts\Units\Guard_Corvette.cs" />
+    <Compile Include="Assets\Scripts\Units\GunMachine.cs" />
+    <Compile Include="Assets\Scripts\Units\LR_Corvette.cs" />
+    <Compile Include="Assets\Scripts\Units\Recon.cs" />
+    <Compile Include="Assets\Scripts\Units\Scout.cs" />
+    <Compile Include="Assets\Scripts\Units\SpaceMovementController.cs" />
+    <Compile Include="Assets\Scripts\Units\SpellModule.cs" />
+    <Compile Include="Assets\Scripts\Units\Support_Corvette.cs" />
+    <Compile Include="Assets\Scripts\Units\UnitAbstract.cs" />
+    <Compile Include="Assets\Scripts\Utils\DeusRandomizer.cs" />
+    <Compile Include="Assets\Scripts\Utils\DeusUIUtility.cs" />
+    <Compile Include="Assets\Scripts\Utils\DeusUtilityBase.cs" />
+    <Compile Include="Assets\Scripts\WarpArrive.cs" />
+    <Compile Include="Assets\Scripts\WeponScript\Chaingun.cs" />
+    <Compile Include="Assets\Scripts\WeponScript\MachineCannon.cs" />
+    <Compile Include="Assets\Scripts\WeponScript\BigCannon.cs" />
+    <Compile Include="Assets\Scripts\WeponScript\BombardierMissile.cs" />
+    <Compile Include="Assets\Scripts\WeponScript\AutoBuckshotCannon.cs" />
+    <Compile Include="Assets\Scripts\WeponScript\BuckshotCannon.cs" />
+    <Compile Include="Assets\Scripts\WeponScript\CannonShell.cs" />
+    <Compile Include="Assets\Scripts\WeponScript\HunterMissile.cs" />
+    <Compile Include="Assets\Scripts\WeponScript\InterceptorMissile.cs" />
+    <Compile Include="Assets\Scripts\WeponScript\Laser.cs" />
+    <Compile Include="Assets\Scripts\WeponScript\LaserImpulse.cs" />
+    <Compile Include="Assets\Scripts\WeponScript\MagnetohydrodynamicCannon.cs" />
+    <Compile Include="Assets\Scripts\WeponScript\MagnetoMine.cs" />
+    <Compile Include="Assets\Scripts\WeponScript\MagnetoShell.cs" />
+    <Compile Include="Assets\Scripts\WeponScript\MediumCannon.cs" />
+    <Compile Include="Assets\Scripts\WeponScript\MetheorMissile.cs" />
+    <Compile Include="Assets\Scripts\WeponScript\MissileTrap.cs" />
+    <Compile Include="Assets\Scripts\WeponScript\NukeTorpedo.cs" />
+    <Compile Include="Assets\Scripts\WeponScript\PlazmaCannon.cs" />
+    <Compile Include="Assets\Scripts\WeponScript\PlazmaSphere.cs" />
+    <Compile Include="Assets\Scripts\WeponScript\Railgun.cs" />
+    <Compile Include="Assets\Scripts\WeponScript\RailgunShell.cs" />
+    <Compile Include="Assets\Scripts\WeponScript\Railmortar.cs" />
+    <Compile Include="Assets\Scripts\WeponScript\RocketLauncher.cs" />
+    <Compile Include="Assets\Scripts\WeponScript\SmallCannon.cs" />
+    <Compile Include="Assets\Scripts\WeponScript\ShieldBreakerTorpedo.cs" />
+    <Compile Include="Assets\Scripts\WeponScript\SpruteTorpedo.cs" />
+    <Compile Include="Assets\Scripts\WeponScript\TorpedoLauncher.cs" />
+    <Compile Include="Assets\Scripts\WeponScript\UnitaryTorpedo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Effects\Shaders\SFE_TransparentAntiRim.shader" />

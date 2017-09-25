@@ -18,6 +18,7 @@ namespace SpaceCommander
         private SpaceShip walker;
         private Transform walkerTransform;
         private Rigidbody walkerBody;
+        private GlobalController Global;
 
         private float mainThrust;
         private float verticalShiftThrust;
@@ -41,14 +42,14 @@ namespace SpaceCommander
             this.walker = walker.GetComponent<SpaceShip>();
             walkerTransform = walker.GetComponent<Transform>();
             walkerBody = walker.GetComponent<Rigidbody>();
-
+            Global = GameObject.FindObjectOfType<GlobalController>();
             Debug.Log("Driver online");
         }
         public void Update()
         {
             if (path.Count > 0)
             {
-                MoveSimple();
+                Move();
                 Rotate();
                 if ((path.Peek() - walkerTransform.position).magnitude < accurancy)
                 {
@@ -96,7 +97,29 @@ namespace SpaceCommander
             }
             return false;
         }
+        public void BuildPathArrows()
+        {
+            Vector3[] pathLocal = path.ToArray();
+            GameObject arrow;
+            float dist;
 
+            arrow = GameObject.Instantiate(Global.pathArrow);
+            dist = Vector3.Distance(walkerTransform.position, pathLocal[0]);
+            arrow.transform.localScale = new Vector3(1, 1, dist);
+            arrow.transform.position = walkerTransform.position + (pathLocal[0] - walkerTransform.position).normalized * dist / 2;
+            arrow.transform.rotation = Quaternion.LookRotation((pathLocal[0] - walkerTransform.position), new Vector3(0, 1, 0));
+            arrow.AddComponent<SelfDestructor>().ttl = 2f;
+
+            for (int i = 0; i+1 < pathLocal.Length; i++)
+            {
+                arrow = GameObject.Instantiate(Global.pathArrow);
+                dist = Vector3.Distance(pathLocal[i], pathLocal[i + 1]);
+                arrow.transform.localScale = new Vector3(1, 1, dist);
+                arrow.transform.position = pathLocal[i] + (pathLocal[i+1] - pathLocal[i]).normalized * dist / 2;
+                arrow.transform.rotation = Quaternion.LookRotation((pathLocal[i + 1] - pathLocal[i]), new Vector3(0, 1, 0));
+                arrow.AddComponent<SelfDestructor>().ttl = 2f;
+            }
+        }
         private Vector3[] BuildPath(Vector3 destination, float accuracyFactor)
         {
             // Шаг 1.
@@ -125,7 +148,7 @@ namespace SpaceCommander
                 currentNode = openSet.OrderBy(node => node.EstimateFullPathLength).First();
                 // Шаг 4.
                 if (Vector3.Distance(currentNode.Position, destination) <= accurancy * accuracyFactor)
-                    return GetPathForNode(currentNode).ToArray();
+                    return CollapsePath(GetPathForNode(currentNode)).ToArray();
                 // Шаг 5.
                 openSet.Remove(currentNode);
                 closedSet.Add(currentNode);
@@ -301,14 +324,14 @@ namespace SpaceCommander
             PathNode currentNode = pathNode;
             
             //debug
-            GameObject worldpoint = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            worldpoint.GetComponent<SphereCollider>().enabled = false;
-            worldpoint.AddComponent<SelfDestructor>().ttl = 15f;
+            //GameObject worldpoint = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            //worldpoint.GetComponent<SphereCollider>().enabled = false;
+            //worldpoint.AddComponent<SelfDestructor>().ttl = 15f;
 
             while (currentNode != null)
             {
                 //debug
-                GameObject.Instantiate(worldpoint, currentNode.Position, walkerTransform.rotation);
+                //GameObject.Instantiate(worldpoint, currentNode.Position, walkerTransform.rotation);
 
                 result.Add(currentNode.Position);
                 currentNode = currentNode.CameFrom;
@@ -316,7 +339,19 @@ namespace SpaceCommander
             result.Reverse();
             return result;
         }
+        private List<Vector3> CollapsePath(List<Vector3> path)
+        {
+            List<Vector3> collapsedPath = path;
+            int i = 0;
+            while ((i+2) < collapsedPath.Count)
+            {
+                if (CanWalk(collapsedPath[i], collapsedPath[i + 2]))
+                    collapsedPath.Remove(collapsedPath[i + 1]);
+                else i = i + 1;
+            }
 
+            return collapsedPath;
+        }
         public void ClearQueue()
         {
             //backCount = 0;

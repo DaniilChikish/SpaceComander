@@ -28,7 +28,7 @@ namespace SpaceCommander.Units
             radarRange = 800; //set in child
             radarPover = 0.9f;
             speedThrust = 11f; //set in child
-            speedRotation = 60;
+            speedRotation = 75;
             speedShift = 11;
             jamming = false;
             stealthness = 0.6f; //set in child

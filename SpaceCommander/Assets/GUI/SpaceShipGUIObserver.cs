@@ -74,7 +74,7 @@ namespace SpaceCommander
         private ObserverMode mode;
         private float statusOpenedY;
         private float previevOpenedX;
-        private RTS_Cam.RTS_Camera maincam;
+        private OrbitalCamera maincam;
 
 
         private void OnEnable()
@@ -83,7 +83,7 @@ namespace SpaceCommander
             statusIsOpen = true;
             previevCount = MovDuratuon;
             previevIsOpen = true;
-            maincam = FindObjectOfType<RTS_Cam.RTS_Camera>();
+            maincam = FindObjectOfType<OrbitalCamera>();
             hud = FindObjectOfType<HUDBase>();
             Global = FindObjectOfType<GlobalController>();
             canvas = GameObject.Find("Canvas");
@@ -300,8 +300,8 @@ namespace SpaceCommander
                     SetObservable(Global.selectedList[0]);
                 if (observable.ManualControl)//observable status under manual control
                 {
-                    //maincam.TargetFollow = observable.GetTransform().GetComponent<Unit>();
-                    //maincam.mode = RTS_Cam.CamMode.ThirthPerson;
+                    maincam.TargetFollow = observable.GetTransform();
+                    maincam.mode = OrbitalCamMode.ThirthPerson;
                     mode = ObserverMode.Full;
                     if (previevIsOpen)
                     {
@@ -310,12 +310,10 @@ namespace SpaceCommander
                 }
                 else
                 {
-                    maincam.enabled = true;
                     FindObjectOfType<UnitSelectionComponent>().enabled = true;
-                    FindObjectOfType<UnityStandardAssets.Cameras.AutoCam>().enabled = false;
                     FindObjectOfType<ShipManualController>().enabled = false;
-                    maincam.TargetFollow = observable.GetTransform().GetComponent<Unit>();
-                    maincam.mode = RTS_Cam.CamMode.Folloving;
+                    maincam.TargetFollow = observable.GetTransform();
+                    maincam.mode = OrbitalCamMode.Folloving;
                     mode = ObserverMode.Half;
                     if (!previevIsOpen)
                     {
@@ -336,10 +334,8 @@ namespace SpaceCommander
                 }
                 maincam.TargetFollow = null;
                 observable = null;
-                maincam.enabled = true;
-                FindObjectOfType<UnityStandardAssets.Cameras.AutoCam>().enabled = false;
                 FindObjectOfType<ShipManualController>().enabled = false;
-                maincam.mode = RTS_Cam.CamMode.Free;
+                maincam.mode = OrbitalCamMode.Free;
                 FindObjectOfType<UnitSelectionComponent>().enabled = true;
                 mode = ObserverMode.None;
                 if (statusIsOpen)
@@ -548,14 +544,12 @@ namespace SpaceCommander
                 if (observable != null)
                 {
                     observable.ManualControl = true;
-                    maincam.enabled = false;
-                    FindObjectOfType<UnityStandardAssets.Cameras.AutoCam>().enabled = true;
                     if (observable.Type == UnitClass.LR_Corvette || observable.Type == UnitClass.Guard_Corvette || observable.Type == UnitClass.Support_Corvette)
-                        FindObjectOfType<UnityStandardAssets.Cameras.AutoCam>().targetOffset = new Vector3(0, 10, -15);
+                        maincam.targetOffset = new Vector3(0, 10, -15);
                     else if (observable.Type == UnitClass.Figther || observable.Type == UnitClass.Command || observable.Type == UnitClass.Bomber)
-                        FindObjectOfType<UnityStandardAssets.Cameras.AutoCam>().targetOffset = new Vector3(0, 5, -10);
-                    else FindObjectOfType<UnityStandardAssets.Cameras.AutoCam>().targetOffset = new Vector3(0, 1, -5);
-                    FindObjectOfType<UnityStandardAssets.Cameras.AutoCam>().SetTarget(observable.GetTransform());
+                        maincam.targetOffset = new Vector3(0, 5, -10);
+                    else maincam.targetOffset = new Vector3(0, 1, -5);
+                    maincam.TargetFollow = observable.GetTransform();
                     FindObjectOfType<ShipManualController>().owner = observable.GetTransform().GetComponent<SpaceShip>();
                     FindObjectOfType<ShipManualController>().enabled = true;
                 }

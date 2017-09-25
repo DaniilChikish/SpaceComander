@@ -58,11 +58,14 @@ namespace SpaceCommander
         private string verticalShiftAxis = "VerticalShift";
         private string pitchAxis = "Pitch";
         private string yawAxis = "Yaw";
+        private string pitchAxisMouse = "PitchMouse";
+        private string yawAxisMouse = "YawMouse";
         private string rollAxis = "Roll";
         private string primaryWeaponAxis = "PrimaryWeapon";
         private string secondaryWeaponAxis = "SecondaryWeapon";
         private string lockTargetAxis = "LockTarget";
         private string swithTargetAxis = "SwitchTarget";
+        private KeyCode freeCursor = KeyCode.LeftAlt;
 
         private void OnEnable()
         {
@@ -275,6 +278,12 @@ namespace SpaceCommander
         {
             Move();
             Rotate();
+            if (!Input.GetKey(freeCursor))
+            {
+                Cursor.visible = false;
+                RotateByMouse();
+            }
+            else Cursor.visible = true;
             if (!tridimensional)
                 Stabilisation();
         }
@@ -389,6 +398,17 @@ namespace SpaceCommander
                 rot.z -= Input.GetAxis(rollAxis);
             }
 
+            owner.transform.Rotate(rot, owner.RotationSpeed * Time.deltaTime);
+        }
+        private void RotateByMouse()
+        {
+            var rot = new Vector3(0f, 0f, 0f);
+            rot.y += Input.GetAxis(yawAxisMouse);
+
+            if (tridimensional)
+            {
+                rot.x -= Input.GetAxis(pitchAxisMouse);
+            }
             owner.transform.Rotate(rot, owner.RotationSpeed * Time.deltaTime);
         }
         private void Stabilisation()

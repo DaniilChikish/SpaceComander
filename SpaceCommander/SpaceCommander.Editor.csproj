@@ -122,17 +122,17 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="Space Commander.Plugins.csproj">
+    <ProjectReference Include="SpaceCommander.Plugins.csproj">
       <Project>{972A4390-72D1-E11A-9BC4-8622941630DB}</Project>
-      <Name>Space Commander.Plugins</Name>
+      <Name>SpaceCommander.Plugins</Name>
     </ProjectReference>
-    <ProjectReference Include="Space Commander.csproj">
+    <ProjectReference Include="SpaceCommander.csproj">
       <Project>{93C29301-D512-69DE-4433-02243F387B2F}</Project>
-      <Name>Space Commander</Name>
+      <Name>SpaceCommander</Name>
     </ProjectReference>
-    <ProjectReference Include="Space Commander.Editor.Plugins.csproj">
+    <ProjectReference Include="SpaceCommander.Editor.Plugins.csproj">
       <Project>{04F34A1F-BE3E-9AB0-0853-4B31B40A09E3}</Project>
-      <Name>Space Commander.Editor.Plugins</Name>
+      <Name>SpaceCommander.Editor.Plugins</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

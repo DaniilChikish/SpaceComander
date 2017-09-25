@@ -26,6 +26,7 @@ namespace SpaceCommander
         void Update();
         bool MoveTo(Vector3 destination);
         bool MoveToQueue(Vector3 destination);
+        void BuildPathArrows();
         void ClearQueue();
         int PathPoints { get; }
         DriverStatus Status { get; }

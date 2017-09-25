@@ -2079,13 +2079,15 @@ namespace SpaceCommander
         {
             //Debug.Log("Send To " + destination);
             aiStatus = UnitStateType.UnderControl;
-            Driver.MoveTo(destination);
+            if (Driver.MoveTo(destination) && Team == Global.playerArmy)
+                Driver.BuildPathArrows();
         }
         public virtual void SendToQueue(Vector3 destination)
         {
             //Debug.Log("Add To Quenue " + destination);
             aiStatus = UnitStateType.UnderControl;
-            Driver.MoveToQueue(destination);
+            if(Driver.MoveToQueue(destination) && Team == Global.playerArmy)
+                Driver.BuildPathArrows();
         }
         protected virtual void SendToQueue(Vector3[] path)
         {
@@ -2094,6 +2096,8 @@ namespace SpaceCommander
             {
                 Driver.MoveToQueue(path[i]);
             }
+            if (Team == Global.playerArmy)
+                Driver.BuildPathArrows();
         }
         public virtual void AttackThat(Unit target)
         {

@@ -20,7 +20,7 @@ namespace SpaceCommander.Units
             radarRange = 550; //set in child
             radarPover = 0.8f;
             speedThrust = 9; //set in child
-            speedRotation = 11;
+            speedRotation = 55;
             speedShift = 11;
             stealthness = 0.5f; //set in child
             radiolink = 1.5f;
@@ -99,18 +99,6 @@ namespace SpaceCommander.Units
             }
             Driver.MoveToQueue(this.transform.position);
             return true;
-        }
-        public override void SendTo(Vector3 destination)
-        {
-            movementAIDelay = Vector3.Distance(this.transform.position, destination) / (this.GetComponent<NavMeshAgent>().speed * 0.9f);
-            aiStatus = UnitStateType.UnderControl;
-            Driver.MoveTo(destination);
-        }
-        public override void SendToQueue(Vector3 destination)
-        {
-            movementAIDelay += Vector3.Distance(this.transform.position, destination) / (this.GetComponent<NavMeshAgent>().speed * 0.9f);
-            aiStatus = UnitStateType.UnderControl;
-            Driver.MoveToQueue(destination);
         }
     }
 }

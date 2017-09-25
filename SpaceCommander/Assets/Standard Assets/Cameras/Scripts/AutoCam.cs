@@ -86,10 +86,9 @@ namespace UnityStandardAssets.Cameras
             }
 
             // camera position moves towards target position:
-            float heightDiff = this.transform.position.y - target.position.y;
             Vector3 offsetX = targetOffset.x * target.right;
             Vector3 offsetY = targetOffset.y * target.up;
-            Vector3 offsetZ = (targetOffset.z + heightDiff * -1.43f) * transform.forward;
+            Vector3 offsetZ = targetOffset.z * transform.forward;
             Vector3 offsetLocal = offsetX + offsetY + offsetZ;
             transform.position = Vector3.Lerp(transform.position, target.position + offsetLocal, deltaTime * m_MoveSpeed);
 
@@ -109,12 +108,12 @@ namespace UnityStandardAssets.Cameras
             m_RollUp = m_RollSpeed > 0 ? Vector3.Slerp(m_RollUp, targetUp, m_RollSpeed*deltaTime) : Vector3.up;
             transform.rotation = Quaternion.Lerp(transform.rotation, rollRotation, m_TurnSpeed*m_CurrentTurnAmount*deltaTime);
 
-            Transform mapcam = this.transform.FindChild("MapCam");
-            if (mapcam != null)
-            {
-                //mapPos.z = 0;
-                mapcam.position = Vector3.Lerp(mapcam.position, target.position, deltaTime * m_MoveSpeed);
-            }
+            //Transform mapcam = this.transform.FindChild("MapCam");
+            //if (mapcam != null)
+            //{
+            //    //mapPos.z = 0;
+            //    mapcam.position = Vector3.Lerp(mapcam.position, target.position, deltaTime * m_MoveSpeed);
+            //}
         }
     }
 }

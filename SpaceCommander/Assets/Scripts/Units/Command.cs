@@ -13,7 +13,7 @@ namespace SpaceCommander.Units
             radarRange = 1000; //set in child
             radarPover = 0.8f;
             speedThrust = 10; //set in child
-            speedRotation = 61;
+            speedRotation = 60;
             speedShift = 10;
             combatAIEnabled = true; //set in child
             selfDefenceModuleEnabled = true; //set in child
