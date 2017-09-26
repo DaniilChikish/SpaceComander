@@ -19,7 +19,7 @@ namespace SpaceCommander.Units
             speedThrust = 12; //set in child
             speedRotation = 80;
             speedShift = 12;
-            stealthness = 0.7f; //set in child
+            stealthness = 0.6f; //set in child
             radiolink = 1.5f;
             EnemySortDelegate = ScoutSortEnemys;
             AlliesSortDelegate = ReconSortEnemys;

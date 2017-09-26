@@ -37,10 +37,10 @@ namespace SpaceCommander.Weapons
             }
             else if (pingCount <= 0)
             {
-                pingCount = 0.5f;
+                pingCount = 0.1f;
                 foreach (SpaceShip x in Global.unitList)
                 {
-                    if (Vector3.Distance(x.transform.position, this.transform.position) < explosionRange)
+                    if (x.Team != team && Vector3.Distance(x.transform.position, this.transform.position) < explosionRange)
                     {
                         Arm(x.transform);
                         break;

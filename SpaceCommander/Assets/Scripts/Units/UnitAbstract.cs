@@ -1164,14 +1164,14 @@ namespace SpaceCommander
             {
                 if (module != null && module.Length > 0)
                 {
-                    //foreach (SpellModule m in module)
-                    //{
-                    //    if (m.GetType() == typeof(MissileTrapLauncher))
-                    //    {
-                    //        m.EnableIfReady();
-                    //        break;
-                    //    }
-                    //}
+                    foreach (SpellModule m in module)
+                    {
+                        if (m.GetType() == typeof(TorpedoEliminator))
+                        {
+                            m.EnableIfReady();
+                            break;
+                        }
+                    }
                 }
                 HazardEvasion(hazard);
                 return true;

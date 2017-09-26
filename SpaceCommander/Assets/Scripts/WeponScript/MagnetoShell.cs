@@ -36,7 +36,7 @@ namespace SpaceCommander.Weapons
             body.mass = mass;
             body.AddForce(transform.forward * Speed, ForceMode.VelocityChange);
         }
-        protected override void Destroy()
+        public override void Destroy()
         {
             Destroy(this.gameObject);
         }

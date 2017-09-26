@@ -44,6 +44,7 @@ namespace SpaceCommander
         public GameObject NukeBlast;
         public GameObject ShipDieBlast;
         public GameObject pathArrow;
+        public GameObject greenBeam;
         public double[] RandomNormalPool;
         public double RandomNormalAverage;
         //public double[] RandomExponentPool;
@@ -735,7 +736,7 @@ namespace SpaceCommander
                     }
             }
         }
-        protected abstract void Destroy();
+        public abstract void Destroy();
     }
     public abstract class SelfguidedMissile : MonoBehaviour
     {

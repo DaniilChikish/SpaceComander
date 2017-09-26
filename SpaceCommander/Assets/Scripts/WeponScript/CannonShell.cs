@@ -23,7 +23,7 @@ namespace SpaceCommander.Weapons
 
             this.GetComponent<Rigidbody>().AddForce(transform.forward * Speed, ForceMode.VelocityChange);
         }
-        protected override void Destroy()
+        public override void Destroy()
         {
             if (explosive)
             {

@@ -18,11 +18,13 @@ namespace SpaceCommander.Units
             speedShift = 9;
             stealthness = 0.2f; //set in child
             radiolink = 1f;
-            EnemySortDelegate = SupportCorvetteSortEnemys;
+            EnemySortDelegate = GuardCorvetteSortEnemys;
             AlliesSortDelegate = SupportCorvetteSortEnemys;
 
-            module = new SpellModule[1];
+            module = new SpellModule[3];
             module[0] = new EmergencySelfRapairing(this);
+            module[1] = new TorpedoEliminator(this);
+            module[2] = new ProtectionMatrix(this);
         }
         protected override void Explosion()
         {

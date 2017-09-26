@@ -6,14 +6,14 @@ using UnityEngine;
 
 namespace SpaceCommander
 {
-    public enum DriverStatus { Movement, Waiting};
+    public enum DriverStatus { Navigating, Maneuvering, Calculating, Waiting};
     class SpaceMovementController : IDriver
     {
         private DriverStatus status;
         public DriverStatus Status { get { return status; } }
         public bool tridimensional = true;
         public float gridStep = 5f;
-        public float accurancy = 7f;
+        public float accurancy = 10f;
 
         private SpaceShip walker;
         private Transform walkerTransform;
@@ -25,6 +25,11 @@ namespace SpaceCommander
         private float horisontalShiftThrust;
 
         private Queue<Vector3> path; //очередь путевых точек
+        List<PathNode> closedSet = new List<PathNode>();
+        List<PathNode> openSet = new List<PathNode>();
+        private Vector3 navDestination;
+        private float navAccurancy;
+        private int calculatingStep;
         public Vector3 Velocity { get { return walkerBody.velocity; } }
         public int PathPoints
         {
@@ -47,20 +52,43 @@ namespace SpaceCommander
         }
         public void Update()
         {
-            if (path.Count > 0)
+            switch (status)
             {
-                Move();
-                Rotate();
-                if ((path.Peek() - walkerTransform.position).magnitude < accurancy)
-                {
-                    path.Dequeue();
-                }
-            }
-            else
-            {
-                status = DriverStatus.Waiting;
-                if (!walker.ManualControl && walker.Gunner.Target == null)
-                    Stabilisation();
+                case DriverStatus.Calculating:
+                    {
+                        if (openSet.Count > 0 && calculatingStep < 120)
+                            PathfindingStep(navDestination, navAccurancy);
+                        else status = DriverStatus.Waiting;
+                        break;
+                    }
+                case DriverStatus.Navigating:
+                    {
+                        if (path.Count > 0)
+                        {
+                            Move();
+                            Rotate();
+                            if ((path.Peek() - walkerTransform.position).magnitude < accurancy)
+                            {
+                                path.Dequeue();
+                            }
+                        }
+                        else
+                        {
+                            status = DriverStatus.Waiting;
+
+                        }
+                        break;
+                    }
+                case DriverStatus.Maneuvering:
+                    {
+                        break;
+                    }
+                default:
+                    {
+                        if (!walker.ManualControl && walker.Gunner.Target == null)
+                            Stabilisation();
+                        break;
+                    }
             }
         }
         public bool MoveTo(Vector3 destination)
@@ -71,23 +99,16 @@ namespace SpaceCommander
         public bool MoveToQueue(Vector3 destination)
         {
             //Debug.Log("MoveTo " + destination);
-            status = DriverStatus.Movement;
-            if (!CanWalk(walkerTransform.position, destination))
+            status = DriverStatus.Navigating;
+            Vector3 last;
+            if (path.Count > 0)
+                last = path.Last();
+            else
+                last = walkerTransform.position;
+            if (!CanWalk(last, destination))
             {
-                //Debug.Log("Find barier, build path");
-                float accuracyFactor = (1 + (Vector3.Distance(walkerTransform.position, destination) / (accurancy * 10)));
-                Vector3[] pathPoints = BuildPath(destination, accuracyFactor);
-                if (pathPoints != null)
-                {
-                    //Debug.Log("Path created");
-                    foreach (Vector3 x in pathPoints)
-                    {
-                        //Debug.Log(x);
-                        path.Enqueue(x);
-                    }
-                    return true;
-                }
-                else Debug.Log("Path not created");
+                PathfindingBegin(destination);
+                return true;
             }
             else
             {
@@ -95,37 +116,39 @@ namespace SpaceCommander
                 path.Enqueue(destination);
                 return true;
             }
-            return false;
         }
         public void BuildPathArrows()
         {
-            Vector3[] pathLocal = path.ToArray();
-            GameObject arrow;
-            float dist;
-
-            arrow = GameObject.Instantiate(Global.pathArrow);
-            dist = Vector3.Distance(walkerTransform.position, pathLocal[0]);
-            arrow.transform.localScale = new Vector3(1, 1, dist);
-            arrow.transform.position = walkerTransform.position + (pathLocal[0] - walkerTransform.position).normalized * dist / 2;
-            arrow.transform.rotation = Quaternion.LookRotation((pathLocal[0] - walkerTransform.position), new Vector3(0, 1, 0));
-            arrow.AddComponent<SelfDestructor>().ttl = 2f;
-
-            for (int i = 0; i+1 < pathLocal.Length; i++)
+            if (path.Count > 0)
             {
+                Vector3[] pathLocal = path.ToArray();
+                GameObject arrow;
+                float dist;
+
                 arrow = GameObject.Instantiate(Global.pathArrow);
-                dist = Vector3.Distance(pathLocal[i], pathLocal[i + 1]);
+                dist = Vector3.Distance(walkerTransform.position, pathLocal[0]);
                 arrow.transform.localScale = new Vector3(1, 1, dist);
-                arrow.transform.position = pathLocal[i] + (pathLocal[i+1] - pathLocal[i]).normalized * dist / 2;
-                arrow.transform.rotation = Quaternion.LookRotation((pathLocal[i + 1] - pathLocal[i]), new Vector3(0, 1, 0));
+                arrow.transform.position = walkerTransform.position + (pathLocal[0] - walkerTransform.position).normalized * dist / 2;
+                arrow.transform.rotation = Quaternion.LookRotation((pathLocal[0] - walkerTransform.position), new Vector3(0, 1, 0));
                 arrow.AddComponent<SelfDestructor>().ttl = 2f;
+
+                for (int i = 0; i + 1 < pathLocal.Length; i++)
+                {
+                    arrow = GameObject.Instantiate(Global.pathArrow);
+                    dist = Vector3.Distance(pathLocal[i], pathLocal[i + 1]);
+                    arrow.transform.localScale = new Vector3(1, 1, dist);
+                    arrow.transform.position = pathLocal[i] + (pathLocal[i + 1] - pathLocal[i]).normalized * dist / 2;
+                    arrow.transform.rotation = Quaternion.LookRotation((pathLocal[i + 1] - pathLocal[i]), new Vector3(0, 1, 0));
+                    arrow.AddComponent<SelfDestructor>().ttl = 2f;
+                }
             }
         }
-        private Vector3[] BuildPath(Vector3 destination, float accuracyFactor)
+        private void PathfindingBegin(Vector3 destination)
         {
-            // Шаг 1.
-            List<PathNode> closedSet = new List<PathNode>();
-            List<PathNode> openSet = new List<PathNode>();
-            int steps = 0;
+            navAccurancy = (1 + (Vector3.Distance(walkerTransform.position, destination) / (accurancy * 10)));
+            navDestination = destination;
+            calculatingStep = 0;
+            status = DriverStatus.Calculating;
             Vector3 startPos;
             if (path.Count > 0)
                 startPos = path.Last();
@@ -140,53 +163,65 @@ namespace SpaceCommander
                 HeuristicEstimatePathLength = GetHeuristicPathLength(walkerTransform.position, destination)
             };
             openSet.Add(startNode);
+        }
+        private void PathfindingStep(Vector3 destination, float accuracyFactor)
+        {
+            calculatingStep++;
             PathNode currentNode;
-            while (openSet.Count > 0 && steps < 1000)
+            // Шаг 3.
+            currentNode = openSet.OrderBy(node => node.EstimateFullPathLength).First();
+            // Шаг 4.
+            if (Vector3.Distance(currentNode.Position, destination) <= accurancy * accuracyFactor)
             {
-                steps++;
-                // Шаг 3.
-                currentNode = openSet.OrderBy(node => node.EstimateFullPathLength).First();
-                // Шаг 4.
-                if (Vector3.Distance(currentNode.Position, destination) <= accurancy * accuracyFactor)
-                    return CollapsePath(GetPathForNode(currentNode)).ToArray();
-                // Шаг 5.
-                openSet.Remove(currentNode);
-                closedSet.Add(currentNode);
-                // Шаг 6.
-                List<PathNode> neighbours = GetNeighbours(currentNode, destination, accuracyFactor);
-                foreach (PathNode neighbourNode in neighbours)
+                PathfindingComplete(CollapsePath(GetPathForNode(currentNode)).ToArray());
+                return;
+            }
+            // Шаг 5.
+            openSet.Remove(currentNode);
+            closedSet.Add(currentNode);
+            // Шаг 6.
+            List<PathNode> neighbours = GetNeighbours(currentNode, destination, accuracyFactor);
+            foreach (PathNode neighbourNode in neighbours)
+            {
+                // Шаг 7.
+                if (closedSet.Count(node => node.Position == neighbourNode.Position) > 0)
+                    continue;
+                PathNode openNode = openSet.Find(node => node.Position == neighbourNode.Position);
+                // Шаг 8.
+                if (openNode == null)
+                    openSet.Add(neighbourNode);
+                else if (openNode.PathLengthFromStart > neighbourNode.PathLengthFromStart)
                 {
-                    // Шаг 7.
-                    if (closedSet.Count(node => node.Position == neighbourNode.Position) > 0)
-                        continue;
-                    PathNode openNode = openSet.Find(node => node.Position == neighbourNode.Position);
-                    // Шаг 8.
-                    if (openNode == null)
-                        openSet.Add(neighbourNode);
-                    else if (openNode.PathLengthFromStart > neighbourNode.PathLengthFromStart)
-                    {
-                        // Шаг 9.
-                        openNode.CameFrom = currentNode;
-                        openNode.PathLengthFromStart = neighbourNode.PathLengthFromStart;
-                    }
+                    // Шаг 9.
+                    openNode.CameFrom = currentNode;
+                    openNode.PathLengthFromStart = neighbourNode.PathLengthFromStart;
                 }
             }
-            // Шаг 10.
-            return null;
         }
-
+        private void PathfindingComplete(Vector3[] pathPoints)
+        {
+            if (pathPoints != null)
+            {
+                status = DriverStatus.Navigating;
+                foreach (Vector3 x in pathPoints)
+                {
+                    //Debug.Log(x);
+                    path.Enqueue(x);
+                }
+                BuildPathArrows();
+            }
+        }
         private float GetHeuristicPathLength(Vector3 from, Vector3 to)
         {
-            return Mathf.Abs(from.x - to.x) + Math.Abs(from.y - to.y) + Math.Abs(from.z - to.z);
+            return Vector3.Distance(from, to);//Mathf.Abs(from.x - to.x) + Math.Abs(from.y - to.y) + Math.Abs(from.z - to.z);
         }
-
         private List<PathNode> GetNeighbours(PathNode pathNode, Vector3 destination, float accuracyFactor)
         {
             var result = new List<PathNode>();
             float gridStepLocal = gridStep * accuracyFactor;
 
             // Соседними точками являются соседние по стороне клетки.
-            Vector3[] neighbourPoints = new Vector3[35];
+            Vector3[] neighbourPoints = new Vector3[27];
             //neighbourPoints[0] = new Vector3(pathNode.Position.x + gridStepLocal, pathNode.Position.y - gridStepLocal, pathNode.Position.z - gridStepLocal);
             //neighbourPoints[1] = new Vector3(pathNode.Position.x + gridStepLocal, pathNode.Position.y, pathNode.Position.z - gridStepLocal);
             //neighbourPoints[2] = new Vector3(pathNode.Position.x + gridStepLocal, pathNode.Position.y + gridStepLocal, pathNode.Position.z - gridStepLocal);
@@ -255,21 +290,22 @@ namespace SpaceCommander
             neighbourPoints[21] = pathNode.Position + (gridStepLocal * ((-1 * walkerTransform.forward) + (0 * walkerTransform.right) + (0 * walkerTransform.up)));
             neighbourPoints[22] = pathNode.Position + (gridStepLocal * ((-1 * walkerTransform.forward) + (0 * walkerTransform.right) + (1 * walkerTransform.up)));
 
-            neighbourPoints[23] = pathNode.Position + (gridStepLocal * ((-1 * walkerTransform.forward) + (-1 * walkerTransform.right) + (-1 * walkerTransform.up)));
-            neighbourPoints[24] = pathNode.Position + (gridStepLocal * ((-1 * walkerTransform.forward) + (-1 * walkerTransform.right) + (0 * walkerTransform.up)));
-            neighbourPoints[25] = pathNode.Position + (gridStepLocal * ((-1 * walkerTransform.forward) + (-1 * walkerTransform.right) + (1 * walkerTransform.up)));
+            neighbourPoints[23] = pathNode.Position + (gridStepLocal * ((-1 * walkerTransform.forward) + (1 * walkerTransform.right) + (-1 * walkerTransform.up)));
+            neighbourPoints[24] = pathNode.Position + (gridStepLocal * ((-1 * walkerTransform.forward) + (1 * walkerTransform.right) + (0 * walkerTransform.up)));
+            neighbourPoints[25] = pathNode.Position + (gridStepLocal * ((-1 * walkerTransform.forward) + (1 * walkerTransform.right) + (1 * walkerTransform.up)));
+            neighbourPoints[26] = destination;
             //
-            neighbourPoints[26] = pathNode.Position + (gridStepLocal * ((2 * walkerTransform.forward) + (-1 * walkerTransform.right) + (-1 * walkerTransform.up)));
-            neighbourPoints[27] = pathNode.Position + (gridStepLocal * ((2 * walkerTransform.forward) + (-1 * walkerTransform.right) + (0 * walkerTransform.up)));
-            neighbourPoints[28] = pathNode.Position + (gridStepLocal * ((2 * walkerTransform.forward) + (-1 * walkerTransform.right) + (1 * walkerTransform.up)));
+            //neighbourPoints[26] = pathNode.Position + (gridStepLocal * ((2 * walkerTransform.forward) + (-1 * walkerTransform.right) + (-1 * walkerTransform.up)));
+            //neighbourPoints[27] = pathNode.Position + (gridStepLocal * ((2 * walkerTransform.forward) + (-1 * walkerTransform.right) + (0 * walkerTransform.up)));
+            //neighbourPoints[28] = pathNode.Position + (gridStepLocal * ((2 * walkerTransform.forward) + (-1 * walkerTransform.right) + (1 * walkerTransform.up)));
 
-            neighbourPoints[29] = pathNode.Position + (gridStepLocal * ((2 * walkerTransform.forward) + (0 * walkerTransform.right) + (-1 * walkerTransform.up)));
-            neighbourPoints[30] = pathNode.Position + (gridStepLocal * ((2 * walkerTransform.forward) + (0 * walkerTransform.right) + (0 * walkerTransform.up)));
-            neighbourPoints[31] = pathNode.Position + (gridStepLocal * ((2 * walkerTransform.forward) + (0 * walkerTransform.right) + (1 * walkerTransform.up)));
+            //neighbourPoints[29] = pathNode.Position + (gridStepLocal * ((2 * walkerTransform.forward) + (0 * walkerTransform.right) + (-1 * walkerTransform.up)));
+            //neighbourPoints[30] = pathNode.Position + (gridStepLocal * ((2 * walkerTransform.forward) + (0 * walkerTransform.right) + (0 * walkerTransform.up)));
+            //neighbourPoints[31] = pathNode.Position + (gridStepLocal * ((2 * walkerTransform.forward) + (0 * walkerTransform.right) + (1 * walkerTransform.up)));
 
-            neighbourPoints[32] = pathNode.Position + (gridStepLocal * ((2 * walkerTransform.forward) + (-1 * walkerTransform.right) + (-1 * walkerTransform.up)));
-            neighbourPoints[33] = pathNode.Position + (gridStepLocal * ((2 * walkerTransform.forward) + (-1 * walkerTransform.right) + (0 * walkerTransform.up)));
-            neighbourPoints[34] = pathNode.Position + (gridStepLocal * ((2 * walkerTransform.forward) + (-1 * walkerTransform.right) + (1 * walkerTransform.up)));
+            //neighbourPoints[32] = pathNode.Position + (gridStepLocal * ((2 * walkerTransform.forward) + (1 * walkerTransform.right) + (-1 * walkerTransform.up)));
+            //neighbourPoints[33] = pathNode.Position + (gridStepLocal * ((2 * walkerTransform.forward) + (1 * walkerTransform.right) + (0 * walkerTransform.up)));
+            //neighbourPoints[34] = pathNode.Position + (gridStepLocal * ((2 * walkerTransform.forward) + (1 * walkerTransform.right) + (1 * walkerTransform.up)));
             //debug
             GameObject worldpoint = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             worldpoint.GetComponent<SphereCollider>().enabled = false;
@@ -295,7 +331,6 @@ namespace SpaceCommander
             }
             return result;
         }
-
         private bool CanWalk(Vector3 position, Vector3 destination)
         {
             RaycastHit[] hits = Physics.RaycastAll(position, (destination - position), (destination - position).magnitude); //9 is Terrain layer
@@ -306,7 +341,6 @@ namespace SpaceCommander
             }
             return true;
         }
-
         private bool FreeSpace(Vector3 point, float radius)
         {
             Collider[] hits = Physics.OverlapSphere(point, radius);
@@ -317,7 +351,6 @@ namespace SpaceCommander
             }
             return true;
         }
-
         private List<Vector3> GetPathForNode(PathNode pathNode)
         {
             List<Vector3> result = new List<Vector3>();
@@ -432,38 +465,50 @@ namespace SpaceCommander
         private float ThrustAxis()
         {
             Vector3 targetMotion = path.Peek() - walkerTransform.position;
+            float sign;
+            if (Vector3.Angle(targetMotion, walkerTransform.forward) < 90)
+                sign = 1;
+            else sign = -1;
             float targetPojection = Vector3.Project(targetMotion, walkerTransform.forward).magnitude;
             float velocityPojection = Vector3.Project(walkerBody.velocity, walkerTransform.forward).magnitude;
             if (targetPojection > 0.1f)
                 if (Mathf.Abs(targetPojection) > (Mathf.Abs(velocityPojection) * 2.5))
-                    return 1 * (Mathf.Sign(targetPojection));
+                    return 1 * sign;
                 else if (path.Count == 0)
-                    return Mathf.Abs(targetPojection) * -(Mathf.Sign(targetPojection));
+                    return targetPojection * -sign;
             //else return 0.2f * (Mathf.Sign(targetPojection));
             return 0;
         }
         private float HorizontalShiftAxis()
         {
             Vector3 targetMotion = path.Peek() - walkerTransform.position;
+            float sign;
+            if (Vector3.Angle(targetMotion, walkerTransform.right) < 90)
+                sign = 1;
+            else sign = -1;
             float targetPojection = Vector3.Project(targetMotion, walkerTransform.right).magnitude;
             float velocityPojection = Vector3.Project(walkerBody.velocity, walkerTransform.right).magnitude;
             if (targetPojection > 0.1f)
                 if (Mathf.Abs(targetPojection) > Mathf.Abs(velocityPojection))
-                    return 0.5f * (Mathf.Sign(targetPojection));
+                    return 0.5f * sign;
                 else if (path.Count == 0)
-                    return Mathf.Abs(targetPojection) * 0.5f * -(Mathf.Sign(targetPojection));
+                    return targetPojection * 0.5f * -sign;
             return 0;
         }
         private float VerticalShiftAxis()
         {
             Vector3 targetMotion = path.Peek() - walkerTransform.position;
+            float sign;
+            if (Vector3.Angle(targetMotion, walkerTransform.up) < 90)
+                sign = 1;
+            else sign = -1;
             float targetPojection = Vector3.Project(targetMotion, walkerTransform.up).magnitude;
             float velocityPojection = Vector3.Project(walkerBody.velocity, walkerTransform.up).magnitude;
             if (targetPojection > 0.1f)
                 if (Mathf.Abs(targetPojection) > Mathf.Abs(velocityPojection))
-                    return 0.5f * (Mathf.Sign(targetPojection));
+                    return 0.5f * sign;
                 else if (path.Count == 0)
-                    return Mathf.Abs(targetPojection) * 0.5f * -(Mathf.Sign(targetPojection));
+                    return targetPojection * 0.5f * -sign;
             return 0;
         }
 

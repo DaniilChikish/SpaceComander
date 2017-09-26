@@ -88,7 +88,7 @@ namespace SpaceCommander
         {
             float mainThrustLocal = Input.GetAxis(thrustAxis);
             float horisontalShiftLocal = Input.GetAxis(horizontalShiftAxis);
-                float vertikalShiftLocal = Input.GetAxis(verticalShiftAxis);
+            float vertikalShiftLocal = Input.GetAxis(verticalShiftAxis);
 
             if (mainThrustLocal == 0 && horisontalShiftLocal == 0 && vertikalShiftLocal == 0)
             {
@@ -97,7 +97,7 @@ namespace SpaceCommander
             }
             else if (holding < 50) holding += deltaTime * 10;
 
-            Vector3 shiftLocal = (owner.transform.forward * mainThrustLocal + owner.transform.up * vertikalShiftLocal + owner.transform.right * horisontalShiftLocal) * (1 + holding) * MoveSpeed * deltaTime;
+            Vector3 shiftLocal = (Vector3.ProjectOnPlane(owner.transform.forward, Vector3.up) * mainThrustLocal + Vector3.up * vertikalShiftLocal + Vector3.ProjectOnPlane(owner.transform.right, Vector3.up) * horisontalShiftLocal) * (1 + holding) * MoveSpeed * deltaTime;
             if ((owner.transform.position + shiftLocal).magnitude < borderRadius)
                 owner.transform.position += shiftLocal;
         }
@@ -110,8 +110,8 @@ namespace SpaceCommander
                 aroundPoint = mainCam.position;
 
             transform.RotateAround(aroundPoint, owner.transform.right, -Input.GetAxis(pitchAxis) * Time.deltaTime * TurnSpeed * 10);
-            transform.RotateAround(aroundPoint, owner.transform.up, Input.GetAxis(yawAxis) * Time.deltaTime * TurnSpeed * 10);
-            transform.RotateAround(aroundPoint, owner.transform.forward, Input.GetAxis(rollAxis) * Time.deltaTime * TurnSpeed * 10);
+            transform.RotateAround(aroundPoint, Vector3.up, Input.GetAxis(yawAxis) * Time.deltaTime * TurnSpeed * 10);
+            transform.RotateAround(aroundPoint, owner.transform.forward, -Input.GetAxis(rollAxis) * Time.deltaTime * TurnSpeed * 10);
 
             //var rot = new Vector3(0f, 0f, 0f);
             //rot.y += Input.GetAxis(yawAxis);

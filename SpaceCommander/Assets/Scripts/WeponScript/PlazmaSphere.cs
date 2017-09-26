@@ -61,7 +61,7 @@ namespace SpaceCommander.Weapons
             this.target = target;
         }
 
-        protected override void Destroy()
+        public override void Destroy()
         {
             Destroy(this.gameObject);
         }

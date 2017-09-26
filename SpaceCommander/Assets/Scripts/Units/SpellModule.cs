@@ -160,7 +160,6 @@ namespace SpaceCommander
         }
         public override void Enable()
         {
-            Debug.Log("MissileTrap Lauched");
             base.Enable();
             brustCount = 0;
         }
@@ -951,6 +950,110 @@ namespace SpaceCommander
                 x.DispersionMultiplicator -= (-0.5f);
                 x.APMultiplacator -= 1.5f;
             }
+        }
+    }
+    public class TorpedoEliminator : SpellModule
+    {
+        protected GlobalController Global;
+        private float Count;
+
+        public TorpedoEliminator(SpaceShip owner) : base(owner)
+        {
+            Global = GameObject.FindObjectOfType<GlobalController>();
+            base.backCount = 0;
+            type = SpellType.LongAction;
+            coolingTime = 60;
+            activeTime = 15;
+            state = SpellModuleState.Ready;
+            function.Add(SpellFunction.Defence);
+            function.Add(SpellFunction.Emergency);
+        }
+        public override void Enable()
+        {
+            base.Enable();
+            Count = 0;
+        }
+
+        protected override void Disable()
+        {
+        }
+
+        protected override void Act()
+        {
+            if (Count <= 0)
+            {
+                GameObject[] torpedo = GameObject.FindGameObjectsWithTag("Torpedo");
+                float dist;
+
+                for (int i = 0; i < torpedo.Length; i++)
+                {
+                    dist = Vector3.Distance(torpedo[i].transform.position, owner.transform.position);
+                    if (torpedo[i].GetComponent<Torpedo>().Team != owner.Team && dist < 300)
+                    {
+                        torpedo[i].GetComponent<Torpedo>().Explode();
+                        GameObject beam;
+                        beam = GameObject.Instantiate(Global.greenBeam);
+                        Vector3.Distance(owner.transform.position, torpedo[i].transform.position);
+                        beam.transform.localScale = new Vector3(1, 1, dist);
+                        beam.transform.position = owner.transform.position + (torpedo[i].transform.position - owner.transform.position).normalized * dist / 2;
+                        beam.transform.rotation = Quaternion.LookRotation((torpedo[i].transform.position - owner.transform.position), new Vector3(0, 1, 0));
+                        beam.AddComponent<SelfDestructor>().ttl = 0.8f;
+                        Count = 0.4f;
+                        return;
+                    }
+                }
+            }
+            else Count -= Time.deltaTime;
+        }
+    }
+    public class ProtectionMatrix : SpellModule
+    {
+        protected GlobalController Global;
+        private float Count;
+
+        public ProtectionMatrix(SpaceShip owner) : base(owner)
+        {
+            Global = GameObject.FindObjectOfType<GlobalController>();
+            base.backCount = 0;
+            type = SpellType.LongAction;
+            coolingTime = 15;
+            activeTime = 15;
+            state = SpellModuleState.Ready;
+            function.Add(SpellFunction.Defence);
+            function.Add(SpellFunction.Self);
+        }
+        public override void Enable()
+        {
+            base.Enable();
+        }
+
+        protected override void Disable()
+        {
+        }
+
+        protected override void Act()
+        {
+            GameObject[] shells = GameObject.FindGameObjectsWithTag("Shell");
+                float dist;
+                Vector3 dir;
+                for (int i = 0; i < shells.Length; i++)
+                {
+                    dist = Vector3.Distance(shells[i].transform.position, owner.transform.position);
+                    dir = (shells[i].transform.position - owner.transform.position);
+                    if (dist < 100 && Vector3.Angle(dir, owner.transform.forward) < 45 && Vector3.Angle(shells[i].GetComponent<Rigidbody>().velocity, -owner.transform.forward) < 45)
+                    {
+                        shells[i].GetComponent<Round>().Destroy();
+                        GameObject beam;
+                        beam = GameObject.Instantiate(Global.greenBeam);
+                        Vector3.Distance(owner.transform.position, shells[i].transform.position);
+                        beam.transform.localScale = new Vector3(1, 1, dist);
+                        beam.transform.position = owner.transform.position + dir.normalized * dist / 2;
+                        beam.transform.rotation = Quaternion.LookRotation(dir, new Vector3(0, 1, 0));
+                        beam.AddComponent<SelfDestructor>().ttl = 0.8f;
+                        return;
+                    }
+                }
+            owner.ShieldForce -= owner.ShieldRecharging * Time.deltaTime * 0.7f;
         }
     }
 
