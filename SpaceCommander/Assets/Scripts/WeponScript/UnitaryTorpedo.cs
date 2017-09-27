@@ -7,10 +7,7 @@ namespace SpaceCommander.Weapons
     {
         protected override void Start()
         {
-            Speed = 20f;// скорость ракеты      
-            TurnSpeed = 15f;// скорость поворота ракеты            
-            DropImpulse = 2000f;//импульс сброса                  
-            explosionRange = 5f; //расстояние детонации
+            base.Start();
             gameObject.GetComponent<Rigidbody>().AddForce(-transform.up * DropImpulse, ForceMode.Impulse);
             Global = FindObjectOfType<GlobalController>();
             lt = 0;

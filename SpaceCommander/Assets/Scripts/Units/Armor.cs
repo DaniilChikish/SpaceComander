@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 namespace SpaceCommander
@@ -12,10 +13,23 @@ namespace SpaceCommander
         public float blastResist;
         private float hitCount;
         private SpaceShip owner;
+        private GlobalController Global;
         // Use this for initialization
         void Start()
         {
             owner = transform.GetComponentInParent<SpaceShip>();
+            Global = FindObjectOfType<GlobalController>();
+            //Global.SpecINI.Write(owner.GetType().ToString(), "maxHitpoints", maxHitpoints.ToString());
+            //Global.SpecINI.Write(owner.GetType().ToString(), "shellResist", shellResist.ToString());
+            //Global.SpecINI.Write(owner.GetType().ToString(), "energyResist", energyResist.ToString());
+            //Global.SpecINI.Write(owner.GetType().ToString(), "blastResist", blastResist.ToString());
+
+            maxHitpoints = Convert.ToSingle(Global.SpecINI.ReadINI(owner.GetType().ToString(), "maxHitpoints"));
+            shellResist = Convert.ToSingle(Global.SpecINI.ReadINI(owner.GetType().ToString(), "shellResist"));
+            energyResist = Convert.ToSingle(Global.SpecINI.ReadINI(owner.GetType().ToString(), "energyResist"));
+            blastResist = Convert.ToSingle(Global.SpecINI.ReadINI(owner.GetType().ToString(), "blastResist"));
+
+            hitpoints = maxHitpoints;
         }
 
         // Update is called once per frame

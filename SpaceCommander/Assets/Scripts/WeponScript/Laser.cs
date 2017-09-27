@@ -12,17 +12,11 @@ namespace SpaceCommander.Weapons
         private float impulseBackount;
         private GameObject beam;
 
-        public override void StatUp()
+        protected override void StatUp()
         {
+            base.StatUp();
             type = WeaponType.Laser;
-            //gameObject.GetComponent<MeshRenderer>().enabled = false;
-            range = 350;
-            dispersion = 0.00001f;//exponential
-            shildBlinkTime = 0.05f;
-            averageRoundSpeed = 1000000;
-            maxHeat = 100;
-            firerate = 6000;
-            PreAiming = true;
+            //gameObject.GetComponent<MeshRenderer>().enabled = true;
             beam = gameObject.transform.GetChild(0).gameObject;
             beam.GetComponent<LaserImpulse>().StatUp(AmmoType);
         }

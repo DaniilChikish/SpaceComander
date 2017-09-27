@@ -13,14 +13,8 @@ namespace SpaceCommander.Units
 
         protected override void StatsUp()
         {
+            base.StatsUp();
             type = UnitClass.Scout;
-            radarRange = 1100; //set in child
-            radarPover = 1f;
-            speedThrust = 12; //set in child
-            speedRotation = 80;
-            speedShift = 12;
-            stealthness = 0.6f; //set in child
-            radiolink = 1.5f;
             EnemySortDelegate = ScoutSortEnemys;
             AlliesSortDelegate = ReconSortEnemys;
 

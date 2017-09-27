@@ -9,16 +9,8 @@ namespace SpaceCommander.Units
     {
         protected override void StatsUp()
         {
+            base.StatsUp();
             type = UnitClass.Command;
-            radarRange = 1000; //set in child
-            radarPover = 0.8f;
-            speedThrust = 10; //set in child
-            speedRotation = 60;
-            speedShift = 10;
-            combatAIEnabled = true; //set in child
-            selfDefenceModuleEnabled = true; //set in child
-            stealthness = 0.45f; //set in child
-            radiolink = 2.5f;
             EnemySortDelegate = FigtherSortEnemys;
             AlliesSortDelegate = ReconSortEnemys;
 

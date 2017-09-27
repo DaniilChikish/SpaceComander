@@ -6,10 +6,11 @@ using UnityEngine;
 
 namespace SpaceCommander
 {
-    public enum DriverStatus { Navigating, Maneuvering, Calculating, Waiting};
+    public enum DriverStatus { Navigating, Maneuvering, Waiting};
     class SpaceMovementController : IDriver
     {
         private DriverStatus status;
+        private bool calculating;
         public DriverStatus Status { get { return status; } }
         public bool tridimensional = true;
         public float gridStep = 5f;
@@ -52,19 +53,19 @@ namespace SpaceCommander
         }
         public void Update()
         {
+        }
+        public void FixedUpdate()
+        {
+            if (calculating && openSet.Count > 0 && calculatingStep < 240)
+                PathfindingStep(navDestination, navAccurancy);
+            else calculating = false;
             switch (status)
             {
-                case DriverStatus.Calculating:
-                    {
-                        if (openSet.Count > 0 && calculatingStep < 120)
-                            PathfindingStep(navDestination, navAccurancy);
-                        else status = DriverStatus.Waiting;
-                        break;
-                    }
                 case DriverStatus.Navigating:
                     {
                         if (path.Count > 0)
                         {
+                            //MoveSimple();
                             Move();
                             Rotate();
                             if ((path.Peek() - walkerTransform.position).magnitude < accurancy)
@@ -81,10 +82,12 @@ namespace SpaceCommander
                     }
                 case DriverStatus.Maneuvering:
                     {
+                        Move();
                         break;
                     }
                 default:
                     {
+                        Move();
                         if (!walker.ManualControl && walker.Gunner.Target == null)
                             Stabilisation();
                         break;
@@ -130,7 +133,7 @@ namespace SpaceCommander
                 arrow.transform.localScale = new Vector3(1, 1, dist);
                 arrow.transform.position = walkerTransform.position + (pathLocal[0] - walkerTransform.position).normalized * dist / 2;
                 arrow.transform.rotation = Quaternion.LookRotation((pathLocal[0] - walkerTransform.position), new Vector3(0, 1, 0));
-                arrow.AddComponent<SelfDestructor>().ttl = 2f;
+                arrow.AddComponent<Service.SelfDestructor>().ttl = 2f;
 
                 for (int i = 0; i + 1 < pathLocal.Length; i++)
                 {
@@ -139,7 +142,7 @@ namespace SpaceCommander
                     arrow.transform.localScale = new Vector3(1, 1, dist);
                     arrow.transform.position = pathLocal[i] + (pathLocal[i + 1] - pathLocal[i]).normalized * dist / 2;
                     arrow.transform.rotation = Quaternion.LookRotation((pathLocal[i + 1] - pathLocal[i]), new Vector3(0, 1, 0));
-                    arrow.AddComponent<SelfDestructor>().ttl = 2f;
+                    arrow.AddComponent<Service.SelfDestructor>().ttl = 2f;
                 }
             }
         }
@@ -148,7 +151,9 @@ namespace SpaceCommander
             navAccurancy = (1 + (Vector3.Distance(walkerTransform.position, destination) / (accurancy * 10)));
             navDestination = destination;
             calculatingStep = 0;
-            status = DriverStatus.Calculating;
+            calculating = true;
+            closedSet = new List<PathNode>();
+            openSet = new List<PathNode>();
             Vector3 startPos;
             if (path.Count > 0)
                 startPos = path.Last();
@@ -210,6 +215,7 @@ namespace SpaceCommander
                 }
                 BuildPathArrows();
             }
+            calculating = false;
         }
         private float GetHeuristicPathLength(Vector3 from, Vector3 to)
         {
@@ -222,77 +228,77 @@ namespace SpaceCommander
 
             // Соседними точками являются соседние по стороне клетки.
             Vector3[] neighbourPoints = new Vector3[27];
-            //neighbourPoints[0] = new Vector3(pathNode.Position.x + gridStepLocal, pathNode.Position.y - gridStepLocal, pathNode.Position.z - gridStepLocal);
-            //neighbourPoints[1] = new Vector3(pathNode.Position.x + gridStepLocal, pathNode.Position.y, pathNode.Position.z - gridStepLocal);
-            //neighbourPoints[2] = new Vector3(pathNode.Position.x + gridStepLocal, pathNode.Position.y + gridStepLocal, pathNode.Position.z - gridStepLocal);
+            neighbourPoints[0] = new Vector3(pathNode.Position.x + gridStepLocal, pathNode.Position.y - gridStepLocal, pathNode.Position.z - gridStepLocal);
+            neighbourPoints[1] = new Vector3(pathNode.Position.x + gridStepLocal, pathNode.Position.y, pathNode.Position.z - gridStepLocal);
+            neighbourPoints[2] = new Vector3(pathNode.Position.x + gridStepLocal, pathNode.Position.y + gridStepLocal, pathNode.Position.z - gridStepLocal);
 
-            //neighbourPoints[3] = new Vector3(pathNode.Position.x + gridStepLocal, pathNode.Position.y - gridStepLocal, pathNode.Position.z);
-            //neighbourPoints[4] = new Vector3(pathNode.Position.x + gridStepLocal, pathNode.Position.y, pathNode.Position.z);
-            //neighbourPoints[5] = new Vector3(pathNode.Position.x + gridStepLocal, pathNode.Position.y + gridStepLocal, pathNode.Position.z);
+            neighbourPoints[3] = new Vector3(pathNode.Position.x + gridStepLocal, pathNode.Position.y - gridStepLocal, pathNode.Position.z);
+            neighbourPoints[4] = new Vector3(pathNode.Position.x + gridStepLocal, pathNode.Position.y, pathNode.Position.z);
+            neighbourPoints[5] = new Vector3(pathNode.Position.x + gridStepLocal, pathNode.Position.y + gridStepLocal, pathNode.Position.z);
 
-            //neighbourPoints[6] = new Vector3(pathNode.Position.x + gridStepLocal, pathNode.Position.y - gridStepLocal, pathNode.Position.z + gridStepLocal);
-            //neighbourPoints[7] = new Vector3(pathNode.Position.x + gridStepLocal, pathNode.Position.y, pathNode.Position.z + gridStepLocal);
-            //neighbourPoints[8] = new Vector3(pathNode.Position.x + gridStepLocal, pathNode.Position.y + gridStepLocal, pathNode.Position.z + gridStepLocal);
+            neighbourPoints[6] = new Vector3(pathNode.Position.x + gridStepLocal, pathNode.Position.y - gridStepLocal, pathNode.Position.z + gridStepLocal);
+            neighbourPoints[7] = new Vector3(pathNode.Position.x + gridStepLocal, pathNode.Position.y, pathNode.Position.z + gridStepLocal);
+            neighbourPoints[8] = new Vector3(pathNode.Position.x + gridStepLocal, pathNode.Position.y + gridStepLocal, pathNode.Position.z + gridStepLocal);
 
-            //neighbourPoints[9] = new Vector3(pathNode.Position.x, pathNode.Position.y - gridStepLocal, pathNode.Position.z - gridStepLocal);
-            //neighbourPoints[10] = new Vector3(pathNode.Position.x, pathNode.Position.y, pathNode.Position.z - gridStepLocal);
-            //neighbourPoints[11] = new Vector3(pathNode.Position.x, pathNode.Position.y + gridStepLocal, pathNode.Position.z - gridStepLocal);
+            neighbourPoints[9] = new Vector3(pathNode.Position.x, pathNode.Position.y - gridStepLocal, pathNode.Position.z - gridStepLocal);
+            neighbourPoints[10] = new Vector3(pathNode.Position.x, pathNode.Position.y, pathNode.Position.z - gridStepLocal);
+            neighbourPoints[11] = new Vector3(pathNode.Position.x, pathNode.Position.y + gridStepLocal, pathNode.Position.z - gridStepLocal);
 
-            //neighbourPoints[12] = new Vector3(pathNode.Position.x, pathNode.Position.y - gridStepLocal, pathNode.Position.z);
-            ////this pathNode
-            //neighbourPoints[13] = new Vector3(pathNode.Position.x, pathNode.Position.y + gridStepLocal, pathNode.Position.z);
+            neighbourPoints[12] = new Vector3(pathNode.Position.x, pathNode.Position.y - gridStepLocal, pathNode.Position.z);
+            //this pathNode
+            neighbourPoints[13] = new Vector3(pathNode.Position.x, pathNode.Position.y + gridStepLocal, pathNode.Position.z);
 
-            //neighbourPoints[14] = new Vector3(pathNode.Position.x, pathNode.Position.y - gridStepLocal, pathNode.Position.z + gridStepLocal);
-            //neighbourPoints[15] = new Vector3(pathNode.Position.x, pathNode.Position.y, pathNode.Position.z + gridStepLocal);
-            //neighbourPoints[16] = new Vector3(pathNode.Position.x, pathNode.Position.y + gridStepLocal, pathNode.Position.z + gridStepLocal);
+            neighbourPoints[14] = new Vector3(pathNode.Position.x, pathNode.Position.y - gridStepLocal, pathNode.Position.z + gridStepLocal);
+            neighbourPoints[15] = new Vector3(pathNode.Position.x, pathNode.Position.y, pathNode.Position.z + gridStepLocal);
+            neighbourPoints[16] = new Vector3(pathNode.Position.x, pathNode.Position.y + gridStepLocal, pathNode.Position.z + gridStepLocal);
 
-            //neighbourPoints[17] = new Vector3(pathNode.Position.x - gridStepLocal, pathNode.Position.y - gridStepLocal, pathNode.Position.z - gridStepLocal);
-            //neighbourPoints[18] = new Vector3(pathNode.Position.x - gridStepLocal, pathNode.Position.y, pathNode.Position.z - gridStepLocal);
-            //neighbourPoints[19] = new Vector3(pathNode.Position.x - gridStepLocal, pathNode.Position.y + gridStepLocal, pathNode.Position.z - gridStepLocal);
+            neighbourPoints[17] = new Vector3(pathNode.Position.x - gridStepLocal, pathNode.Position.y - gridStepLocal, pathNode.Position.z - gridStepLocal);
+            neighbourPoints[18] = new Vector3(pathNode.Position.x - gridStepLocal, pathNode.Position.y, pathNode.Position.z - gridStepLocal);
+            neighbourPoints[19] = new Vector3(pathNode.Position.x - gridStepLocal, pathNode.Position.y + gridStepLocal, pathNode.Position.z - gridStepLocal);
 
-            //neighbourPoints[20] = new Vector3(pathNode.Position.x - gridStepLocal, pathNode.Position.y - gridStepLocal, pathNode.Position.z);
-            //neighbourPoints[21] = new Vector3(pathNode.Position.x - gridStepLocal, pathNode.Position.y, pathNode.Position.z);
-            //neighbourPoints[22] = new Vector3(pathNode.Position.x - gridStepLocal, pathNode.Position.y + gridStepLocal, pathNode.Position.z);
+            neighbourPoints[20] = new Vector3(pathNode.Position.x - gridStepLocal, pathNode.Position.y - gridStepLocal, pathNode.Position.z);
+            neighbourPoints[21] = new Vector3(pathNode.Position.x - gridStepLocal, pathNode.Position.y, pathNode.Position.z);
+            neighbourPoints[22] = new Vector3(pathNode.Position.x - gridStepLocal, pathNode.Position.y + gridStepLocal, pathNode.Position.z);
 
-            //neighbourPoints[23] = new Vector3(pathNode.Position.x - gridStepLocal, pathNode.Position.y - gridStepLocal, pathNode.Position.z + gridStepLocal);
-            //neighbourPoints[24] = new Vector3(pathNode.Position.x - gridStepLocal, pathNode.Position.y, pathNode.Position.z + gridStepLocal);
-            //neighbourPoints[25] = new Vector3(pathNode.Position.x - gridStepLocal, pathNode.Position.y + gridStepLocal, pathNode.Position.z + gridStepLocal);
+            neighbourPoints[23] = new Vector3(pathNode.Position.x - gridStepLocal, pathNode.Position.y - gridStepLocal, pathNode.Position.z + gridStepLocal);
+            neighbourPoints[24] = new Vector3(pathNode.Position.x - gridStepLocal, pathNode.Position.y, pathNode.Position.z + gridStepLocal);
+            neighbourPoints[25] = new Vector3(pathNode.Position.x - gridStepLocal, pathNode.Position.y + gridStepLocal, pathNode.Position.z + gridStepLocal);
 
-            neighbourPoints[0] = pathNode.Position + (gridStepLocal * ((-1 * walkerTransform.forward) + (-1 * walkerTransform.right) + (-1 * walkerTransform.up)));
-            neighbourPoints[1] = pathNode.Position + (gridStepLocal * ((-1 * walkerTransform.forward) + (-1 * walkerTransform.right) + (0 * walkerTransform.up)));
-            neighbourPoints[2] = pathNode.Position + (gridStepLocal * ((-1 * walkerTransform.forward) + (-1 * walkerTransform.right) + (1 * walkerTransform.up)));
+            //neighbourPoints[0] = pathNode.Position + (gridStepLocal * ((-1 * walkerTransform.forward) + (-1 * walkerTransform.right) + (-1 * walkerTransform.up)));
+            //neighbourPoints[1] = pathNode.Position + (gridStepLocal * ((-1 * walkerTransform.forward) + (-1 * walkerTransform.right) + (0 * walkerTransform.up)));
+            //neighbourPoints[2] = pathNode.Position + (gridStepLocal * ((-1 * walkerTransform.forward) + (-1 * walkerTransform.right) + (1 * walkerTransform.up)));
 
-            neighbourPoints[3] = pathNode.Position + (gridStepLocal * ((-1 * walkerTransform.forward) + (0 * walkerTransform.right) + (-1 * walkerTransform.up)));
-            neighbourPoints[4] = pathNode.Position + (gridStepLocal * ((-1 * walkerTransform.forward) + (0 * walkerTransform.right) + (0 * walkerTransform.up)));
-            neighbourPoints[5] = pathNode.Position + (gridStepLocal * ((-1 * walkerTransform.forward) + (0 * walkerTransform.right) + (1 * walkerTransform.up)));
+            //neighbourPoints[3] = pathNode.Position + (gridStepLocal * ((-1 * walkerTransform.forward) + (0 * walkerTransform.right) + (-1 * walkerTransform.up)));
+            //neighbourPoints[4] = pathNode.Position + (gridStepLocal * ((-1 * walkerTransform.forward) + (0 * walkerTransform.right) + (0 * walkerTransform.up)));
+            //neighbourPoints[5] = pathNode.Position + (gridStepLocal * ((-1 * walkerTransform.forward) + (0 * walkerTransform.right) + (1 * walkerTransform.up)));
 
-            neighbourPoints[6] = pathNode.Position + (gridStepLocal * ((-1 * walkerTransform.forward) + (1 * walkerTransform.right) + (-1 * walkerTransform.up)));
-            neighbourPoints[7] = pathNode.Position + (gridStepLocal * ((-1 * walkerTransform.forward) + (1 * walkerTransform.right) + (0 * walkerTransform.up)));
-            neighbourPoints[8] = pathNode.Position + (gridStepLocal * ((-1 * walkerTransform.forward) + (1 * walkerTransform.right) + (1 * walkerTransform.up)));
-            //
-            neighbourPoints[9] = pathNode.Position + (gridStepLocal * ((0 * walkerTransform.forward) + (-1 * walkerTransform.right) + (-1 * walkerTransform.up)));
-            neighbourPoints[10] = pathNode.Position + (gridStepLocal * ((0 * walkerTransform.forward) + (-1 * walkerTransform.right) + (0 * walkerTransform.up)));
-            neighbourPoints[11] = pathNode.Position + (gridStepLocal * ((0 * walkerTransform.forward) + (-1 * walkerTransform.right) + (1 * walkerTransform.up)));
+            //neighbourPoints[6] = pathNode.Position + (gridStepLocal * ((-1 * walkerTransform.forward) + (1 * walkerTransform.right) + (-1 * walkerTransform.up)));
+            //neighbourPoints[7] = pathNode.Position + (gridStepLocal * ((-1 * walkerTransform.forward) + (1 * walkerTransform.right) + (0 * walkerTransform.up)));
+            //neighbourPoints[8] = pathNode.Position + (gridStepLocal * ((-1 * walkerTransform.forward) + (1 * walkerTransform.right) + (1 * walkerTransform.up)));
+            ////
+            //neighbourPoints[9] = pathNode.Position + (gridStepLocal * ((0 * walkerTransform.forward) + (-1 * walkerTransform.right) + (-1 * walkerTransform.up)));
+            //neighbourPoints[10] = pathNode.Position + (gridStepLocal * ((0 * walkerTransform.forward) + (-1 * walkerTransform.right) + (0 * walkerTransform.up)));
+            //neighbourPoints[11] = pathNode.Position + (gridStepLocal * ((0 * walkerTransform.forward) + (-1 * walkerTransform.right) + (1 * walkerTransform.up)));
 
-            neighbourPoints[12] = pathNode.Position + (gridStepLocal * ((0 * walkerTransform.forward) + (0 * walkerTransform.right) + (-1 * walkerTransform.up)));
-            //this
-            neighbourPoints[13] = pathNode.Position + (gridStepLocal * ((0 * walkerTransform.forward) + (0 * walkerTransform.right) + (1 * walkerTransform.up)));
+            //neighbourPoints[12] = pathNode.Position + (gridStepLocal * ((0 * walkerTransform.forward) + (0 * walkerTransform.right) + (-1 * walkerTransform.up)));
+            ////this
+            //neighbourPoints[13] = pathNode.Position + (gridStepLocal * ((0 * walkerTransform.forward) + (0 * walkerTransform.right) + (1 * walkerTransform.up)));
 
-            neighbourPoints[14] = pathNode.Position + (gridStepLocal * ((0 * walkerTransform.forward) + (1 * walkerTransform.right) + (-1 * walkerTransform.up)));
-            neighbourPoints[15] = pathNode.Position + (gridStepLocal * ((0 * walkerTransform.forward) + (1 * walkerTransform.right) + (0 * walkerTransform.up)));
-            neighbourPoints[16] = pathNode.Position + (gridStepLocal * ((0 * walkerTransform.forward) + (1 * walkerTransform.right) + (1 * walkerTransform.up)));
-            //
-            neighbourPoints[17] = pathNode.Position + (gridStepLocal * ((-1 * walkerTransform.forward) + (-1 * walkerTransform.right) + (-1 * walkerTransform.up)));
-            neighbourPoints[18] = pathNode.Position + (gridStepLocal * ((-1 * walkerTransform.forward) + (-1 * walkerTransform.right) + (0 * walkerTransform.up)));
-            neighbourPoints[19] = pathNode.Position + (gridStepLocal * ((-1 * walkerTransform.forward) + (-1 * walkerTransform.right) + (1 * walkerTransform.up)));
+            //neighbourPoints[14] = pathNode.Position + (gridStepLocal * ((0 * walkerTransform.forward) + (1 * walkerTransform.right) + (-1 * walkerTransform.up)));
+            //neighbourPoints[15] = pathNode.Position + (gridStepLocal * ((0 * walkerTransform.forward) + (1 * walkerTransform.right) + (0 * walkerTransform.up)));
+            //neighbourPoints[16] = pathNode.Position + (gridStepLocal * ((0 * walkerTransform.forward) + (1 * walkerTransform.right) + (1 * walkerTransform.up)));
+            ////
+            //neighbourPoints[17] = pathNode.Position + (gridStepLocal * ((-1 * walkerTransform.forward) + (-1 * walkerTransform.right) + (-1 * walkerTransform.up)));
+            //neighbourPoints[18] = pathNode.Position + (gridStepLocal * ((-1 * walkerTransform.forward) + (-1 * walkerTransform.right) + (0 * walkerTransform.up)));
+            //neighbourPoints[19] = pathNode.Position + (gridStepLocal * ((-1 * walkerTransform.forward) + (-1 * walkerTransform.right) + (1 * walkerTransform.up)));
 
-            neighbourPoints[20] = pathNode.Position + (gridStepLocal * ((-1 * walkerTransform.forward) + (0 * walkerTransform.right) + (-1 * walkerTransform.up)));
-            neighbourPoints[21] = pathNode.Position + (gridStepLocal * ((-1 * walkerTransform.forward) + (0 * walkerTransform.right) + (0 * walkerTransform.up)));
-            neighbourPoints[22] = pathNode.Position + (gridStepLocal * ((-1 * walkerTransform.forward) + (0 * walkerTransform.right) + (1 * walkerTransform.up)));
+            //neighbourPoints[20] = pathNode.Position + (gridStepLocal * ((-1 * walkerTransform.forward) + (0 * walkerTransform.right) + (-1 * walkerTransform.up)));
+            //neighbourPoints[21] = pathNode.Position + (gridStepLocal * ((-1 * walkerTransform.forward) + (0 * walkerTransform.right) + (0 * walkerTransform.up)));
+            //neighbourPoints[22] = pathNode.Position + (gridStepLocal * ((-1 * walkerTransform.forward) + (0 * walkerTransform.right) + (1 * walkerTransform.up)));
 
-            neighbourPoints[23] = pathNode.Position + (gridStepLocal * ((-1 * walkerTransform.forward) + (1 * walkerTransform.right) + (-1 * walkerTransform.up)));
-            neighbourPoints[24] = pathNode.Position + (gridStepLocal * ((-1 * walkerTransform.forward) + (1 * walkerTransform.right) + (0 * walkerTransform.up)));
-            neighbourPoints[25] = pathNode.Position + (gridStepLocal * ((-1 * walkerTransform.forward) + (1 * walkerTransform.right) + (1 * walkerTransform.up)));
+            //neighbourPoints[23] = pathNode.Position + (gridStepLocal * ((-1 * walkerTransform.forward) + (1 * walkerTransform.right) + (-1 * walkerTransform.up)));
+            //neighbourPoints[24] = pathNode.Position + (gridStepLocal * ((-1 * walkerTransform.forward) + (1 * walkerTransform.right) + (0 * walkerTransform.up)));
+            //neighbourPoints[25] = pathNode.Position + (gridStepLocal * ((-1 * walkerTransform.forward) + (1 * walkerTransform.right) + (1 * walkerTransform.up)));
             neighbourPoints[26] = destination;
             //
             //neighbourPoints[26] = pathNode.Position + (gridStepLocal * ((2 * walkerTransform.forward) + (-1 * walkerTransform.right) + (-1 * walkerTransform.up)));
@@ -309,12 +315,12 @@ namespace SpaceCommander
             //debug
             GameObject worldpoint = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             worldpoint.GetComponent<SphereCollider>().enabled = false;
-            worldpoint.AddComponent<SelfDestructor>().ttl = 1f;
+            worldpoint.AddComponent<Service.SelfDestructor>().ttl = 1f;
 
             foreach (Vector3 point in neighbourPoints)
             {
                 // Проверяем, что по клетке можно ходить.
-                if (!CanWalk(pathNode.Position, point)/* || !FreeSpace(pathNode.Position, gridStepLocal * 0.5f)*/)
+                if (!CanWalk(pathNode.Position, point) || !FreeSpace(point, gridStepLocal * 0.5f))
                     continue;
                 // Заполняем данные для точки маршрута.
                 //debug
@@ -392,8 +398,8 @@ namespace SpaceCommander
         }
         private void MoveSimple()
         {
-            //    walkerTransform.Translate((path.Peek() - walkerTransform.position).normalized * walker.Speed * Time.deltaTime, Space.World);
-            walkerBody.velocity = (path.Peek() - walkerTransform.position).normalized * walker.Speed;
+              walkerTransform.Translate((path.Peek() - walkerTransform.position).normalized * walker.Speed * Time.deltaTime, Space.World);
+            //walkerBody.velocity = (path.Peek() - walkerTransform.position).normalized * walker.Speed;
 
             //    Vector3 targetMotion = (path.Peek() - walkerTransform.position).normalized;
             //    float mainThrustLocal = Vector3.Project(targetMotion, walkerTransform.forward).magnitude;
@@ -464,51 +470,75 @@ namespace SpaceCommander
 
         private float ThrustAxis()
         {
-            Vector3 targetMotion = path.Peek() - walkerTransform.position;
             float sign;
-            if (Vector3.Angle(targetMotion, walkerTransform.forward) < 90)
-                sign = 1;
-            else sign = -1;
-            float targetPojection = Vector3.Project(targetMotion, walkerTransform.forward).magnitude;
-            float velocityPojection = Vector3.Project(walkerBody.velocity, walkerTransform.forward).magnitude;
-            if (targetPojection > 0.1f)
-                if (Mathf.Abs(targetPojection) > (Mathf.Abs(velocityPojection) * 2.5))
-                    return 1 * sign;
-                else if (path.Count == 0)
-                    return targetPojection * -sign;
+                float velocityPojection = Vector3.Project(walkerBody.velocity, walkerTransform.forward).magnitude;
+            if (path.Count != 0)
+            {
+                Vector3 targetMotion = path.Peek() - walkerTransform.position;
+                if (Vector3.Angle(targetMotion, walkerTransform.forward) < 90)
+                    sign = 1;
+                else sign = -1;
+                float targetPojection = Vector3.Project(targetMotion, walkerTransform.forward).magnitude;
+                if (targetPojection > 0.1f)
+                    //if (Mathf.Abs(targetPojection) > (Mathf.Abs(velocityPojection) * 2.5))
+                        return 1f * sign;
+            }
+            else
+            {
+                if (Vector3.Angle(walkerBody.velocity, walkerTransform.forward) < 90)
+                    sign = 2;
+                else sign = -2;
+                return -Mathf.Clamp01(velocityPojection) * sign;
+            }
             //else return 0.2f * (Mathf.Sign(targetPojection));
             return 0;
         }
         private float HorizontalShiftAxis()
         {
-            Vector3 targetMotion = path.Peek() - walkerTransform.position;
             float sign;
-            if (Vector3.Angle(targetMotion, walkerTransform.right) < 90)
-                sign = 1;
-            else sign = -1;
-            float targetPojection = Vector3.Project(targetMotion, walkerTransform.right).magnitude;
-            float velocityPojection = Vector3.Project(walkerBody.velocity, walkerTransform.right).magnitude;
-            if (targetPojection > 0.1f)
-                if (Mathf.Abs(targetPojection) > Mathf.Abs(velocityPojection))
-                    return 0.5f * sign;
-                else if (path.Count == 0)
-                    return targetPojection * 0.5f * -sign;
+                float velocityPojection = Vector3.Project(walkerBody.velocity, walkerTransform.right).magnitude;
+            if (path.Count != 0)
+            {
+                Vector3 targetMotion = path.Peek() - walkerTransform.position;
+                if (Vector3.Angle(targetMotion, walkerTransform.right) < 90)
+                    sign = 1;
+                else sign = -1;
+                float targetPojection = Vector3.Project(targetMotion, walkerTransform.right).magnitude;
+                if (targetPojection > 0.1f)
+                    if (Mathf.Abs(targetPojection) > Mathf.Abs(velocityPojection))
+                        return 0.5f * sign;
+            }
+            else
+            {
+                if (Vector3.Angle(walkerBody.velocity, walkerTransform.right) < 90)
+                    sign = 1;
+                else sign = -1;
+                return -Mathf.Clamp01(velocityPojection) * sign;
+            }
             return 0;
         }
         private float VerticalShiftAxis()
         {
-            Vector3 targetMotion = path.Peek() - walkerTransform.position;
             float sign;
-            if (Vector3.Angle(targetMotion, walkerTransform.up) < 90)
-                sign = 1;
-            else sign = -1;
-            float targetPojection = Vector3.Project(targetMotion, walkerTransform.up).magnitude;
-            float velocityPojection = Vector3.Project(walkerBody.velocity, walkerTransform.up).magnitude;
-            if (targetPojection > 0.1f)
-                if (Mathf.Abs(targetPojection) > Mathf.Abs(velocityPojection))
-                    return 0.5f * sign;
-                else if (path.Count == 0)
-                    return targetPojection * 0.5f * -sign;
+                float velocityPojection = Vector3.Project(walkerBody.velocity, walkerTransform.up).magnitude;
+            if (path.Count != 0)
+            {
+                Vector3 targetMotion = path.Peek() - walkerTransform.position;
+                if (Vector3.Angle(targetMotion, walkerTransform.up) < 90)
+                    sign = 1;
+                else sign = -1;
+                float targetPojection = Vector3.Project(targetMotion, walkerTransform.up).magnitude;
+                if (targetPojection > 0.1f)
+                    if (Mathf.Abs(targetPojection) > Mathf.Abs(velocityPojection))
+                        return 0.5f * sign;
+            }
+            else
+            {
+                if (Vector3.Angle(walkerBody.velocity, walkerTransform.up) < 90)
+                    sign = 1;
+                else sign = -1;
+                return -Mathf.Clamp01(velocityPojection) * sign;
+            }
             return 0;
         }
 

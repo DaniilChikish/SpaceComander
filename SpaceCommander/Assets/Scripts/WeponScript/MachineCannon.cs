@@ -13,19 +13,10 @@ namespace SpaceCommander.Weapons
         public SmallShellType[] ShellLine;
         public int shellPosition;
         private float heat;
-        public override void StatUp()
+        protected override void StatUp()
         {
+            base.StatUp();
             type = WeaponType.MachineCannon;
-            gameObject.GetComponent<MeshRenderer>().enabled = false;
-            range = 200;
-            ammoCampacity = 200; //~2 Min
-            ammo = AmmoCampacity;
-            firerate = 500;
-            reloadingTime = 20;
-            dispersion = 0.05f;
-            shildBlinkTime = 0.1f;
-            averageRoundSpeed = 130;
-            PreAiming = true;
             switch (AmmoType)
             {
                 case ShellLineType.Solid:
@@ -36,7 +27,6 @@ namespace SpaceCommander.Weapons
                         ShellLine[2] = SmallShellType.Solid;
                         ShellLine[3] = SmallShellType.Solid;
                         ShellLine[4] = SmallShellType.APShell;
-                        averageRoundSpeed = 133.33f;
                         break;
                     }
                 case ShellLineType.ArmorPenetration:
@@ -46,7 +36,6 @@ namespace SpaceCommander.Weapons
                         ShellLine[1] = SmallShellType.APShell;
                         ShellLine[2] = SmallShellType.Incendiary;
                         ShellLine[3] = SmallShellType.APShell;
-                        averageRoundSpeed = 113.58f;
                         break;
                     }
                 case ShellLineType.ShildOwerheat:
@@ -58,7 +47,6 @@ namespace SpaceCommander.Weapons
                         ShellLine[3] = SmallShellType.Solid;
                         ShellLine[4] = SmallShellType.Incendiary;
                         ShellLine[5] = SmallShellType.Solid;
-                        averageRoundSpeed = 112.83f;
                         break;
                     }
                 case ShellLineType.Incendiary:
@@ -68,7 +56,6 @@ namespace SpaceCommander.Weapons
                         ShellLine[1] = SmallShellType.Incendiary;
                         ShellLine[2] = SmallShellType.APShell;
                         ShellLine[3] = SmallShellType.Incendiary;
-                        averageRoundSpeed = 124.4f;
                         break;
                     }
                 case ShellLineType.Universal:
@@ -80,7 +67,6 @@ namespace SpaceCommander.Weapons
                         ShellLine[3] = SmallShellType.SemiShell;
                         ShellLine[4] = SmallShellType.Incendiary;
                         ShellLine[5] = SmallShellType.APShell;
-                        averageRoundSpeed = 118.13f;
                         break;
                     }
             }
@@ -108,14 +94,13 @@ namespace SpaceCommander.Weapons
             if (shellPosition >= ShellLine.Length)
                 shellPosition = 0;
 
-            float speed, damage, armorPiersing, mass;
+            float speed = roundSpeed, damage, armorPiersing, mass;
             bool canRicochet = false;
             GameObject explosionPrefab = null;
             switch (ShellLine[shellPosition])
             {
                 case SmallShellType.SemiShell:
                     {
-                        speed = 130f;
                         damage = 25f;
                         armorPiersing = 1.5f;
                         mass = 0.75f;
@@ -123,7 +108,6 @@ namespace SpaceCommander.Weapons
                     }
                 case SmallShellType.APShell:
                     {
-                        speed = 130f;
                         damage = 15f;
                         armorPiersing = 4;
                         mass = 1.05f;
@@ -132,7 +116,6 @@ namespace SpaceCommander.Weapons
                     }
                 case SmallShellType.Incendiary:
                     {
-                        speed = 130f;
                         damage = 5f;
                         armorPiersing = 1;
                         mass = 1;
@@ -141,7 +124,6 @@ namespace SpaceCommander.Weapons
                     }
                 case SmallShellType.BuckShot:
                     {
-                        speed = 100f;
                         damage = 30f;
                         armorPiersing = 1;
                         mass = 0.6f;
@@ -151,7 +133,6 @@ namespace SpaceCommander.Weapons
                 case SmallShellType.Solid:
                 default:
                     {
-                        speed = 130f;
                         damage = 20f;
                         armorPiersing = 2;
                         mass = 1;

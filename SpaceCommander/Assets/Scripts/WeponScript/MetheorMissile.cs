@@ -6,20 +6,16 @@ namespace SpaceCommander.Weapons
 {
     class MetheorMissile : SelfguidedMissile
     {
-        public override void Start()
+        protected override void Start()
         {
-            type = MissileType.Metheor;
-            Speed = 100f;
-            DropImpulse = 250f;
-            TurnSpeed = 90;
-            explosionTime = 30f;
-            AimCone = 45;
+            base.Start();
+            Type = MissileType.Metheor;
             gameObject.GetComponent<Rigidbody>().AddForce(transform.forward * DropImpulse, ForceMode.Impulse);
-            lt = 0;
+            lifeTime = 0;
         }
         protected override void Explode()
         {
-            GameObject blast = Instantiate(FindObjectOfType<GlobalController>().ExplosiveBlast, this.transform.position, this.transform.rotation);
+            GameObject blast = Instantiate(Global.ExplosiveBlast, this.transform.position, this.transform.rotation);
             blast.GetComponent<Explosion>().StatUp(BlastType.Missile);
             Destroy(gameObject);
         }

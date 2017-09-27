@@ -13,19 +13,10 @@ namespace SpaceCommander.Weapons
         public SmallShellType[] ShellLine;
         public int shellPosition;
         private float rotSpeed;
-        public override void StatUp()
+        protected override void StatUp()
         {
-            type = WeaponType.MachineCannon;
-            gameObject.GetComponent<MeshRenderer>().enabled = false;
-            range = 250;
-            ammoCampacity = 1000; //~2 Min
-            ammo = AmmoCampacity;
-            firerate = 100;
-            reloadingTime = 20;
-            dispersion = 0.06f;
-            shildBlinkTime = 0.1f;
-            averageRoundSpeed = 250;
-            PreAiming = true;
+            base.StatUp();
+            type = WeaponType.Chaingun;
             switch (AmmoType)
             {
                 case ShellLineType.Solid:
@@ -120,7 +111,7 @@ namespace SpaceCommander.Weapons
             float speed, damage, armorPiersing, mass;
             bool canRicochet = false;
             GameObject explosionPrefab = null;
-            speed = 250f;
+            speed = roundSpeed;
             switch (ShellLine[shellPosition])
             {
                 case SmallShellType.SemiShell:

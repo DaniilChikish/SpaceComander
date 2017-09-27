@@ -50,6 +50,8 @@ namespace SpaceCommander
         //public double[] RandomExponentPool;
         private float randomPoolBackCoount;
         //settings
+        private INIHandler specINI;
+        public INIHandler SpecINI { get { return specINI; } }
         private SerializeSettings settings;
         public bool SettingsSaved;
         public Languages Localisation { get { return settings.localisation; } set { SettingsSaved = false; settings.localisation = value; } }
@@ -90,10 +92,8 @@ namespace SpaceCommander
         private void OnEnable()
         {
             LoadSettings();
-            //Debug.Log("Global - OnEnable");
             LoadTexts();
-            //text_0 = Texts["string2_key"];
-            //Debug.Log("GlobalController started");
+            LoadSpec();
             Mission = FindObjectOfType<Scenario>();
         }
         public void SaveSettings()
@@ -132,7 +132,10 @@ namespace SpaceCommander
             }
             SettingsSaved = true;
         }
-
+        private void LoadSpec()
+        {
+            specINI = new INIHandler(Application.streamingAssetsPath + "\\spec.ini");
+        }
         private void Start()
         {
 
@@ -318,6 +321,11 @@ namespace SpaceCommander
         {
             throw new NotImplementedException();
         }
+
+        public void FixedUpdate()
+        {
+            throw new NotImplementedException();
+        }
     }
     public class ShootController : IGunner
     {
@@ -470,7 +478,7 @@ namespace SpaceCommander
         public Unit Target { set { target = value; } get { return target; } }
         protected float dispersion; //dafault 0;
         protected float shildBlinkTime; //default 0.01
-        protected float averageRoundSpeed; //default 1000;
+        protected float roundSpeed; //default 1000;
         protected float firerate;
 
         protected bool PreAiming;
@@ -479,7 +487,7 @@ namespace SpaceCommander
         protected float backCount;
 
         public float Range { get { return range * (1 + RangeMultiplacator); } }
-        public float RoundSpeed { get { return averageRoundSpeed * (1 + RoundspeedMultiplacator); } }
+        public float RoundSpeed { get { return roundSpeed * (1 + RoundspeedMultiplacator); } }
         public float Dispersion { get { return dispersion * (1 + DispersionMultiplicator); } }
         public float ShildBlink { get { return shildBlinkTime; } }
         public float BackCounter { get { return backCount; } }
@@ -491,11 +499,11 @@ namespace SpaceCommander
         protected void Start()
         {
             Global = FindObjectOfType<GlobalController>();
-            averageRoundSpeed = 150;
+            roundSpeed = 150;
             shildBlinkTime = 0.01f;
             StatUp();
         }
-        public abstract void StatUp();
+        protected abstract void StatUp();
         // Update is called once per frame
         public virtual void Update()
         {
@@ -565,6 +573,29 @@ namespace SpaceCommander
         protected int ammo;
         protected int ammoCampacity;
         protected int AmmoCampacity { get { return Mathf.RoundToInt(ammoCampacity * (1 + AmmocampacityMultiplacator)); } }
+        protected override void StatUp()
+        {
+            gameObject.GetComponent<MeshRenderer>().enabled = false;
+            //Global.SpecINI.Write(this.GetType().ToString(), "range", range.ToString());
+            //Global.SpecINI.Write(this.GetType().ToString(), "dispersion", dispersion.ToString());
+            //Global.SpecINI.Write(this.GetType().ToString(), "shildBlinkTime", shildBlinkTime.ToString());
+            //Global.SpecINI.Write(this.GetType().ToString(), "firerate", firerate.ToString());
+            //Global.SpecINI.Write(this.GetType().ToString(), "ammoCampacity", ammoCampacity.ToString());
+            //Global.SpecINI.Write(this.GetType().ToString(), "reloadingTime", reloadingTime.ToString());
+            //Global.SpecINI.Write(this.GetType().ToString(), "PreAiming", PreAiming.ToString());
+            //Global.SpecINI.Write(this.GetType().ToString(), "roundSpeed", roundSpeed.ToString());
+
+            range = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "range"));
+            dispersion = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "dispersion"));
+            shildBlinkTime = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "shildBlinkTime"));
+            firerate = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "firerate"));
+            ammoCampacity = Convert.ToInt32(Global.SpecINI.ReadINI(this.GetType().ToString(), "ammoCampacity"));
+            reloadingTime = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "reloadingTime"));
+            PreAiming = Convert.ToBoolean(Global.SpecINI.ReadINI(this.GetType().ToString(), "PreAiming"));
+            roundSpeed = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "roundSpeed"));
+
+            ammo = AmmoCampacity;
+        }
         public override bool Fire()
         {
             if (IsReady)
@@ -614,6 +645,29 @@ namespace SpaceCommander
         protected int ammo;
         protected int ammoCampacity;
         protected int AmmoCampacity { get { return Mathf.RoundToInt(ammoCampacity * (1 + AmmocampacityMultiplacator)); } }
+        protected override void StatUp()
+        {
+            gameObject.GetComponent<MeshRenderer>().enabled = false;
+            //Global.SpecINI.Write(this.GetType().ToString(), "range", range.ToString());
+            //Global.SpecINI.Write(this.GetType().ToString(), "dispersion", dispersion.ToString());
+            //Global.SpecINI.Write(this.GetType().ToString(), "shildBlinkTime", shildBlinkTime.ToString());
+            //Global.SpecINI.Write(this.GetType().ToString(), "firerate", firerate.ToString());
+            //Global.SpecINI.Write(this.GetType().ToString(), "ammoCampacity", ammoCampacity.ToString());
+            //Global.SpecINI.Write(this.GetType().ToString(), "reloadingTime", reloadingTime.ToString());
+            //Global.SpecINI.Write(this.GetType().ToString(), "PreAiming", PreAiming.ToString());
+            //Global.SpecINI.Write(this.GetType().ToString(), "roundSpeed", roundSpeed.ToString());
+
+            range = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "range"));
+            dispersion = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "dispersion"));
+            shildBlinkTime = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "shildBlinkTime"));
+            firerate = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "firerate"));
+            ammoCampacity = Convert.ToInt32(Global.SpecINI.ReadINI(this.GetType().ToString(), "ammoCampacity"));
+            reloadingTime = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "reloadingTime"));
+            PreAiming = Convert.ToBoolean(Global.SpecINI.ReadINI(this.GetType().ToString(), "PreAiming"));
+            roundSpeed = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "roundSpeed"));
+
+            ammo = AmmoCampacity;
+        }
         public override bool Fire()
         {
             if (IsReady)
@@ -662,6 +716,26 @@ namespace SpaceCommander
         protected float heat;
         protected float maxHeat;
         protected bool overheat;
+        protected override void StatUp()
+        {
+            gameObject.GetComponent<MeshRenderer>().enabled = false;
+
+            //Global.SpecINI.Write(this.GetType().ToString(), "range", range.ToString());
+            //Global.SpecINI.Write(this.GetType().ToString(), "dispersion", dispersion.ToString());
+            //Global.SpecINI.Write(this.GetType().ToString(), "shildBlinkTime", shildBlinkTime.ToString());
+            //Global.SpecINI.Write(this.GetType().ToString(), "firerate", firerate.ToString());
+            //Global.SpecINI.Write(this.GetType().ToString(), "maxHeat", maxHeat.ToString());
+            //Global.SpecINI.Write(this.GetType().ToString(), "PreAiming", PreAiming.ToString());
+            //Global.SpecINI.Write(this.GetType().ToString(), "roundSpeed", roundSpeed.ToString());
+
+            range = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "range"));
+            dispersion = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "dispersion"));
+            shildBlinkTime = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "shildBlinkTime"));
+            firerate = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "firerate"));
+            maxHeat = Convert.ToInt32(Global.SpecINI.ReadINI(this.GetType().ToString(), "maxHeat"));
+            PreAiming = Convert.ToBoolean(Global.SpecINI.ReadINI(this.GetType().ToString(), "PreAiming"));
+            roundSpeed = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "roundSpeed"));
+        }
         public override bool Fire()
         {
             if (IsReady)
@@ -740,21 +814,37 @@ namespace SpaceCommander
     }
     public abstract class SelfguidedMissile : MonoBehaviour
     {
+        protected GlobalController Global;
         public Transform target;// цель для ракеты       
         //public GameObject Blast;// префаб взрыва   
-        protected MissileType type;
+        protected MissileType Type;
         protected float Speed;// скорость ракеты           
         public float DropImpulse;//импульс сброса          
         protected float TurnSpeed;// скорость поворота ракеты            
         protected float explosionTime;// длительность жизни
         public float AimCone;
-        protected float lt;//продолжительность жизни
+        protected float lifeTime;//продолжительность жизни
         protected float detonateTimer;
         protected bool isArmed;
 
-        public abstract void Start();
+        protected virtual void Start()
+        {
+            Global = FindObjectOfType<GlobalController>();
+            Speed = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "Speed"));
+            DropImpulse = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "DropImpulse"));
+            TurnSpeed = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "TurnSpeed"));
+            explosionTime = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "explosionTime"));
+            AimCone = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "AimCone"));
+
+            //Global.SpecINI.Write(this.GetType().ToString(), "Speed", Speed.ToString());
+            //Global.SpecINI.Write(this.GetType().ToString(), "DropImpulse", DropImpulse.ToString());
+            //Global.SpecINI.Write(this.GetType().ToString(), "TurnSpeed", TurnSpeed.ToString());
+            //Global.SpecINI.Write(this.GetType().ToString(), "explosionTime", explosionTime.ToString());
+            //Global.SpecINI.Write(this.GetType().ToString(), "AimCone", AimCone.ToString());
+        }
         private void Update()
         {
+
             if (isArmed)
             {
                 if (detonateTimer > 0)
@@ -763,12 +853,12 @@ namespace SpaceCommander
             }
             else
             {
-                if (lt > explosionTime)
+                if (lifeTime > explosionTime)
                     Explode();
                 else
-                    lt += Time.deltaTime;
+                    lifeTime += Time.deltaTime;
             }
-            if (lt > 0.5)//задержка старта
+            if (lifeTime > 0.5)//задержка старта
             {
                 if (target != null)//наведение
                 {
@@ -793,7 +883,7 @@ namespace SpaceCommander
                 //Debug.Log(gameObject.GetComponent<Rigidbody>().velocity.magnitude);
 
                 //полет по прямой
-                float multiplicator = Mathf.Pow((lt * 0.05f), (1f / 4f));
+                float multiplicator = Mathf.Pow((lifeTime * 0.05f), (1f / 4f));
                 //Debug.Log(multiplicator);
                 //Debug.Log(Convert.ToSingle(multiplicator));
                 //gameObject.GetComponent<Rigidbody>().velocity = transform.forward * Speed * Convert.ToSingle(multiplicator); 
@@ -803,7 +893,7 @@ namespace SpaceCommander
         protected abstract void Explode();
         public void Arm()
         {
-            if (!isArmed && lt > 2.5)
+            if (!isArmed && lifeTime > 2.5)
             {
                 isArmed = true;
                 detonateTimer = 0.2f;
@@ -816,7 +906,7 @@ namespace SpaceCommander
             {
                 case "Unit":
                     {
-                        if (lt > explosionTime / 20)
+                        if (lifeTime > explosionTime / 20)
                             Arm();
                         break;
                     }
@@ -833,7 +923,7 @@ namespace SpaceCommander
             {
                 case "Explosion":
                     {
-                        if (lt > explosionTime / 20)
+                        if (lifeTime > explosionTime / 20)
                             Arm();
                         break;
                     }
@@ -856,7 +946,20 @@ namespace SpaceCommander
         public float DropImpulse;//импульс сброса                  
         public float explosionRange; //расстояние детонации
         protected float lt;//продолжительность жизни
-        protected abstract void Start();
+        protected virtual void Start()
+        {
+            Global = FindObjectOfType<GlobalController>();
+
+            //Global.SpecINI.Write(this.GetType().ToString(), "Speed", Speed.ToString());
+            //Global.SpecINI.Write(this.GetType().ToString(), "DropImpulse", DropImpulse.ToString());
+            //Global.SpecINI.Write(this.GetType().ToString(), "TurnSpeed", TurnSpeed.ToString());
+            //Global.SpecINI.Write(this.GetType().ToString(), "explosionRange", explosionRange.ToString());
+
+            Speed = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "Speed"));
+            DropImpulse = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "DropImpulse"));
+            TurnSpeed = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "TurnSpeed"));
+            explosionRange = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "explosionRange"));
+        }
         public virtual void Update()
         {
             if (Vector3.Distance(this.transform.position, midPoint) < 1)

@@ -24,15 +24,9 @@ namespace SpaceCommander.Units
 
         protected override void StatsUp()
         {
+            base.StatsUp();
             type = UnitClass.ECM;
-            radarRange = 800; //set in child
-            radarPover = 0.9f;
-            speedThrust = 11f; //set in child
-            speedRotation = 75;
-            speedShift = 11;
             jamming = false;
-            stealthness = 0.7f; //set in child
-            radiolink = 1.1f;
             EnemySortDelegate = EMCSortEnemys;
             AlliesSortDelegate = ScoutSortEnemys;
 

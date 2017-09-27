@@ -11,14 +11,8 @@ namespace SpaceCommander.Units
         private bool transpond;
         protected override void StatsUp()
         {
+            base.StatsUp();
             type = UnitClass.Recon;
-            radarRange = 700; //set in child
-            radarPover = 0.8f;
-            speedThrust = 10f; //set in child
-            speedRotation = 70;
-            speedShift = 12;
-            stealthness = 0.7f; //set in child
-            radiolink = 1.5f;
             EnemySortDelegate = ReconSortEnemys;
             AlliesSortDelegate = EMCSortEnemys;
             module = new SpellModule[3];

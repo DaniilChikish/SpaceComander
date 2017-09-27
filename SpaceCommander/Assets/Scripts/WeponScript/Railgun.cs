@@ -6,25 +6,17 @@ namespace SpaceCommander.Weapons
 {
     public class Railgun : ShellWeapon {
         float damageAccumulate =1;
-        public override void StatUp()
+        protected override void StatUp()
         {
+            base.StatUp();
             type = WeaponType.Railgun;
             gameObject.GetComponent<MeshRenderer>().enabled = false;
-            range = 1500;
-            ammoCampacity = 10;
-            ammo = AmmoCampacity;
-            firerate = 60;//200 DD, 40 DpS
-            reloadingTime = 10;
-            dispersion = 0.0f;
-            shildBlinkTime = 0.05f;
-            averageRoundSpeed = 300;
-            PreAiming = true;
         }
         protected override void UpdateLocal()
         {
             if (damageAccumulate < 4)
             damageAccumulate += Time.deltaTime;
-            averageRoundSpeed = 200f * damageAccumulate / 2;
+            roundSpeed = 200f * damageAccumulate / 2;
         }
         protected override void Shoot(Transform target)
         {

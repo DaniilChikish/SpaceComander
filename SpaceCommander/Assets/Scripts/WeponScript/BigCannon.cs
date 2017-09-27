@@ -10,19 +10,10 @@ namespace SpaceCommander.Weapons
     public class BigCannon : MagWeapon
     {
         public BigShellType AmmoType;
-        public override void StatUp()
+        protected override void StatUp()
         {
+            base.StatUp();
             type = WeaponType.Cannon;
-            gameObject.GetComponent<MeshRenderer>().enabled = false;
-            range = 400;
-            dispersion = 0.05f;
-            shildBlinkTime = 0.2f;
-            firerate = 90;
-            ammoCampacity = 30;
-            ammo = AmmoCampacity;
-            reloadingTime = 20;
-            PreAiming = true;
-            averageRoundSpeed = 133.33f;
         }
         protected override void Shoot(Transform target)
         {
@@ -40,14 +31,13 @@ namespace SpaceCommander.Weapons
 
             shell.transform.localScale = shell.transform.localScale * 3;
 
-            float speed, damage, armorPiersing, mass;
+            float speed = roundSpeed, damage, armorPiersing, mass;
             bool canRicochet = false;
             GameObject explosionPrefab = null;
             switch (AmmoType)
             {
                 case BigShellType.HigExplosive:
                     {
-                        speed = 100f;
                         damage = 30f;
                         armorPiersing = 3f;
                         mass = 10f;
@@ -56,7 +46,6 @@ namespace SpaceCommander.Weapons
                     }
                 case BigShellType.UraniumIngot:
                     {
-                        speed = 100f;
                         damage = 70f;
                         armorPiersing = 5f;
                         mass = 15;
@@ -65,7 +54,6 @@ namespace SpaceCommander.Weapons
                 case BigShellType.WolframIngot:
                 default:
                     {
-                        speed = 100f;
                         damage = 60f;
                         armorPiersing = 7;
                         mass = 11f;

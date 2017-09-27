@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -19,6 +20,7 @@ namespace SpaceCommander
         MeshRenderer secondField;
         ParticleSystem shildCollaps;
         private SpaceShip owner;
+        private GlobalController Global;
 
         // Use this for initialization
         void Start()
@@ -28,6 +30,14 @@ namespace SpaceCommander
             shildCollaps = this.transform.FindChild("FirstField").GetComponentInChildren<ParticleSystem>();
             secondField = this.transform.FindChild("SecondField").GetComponent<MeshRenderer>();
             owner = transform.GetComponentInParent<SpaceShip>();
+            Global = FindObjectOfType<GlobalController>();
+
+            //Global.SpecINI.Write(owner.GetType().ToString(), "maxCampacity", maxCampacity.ToString());
+            //Global.SpecINI.Write(owner.GetType().ToString(), "recharging", recharging.ToString());
+            maxCampacity = Convert.ToSingle(Global.SpecINI.ReadINI(owner.GetType().ToString(), "maxCampacity"));
+            recharging = Convert.ToSingle(Global.SpecINI.ReadINI(owner.GetType().ToString(), "recharging"));
+
+            force = maxCampacity;
         }
 
         // Update is called once per frame

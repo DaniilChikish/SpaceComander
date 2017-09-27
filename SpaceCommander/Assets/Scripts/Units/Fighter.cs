@@ -16,15 +16,8 @@ namespace SpaceCommander.Units
 
         protected override void StatsUp()
         {
+            base.StatsUp();
             type = UnitClass.Figther;
-            radarRange = 550; //set in child
-            radarPover = 0.8f;
-            speedThrust = 9; //set in child
-            speedRotation = 55;
-            speedShift = 11;
-            stealthness = 0.5f; //set in child
-            radiolink = 1.5f;
-
             EnemySortDelegate = FigtherSortEnemys;
             AlliesSortDelegate = ReconSortEnemys;
 

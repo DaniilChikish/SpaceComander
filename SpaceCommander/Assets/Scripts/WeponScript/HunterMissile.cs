@@ -6,20 +6,16 @@ namespace SpaceCommander.Weapons
 {
     class HunterMissile : SelfguidedMissile
     {
-        public override void Start()
+        protected override void Start()
         {
-            type = MissileType.Hunter;
-            Speed = 40f;
-            DropImpulse = 400f;
-            TurnSpeed = 120;
-            explosionTime = 35f;
-            AimCone = 30;
+            base.Start();
+            Type = MissileType.Hunter;
             gameObject.GetComponent<Rigidbody>().AddForce(transform.forward * DropImpulse, ForceMode.Impulse);
-            lt = 0;
+            lifeTime = 0;
         }
         protected override void Explode()
         {
-            GameObject blast = Instantiate(FindObjectOfType<GlobalController>().ExplosiveBlast, this.transform.position, this.transform.rotation);
+            GameObject blast = Instantiate(Global.ExplosiveBlast, this.transform.position, this.transform.rotation);
             blast.GetComponent<Explosion>().StatUp(BlastType.Missile);
             Destroy(gameObject);
         }

@@ -7,17 +7,10 @@ namespace SpaceCommander.Weapons
     {
         private SpaceShip owner;
         public TorpedoType AmmoType;
-        public override void StatUp()
+        protected override void StatUp()
         {
+            base.StatUp();
             type = WeaponType.Torpedo;
-            gameObject.GetComponent<MeshRenderer>().enabled = false;
-            range = 1000;
-            ammoCampacity = 4;
-            ammo = AmmoCampacity;
-            firerate = 6;
-            reloadingTime = 25;
-            dispersion = 3f;
-            shildBlinkTime = 1f;
             owner = this.transform.GetComponentInParent<SpaceShip>();
         }
         protected override void Shoot(Transform target)

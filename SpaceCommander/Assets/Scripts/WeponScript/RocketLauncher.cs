@@ -6,17 +6,10 @@ namespace SpaceCommander.Weapons
     public class RocketLauncher : ShellWeapon
     {
         public MissileType AmmoType;
-        public override void StatUp()
+        protected override void StatUp()
         {
+            base.StatUp();
             type = WeaponType.Missile;
-            gameObject.GetComponent<MeshRenderer>().enabled = false;
-            range = 250;
-            ammoCampacity = 8;
-            ammo = AmmoCampacity;
-            firerate = 15;
-            reloadingTime = 15;
-            dispersion = 6f;
-            shildBlinkTime = 0.8f;
         }
         protected override void Shoot(Transform target)
         {

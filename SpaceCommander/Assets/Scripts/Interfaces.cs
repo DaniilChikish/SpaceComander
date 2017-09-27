@@ -24,6 +24,7 @@ namespace SpaceCommander
     {
         Vector3 Velocity { get; }
         void Update();
+        void FixedUpdate();
         bool MoveTo(Vector3 destination);
         bool MoveToQueue(Vector3 destination);
         void BuildPathArrows();
@@ -56,7 +57,6 @@ namespace SpaceCommander
         float ShootCounter { get; }
         float MaxShootCounter { get; }
         bool IsReady { get; }
-        void StatUp();
         void Reset();
         bool Fire();
     }

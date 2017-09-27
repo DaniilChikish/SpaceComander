@@ -19,6 +19,8 @@ namespace SpaceCommander
         protected SpellType type;
         protected List<SpellFunction> function;
         protected SpaceShip owner;
+        protected GlobalController Global;
+
         public SpellModuleState State { get { return state; } }
         public float BackCount {  get { return backCount; } }
         public float CoolingTime { get { return coolingTime; } }
@@ -41,6 +43,9 @@ namespace SpaceCommander
         public SpellModule(SpaceShip owner)
         {
             this.owner = owner;
+            Global = GameObject.FindObjectOfType<GlobalController>();
+            activeTime = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "activeTime"));
+            coolingTime = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "coolingTime"));
             this.function = new List<SpellFunction>();
         }
         public virtual void Enable()
@@ -79,21 +84,21 @@ namespace SpaceCommander
                 }
             if (type == SpellType.Passive || (type == SpellType.LongAction && state == SpellModuleState.Active))
                 Act();
+            //Global.SpecINI.Write(this.GetType().ToString(), "activeTime", activeTime.ToString());
+            //Global.SpecINI.Write(this.GetType().ToString(), "coolingTime", coolingTime.ToString());
         }
         protected virtual void Act() { }
         protected abstract void Disable();
     }
     public class Jammer : SpellModule
     {
-        protected GlobalController Global;
         private float ownerStealthnessBefore;
         public Jammer(SpaceShip owner) : base(owner)
         {
-            Global = GameObject.FindObjectOfType<GlobalController>();
             backCount = 0;
             type = SpellType.LongAction;
-            coolingTime = 100;
-            activeTime = 30;
+            //coolingTime = 100;
+            //activeTime = 30;
             state = SpellModuleState.Ready;
             function.Add(SpellFunction.Self);
             function.Add(SpellFunction.Defence);
@@ -125,8 +130,8 @@ namespace SpaceCommander
         {
             backCount = 0;
             type = SpellType.LongAction;
-            coolingTime = 60;
-            activeTime = 15;
+            //coolingTime = 60;
+            //activeTime = 15;
             state = SpellModuleState.Ready;
             function.Add(SpellFunction.Self);
             function.Add(SpellFunction.Buff);
@@ -144,16 +149,14 @@ namespace SpaceCommander
     }
     public class MissileTrapLauncher : SpellModule
     {
-        protected GlobalController Global;
         private float brustCount;
 
         public MissileTrapLauncher(SpaceShip owner) : base(owner)
         {
-            Global = GameObject.FindObjectOfType<GlobalController>();
             backCount = 0;
             type = SpellType.LongAction;
-            coolingTime = 15;
-            activeTime = 2;
+            //coolingTime = 15;
+            //activeTime = 2;
             state = SpellModuleState.Ready;
             function.Add(SpellFunction.Defence);
             function.Add(SpellFunction.Emergency);
@@ -210,8 +213,8 @@ namespace SpaceCommander
         {
             backCount = 0;
             type = SpellType.LongAction;
-            coolingTime = 30;
-            activeTime = 5;
+            //coolingTime = 30;
+            //activeTime = 5;
             state = SpellModuleState.Ready;
             function.Add(SpellFunction.Self);
             function.Add(SpellFunction.Buff);
@@ -268,14 +271,12 @@ namespace SpaceCommander
     }
     public class RadarBooster : SpellModule
     {
-        protected GlobalController Global;
         public RadarBooster(SpaceShip owner) : base(owner)
         {
-            Global = GameObject.FindObjectOfType<GlobalController>();
             backCount = 0;
             type = SpellType.LongAction;
-            coolingTime = 60;
-            activeTime = 20;
+            //coolingTime = 60;
+            //activeTime = 20;
             state = SpellModuleState.Ready;
             function.Add(SpellFunction.Self);
             function.Add(SpellFunction.Allies);
@@ -338,13 +339,12 @@ namespace SpaceCommander
     }
     public class ShieldStunner : SpellModule
     {
-        protected GlobalController Global;
         public ShieldStunner(SpaceShip owner) : base(owner)
         {
             backCount = 0;
             type = SpellType.Activated;
-            coolingTime = 30;
-            activeTime = 1;
+            //coolingTime = 30;
+            //activeTime = 1;
             state = SpellModuleState.Ready;
             function.Add(SpellFunction.Enemy);
             function.Add(SpellFunction.Shield);
@@ -412,13 +412,12 @@ namespace SpaceCommander
     }
     public class TrusterStunner : SpellModule
     {
-        protected GlobalController Global;
         public TrusterStunner(SpaceShip owner) : base(owner)
         {
             backCount = 0;
             type = SpellType.Activated;
-            coolingTime = 45;
-            activeTime = 1;
+            //coolingTime = 45;
+            //activeTime = 1;
             state = SpellModuleState.Ready;
             function.Add(SpellFunction.Enemy);
             function.Add(SpellFunction.Attack);
@@ -496,13 +495,12 @@ namespace SpaceCommander
     }
     public class RadarInhibitor : SpellModule
     {
-        protected GlobalController Global;
         public RadarInhibitor(SpaceShip owner) : base(owner)
         {
             backCount = 0;
             type = SpellType.Activated;
-            coolingTime = 45;
-            activeTime = 0;
+            //coolingTime = 45;
+            //activeTime = 0;
             state = SpellModuleState.Ready;
             function.Add(SpellFunction.Enemy);
             function.Add(SpellFunction.Debuff);
@@ -563,8 +561,8 @@ namespace SpaceCommander
         {
             backCount = 0;
             type = SpellType.LongAction;
-            coolingTime = 120;
-            activeTime = 3;
+            //coolingTime = 120;
+            //activeTime = 3;
             state = SpellModuleState.Ready;
             function.Add(SpellFunction.Self);
             function.Add(SpellFunction.Emergency);
@@ -714,8 +712,8 @@ namespace SpaceCommander
         {
             backCount = 0;
             type = SpellType.Activated;
-            coolingTime = 60;
-            activeTime = 1;
+            //coolingTime = 60;
+            //activeTime = 1;
             state = SpellModuleState.Ready;
             function.Add(SpellFunction.Enemy);
             function.Add(SpellFunction.Shield);
@@ -742,8 +740,8 @@ namespace SpaceCommander
         {
             backCount = 0;
             type = SpellType.Activated;
-            coolingTime = 90;
-            activeTime = 5;
+            //coolingTime = 90;
+            //activeTime = 5;
             state = SpellModuleState.Ready;
             function.Add(SpellFunction.Self);
             function.Add(SpellFunction.Buff);
@@ -840,8 +838,8 @@ namespace SpaceCommander
         {
             backCount = 0;
             type = SpellType.Activated;
-            coolingTime = 120;
-            activeTime = 20;
+            //coolingTime = 120;
+            //activeTime = 20;
             state = SpellModuleState.Ready;
             function.Add(SpellFunction.Allies);
             function.Add(SpellFunction.Buff);
@@ -899,8 +897,8 @@ namespace SpaceCommander
             alies = new List<SpaceShip>();
             backCount = 0;
             type = SpellType.Activated;
-            coolingTime = 60;
-            activeTime = 15;
+            //coolingTime = 60;
+            //activeTime = 15;
             state = SpellModuleState.Ready;
             function.Add(SpellFunction.Allies);
             function.Add(SpellFunction.Buff);
@@ -954,16 +952,14 @@ namespace SpaceCommander
     }
     public class TorpedoEliminator : SpellModule
     {
-        protected GlobalController Global;
         private float Count;
 
         public TorpedoEliminator(SpaceShip owner) : base(owner)
         {
-            Global = GameObject.FindObjectOfType<GlobalController>();
             base.backCount = 0;
             type = SpellType.LongAction;
-            coolingTime = 60;
-            activeTime = 15;
+            //coolingTime = 60;
+            //activeTime = 15;
             state = SpellModuleState.Ready;
             function.Add(SpellFunction.Defence);
             function.Add(SpellFunction.Emergency);
@@ -997,7 +993,7 @@ namespace SpaceCommander
                         beam.transform.localScale = new Vector3(1, 1, dist);
                         beam.transform.position = owner.transform.position + (torpedo[i].transform.position - owner.transform.position).normalized * dist / 2;
                         beam.transform.rotation = Quaternion.LookRotation((torpedo[i].transform.position - owner.transform.position), new Vector3(0, 1, 0));
-                        beam.AddComponent<SelfDestructor>().ttl = 0.8f;
+                        beam.AddComponent<Service.SelfDestructor>().ttl = 0.8f;
                         Count = 0.4f;
                         return;
                     }
@@ -1008,16 +1004,14 @@ namespace SpaceCommander
     }
     public class ProtectionMatrix : SpellModule
     {
-        protected GlobalController Global;
         private float Count;
 
         public ProtectionMatrix(SpaceShip owner) : base(owner)
         {
-            Global = GameObject.FindObjectOfType<GlobalController>();
             base.backCount = 0;
             type = SpellType.LongAction;
-            coolingTime = 15;
-            activeTime = 15;
+            //coolingTime = 15;
+            //activeTime = 15;
             state = SpellModuleState.Ready;
             function.Add(SpellFunction.Defence);
             function.Add(SpellFunction.Self);
@@ -1049,7 +1043,7 @@ namespace SpaceCommander
                         beam.transform.localScale = new Vector3(1, 1, dist);
                         beam.transform.position = owner.transform.position + dir.normalized * dist / 2;
                         beam.transform.rotation = Quaternion.LookRotation(dir, new Vector3(0, 1, 0));
-                        beam.AddComponent<SelfDestructor>().ttl = 0.8f;
+                        beam.AddComponent<Service.SelfDestructor>().ttl = 0.8f;
                         return;
                     }
                 }

@@ -10,19 +10,10 @@ namespace SpaceCommander.Weapons
     public class MediumCannon : MagWeapon
     {
         public MediumShellType AmmoType;
-        public override void StatUp()
+        protected override void StatUp()
         {
+            base.StatUp();
             type = WeaponType.Cannon;
-            gameObject.GetComponent<MeshRenderer>().enabled = false;
-            range = 355;
-            dispersion = 0.05f;
-            shildBlinkTime = 0.15f;
-            firerate = 120;
-            ammoCampacity = 60;
-            ammo = AmmoCampacity;
-            reloadingTime = 15;
-            PreAiming = true;
-            averageRoundSpeed = 133.33f;
         }
         protected override void Shoot(Transform target)
         {

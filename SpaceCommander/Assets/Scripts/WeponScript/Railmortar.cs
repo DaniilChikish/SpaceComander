@@ -8,18 +8,10 @@ namespace SpaceCommander.Weapons
     {
         private SpaceShip owner;
         public float DropImpulse;
-        public override void StatUp()
+        protected override void StatUp()
         {
+            base.StatUp();
             type = WeaponType.Railmortar;
-            gameObject.GetComponent<MeshRenderer>().enabled = false;
-            range = 150;
-            ammoCampacity = 10;
-            ammo = AmmoCampacity;
-            firerate = 60;
-            reloadingTime = 30;
-            dispersion = 3f;
-            shildBlinkTime = 1f;
-            PreAiming = false;
             owner = this.transform.GetComponentInParent<SpaceShip>();
         }
         protected override void Shoot(Transform target)

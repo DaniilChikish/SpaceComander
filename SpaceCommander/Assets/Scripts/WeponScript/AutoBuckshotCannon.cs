@@ -10,19 +10,10 @@ namespace SpaceCommander.Weapons
     public class AutoBuckshotCannon : MagWeapon
     {
         private int bucksotRate;
-        public override void StatUp()
+        protected override void StatUp()
         {
+            base.StatUp();
             type = WeaponType.ShootCannon;
-            gameObject.GetComponent<MeshRenderer>().enabled = false;
-            range = 200;
-            dispersion = 0.6f;
-            shildBlinkTime = 0.1f;
-            firerate = 150;
-            ammoCampacity = 30;
-            ammo = AmmoCampacity;
-            reloadingTime = 15;
-            PreAiming = true;
-            averageRoundSpeed = 100f;
             bucksotRate = 12;
         }
         protected override void Shoot(Transform target)
@@ -44,7 +35,7 @@ namespace SpaceCommander.Weapons
                 float speed, damage, armorPiersing, mass;
                 bool canRicochet = true;
                 GameObject explosionPrefab = null;
-                speed = 100f;
+                speed = roundSpeed;
                 damage = 10f;
                 armorPiersing = 3;
                 mass = 0.3f;

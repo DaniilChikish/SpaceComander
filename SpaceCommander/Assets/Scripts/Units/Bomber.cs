@@ -9,20 +9,15 @@ namespace SpaceCommander.Units
         public TorpedoType StrategicLoad;
         protected override void StatsUp()
         {
+            base.StatsUp();
             type = UnitClass.Bomber;
-            radarRange = 600; //set in child
-            radarPover = 0.5f;
-            speedThrust = 7.5f; //set in child
-            speedRotation = 33;
-            speedShift = 6;
-            stealthness = 0.4f; //set in child
-            radiolink = 2.5f;
             StrategicLoad = TorpedoType.Nuke;
             EnemySortDelegate = BomberSortEnemys;
             AlliesSortDelegate = SupportCorvetteSortEnemys;
 
-            module = new SpellModule[1];
+            module = new SpellModule[2];
             module[0] = new MissileTrapLauncher(this);
+            module[1] = new RechargeAcceleratorPassive(this);
         }
 
         protected override void Explosion()

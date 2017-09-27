@@ -7,17 +7,10 @@ namespace SpaceCommander.Weapons
 {
     public class MagnetohydrodynamicCannon : EnergyWeapon
     {
-        public override void StatUp()
+        protected override void StatUp()
         {
+            base.StatUp();
             type = WeaponType.MagnetohydrodynamicGun;
-            gameObject.GetComponent<MeshRenderer>().enabled = false;
-            range = 350;
-            firerate = 200;
-            maxHeat = 100;
-            dispersion = 0.4f;
-            shildBlinkTime = 0.05f;
-            averageRoundSpeed = 600;
-            PreAiming = true;
         }
         protected override void UpdateLocal()
         {
@@ -25,7 +18,7 @@ namespace SpaceCommander.Weapons
         }
         protected override void Shoot(Transform target)
         {
-            float speed = 600f;
+            float speed = roundSpeed;
             float damage = 10f;
             float armorPiersing = 9f;
             float mass = 20f;

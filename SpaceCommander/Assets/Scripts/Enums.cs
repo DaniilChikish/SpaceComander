@@ -12,7 +12,7 @@ namespace SpaceCommander
     public enum SquadStatus { Free, InSquad, SquadMaster }
     public enum TacticSituation { SectorСlear, Attack, Defense, Retreat, ExitTheBattle }
     public enum TargetStateType { BehindABarrier, InPrimaryRange, InSecondaryRange, Captured, NotFinded };
-    public enum WeaponType { Cannon, MachineCannon, ShootCannon, Railgun, Railmortar, Laser, Plazma, MagnetohydrodynamicGun, Missile, Torpedo };
+    public enum WeaponType { Cannon, MachineCannon, ShootCannon, Railgun, Railmortar, Laser, Plazma, MagnetohydrodynamicGun, Missile, Torpedo, Chaingun };
     public enum SmallShellType { SemiShell, Solid, APShell, Incendiary, BuckShot };
     public enum MediumShellType { Camorous, CamorousAP, Subcaliber };
     public enum BigShellType { WolframIngot, UraniumIngot, HigExplosive };

@@ -136,6 +136,7 @@ namespace SpaceCommander
         //base interface
         protected void Start()//_______________________Start
         {
+            Global = FindObjectOfType<GlobalController>();
             movementAiEnabled = true;
             combatAIEnabled = true;
             selfDefenceModuleEnabled = true;
@@ -143,12 +144,19 @@ namespace SpaceCommander
             radarPover = 1;
             StatsUp();//
 
+            //Global.SpecINI.Write(this.GetType().ToString(), "speedThrust", speedThrust.ToString());
+            //Global.SpecINI.Write(this.GetType().ToString(), "speedRotation", speedRotation.ToString());
+            //Global.SpecINI.Write(this.GetType().ToString(), "speedShift", speedShift.ToString());
+            //Global.SpecINI.Write(this.GetType().ToString(), "radarRange", speedShift.ToString());
+            //Global.SpecINI.Write(this.GetType().ToString(), "radarPover", speedShift.ToString());
+            //Global.SpecINI.Write(this.GetType().ToString(), "stealthness", stealthness.ToString());
+            //Global.SpecINI.Write(this.GetType().ToString(), "radiolink", radiolink.ToString());
+
             //Health = MaxHealth;
             cooldownDetected = 0;
             //waitingBackCount = 0.2f;
             aiStatus = UnitStateType.Waiting;
             unitName = type.ToString();
-            Global = FindObjectOfType<GlobalController>();
             hud = FindObjectOfType<HUDBase>();
             Global.unitList.Add(this);
             Anchor = this.transform.position;
@@ -180,7 +188,16 @@ namespace SpaceCommander
         {
             Start();
         }
-        protected abstract void StatsUp();
+        protected virtual void StatsUp()
+        {
+            speedThrust = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "speedThrust"));
+            speedRotation = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "speedRotation"));
+            speedShift = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "speedShift"));
+            radarRange = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "radarRange"));
+            radarPover = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "radarPover"));
+            stealthness = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "stealthness"));
+            radiolink = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "radiolink"));
+        }
         protected void Update()//______________________Update
         {
             if (CurrentTarget != null)
@@ -286,7 +303,11 @@ namespace SpaceCommander
                 }
             }
         }
-
+        protected void FixedUpdate()
+        {
+            if (!ManualControl)
+                Driver.FixedUpdate();
+        }
         protected void DecrementBaseCounters()
         {
             synchAction -= Time.deltaTime;

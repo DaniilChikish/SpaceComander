@@ -9,14 +9,8 @@ namespace SpaceCommander.Units
         private bool idleFulag;
         protected override void StatsUp()
         {
+            base.StatsUp();
             type = UnitClass.Support_Corvette;
-            radarRange = 500; //set in child
-            radarPover = 0.6f;
-            speedThrust = 7; //set in child
-            speedRotation = 35;
-            speedShift = 6;
-            stealthness = 0.1f; //set in child
-            radiolink = 1f;
             EnemySortDelegate = SupportCorvetteSortEnemys;
             AlliesSortDelegate = SupportCorvetteSortEnemys;
             module = new SpellModule[2];

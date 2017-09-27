@@ -9,16 +9,11 @@ namespace SpaceCommander.Weapons
 {
     public class PlazmaCannon : EnergyWeapon
     {
-        public override void StatUp()
+        protected override void StatUp()
         {
+            base.StatUp();
             type = WeaponType.Plazma;
             gameObject.GetComponent<MeshRenderer>().enabled = false;
-            range = 125;
-            maxHeat = 100;
-            firerate = 100;
-            dispersion = 5f;
-            shildBlinkTime = 0.05f;
-            averageRoundSpeed = 60;
         }
         protected override void Shoot(Transform target)
         {
