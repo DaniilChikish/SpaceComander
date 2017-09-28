@@ -53,15 +53,7 @@ namespace SpaceCommander
         private INIHandler specINI;
         public INIHandler SpecINI { get { return specINI; } }
         private SerializeSettings settings;
-        public bool SettingsSaved;
-        public Languages Localisation { get { return settings.localisation; } set { SettingsSaved = false; settings.localisation = value; } }
-        public float SoundLevel { get { return settings.soundLevel; } set { SettingsSaved = false; settings.soundLevel = value; } }
-        public float MusicLevel { get { return settings.musicLevel; } set { SettingsSaved = false; settings.musicLevel = value; } }
-        public bool StaticProportion
-        {
-            get { return settings.staticProportion; }
-            set { SettingsSaved = false; settings.staticProportion = value; }
-        }
+        public SerializeSettings Settings { get { return settings; } }
         //texts
         private Dictionary<string, string> localTexts;
         public string Texts(string key)
@@ -104,15 +96,15 @@ namespace SpaceCommander
             {
                 formatter.Serialize(fs, settings);
             }
-            SettingsSaved = true;
+            Settings.SettingsSaved = true;
         }
         public void SetDefault()
         {
             settings = new SerializeSettings();
-            settings.localisation = Languages.English;
-            settings.staticProportion = true;
-            settings.musicLevel = 100;
-            settings.soundLevel = 100;
+            Settings.Localisation = Languages.English;
+            Settings.StaticProportion = true;
+            Settings.MusicLevel = 100;
+            Settings.SoundLevel = 100;
             SaveSettings();
         }
         public void LoadSettings()
@@ -130,7 +122,7 @@ namespace SpaceCommander
             {
                 SetDefault();
             }
-            SettingsSaved = true;
+            Settings.SettingsSaved = true;
         }
         private void LoadSpec()
         {
@@ -161,7 +153,7 @@ namespace SpaceCommander
         public void LoadTexts()
         {
             string path = Application.streamingAssetsPath + "\\local";
-            switch (Localisation)
+            switch (Settings.Localisation)
             {
                 case Languages.English:
                     {

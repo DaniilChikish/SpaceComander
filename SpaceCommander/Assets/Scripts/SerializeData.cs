@@ -47,9 +47,24 @@ namespace SpaceCommander
     [Serializable]
     public class SerializeSettings
     {
-        public Languages localisation;
-        public bool staticProportion;
-        public float soundLevel;
-        public float musicLevel;
+        public bool SettingsSaved;
+
+        [SerializeField]
+        private Languages localisation;
+        [SerializeField]
+        private bool staticProportion;
+        [SerializeField]
+        private float soundLevel;
+        [SerializeField]
+        private float musicLevel;
+
+        public Languages Localisation { get { return localisation; } set { SettingsSaved = false; localisation = value; } }
+        public float SoundLevel { get { return soundLevel; } set { SettingsSaved = false; soundLevel = value; } }
+        public float MusicLevel { get { return musicLevel; } set { SettingsSaved = false; musicLevel = value; } }
+        public bool StaticProportion
+        {
+            get { return staticProportion; }
+            set { SettingsSaved = false; staticProportion = value; }
+        }
     }
 }

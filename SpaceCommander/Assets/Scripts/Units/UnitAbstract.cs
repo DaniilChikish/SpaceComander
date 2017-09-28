@@ -19,11 +19,11 @@ namespace SpaceCommander
         public string UnitName { get { return unitName; } }
         public abstract Army Team { get; }
         public abstract Unit CurrentTarget { get; }
-        public abstract float Speed {get; }
+        public abstract float Speed { get; }
         public float SpeedMultiplicator { set; get; }
-        public abstract float RotationSpeed {get; }
+        public abstract float RotationSpeed { get; }
         public float RotationSpeedMultiplicator { set; get; }
-        public abstract float ShiftSpeed {get; }
+        public abstract float ShiftSpeed { get; }
         public float ShiftSpeedMultiplicator { set; get; }
         public abstract float Health { set; get; }
         public abstract float MaxHealth { get; }
@@ -35,7 +35,7 @@ namespace SpaceCommander
         public abstract float ShieldForce { set; get; }
         public abstract float ShieldRecharging { get; }
         public float ShieldRechargingMultiplacator { set; get; }
-        public abstract float ShieldCampacity {get; }
+        public abstract float ShieldCampacity { get; }
         public float ShieldCampacityMultiplacator { set; get; }
 
         public abstract float RadarRange { get; }
@@ -77,17 +77,21 @@ namespace SpaceCommander
         public override float Health { set { armor.hitpoints = value; } get { return armor.hitpoints; } }
         public override float MaxHealth { get { return armor.maxHitpoints * (1 + MaxHealthMultiplacator); } }
         public override Army Team { get { return team; } }
-        public override Vector3 Velocity { get {
+        public override Vector3 Velocity
+        {
+            get
+            {
                 if (ManualControl) return this.gameObject.GetComponent<Rigidbody>().velocity;
                 else return Driver.Velocity;
-            } }
+            }
+        }
         public override float Speed { get { return speedThrust * (1 + SpeedMultiplicator); } }
         public override float RotationSpeed { get { return speedRotation * (1 + RotationSpeedMultiplicator); } }
         public override float ShiftSpeed { get { return speedShift * (1 + ShiftSpeedMultiplicator); } }
         public override float RadarRange { get { return radarRange * (1 + RadarRangeMultiplacator); } }
         public override float ShieldForce { set { shield.force = value; } get { return shield.force; } }
         public override float ShieldRecharging { get { return shield.recharging * (1 + ShieldRechargingMultiplacator); } }
-        public override float ShieldCampacity { get { return shield.maxCampacity * (1+ShieldCampacityMultiplacator); } }
+        public override float ShieldCampacity { get { return shield.maxCampacity * (1 + ShieldCampacityMultiplacator); } }
         public override Unit CurrentTarget { get { return Gunner.Target; } }
         public override float ShellResist { get { return armor.shellResist * (1 + ResistMultiplacator); } }
 
@@ -254,7 +258,7 @@ namespace SpaceCommander
                         if (selfDefenceModuleEnabled)
                             SelfDefenceFunction();
                     }
-                    if (Driver.Status == DriverStatus.Waiting && movementAIDelay<=0)
+                    if (Driver.Status == DriverStatus.Waiting && movementAIDelay <= 0)
                         switch (aiStatus)
                         {
                             case UnitStateType.MoveAI:
@@ -356,7 +360,7 @@ namespace SpaceCommander
         protected abstract void DecrementLocalCounters();
         protected void OnGUI()
         {
-            if (hud!=null&&!ManualControl)
+            if (hud != null && !ManualControl)
             {
                 //GUI.skin = hud.Skin;
                 //if (Global.StaticProportion && hud.scale != 1)
@@ -370,7 +374,7 @@ namespace SpaceCommander
                 float distance = Vector3.Distance(this.transform.position, Camera.main.transform.position);
                 crd.y = Screen.height - crd.y;
 
-                if (crd.x > Screen.width -40 || crd.x < 40 || crd.y > Screen.height -5 || crd.y < 40)
+                if (crd.x > Screen.width - 40 || crd.x < 40 || crd.y > Screen.height - 5 || crd.y < 40)
                     outOfBorder = true;
                 if (crd.z < 0)
                     outOfPlane = true;
@@ -399,7 +403,7 @@ namespace SpaceCommander
                     }
                     crd = center + originC.normalized * r;
 
-                    if (manualController.enabled && true) //in hud elipse
+                    if (manualController.enabled && false) //in hud elipse
                     {
                         crd = Camera.main.WorldToScreenPoint(transform.position);
                         if (crd.x < 0)
@@ -411,7 +415,7 @@ namespace SpaceCommander
                         {
                             crd.x = Screen.width - border;
                         }
-                            crd.y = center.y + (b *(1- crd.z / distance));
+                        crd.y = center.y + (b * (1 - crd.z / distance));
 
                     }
                 }
@@ -431,8 +435,8 @@ namespace SpaceCommander
                 float iconX;
                 float iconY;
 
-                if (!true || distance < 200) //perspective
-                    distance = 200;
+                if (!true || distance < 400) //perspective
+                    distance = 400;
 
                 frameSize = frameSize * (200 / distance) * scaleLocal;
                 frameY = crd.y - frameSize.y / 2f - (12 * (200 / distance) * scaleLocal);
@@ -457,7 +461,7 @@ namespace SpaceCommander
                     {
                         style.normal.textColor = Color.cyan;
 
-                        if (!outOfBorder&&!outOfPlane)
+                        if (!outOfBorder && !outOfPlane)
                             frameToDraw = Global.AlliesSelectedGUIFrame;
                         else
                             frameToDraw = Global.AlliesSelectedOutscreenPoint;
@@ -767,8 +771,8 @@ namespace SpaceCommander
         {
             if (module != null && module.Length > 0)
                 foreach (SpellModule m in module)
-                        if (m.FunctionsIs(functions))
-                            m.EnableIfReady();
+                    if (m.FunctionsIs(functions))
+                        m.EnableIfReady();
         }
         //sevice function
         //base maneuvers
@@ -1155,14 +1159,14 @@ namespace SpaceCommander
         {
             MissileProtection();
             TorpedoProtection();
-            UseModule(new SpellFunction[] {SpellFunction.Defence, SpellFunction.Self });
+            UseModule(new SpellFunction[] { SpellFunction.Defence, SpellFunction.Self });
         }
         protected bool MissileProtection()
         {
             GameObject hazard = AntiMissileRadar();
             if (hazard != null)
             {
-                if (module!=null&&module.Length>0)
+                if (module != null && module.Length > 0)
                 {
                     foreach (SpellModule m in module)
                     {
@@ -1201,18 +1205,18 @@ namespace SpaceCommander
         }
         protected void HazardEvasion(GameObject hazard)
         {
-                if (situation == TacticSituation.SectorСlear)
-                {
-                    Driver.ClearQueue();
-                    aiStatus = UnitStateType.MoveAI;
-                    situation = TacticSituation.Defense;
-                    Evasion(hazard.transform.right);
-                }
-                else if (Driver.PathPoints == 0)
-                {
-                    aiStatus = UnitStateType.MoveAI;
-                    Evasion(hazard.transform.right);
-                }
+            if (situation == TacticSituation.SectorСlear)
+            {
+                Driver.ClearQueue();
+                aiStatus = UnitStateType.MoveAI;
+                situation = TacticSituation.Defense;
+                Evasion(hazard.transform.right);
+            }
+            else if (Driver.PathPoints == 0)
+            {
+                aiStatus = UnitStateType.MoveAI;
+                Evasion(hazard.transform.right);
+            }
         }
         //group interaction
         public virtual bool Allies(Army army)
@@ -2021,17 +2025,17 @@ namespace SpaceCommander
                         xPriority = 10;
                         break;
                     }
-                case UnitClass.LR_Corvette: 
+                case UnitClass.LR_Corvette:
                     {
                         xPriority = 5;
                         break;
                     }
-                case UnitClass.Guard_Corvette: 
+                case UnitClass.Guard_Corvette:
                     {
                         xPriority = 5;
                         break;
                     }
-                case UnitClass.Bomber: 
+                case UnitClass.Bomber:
                     {
                         xPriority = 5;
                         break;
@@ -2107,7 +2111,7 @@ namespace SpaceCommander
         {
             //Debug.Log("Add To Quenue " + destination);
             aiStatus = UnitStateType.UnderControl;
-            if(Driver.MoveToQueue(destination) && Team == Global.playerArmy)
+            if (Driver.MoveToQueue(destination) && Team == Global.playerArmy)
                 Driver.BuildPathArrows();
         }
         protected virtual void SendToQueue(Vector3[] path)

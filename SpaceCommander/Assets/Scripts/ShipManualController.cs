@@ -244,7 +244,7 @@ namespace SpaceCommander
                         break;
                     }
             }
-            GUI.DrawTexture(new Rect(new Vector2(texXPos, texYPos)*scaleLocal, texSize), aimTexture);
+            GUI.DrawTexture(new Rect(new Vector2(texXPos, texYPos), texSize), aimTexture);
 
             //current target point
             if (TargetBuffer != null)

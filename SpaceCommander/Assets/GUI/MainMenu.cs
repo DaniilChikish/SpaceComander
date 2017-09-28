@@ -46,7 +46,7 @@ namespace SpaceCommander
         {
             screenRatio = UIUtil.GetRatio();
 
-            if (Global.StaticProportion)
+            if (Global.Settings.StaticProportion)
             {
                 scale = Screen.width / (1280f / 1f);
                 mainRect = new Rect(0, 0, Screen.width / scale, Screen.height / scale);
@@ -62,7 +62,7 @@ namespace SpaceCommander
         void OnGUI()
         {
             GUI.skin = Skin;
-            if (Global.StaticProportion&&scale != 1)
+            if (Global.Settings.StaticProportion &&scale != 1)
                 GUI.matrix = Matrix4x4.Scale(Vector3.one * scale);
             GUI.BeginGroup(mainRect);
             switch (CurWin)
@@ -150,41 +150,41 @@ namespace SpaceCommander
 
             GUI.BeginGroup(new Rect(Windows[windowID].CenterX - 170, 100, 340, 55));
             UIUtil.Label(new Rect(120, 0, 100, 20), Global.Texts("Sound"));
-            fBuffer = GUI.HorizontalSlider(new Rect(0, 40, 340, 13), Global.SoundLevel, 0.0f, 1f);
-            if (Global.SoundLevel != fBuffer)
-                Global.SoundLevel = fBuffer;
+            fBuffer = GUI.HorizontalSlider(new Rect(0, 40, 340, 13), Global.Settings.SoundLevel, 0.0f, 1f);
+            if (Global.Settings.SoundLevel != fBuffer)
+                Global.Settings.SoundLevel = fBuffer;
             GUI.EndGroup();
 
             GUI.BeginGroup(new Rect(Windows[windowID].CenterX - 170, 165, 340, 55));
             UIUtil.Label(new Rect(120, 0, 100, 20), Global.Texts("Music"));
-            fBuffer = GUI.HorizontalSlider(new Rect(0, 40, 340, 13), Global.MusicLevel, 0.0f, 1f);
-            if (Global.MusicLevel != fBuffer)
-                Global.MusicLevel = fBuffer;
+            fBuffer = GUI.HorizontalSlider(new Rect(0, 40, 340, 13), Global.Settings.MusicLevel, 0.0f, 1f);
+            if (Global.Settings.MusicLevel != fBuffer)
+                Global.Settings.MusicLevel = fBuffer;
             GUI.EndGroup();
 
             {
                 string[] radios = new string[2];
                 radios[0] = "English";
                 radios[1] = "Русский";
-                int langueageRadioSelected = (int)Global.Localisation;
+                int langueageRadioSelected = (int)Global.Settings.Localisation;
                 GUI.BeginGroup(UIUtil.GetRect(new Vector2(150, 110), PositionAnchor.LeftDown, Windows[windowID].rect.size, new Vector2(100, -100)));
                 UIUtil.Label(new Rect(0, 0, 150, 20), Global.Texts("Language"));
                 langueageRadioSelected = UIUtil.ToggleList(new Rect(10, 40, 140, 74), langueageRadioSelected, radios);
                 GUI.EndGroup();
-                if (langueageRadioSelected != (int)Global.Localisation)
+                if (langueageRadioSelected != (int)Global.Settings.Localisation)
                 {
-                    Global.Localisation = (Languages)langueageRadioSelected;
+                    Global.Settings.Localisation = (Languages)langueageRadioSelected;
                     langChanged = true;
                 }
             }
 
-            if (Screen.width != 1280)
+            if (false)
             {
                 string[] radios = new string[2];
                 radios[0] = "Static size";
                 radios[1] = "Static proportion";
                 int screenRadioSelected;
-                if (Global.StaticProportion)
+                if (Global.Settings.StaticProportion)
                     screenRadioSelected = 1;
                 else screenRadioSelected = 0;
                 GUI.BeginGroup(UIUtil.GetRect(new Vector2(150, 110), PositionAnchor.RightDown, Windows[windowID].rect.size, new Vector2(-100, -100)));
@@ -193,11 +193,11 @@ namespace SpaceCommander
                 GUI.EndGroup();
                 if (screenRadioSelected != screenRadioBuffer)
                 {
-                    Global.StaticProportion = (screenRadioBuffer == 1);     
+                    Global.Settings.StaticProportion = (screenRadioBuffer == 1);     
                 }
             }
 
-            if (Global.SettingsSaved)
+            if (Global.Settings.SettingsSaved)
             {
                 if (UIUtil.ButtonBig(UIUtil.GetRect(new Vector2(200, 50), PositionAnchor.Down, Windows[windowID].rect.size, new Vector2(0, -50)), Global.Texts("Back")))
                 {

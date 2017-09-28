@@ -1,3 +1,3 @@
 # SpaceComander
-Team project for subject "Professional practice of programming"
-See the details in the Documents folder.
+Real time strategy game with shooter elements.
+See the details in TechnikalTask in the Documents folder.

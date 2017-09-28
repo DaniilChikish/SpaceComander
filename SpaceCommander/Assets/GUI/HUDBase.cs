@@ -46,7 +46,7 @@ namespace SpaceCommander
         void Update()
         {
             //
-            if (Global.StaticProportion)
+            if (Global.Settings.StaticProportion)
             {
                 scale = Screen.width / (1280f / 1f);
                 mainRect = new Rect(0, 0, Screen.width / scale, Screen.height / scale);
@@ -76,7 +76,7 @@ namespace SpaceCommander
         private void OnGUI()
         {
             GUI.skin = Skin;
-            if (Global.StaticProportion && scale != 1)
+            if (Global.Settings.StaticProportion && scale != 1)
                 GUI.matrix = Matrix4x4.Scale(Vector3.one * scale);
             int victory = Global.CheckVictory();
             if (victory == 1)
@@ -237,16 +237,16 @@ namespace SpaceCommander
 
             GUI.BeginGroup(new Rect(Windows[windowID].CenterX - 170, 100, 340, 55));
             UIUtil.Label(new Rect(120, 0, 100, 20), Global.Texts("Sound"));
-            fBuffer = GUI.HorizontalSlider(new Rect(0, 40, 340, 13), Global.SoundLevel, 0.0f, 1f);
-            if (Global.SoundLevel != fBuffer)
-                Global.SoundLevel = fBuffer;
+            fBuffer = GUI.HorizontalSlider(new Rect(0, 40, 340, 13), Global.Settings.SoundLevel, 0.0f, 1f);
+            if (Global.Settings.SoundLevel != fBuffer)
+                Global.Settings.SoundLevel = fBuffer;
             GUI.EndGroup();
 
             GUI.BeginGroup(new Rect(Windows[windowID].CenterX - 170, 165, 340, 55));
             UIUtil.Label(new Rect(120, 0, 100, 20), Global.Texts("Music"));
-            fBuffer = GUI.HorizontalSlider(new Rect(0, 40, 340, 13), Global.MusicLevel, 0.0f, 1f);
-            if (Global.MusicLevel != fBuffer)
-                Global.MusicLevel = fBuffer;
+            fBuffer = GUI.HorizontalSlider(new Rect(0, 40, 340, 13), Global.Settings.MusicLevel, 0.0f, 1f);
+            if (Global.Settings.MusicLevel != fBuffer)
+                Global.Settings.MusicLevel = fBuffer;
             GUI.EndGroup();
 
             if (Screen.width != 1280)
@@ -255,7 +255,7 @@ namespace SpaceCommander
                 radios[0] = "Static size";
                 radios[1] = "Static proportion";
                 int screenRadioSelected;
-                if (Global.StaticProportion)
+                if (Global.Settings.StaticProportion)
                     screenRadioSelected = 1;
                 else screenRadioSelected = 0;
                 GUI.BeginGroup(UIUtil.GetRect(new Vector2(150, 110), PositionAnchor.RightDown, Windows[windowID].rect.size, new Vector2(-100, -100)));
@@ -264,11 +264,11 @@ namespace SpaceCommander
                 GUI.EndGroup();
                 if (screenRadioSelected != screenRadioBuffer)
                 {
-                    Global.StaticProportion = (screenRadioBuffer == 1);
+                    Global.Settings.StaticProportion = (screenRadioBuffer == 1);
                 }
             }
 
-            if (Global.SettingsSaved)
+            if (Global.Settings.SettingsSaved)
             {
                 if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - UIUtil.Scaled(100), Windows[windowID].Bottom - 100, UIUtil.Scaled(200), 50), Global.Texts("Back")))
                 {
@@ -343,7 +343,7 @@ namespace SpaceCommander
         public void ShowExclamation(string text)
         {
             GUI.skin = Skin;
-            if (Global.StaticProportion && scale != 1)
+            if (Global.Settings.StaticProportion && scale != 1)
                 GUI.matrix = Matrix4x4.Scale(Vector3.one * scale);
             UIUtil.Exclamation(UIUtil.GetRect(new Vector2(200, 50), PositionAnchor.Up, mainRect.size, new Vector2(0, 10)), text);
         }
