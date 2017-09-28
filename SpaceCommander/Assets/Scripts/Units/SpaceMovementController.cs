@@ -29,7 +29,7 @@ namespace SpaceCommander
         List<PathNode> closedSet = new List<PathNode>();
         List<PathNode> openSet = new List<PathNode>();
         private Vector3 navDestination;
-        private float navAccurancy;
+        private float navAccurancyFactor;
         private int calculatingStep;
         public Vector3 Velocity { get { return walkerBody.velocity; } }
         public int PathPoints
@@ -57,7 +57,7 @@ namespace SpaceCommander
         public void FixedUpdate()
         {
             if (calculating && openSet.Count > 0 && calculatingStep < 240)
-                PathfindingStep(navDestination, navAccurancy);
+                PathfindingStep(navDestination, navAccurancyFactor);
             else calculating = false;
             switch (status)
             {
@@ -148,7 +148,7 @@ namespace SpaceCommander
         }
         private void PathfindingBegin(Vector3 destination)
         {
-            navAccurancy = (1 + (Vector3.Distance(walkerTransform.position, destination) / (accurancy * 10)));
+            navAccurancyFactor = (1 + (Vector3.Distance(walkerTransform.position, destination) / (accurancy * 5)));
             navDestination = destination;
             calculatingStep = 0;
             calculating = true;
@@ -219,7 +219,7 @@ namespace SpaceCommander
         }
         private float GetHeuristicPathLength(Vector3 from, Vector3 to)
         {
-            return Vector3.Distance(from, to);//Mathf.Abs(from.x - to.x) + Math.Abs(from.y - to.y) + Math.Abs(from.z - to.z);
+            return Mathf.Abs(from.x - to.x) + Math.Abs(from.y - to.y) + Math.Abs(from.z - to.z);//Vector3.Distance(from, to);//
         }
         private List<PathNode> GetNeighbours(PathNode pathNode, Vector3 destination, float accuracyFactor)
         {
@@ -347,6 +347,22 @@ namespace SpaceCommander
             }
             return true;
         }
+        private bool CanWalk(Vector3 position, Vector3 destination, float accuracyFactor)
+        {
+            Vector3[] directions = new Vector3[6];
+            directions[0] = Vector3.forward;//forward
+            directions[1] = -Vector3.forward;//backward
+            directions[2] = Vector3.right;//right
+            directions[3] = -Vector3.right;//left
+            directions[4] = Vector3.up;//up
+            directions[5] = -Vector3.up;//down
+            foreach (Vector3 direction in directions)
+            {
+                if (!CanWalk(position + gridStep * 0.5f * accuracyFactor * direction, destination))
+                    return false;
+            }
+            return true;
+        }
         private bool FreeSpace(Vector3 point, float radius)
         {
             Collider[] hits = Physics.OverlapSphere(point, radius);
@@ -357,7 +373,92 @@ namespace SpaceCommander
             }
             return true;
         }
-        private List<Vector3> GetPathForNode(PathNode pathNode)
+        private List<PathNode> GetNeighboursJump(PathNode pathNode, Vector3 destination, float accuracyFactor)
+        {
+            Vector3[] directions = new Vector3[27];
+            List<PathNode> result = new List<PathNode>();
+            directions[0] = Vector3.forward;//forward
+            directions[1] = -Vector3.forward;//backward
+            directions[2] = Vector3.right;//right
+            directions[3] = -Vector3.right;//left
+            directions[4] = Vector3.up;//up
+            directions[5] = -Vector3.up;//down
+
+            directions[6] =  Vector3.right + Vector3.up;
+            directions[7] =  Vector3.right + -Vector3.up;
+            directions[8] = -Vector3.right + Vector3.up;
+            directions[9] = -Vector3.right + -Vector3.up;
+
+            directions[10] = Vector3.forward + Vector3.right;
+            directions[11] = Vector3.forward + -Vector3.right;
+            directions[12] = Vector3.forward + Vector3.up;
+            directions[13] = Vector3.forward + -Vector3.up;
+            directions[14] = Vector3.forward + Vector3.right + Vector3.up;
+            directions[15] = Vector3.forward + Vector3.right + -Vector3.up;
+            directions[16] = Vector3.forward + -Vector3.right + Vector3.up;
+            directions[17] = Vector3.forward + -Vector3.right + -Vector3.up;
+
+            directions[18] = -Vector3.forward + Vector3.right;
+            directions[19] = -Vector3.forward + -Vector3.right;
+            directions[20] = -Vector3.forward + Vector3.up;
+            directions[21] = -Vector3.forward + -Vector3.up;
+            directions[22] = -Vector3.forward + Vector3.right + Vector3.up;
+            directions[23] = -Vector3.forward + Vector3.right + -Vector3.up;
+            directions[24] = -Vector3.forward + -Vector3.right + Vector3.up;
+            directions[25] = -Vector3.forward + -Vector3.right + -Vector3.up;
+
+            directions[26] = (destination - pathNode.Position).normalized;
+
+            //debug
+            GameObject worldpoint = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            worldpoint.GetComponent<SphereCollider>().enabled = false;
+            worldpoint.AddComponent<Service.SelfDestructor>().ttl = 1f;
+
+            foreach (Vector3 direction in directions)
+            {
+                //The only difference between this GetNeighbours and the other one 
+                //is that this one calls Jump here.
+                Vector3 point = Jump(pathNode.Position + direction * gridStep, direction, destination);
+                if (point != Vector3.zero)
+                {
+                    // Проверяем, что по клетке можно ходить.
+                    if (!CanWalk(pathNode.Position, point) || !FreeSpace(point, gridStep * accuracyFactor * 0.5f))
+                        continue;
+                    // Заполняем данные для точки маршрута.
+                    //debug
+                    GameObject.Instantiate(worldpoint, point, walkerTransform.rotation);
+
+                    PathNode neighbourNode = new PathNode()
+                    {
+                        Position = point,
+                        CameFrom = pathNode,
+                        PathLengthFromStart = pathNode.PathLengthFromStart + Vector3.Distance(pathNode.Position, point),
+                        HeuristicEstimatePathLength = GetHeuristicPathLength(point, destination)
+                    };
+                    result.Add(neighbourNode);
+                }
+            }
+            return result;
+        }
+        public Vector3 Jump(Vector3 current, Vector3 direction, Vector3 destination)
+        {
+            // Position of new node we are going to consider:
+            Vector3 next = current + direction * gridStep * navAccurancyFactor;
+
+            // If it's blocked we can't jump here
+            if (!CanWalk(current, next) || !FreeSpace(current, gridStep * navAccurancyFactor)||next.magnitude > 2500)
+                return Vector3.zero;
+
+            // If the node is the goal return it
+            if (Vector3.Distance(next, destination) < accurancy * navAccurancyFactor)
+                return next;
+
+            if (!FreeSpace(next, gridStep * navAccurancyFactor))
+                return next;
+            // If forced neighbor was not found try next jump point
+            return Jump(next, direction, destination);
+        }
+    private List<Vector3> GetPathForNode(PathNode pathNode)
         {
             List<Vector3> result = new List<Vector3>();
             PathNode currentNode = pathNode;
@@ -384,7 +485,7 @@ namespace SpaceCommander
             int i = 0;
             while ((i+2) < collapsedPath.Count)
             {
-                if (CanWalk(collapsedPath[i], collapsedPath[i + 2]))
+                if (CanWalk(collapsedPath[i], collapsedPath[i + 2], navAccurancyFactor))
                     collapsedPath.Remove(collapsedPath[i + 1]);
                 else i = i + 1;
             }

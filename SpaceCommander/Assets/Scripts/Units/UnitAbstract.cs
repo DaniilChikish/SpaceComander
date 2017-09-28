@@ -147,8 +147,8 @@ namespace SpaceCommander
             //Global.SpecINI.Write(this.GetType().ToString(), "speedThrust", speedThrust.ToString());
             //Global.SpecINI.Write(this.GetType().ToString(), "speedRotation", speedRotation.ToString());
             //Global.SpecINI.Write(this.GetType().ToString(), "speedShift", speedShift.ToString());
-            //Global.SpecINI.Write(this.GetType().ToString(), "radarRange", speedShift.ToString());
-            //Global.SpecINI.Write(this.GetType().ToString(), "radarPover", speedShift.ToString());
+            //Global.SpecINI.Write(this.GetType().ToString(), "radarRange", radarRange.ToString());
+            //Global.SpecINI.Write(this.GetType().ToString(), "radarPover", radarPover.ToString());
             //Global.SpecINI.Write(this.GetType().ToString(), "stealthness", stealthness.ToString());
             //Global.SpecINI.Write(this.GetType().ToString(), "radiolink", radiolink.ToString());
 
