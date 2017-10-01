@@ -122,7 +122,7 @@ namespace SpaceCommander
         }
         public void BuildPathArrows()
         {
-            if (path.Count > 0)
+            if (walker.isSelected && path.Count > 0)
             {
                 Vector3[] pathLocal = path.ToArray();
                 GameObject arrow;
@@ -141,7 +141,7 @@ namespace SpaceCommander
                     dist = Vector3.Distance(pathLocal[i], pathLocal[i + 1]);
                     arrow.transform.localScale = new Vector3(1, 1, dist);
                     arrow.transform.position = pathLocal[i] + (pathLocal[i + 1] - pathLocal[i]).normalized * dist / 2;
-                    arrow.transform.rotation = Quaternion.LookRotation((pathLocal[i + 1] - pathLocal[i]), new Vector3(0, 1, 0));
+                    arrow.transform.forward = (pathLocal[i + 1] - pathLocal[i]);
                     arrow.AddComponent<Service.SelfDestructor>().ttl = 2f;
                 }
             }

@@ -279,7 +279,7 @@ namespace SpaceCommander
             {
                 if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - UIUtil.Scaled(100), Windows[windowID].Bottom - 100, UIUtil.Scaled(200), 50), Global.Texts("Save")))
                 {
-                    Global.SaveSettings();
+                    Global.Settings.Save();
                 }
             }
         }

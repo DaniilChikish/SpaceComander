@@ -52,15 +52,13 @@ namespace SpaceCommander
         //settings
         private INIHandler specINI;
         public INIHandler SpecINI { get { return specINI; } }
-        private SerializeSettings settings;
-        public SerializeSettings Settings { get { return settings; } }
+        private GameSettings settings;
+        public GameSettings Settings { get { return settings; } }
         //texts
-        private Dictionary<string, string> localTexts;
+        private TextINIHandler localTexts;
         public string Texts(string key)
         {
-            if (localTexts.ContainsKey(key))
-                return localTexts[key];
-            else return key;
+            return localTexts.GetText("Text." + Settings.Localisation.ToString(), key);
         }
         private Scenario Mission;
         public string MissionName
@@ -88,41 +86,10 @@ namespace SpaceCommander
             LoadSpec();
             Mission = FindObjectOfType<Scenario>();
         }
-        public void SaveSettings()
+        private void LoadSettings()
         {
-            XmlSerializer formatter = new XmlSerializer(typeof(SerializeSettings));
-            // получаем поток, куда будем записывать сериализованный объект
-            using (FileStream fs = new FileStream(Application.streamingAssetsPath + "\\settings.dat", FileMode.Create))
-            {
-                formatter.Serialize(fs, settings);
-            }
-            Settings.SettingsSaved = true;
-        }
-        public void SetDefault()
-        {
-            settings = new SerializeSettings();
-            Settings.Localisation = Languages.English;
-            Settings.StaticProportion = true;
-            Settings.MusicLevel = 100;
-            Settings.SoundLevel = 100;
-            SaveSettings();
-        }
-        public void LoadSettings()
-        {
-            string path = Application.streamingAssetsPath + "\\settings.dat";
-            // передаем в конструктор тип класса
-            XmlSerializer formatter = new XmlSerializer(typeof(SerializeSettings));
-            // десериализация
-            try
-            {
-                FileStream fs = new FileStream(path, FileMode.Open);
-                settings = (SerializeSettings)formatter.Deserialize(fs);
-            }
-            catch (FileNotFoundException)
-            {
-                SetDefault();
-            }
-            Settings.SettingsSaved = true;
+            settings = new GameSettings();
+            Settings.Load();
         }
         private void LoadSpec()
         {
@@ -132,58 +99,9 @@ namespace SpaceCommander
         {
 
         }
-        private void SaveText()
-        {
-            SerializeData<string, string> serialeze = new SerializeData<string, string>();
-            //Texts.lang = Languages.English;
-            serialeze.Data = new Dictionary<string, string>();
-            serialeze.Data.Add("Pause", "Pause_value");
-            serialeze.Data.Add("string2_key", "string2_value");
-            serialeze.Data.Add("string3_key", "string3_value");
-            serialeze.OnBeforeSerialize();
-            // передаем в конструктор тип класса
-            XmlSerializer formatter = new XmlSerializer(typeof(SerializeData<string, string>));
-            // получаем поток, куда будем записывать сериализованный объект
-            using (FileStream fs = new FileStream(Application.streamingAssetsPath + "\\temp.xml", FileMode.OpenOrCreate))
-            {
-                formatter.Serialize(fs, serialeze);
-                //Debug.Log("Объект сериализован");
-            }
-        }
         public void LoadTexts()
         {
-            string path = Application.streamingAssetsPath + "\\local";
-            switch (Settings.Localisation)
-            {
-                case Languages.English:
-                    {
-                        path += "\\eng\\base_eng.xml";
-                        break;
-                    }
-                case Languages.Russian:
-                    {
-                        path += "\\rus\\base_rus.xml";
-                        break;
-                    }
-                case Languages.temp:
-                    {
-                        path += "\\temp.xml";
-                        break;
-                    }
-            }
-
-            //SaveText();//debug only
-            //SerializeData<string, string> textsSer = new SerializeData<string, string>();
-            // передаем в конструктор тип класса
-            XmlSerializer formatter = new XmlSerializer(typeof(SerializeData<string, string>));
-            // десериализация
-            Debug.Log("open - " + path);
-            FileStream fs = new FileStream(path, FileMode.Open);
-            SerializeData<string, string> serialeze = (SerializeData<string, string>)formatter.Deserialize(fs);
-            serialeze.OnAfterDeserialize();
-            Debug.Log(serialeze.ToString());
-            localTexts = new Dictionary<string, string>();
-            localTexts = serialeze.Data;
+            this.localTexts = new TextINIHandler(Application.streamingAssetsPath + "\\localisation_base.ini");
         }
 
         public void Update()

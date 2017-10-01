@@ -24,8 +24,12 @@ namespace SpaceCommander
         //Читаем ini-файл и возвращаем значение указного ключа из заданной секции.
         public string ReadINI(string Section, string Key)
         {
-            var RetVal = new StringBuilder(255);
-            GetPrivateProfileString(Section, Key, "", RetVal, 255, Path);
+            return ReadINI(Section, Key, 255);
+        }
+        public string ReadINI(string Section, string Key, int Size)
+        {
+            var RetVal = new StringBuilder(Size);
+            GetPrivateProfileString(Section, Key, "", RetVal, Size, Path);
             return RetVal.ToString();
         }
         //Записываем в ini-файл. Запись происходит в выбранную секцию в выбранный ключ.

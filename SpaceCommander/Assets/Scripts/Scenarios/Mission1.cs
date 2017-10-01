@@ -20,7 +20,7 @@ namespace SpaceCommander.Scenarios
             //Debug.Log("Scenario started");
             Name = Global.Texts("Mision1_name");
             string path = Application.streamingAssetsPath + "\\local";
-            switch (Global.Localisation)
+            switch (Global.Settings.Localisation)
             {
                 case Languages.English:
                     {

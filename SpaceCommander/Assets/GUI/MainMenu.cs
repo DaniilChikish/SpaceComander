@@ -210,7 +210,7 @@ namespace SpaceCommander
             {
                 if (UIUtil.ButtonBig(UIUtil.GetRect(new Vector2(200, 50), PositionAnchor.Down, Windows[windowID].rect.size, new Vector2(0, -50)), Global.Texts("Save")))
                 {
-                    Global.SaveSettings();
+                    Global.Settings.Save();
                 }
             }
         }
