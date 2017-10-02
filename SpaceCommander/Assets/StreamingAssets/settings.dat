@@ -1,5 +1,5 @@
 [SpaceCommander.GameSettings.Base]
-Localisation=1
+Localisation=0
 SoundLevel=100
 MusicLevel=100
 StaticProportion=True

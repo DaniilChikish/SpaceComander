@@ -25,9 +25,6 @@ namespace SpaceCommander
         public Texture AlliesSelectedOutscreenPoint;
         public Texture AlliesOutscreenPoint;
         public Texture EnemyOutscreenPoint;
-        //public float GUIFrameWidth;
-        //public float GUIFrameHeight;
-        //public float GUIFrameOffset;
         public GameObject UnitaryShell;
         public AudioClip CannonShootSound;
         public GameObject ShellBlast;

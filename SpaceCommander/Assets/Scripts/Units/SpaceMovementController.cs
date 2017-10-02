@@ -313,9 +313,9 @@ namespace SpaceCommander
             //neighbourPoints[33] = pathNode.Position + (gridStepLocal * ((2 * walkerTransform.forward) + (1 * walkerTransform.right) + (0 * walkerTransform.up)));
             //neighbourPoints[34] = pathNode.Position + (gridStepLocal * ((2 * walkerTransform.forward) + (1 * walkerTransform.right) + (1 * walkerTransform.up)));
             //debug
-            GameObject worldpoint = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            worldpoint.GetComponent<SphereCollider>().enabled = false;
-            worldpoint.AddComponent<Service.SelfDestructor>().ttl = 1f;
+            //GameObject worldpoint = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            //worldpoint.GetComponent<SphereCollider>().enabled = false;
+            //worldpoint.AddComponent<Service.SelfDestructor>().ttl = 1f;
 
             foreach (Vector3 point in neighbourPoints)
             {
@@ -324,7 +324,7 @@ namespace SpaceCommander
                     continue;
                 // Заполняем данные для точки маршрута.
                 //debug
-                GameObject.Instantiate(worldpoint, point, walkerTransform.rotation);
+                //GameObject.Instantiate(worldpoint, point, walkerTransform.rotation);
 
                 PathNode neighbourNode = new PathNode()
                 {

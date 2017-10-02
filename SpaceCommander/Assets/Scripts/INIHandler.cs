@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -7,7 +8,7 @@ namespace SpaceCommander
 {
     public class INIHandler
     {
-        string Path; //Имя файла.
+        private string path; //Имя файла.
 
         [DllImport("kernel32")] // Подключаем kernel32.dll и описываем его функцию WritePrivateProfilesString
         static extern long WritePrivateProfileString(string Section, string Key, string Value, string FilePath);
@@ -18,7 +19,7 @@ namespace SpaceCommander
         // С помощью конструктора записываем пусть до файла и его имя.
         public INIHandler(string IniPath)
         {
-            Path = new FileInfo(IniPath).FullName.ToString();
+            path = new FileInfo(IniPath).FullName.ToString();
         }
 
         //Читаем ini-файл и возвращаем значение указного ключа из заданной секции.
@@ -26,16 +27,25 @@ namespace SpaceCommander
         {
             return ReadINI(Section, Key, 255);
         }
+        public string ReadINI(string Section, string Key, string Default)
+        {
+            return ReadINI(Section, Key, Default, 255);
+        }
         public string ReadINI(string Section, string Key, int Size)
         {
+            return ReadINI(Section, Key, "", 255);
+        }
+        public string ReadINI(string Section, string Key, string Default, int Size)
+        {
             var RetVal = new StringBuilder(Size);
-            GetPrivateProfileString(Section, Key, "", RetVal, Size, Path);
+            GetPrivateProfileString(Section, Key, Default, RetVal, Size, path);
             return RetVal.ToString();
         }
+
         //Записываем в ini-файл. Запись происходит в выбранную секцию в выбранный ключ.
         public void Write(string Section, string Key, string Value)
         {
-            WritePrivateProfileString(Section, Key, Value, Path);
+            WritePrivateProfileString(Section, Key, Value, path);
         }
 
         //Удаляем ключ из выбранной секции.
@@ -53,5 +63,25 @@ namespace SpaceCommander
         {
             return ReadINI(Section, Key).Length > 0;
         }
+
+        //not work
+        //public List<string> GetSections()
+        //{
+        //    StringBuilder returnString = new StringBuilder(32768);
+        //    GetPrivateProfileString(null, null, null, returnString, 32768, this.path);
+        //    List<string> result = new List<string>(returnString.ToString().Split('\0'));
+        //    if (result.Count>3) result.RemoveRange(result.Count - 2, 2);
+        //    return result;
+        //}
+
+        //not work
+        //public List<string> GetKeys(string section)
+        //{
+        //    StringBuilder returnString = new StringBuilder(32768);
+        //    GetPrivateProfileString(section, null, null, returnString, 32768, this.path);
+        //    List<string> result = new List<string>(returnString.ToString().Split('\0'));
+        //    if (result.Count > 3) result.RemoveRange(result.Count - 2, 2);
+        //    return result;
+        //}
     }
 }
