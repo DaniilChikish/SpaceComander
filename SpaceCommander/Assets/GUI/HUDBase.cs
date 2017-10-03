@@ -29,14 +29,14 @@ namespace SpaceCommander
         {
             //Debug.Log("HUD started");
             Global = FindObjectOfType<GlobalController>();
-            VictoryBannerSize.x = 1784 / 2;
-            VictoryBannerSize.y = 758 / 2;
-            pauseButtonBoxSize.x = 108;
-            pauseButtonBoxSize.y = 50;
-            pauseButtonBoxBorder.x = pauseButtonBoxSize.x * 4 / 88;
-            pauseButtonBoxBorder.y = pauseButtonBoxSize.y * 8 / 40;
-            pauseButtonBoxBorder.z = pauseButtonBoxSize.x * 4 / 88;
-            pauseButtonBoxBorder.w = pauseButtonBoxSize.y * 8 / 40;
+            VictoryBannerSize.x = 1784f / 2f;
+            VictoryBannerSize.y = 758f / 2f;
+            pauseButtonBoxSize.x = 108f;
+            pauseButtonBoxSize.y = 50f;
+            pauseButtonBoxBorder.x = pauseButtonBoxSize.x * 4f / 88f;
+            pauseButtonBoxBorder.y = pauseButtonBoxSize.y * 8f / 40f;
+            pauseButtonBoxBorder.z = pauseButtonBoxSize.x * 4f / 88f;
+            pauseButtonBoxBorder.w = pauseButtonBoxSize.y * 8f / 40f;
             Windows = new UIWindowInfo[5];
             CurWin = PauseWindow.Start;
             Stop();
@@ -121,6 +121,7 @@ namespace SpaceCommander
                                 GUI.Window(1, Windows[1].rect, DrawQuitW, "");
                                 break;
                             }
+                        default: break;
                     }
                     GUI.EndGroup();
                     UIUtil.Exclamation(UIUtil.GetRect(new Vector2(200, 50), PositionAnchor.LeftDown, mainRect.size), "Jogo Deus");

@@ -136,17 +136,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\RTS_Camera\Scripts\Editor\LayoutHelpers.cs" />
-    <Compile Include="Assets\RTS_Camera\Scripts\Editor\RTS_CameraEditor.cs" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Assets\Effects\Shaders\SFE_TransparentAntiRim.shader" />
     <None Include="Assets\Effects\Shaders\SFE_TransparentRim.shader" />
     <None Include="Assets\GUI\Selection\Projector\ProjectorAdditiveTint.shader" />
     <None Include="Assets\GUI\Selection\ProjectorAdditiveTint.shader" />
-    <None Include="Assets\RTS_Camera\Demo\Projectors\Guidelines.txt" />
-    <None Include="Assets\RTS_Camera\Demo\Projectors\Shaders\ProjectorLight.shader" />
-    <None Include="Assets\RTS_Camera\Demo\Projectors\Shaders\ProjectorMultiply.shader" />
     <None Include="Assets\Scripts\ClassDiagram1.cd" />
     <None Include="Assets\SpaceD\readme.txt" />
     <None Include="Assets\Standard Assets\Cameras\CameraGuidelines.txt" />

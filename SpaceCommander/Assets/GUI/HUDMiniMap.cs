@@ -24,11 +24,11 @@ namespace SpaceCommander
         // Update is called once per frame
         void Update()
         {
-            border.x = Size.x * 31 / 256f;
-            border.y = Size.y * 39 / 256f;
-            border.z = Size.x * 31 / 256f;
-            border.w = Size.y * 39 / 256f;
-            Size.y = Screen.height / 3;
+            border.x = Size.x * 31f / 256f;
+            border.y = Size.y * 39f / 256f;
+            border.z = Size.x * 31f / 256f;
+            border.w = Size.y * 39f / 256f;
+            Size.y = Screen.height / 3f;
             Size.x = Size.y;
             Position.x = Screen.width - Size.x;
             Position.y = Screen.height - Size.y;

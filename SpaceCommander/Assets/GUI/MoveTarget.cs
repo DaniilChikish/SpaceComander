@@ -28,7 +28,7 @@ namespace SpaceCommander
             //style.alignment = TextAnchor.MiddleCenter;
             //style.fontStyle = FontStyle.Italic;
 
-            GUI.DrawTexture(new Rect(crd.x - TargetFrameWidth / 2, crd.y - TargetFrameOffset, TargetFrameWidth, TargetFrameHeight), Target);
+            GUI.DrawTexture(new Rect(crd.x - TargetFrameWidth / 2f, crd.y - TargetFrameOffset, TargetFrameWidth, TargetFrameHeight), Target);
             //GUI.Label(new Rect(crd.x - 120, crd.y - TargetFrameOffset, 240, 18), UnitName, style);
         }
 

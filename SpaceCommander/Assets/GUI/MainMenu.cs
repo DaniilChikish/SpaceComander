@@ -23,13 +23,15 @@ namespace SpaceCommander
         private const float scrollSpeedFactor = 0.5f;
         private const float scrollDrag = 1;
         GlobalController Global;
-        bool langChanged;
+        private bool langChanged;
+        private GameSettings settingsLocal;
         void Start()
         {
             Global = FindObjectOfType<GlobalController>();
             Time.timeScale = 1;
             CurWin = MenuWindow.Main;
             Windows = new UIWindowInfo[5];
+            settingsLocal = Global.Settings.Copy();
             //Windows[5] = new SDWindowInfo(new Rect(0, Screen.height-100, 100, 100));//info
         }
         private void Update()
@@ -108,6 +110,7 @@ namespace SpaceCommander
             if (UIUtil.ButtonBig(UIUtil.GetRect(new Vector2(200, 50), PositionAnchor.Up, Windows[windowID].rect.size, new Vector2(0, 150)), Global.Texts("Options")))
             {
                 langChanged = false;
+                settingsLocal = Global.Settings.Copy();
                 CurWin = MenuWindow.Options;
             }
             if (UIUtil.ButtonBig(UIUtil.GetRect(new Vector2(200, 50), PositionAnchor.Up, Windows[windowID].rect.size, new Vector2(0, 200)), Global.Texts("About game")))
@@ -150,16 +153,16 @@ namespace SpaceCommander
 
             GUI.BeginGroup(UIUtil.GetRect(new Vector2(340, 55), PositionAnchor.Up, Windows[windowID].rect.size, new Vector2(0, 100)));
             UIUtil.Label(new Rect(120, 0, 100, 20), Global.Texts("Sound"));
-            fBuffer = GUI.HorizontalSlider(new Rect(0, 40, 340, 13), Global.Settings.SoundLevel, 0.0f, 100f);
-            if (Global.Settings.SoundLevel != fBuffer)
-                Global.Settings.SoundLevel = fBuffer;
+            fBuffer = GUI.HorizontalSlider(new Rect(0, 40, 340, 13), settingsLocal.SoundLevel, 0.0f, 100f);
+            if (settingsLocal.SoundLevel != fBuffer)
+                settingsLocal.SoundLevel = fBuffer;
             GUI.EndGroup();
 
             GUI.BeginGroup(UIUtil.GetRect(new Vector2(340, 55), PositionAnchor.Up, Windows[windowID].rect.size, new Vector2(0, 165)));
             UIUtil.Label(new Rect(120, 0, 100, 20), Global.Texts("Music"));
-            fBuffer = GUI.HorizontalSlider(new Rect(0, 40, 340, 13), Global.Settings.MusicLevel, 0.0f, 100f);
-            if (Global.Settings.MusicLevel != fBuffer)
-                Global.Settings.MusicLevel = fBuffer;
+            fBuffer = GUI.HorizontalSlider(new Rect(0, 40, 340, 13), settingsLocal.MusicLevel, 0.0f, 100f);
+            if (settingsLocal.MusicLevel != fBuffer)
+                settingsLocal.MusicLevel = fBuffer;
             GUI.EndGroup();
 
             GUI.BeginGroup(UIUtil.GetRect(new Vector2(500, 180), PositionAnchor.Up, Windows[windowID].rect.size, new Vector2(0, 210)));
@@ -174,46 +177,46 @@ namespace SpaceCommander
             UISettings UIbuff = new UISettings();
             GUI.BeginGroup(new Rect(200, 37, 100, 145));
             UIUtil.Label(new Rect(0, 0, 100, 25), Global.Texts("Allies"));
-            UIbuff.ShowUnitFrame = UIUtil.Toggle(new Vector2(35, 40), Global.Settings.AliesUI.ShowUnitFrame, "");
-            UIbuff.ShowUnitIcon = UIUtil.Toggle(new Vector2(35, 65), Global.Settings.AliesUI.ShowUnitIcon, "");
-            UIbuff.ShowUnitName = UIUtil.Toggle(new Vector2(35, 90), Global.Settings.AliesUI.ShowUnitName, "");
-            UIbuff.ShowUnitStatus = UIUtil.Toggle(new Vector2(35, 115), Global.Settings.AliesUI.ShowUnitStatus, "");
+            UIbuff.ShowUnitFrame = UIUtil.Toggle(new Vector2(35, 40), settingsLocal.AliesUI.ShowUnitFrame, "");
+            UIbuff.ShowUnitIcon = UIUtil.Toggle(new Vector2(35, 65), settingsLocal.AliesUI.ShowUnitIcon, "");
+            UIbuff.ShowUnitName = UIUtil.Toggle(new Vector2(35, 90), settingsLocal.AliesUI.ShowUnitName, "");
+            UIbuff.ShowUnitStatus = UIUtil.Toggle(new Vector2(35, 115), settingsLocal.AliesUI.ShowUnitStatus, "");
             GUI.EndGroup();
-            if (!Global.Settings.AliesUI.Equals(UIbuff))
-                Global.Settings.AliesUI = UIbuff;
+            if (!settingsLocal.AliesUI.Equals(UIbuff))
+                settingsLocal.AliesUI = UIbuff;
 
             GUI.BeginGroup(new Rect(300, 37, 100, 145));
             UIUtil.Label(new Rect(0, 0, 100, 25), Global.Texts("Selected"));
-            UIbuff.ShowUnitFrame = UIUtil.Toggle(new Vector2(35, 40), Global.Settings.SelectedUI.ShowUnitFrame, "");
-            UIbuff.ShowUnitIcon = UIUtil.Toggle(new Vector2(35, 65), Global.Settings.SelectedUI.ShowUnitIcon, "");
-            UIbuff.ShowUnitName = UIUtil.Toggle(new Vector2(35, 90), Global.Settings.SelectedUI.ShowUnitName, "");
-            UIbuff.ShowUnitStatus = UIUtil.Toggle(new Vector2(35, 115), Global.Settings.SelectedUI.ShowUnitStatus, "");
+            UIbuff.ShowUnitFrame = UIUtil.Toggle(new Vector2(35, 40), settingsLocal.SelectedUI.ShowUnitFrame, "");
+            UIbuff.ShowUnitIcon = UIUtil.Toggle(new Vector2(35, 65), settingsLocal.SelectedUI.ShowUnitIcon, "");
+            UIbuff.ShowUnitName = UIUtil.Toggle(new Vector2(35, 90), settingsLocal.SelectedUI.ShowUnitName, "");
+            UIbuff.ShowUnitStatus = UIUtil.Toggle(new Vector2(35, 115), settingsLocal.SelectedUI.ShowUnitStatus, "");
             GUI.EndGroup();
-            if (!Global.Settings.SelectedUI.Equals(UIbuff))
-                Global.Settings.SelectedUI = UIbuff;
+            if (!settingsLocal.SelectedUI.Equals(UIbuff))
+                settingsLocal.SelectedUI = UIbuff;
 
             GUI.BeginGroup(new Rect(400, 37, 100, 145));
             UIUtil.Label(new Rect(0, 0, 100, 25), Global.Texts("Enemys"));
-            UIbuff.ShowUnitFrame = UIUtil.Toggle(new Vector2(35, 40), Global.Settings.EnemyUI.ShowUnitFrame, "");
-            UIbuff.ShowUnitIcon = UIUtil.Toggle(new Vector2(35, 65), Global.Settings.EnemyUI.ShowUnitIcon, "");
-            UIbuff.ShowUnitName = UIUtil.Toggle(new Vector2(35, 90), Global.Settings.EnemyUI.ShowUnitName, "");
-            UIbuff.ShowUnitStatus = UIUtil.Toggle(new Vector2(35, 115), Global.Settings.EnemyUI.ShowUnitStatus, "");
+            UIbuff.ShowUnitFrame = UIUtil.Toggle(new Vector2(35, 40), settingsLocal.EnemyUI.ShowUnitFrame, "");
+            UIbuff.ShowUnitIcon = UIUtil.Toggle(new Vector2(35, 65), settingsLocal.EnemyUI.ShowUnitIcon, "");
+            UIbuff.ShowUnitName = UIUtil.Toggle(new Vector2(35, 90), settingsLocal.EnemyUI.ShowUnitName, "");
+            UIbuff.ShowUnitStatus = UIUtil.Toggle(new Vector2(35, 115), settingsLocal.EnemyUI.ShowUnitStatus, "");
             GUI.EndGroup();
-            if (!Global.Settings.EnemyUI.Equals(UIbuff))
-                Global.Settings.EnemyUI = UIbuff;
+            if (!settingsLocal.EnemyUI.Equals(UIbuff))
+                settingsLocal.EnemyUI = UIbuff;
             GUI.EndGroup();
             {
                 string[] radios = new string[2];
                 radios[0] = "English";
                 radios[1] = "Русский";
-                int langueageRadioSelected = (int)Global.Settings.Localisation;
+                int langueageRadioSelected = (int)settingsLocal.Localisation;
                 GUI.BeginGroup(UIUtil.GetRect(new Vector2(150, 110), PositionAnchor.LeftDown, Windows[windowID].rect.size, new Vector2(100, -100)));
                 UIUtil.Label(new Rect(0, 0, 150, 20), Global.Texts("Language"));
                 langueageRadioSelected = UIUtil.ToggleList(new Rect(10, 40, 140, 74), langueageRadioSelected, radios);
                 GUI.EndGroup();
-                if (langueageRadioSelected != (int)Global.Settings.Localisation)
+                if (langueageRadioSelected != (int)settingsLocal.Localisation)
                 {
-                    Global.Settings.Localisation = (Languages)langueageRadioSelected;
+                    settingsLocal.Localisation = (Languages)langueageRadioSelected;
                     langChanged = true;
                 }
             }
@@ -224,7 +227,7 @@ namespace SpaceCommander
                 radios[0] = "Static size";
                 radios[1] = "Static proportion";
                 int screenRadioSelected;
-                if (Global.Settings.StaticProportion)
+                if (settingsLocal.StaticProportion)
                     screenRadioSelected = 1;
                 else screenRadioSelected = 0;
                 GUI.BeginGroup(UIUtil.GetRect(new Vector2(150, 110), PositionAnchor.RightDown, Windows[windowID].rect.size, new Vector2(-100, -100)));
@@ -233,21 +236,22 @@ namespace SpaceCommander
                 GUI.EndGroup();
                 if (screenRadioSelected != screenRadioBuffer)
                 {
-                    Global.Settings.StaticProportion = (screenRadioBuffer == 1);
+                    settingsLocal.StaticProportion = (screenRadioBuffer == 1);
                 }
             }
 
             if (UIUtil.ButtonBig(UIUtil.GetRect(new Vector2(200, 50), PositionAnchor.Down, Windows[windowID].rect.size, new Vector2(0, -50)), Global.Texts("Back")))
             {
                 CurWin = MenuWindow.Main;
-                if (langChanged)
-                    Global.LoadTexts();
             }
-            if (!Global.Settings.SettingsSaved)
+            if (!settingsLocal.Equals(Global.Settings))
             {
                 if (UIUtil.ButtonBig(UIUtil.GetRect(new Vector2(200, 50), PositionAnchor.Down, Windows[windowID].rect.size, new Vector2(220, -50)), Global.Texts("Save")))
                 {
+                    Global.Settings = settingsLocal.Copy();
                     Global.Settings.Save();
+                    if (langChanged)
+                        Global.LoadTexts();
                 }
             }
         }

@@ -128,7 +128,7 @@ namespace SpaceCommander
                     }
                 case "Explosion":
                     {
-                        multiplicator = (1 - blastResist) * Mathf.Pow(((-Vector3.Distance(this.gameObject.transform.position, collision.gameObject.transform.position) + collision.gameObject.GetComponent<Explosion>().MaxRadius) * 0.01f), (1 / 3));
+                        multiplicator = (1f - blastResist) * Mathf.Pow(((-Vector3.Distance(this.gameObject.transform.position, collision.gameObject.transform.position) + collision.gameObject.GetComponent<Explosion>().MaxRadius) * 0.01f), (1f / 3f));
                         this.hitpoints -= collision.gameObject.GetComponent<Explosion>().Damage * multiplicator;
                         break;
                     }

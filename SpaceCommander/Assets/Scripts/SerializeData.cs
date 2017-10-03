@@ -176,6 +176,36 @@ namespace SpaceCommander
             listBuff.Remove(userName);
             users = listBuff.ToArray();
         }
+        public GameSettings Copy()
+        {
+            GameSettings copy = new GameSettings();
+            copy.Localisation = this.Localisation;
+            copy.MusicLevel = this.MusicLevel;
+            copy.SoundLevel = this.SoundLevel;
+            copy.StaticProportion = this.StaticProportion;
+            copy.AliesUI = this.AliesUI.Copy();
+            copy.SelectedUI = this.SelectedUI.Copy();
+            copy.EnemyUI = this.EnemyUI.Copy();
+            return copy;
+        }
+        public override bool Equals(object obj)
+        {
+            if (obj == null) return false;
+            if (obj.GetType() != this.GetType())
+                return base.Equals(obj);
+            else
+            {
+                return (
+                       (this.Localisation == ((GameSettings)obj).Localisation)
+                    && (this.SoundLevel == ((GameSettings)obj).SoundLevel)
+                    && (this.MusicLevel == ((GameSettings)obj).MusicLevel)
+                    && (this.StaticProportion == ((GameSettings)obj).StaticProportion)
+                    && (this.AliesUI.Equals(((GameSettings)obj).AliesUI))
+                    && (this.SelectedUI.Equals(((GameSettings)obj).SelectedUI))
+                    && (this.EnemyUI.Equals(((GameSettings)obj).EnemyUI))
+                    );
+            }
+        }
     }
     public struct UISettings
     {
@@ -183,8 +213,18 @@ namespace SpaceCommander
         public bool ShowUnitStatus;
         public bool ShowUnitIcon;
         public bool ShowUnitFrame;
+        public UISettings Copy()
+        {
+            UISettings copy = new UISettings();
+            copy.ShowUnitFrame = this.ShowUnitFrame;
+            copy.ShowUnitIcon = this.ShowUnitIcon;
+            copy.ShowUnitName = this.ShowUnitName;
+            copy.ShowUnitStatus = this.ShowUnitStatus;
+            return copy;
+        }
         public override bool Equals(object obj)
         {
+            if (obj == null) return false;
             if (obj.GetType() != this.GetType())
                 return base.Equals(obj);
             else return (this.ShowUnitName == ((UISettings)obj).ShowUnitName

@@ -1,0 +1,19 @@
+D:\Archive\_Repository\Space Commander Project\Space CommanderTests\obj\Debug\SpaceCommanderTests.csprojResolveAssemblyReference.cache
+D:\Archive\_Repository\Space Commander Project\Space CommanderTests\obj\Debug\Space CommanderTests.dll
+D:\Archive\_Repository\Space Commander Project\Space CommanderTests\obj\Debug\Space CommanderTests.pdb
+D:\Archive\_Repository\Space Commander Project\Space CommanderTests\bin\Debug\Space CommanderTests.dll
+D:\Archive\_Repository\Space Commander Project\Space CommanderTests\bin\Debug\Space CommanderTests.pdb
+D:\Archive\_Repository\Space Commander Project\Space CommanderTests\bin\Debug\Assembly-CSharp.dll.dll
+D:\Archive\_Repository\Space Commander Project\Space CommanderTests\bin\Debug\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll
+D:\Archive\_Repository\Space Commander Project\Space CommanderTests\bin\Debug\UnityEngine.UI.dll
+D:\Archive\_Repository\Space Commander Project\Space CommanderTests\bin\Debug\UnityEditor.dll
+D:\Archive\_Repository\Space Commander Project\Space CommanderTests\bin\Debug\Mono.Cecil.dll
+D:\Archive\_Repository\Space Commander Project\Space CommanderTests\bin\Debug\Unity.SerializationLogic.dll
+D:\Archive\_Repository\Space Commander Project\Space CommanderTests\bin\Debug\Unity.DataContract.dll
+D:\Archive\_Repository\Space Commander Project\Space CommanderTests\bin\Debug\ICSharpCode.NRefactory.dll
+D:\Archive\_Repository\Space Commander Project\Space CommanderTests\bin\Debug\Unity.CecilTools.dll
+D:\Archive\_Repository\Space Commander Project\Space CommanderTests\bin\Debug\Assembly-CSharp.dll.pdb
+D:\Archive\_Repository\Space Commander Project\Space CommanderTests\bin\Debug\UnityEngine.xml
+D:\Archive\_Repository\Space Commander Project\Space CommanderTests\bin\Debug\UnityEngine.UI.xml
+D:\Archive\_Repository\Space Commander Project\Space CommanderTests\bin\Debug\UnityEditor.xml
+D:\Archive\_Repository\Space Commander Project\Space CommanderTests\bin\Debug\ru\Microsoft.VisualStudio.QualityTools.UnitTestFramework.resources.dll

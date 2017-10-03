@@ -180,7 +180,7 @@ namespace SpaceCommander
                 float xPos;
                 for (i = 0; i < observable.Module.Length; i++)
                 {
-                    xPos = -(80 * (observable.Module.Length - 1)) / 2 + (80 * i);
+                    xPos = -(80f * (observable.Module.Length - 1f)) / 2f + (80f * i);
                     newChild = Instantiate(modulOrigin, Vector3.zero, modulOrigin.transform.rotation, spellPanel.transform);
 
                     newChild.transform.localPosition = new Vector3(xPos, modulOrigin.transform.localPosition.y, modulOrigin.transform.localPosition.z);
@@ -506,7 +506,7 @@ namespace SpaceCommander
         Texture2D ProgressUpdate(float progress, Texture2D tex)
         {
             Texture2D thisTex = new Texture2D(tex.width, tex.height);
-            Vector2 centre = new Vector2(Mathf.Ceil(thisTex.width / 2), Mathf.Ceil(thisTex.height / 2)); //find the centre pixel
+            Vector2 centre = new Vector2(Mathf.Ceil(thisTex.width / 2f), Mathf.Ceil(thisTex.height / 2f)); //find the centre pixel
             for (int y = 0; y < thisTex.height; y++)
             {
                 for (int x = 0; x < thisTex.width; x++)

@@ -28,7 +28,7 @@ namespace SpaceCommander
             Size.y = Screen.height / 3.5f;
             Size.x = Size.y;
             Position.x = Screen.width - Size.x;
-            Position.y = Screen.height - Size.y - Screen.height / 3;
+            Position.y = Screen.height - Size.y - Screen.height / 3f;
         }
         private void OnGUI()
         {

@@ -22,15 +22,16 @@ namespace SpaceCommander.Scenarios
             string path = Application.streamingAssetsPath + "\\local";
             switch (Global.Settings.Localisation)
             {
-                case Languages.English:
-                    {
-                        path += "\\eng\\mission1_brief_eng.xml";
-
-                        break;
-                    }
                 case Languages.Russian:
                     {
                         path += "\\rus\\mission1_brief_rus.xml";
+                        break;
+                    }
+                case Languages.English:
+                default:
+                    {
+                        path += "\\eng\\mission1_brief_eng.xml";
+
                         break;
                     }
             }

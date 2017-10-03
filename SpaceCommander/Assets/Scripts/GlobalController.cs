@@ -50,7 +50,7 @@ namespace SpaceCommander
         private INIHandler specINI;
         public INIHandler SpecINI { get { return specINI; } }
         private GameSettings settings;
-        public GameSettings Settings { get { return settings; } }
+        public GameSettings Settings { get { return settings; } set { settings = value; }}
         //texts
         private TextINIHandler localTexts;
         public string Texts(string key)
@@ -360,7 +360,7 @@ namespace SpaceCommander
         public void ReloadWeapons()
         {
             for (int i = 0; i < weapons.Length; i++)
-                for (int j = 0; i < weapons[i].Length; j++)
+                for (int j = 0; j < weapons[i].Length; j++)
                 {
                     weapons[i][j].Reset();
                 }

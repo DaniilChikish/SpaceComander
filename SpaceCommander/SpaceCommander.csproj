@@ -91,7 +91,6 @@
     <Compile Include="Assets\GUI\Selection\Script\UnitSelectionComponent.cs" />
     <Compile Include="Assets\GUI\Selection\Script\Utils.cs" />
     <Compile Include="Assets\GUI\SpaceShipGUIObserver.cs" />
-    <Compile Include="Assets\Scripts\Base.cs" />
     <Compile Include="Assets\Scripts\CameraMovementScript.cs" />
     <Compile Include="Assets\Scripts\Enums.cs" />
     <Compile Include="Assets\Scripts\Explosion.cs" />
@@ -100,7 +99,6 @@
     <Compile Include="Assets\Scripts\Interfaces.cs" />
     <Compile Include="Assets\Scripts\LookOnCam.cs" />
     <Compile Include="Assets\Scripts\OrbitalCamera.cs" />
-    <Compile Include="Assets\Scripts\RepairDock.cs" />
     <Compile Include="Assets\Scripts\Scenarios\Mission1.cs" />
     <Compile Include="Assets\Scripts\Scenarios\Mission2.cs" />
     <Compile Include="Assets\Scripts\Scenarios\Scenario.cs" />

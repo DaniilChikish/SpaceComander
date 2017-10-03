@@ -88,7 +88,7 @@ namespace SpaceCommander.Units
         protected override int RadarWarningResiever()
         {
             capByTarget.Clear();
-            foreach (SpaceShip x in enemys)
+            foreach (Unit x in enemys)
             {
                 UseModule(new SpellFunction[] { SpellFunction.Enemy, SpellFunction.Debuff });
                 SpaceShip enemy = x.GetComponent<SpaceShip>();

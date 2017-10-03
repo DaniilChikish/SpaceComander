@@ -431,7 +431,7 @@ namespace SpaceCommander
                 else frameSize = new Vector2(Global.AlliesOutscreenPoint.width, Global.AlliesOutscreenPoint.height);
                 Vector2 iconSize = new Vector2(aliesIcon.width, aliesIcon.height);// * hud.scale;
                 float frameX;
-                float frameY = crd.y - frameSize.y / 2f - 12;
+                float frameY;
                 float iconX;
                 float iconY;
 
@@ -631,7 +631,7 @@ namespace SpaceCommander
         //}
         protected virtual bool RetreatManeuver()
         {
-            SpaceShip nearest = FindAllies(UnitClass.Support_Corvette);
+            Unit nearest = FindAllies(UnitClass.Support_Corvette);
             if (nearest != null)
                 return Driver.MoveToQueue(this.transform.position + new Vector3(0, 0.5f, 0) + -nearest.transform.forward * 30f);
             else
@@ -1001,15 +1001,16 @@ namespace SpaceCommander
         }
         protected bool GoToBase()
         {
-            Base[] bases = FindObjectsOfType<Base>();
-            if (bases.Length > 0)
-            {
-                foreach (Base x in bases)
-                    if (x.team == this.Team)
-                        return Driver.MoveToQueue(x.GetInQueue(this));
-                return BackToAncour();
-            }
-            else return BackToAncour();
+            //Base[] bases = FindObjectsOfType<Base>();
+            //if (bases.Length > 0)
+            //{
+            //    foreach (Base x in bases)
+            //        if (x.team == this.Team)
+            //            return Driver.MoveToQueue(x.GetInQueue(this));
+            //    return BackToAncour();
+            //}
+            //else 
+            return BackToAncour();
         }
         private bool CanPatrool(Vector3[] path)
         {
@@ -1231,10 +1232,10 @@ namespace SpaceCommander
         protected List<Unit> RequestScout()
         {
             List<Unit> enemys = new List<Unit>();
-            foreach (SpaceShip x in allies)
+            foreach (Unit x in allies)
             {
-                if (x.Ping(this.transform.position))
-                    enemys.AddRange(x.GetEnemys());
+                if (x.GetType() == typeof(SpaceShip) && ((SpaceShip)x).Ping(this.transform.position))
+                    enemys.AddRange(((SpaceShip)x).GetEnemys());
             }
             return enemys;
         }
@@ -1259,11 +1260,11 @@ namespace SpaceCommander
         }
         protected void CooperateFire()
         {
-            foreach (SpaceShip x in allies)
+            foreach (Unit x in allies)
             {
-                if (x.Type == type)
+                if (x.Type == type && x.GetType() == typeof(SpaceShip))
                 {
-                    x.GetFireSupport(CurrentTarget);
+                    ((SpaceShip)x).GetFireSupport(CurrentTarget);
                 }
             }
         }
@@ -1277,22 +1278,22 @@ namespace SpaceCommander
         {
             int inSquadCount = 0;
             Squad[0] = this;
-            foreach (SpaceShip x in allies)
+            foreach (Unit x in allies)
             {
-                if (x.Type == this.Type)
+                if (x.Type == this.Type&& x.GetType() == typeof(SpaceShip))
                 {
-                    if (x.unitSquadStatus == SquadStatus.Free)
+                    if (((SpaceShip)x).unitSquadStatus == SquadStatus.Free)
                     {
                         this.unitSquadStatus = SquadStatus.SquadMaster;
-                        x.unitSquadStatus = SquadStatus.InSquad;
+                        ((SpaceShip)x).unitSquadStatus = SquadStatus.InSquad;
                         inSquadCount++;
-                        this.Squad[inSquadCount] = x;
-                        x.Squad[0] = this.Squad[0];
-                        x.Squad[1] = this.Squad[1];
-                        x.Squad[2] = this.Squad[2];
+                        this.Squad[inSquadCount] = ((SpaceShip)x);
+                        ((SpaceShip)x).Squad[0] = this.Squad[0];
+                        ((SpaceShip)x).Squad[1] = this.Squad[1];
+                        ((SpaceShip)x).Squad[2] = this.Squad[2];
                     }
-                    else if (x.unitSquadStatus == SquadStatus.SquadMaster)
-                        if (x.ComeInSquadRequest(this))
+                    else if (((SpaceShip)x).unitSquadStatus == SquadStatus.SquadMaster)
+                        if (((SpaceShip)x).ComeInSquadRequest(this))
                             return;
                     if (inSquadCount >= 2)
                         return;
@@ -1334,9 +1335,9 @@ namespace SpaceCommander
             else return Vector3.zero;
         }
         //
-        protected SpaceShip FindAllies(UnitClass ofType)
+        protected Unit FindAllies(UnitClass ofType)
         {
-            foreach (SpaceShip x in allies)
+            foreach (Unit x in allies)
             {
                 if (x.Type == ofType)
                     return x;

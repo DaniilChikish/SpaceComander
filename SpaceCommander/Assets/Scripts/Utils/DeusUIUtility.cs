@@ -381,8 +381,6 @@ namespace DeusUtility.UI
             rect.x -= direction.x;
             rect.y -= direction.y;
             GUI.Label(rect, content, style);
-
-            style = backupStyle;
         }
 
         public static void TextStyle1(Rect r, string text)
