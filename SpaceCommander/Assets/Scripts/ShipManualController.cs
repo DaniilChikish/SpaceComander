@@ -30,8 +30,12 @@ namespace SpaceCommander
                 {
                     lockdownCount = lockdownDuration;
                     aimState = AimStateType.Locking;
+                    value.gameObject.GetComponentInChildren<Camera>().enabled = true;
                 }
-                else aimState = AimStateType.Default;
+                else
+                {
+                    aimState = AimStateType.Default;
+                }
             }
             get { return targetBuffer; }
         }
@@ -281,9 +285,14 @@ namespace SpaceCommander
             if (!Input.GetKey(freeCursor))
             {
                 Cursor.visible = false;
+                Cursor.lockState = CursorLockMode.Locked;
                 RotateByMouse();
             }
-            else Cursor.visible = true;
+            else
+            {
+                Cursor.visible = true;
+                Cursor.lockState = CursorLockMode.None;
+            }
             if (!tridimensional)
                 Stabilisation();
         }

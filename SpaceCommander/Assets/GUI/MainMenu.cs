@@ -31,6 +31,18 @@ namespace SpaceCommander
             Time.timeScale = 1;
             CurWin = MenuWindow.Main;
             Windows = new UIWindowInfo[5];
+            screenRatio = UIUtil.GetRatio();
+
+            if (Global.Settings.StaticProportion)
+            {
+                scale = Screen.width / (1280f / 1f);
+                mainRect = new Rect(0, 0, Screen.width / scale, Screen.height / scale);
+            }
+            else
+                mainRect = new Rect(0, 0, Screen.width, Screen.height);
+            Windows[0] = new UIWindowInfo(UIUtil.GetRect(new Vector2(400, 400), PositionAnchor.Center, mainRect.size));//main
+            Windows[1] = new UIWindowInfo(UIUtil.GetRect(new Vector2(1100, 600), PositionAnchor.Center, mainRect.size));//options
+            Windows[2] = new UIWindowInfo(UIUtil.GetRect(new Vector2(600, 200), PositionAnchor.Center, mainRect.size));//question
             settingsLocal = Global.Settings.Copy();
             //Windows[5] = new SDWindowInfo(new Rect(0, Screen.height-100, 100, 100));//info
         }
@@ -56,9 +68,9 @@ namespace SpaceCommander
             else
                 mainRect = new Rect(0, 0, Screen.width, Screen.height);
 
-            Windows[0] = new UIWindowInfo(UIUtil.GetRect(new Vector2(400, 400), PositionAnchor.Center, mainRect.size));//main
-            Windows[1] = new UIWindowInfo(UIUtil.GetRect(new Vector2(1100, 600), PositionAnchor.Center, mainRect.size));//options
-            Windows[2] = new UIWindowInfo(UIUtil.GetRect(new Vector2(600, 200), PositionAnchor.Center, mainRect.size));//question
+            Windows[0].rect = UIUtil.GetRect(new Vector2(400, 400), PositionAnchor.Center, mainRect.size);//main
+            Windows[1].rect = UIUtil.GetRect(new Vector2(1100, 600), PositionAnchor.Center, mainRect.size);//options
+            Windows[2].rect = UIUtil.GetRect(new Vector2(600, 200), PositionAnchor.Center, mainRect.size);//question
         }
 
         void OnGUI()

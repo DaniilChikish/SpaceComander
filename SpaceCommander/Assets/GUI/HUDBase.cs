@@ -19,11 +19,16 @@ namespace SpaceCommander
         public Texture2D DefeatBanner;
         public Vector2 VictoryBannerSize;
         public Texture2D PauseButtonBox;
+        public Texture2D UnitStatBack;
+        public Texture2D UnitArmorLine;
+        public Texture2D UnitShieldLine;
         private Vector4 pauseButtonBoxBorder;
         private Vector2 pauseButtonBoxSize;
         private bool Pause;
         private UIWindowInfo[] Windows;
         GlobalController Global;
+        private bool langChanged;
+        private GameSettings settingsLocal;
         // Use this for initialization
         void Start()
         {
@@ -38,6 +43,21 @@ namespace SpaceCommander
             pauseButtonBoxBorder.z = pauseButtonBoxSize.x * 4f / 88f;
             pauseButtonBoxBorder.w = pauseButtonBoxSize.y * 8f / 40f;
             Windows = new UIWindowInfo[5];
+
+            //
+            if (Global.Settings.StaticProportion)
+            {
+                scale = Screen.width / (1280f / 1f);
+                mainRect = new Rect(0, 0, Screen.width / scale, Screen.height / scale);
+            }
+            else
+                mainRect = new Rect(0, 0, Screen.width, Screen.height);
+
+            Windows[0] = new UIWindowInfo(UIUtil.GetRect(new Vector2(400, 400), PositionAnchor.Center, mainRect.size));//main
+            Windows[1] = new UIWindowInfo(UIUtil.GetRect(new Vector2(600, 250f), PositionAnchor.Center, mainRect.size));//question
+            Windows[2] = new UIWindowInfo(UIUtil.GetRect(new Vector2(800, 600), PositionAnchor.Center, mainRect.size));//options
+            Windows[3] = new UIWindowInfo(UIUtil.GetRect(new Vector2(600, 200), PositionAnchor.Center, mainRect.size, new Vector2(0, 120)));//victory
+
             CurWin = PauseWindow.Start;
             Stop();
         }
@@ -54,16 +74,10 @@ namespace SpaceCommander
             else
                 mainRect = new Rect(0, 0, Screen.width, Screen.height);
 
-
-            Vector2 W4x4 = new Vector2(400, 400);
-            Vector2 W8x6 = new Vector2(800, 600);
-            Vector2 W6x2 = new Vector2(600, 200);
-            Vector2 W6x2f5 = new Vector2(600, 250f);
-            Windows[0] = new UIWindowInfo(UIUtil.GetRect(W4x4, PositionAnchor.Center, mainRect.size));//main
-            Windows[1] = new UIWindowInfo(UIUtil.GetRect(W6x2f5, PositionAnchor.Center, mainRect.size));//question
-            Windows[2] = new UIWindowInfo(UIUtil.GetRect(W8x6, PositionAnchor.Center, mainRect.size));//options
-            Windows[3] = new UIWindowInfo(UIUtil.GetRect(W6x2, PositionAnchor.Center, mainRect.size, new Vector2(0, 120)));//victory
-            //
+            Windows[0].rect = UIUtil.GetRect(new Vector2(400, 400), PositionAnchor.Center, mainRect.size);//main
+            Windows[1].rect = UIUtil.GetRect(new Vector2(600, 250f), PositionAnchor.Center, mainRect.size);//question
+            Windows[2].rect = UIUtil.GetRect(new Vector2(800, 600), PositionAnchor.Center, mainRect.size);//options
+            Windows[3].rect = UIUtil.GetRect(new Vector2(600, 200), PositionAnchor.Center, mainRect.size, new Vector2(0, 120));//victory
 
             if (Input.GetKeyDown(KeyCode.Escape))
             {
@@ -108,7 +122,7 @@ namespace SpaceCommander
                             }
                         case PauseWindow.About:
                             {
-                                GUI.Window(2, Windows[2].rect, DrawAboutW, "");
+                                GUI.Window(2, Windows[2].rect, DrawBriefW, "");
                                 break;
                             }
                         case PauseWindow.Start:
@@ -177,6 +191,8 @@ namespace SpaceCommander
             }
             if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - 100, 150, 200, 50), Global.Texts("Options")))
             {
+                langChanged = false;
+                settingsLocal = Global.Settings.Copy();
                 CurWin = PauseWindow.Options;
             }
             if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - 100, 200, 200, 50), Global.Texts("Briefing")))
@@ -236,27 +252,83 @@ namespace SpaceCommander
             float fBuffer;
             UIUtil.WindowTitle(Windows[windowID], Global.Texts("Options"));
 
-            GUI.BeginGroup(new Rect(Windows[windowID].CenterX - 170, 100, 340, 55));
+            GUI.BeginGroup(UIUtil.GetRect(new Vector2(340, 55), PositionAnchor.Up, Windows[windowID].rect.size, new Vector2(0, 100)));
             UIUtil.Label(new Rect(120, 0, 100, 20), Global.Texts("Sound"));
-            fBuffer = GUI.HorizontalSlider(new Rect(0, 40, 340, 13), Global.Settings.SoundLevel, 0.0f, 1f);
-            if (Global.Settings.SoundLevel != fBuffer)
-                Global.Settings.SoundLevel = fBuffer;
+            fBuffer = GUI.HorizontalSlider(new Rect(0, 40, 340, 13), settingsLocal.SoundLevel, 0.0f, 100f);
+            if (settingsLocal.SoundLevel != fBuffer)
+                settingsLocal.SoundLevel = fBuffer;
             GUI.EndGroup();
 
-            GUI.BeginGroup(new Rect(Windows[windowID].CenterX - 170, 165, 340, 55));
+            GUI.BeginGroup(UIUtil.GetRect(new Vector2(340, 55), PositionAnchor.Up, Windows[windowID].rect.size, new Vector2(0, 165)));
             UIUtil.Label(new Rect(120, 0, 100, 20), Global.Texts("Music"));
-            fBuffer = GUI.HorizontalSlider(new Rect(0, 40, 340, 13), Global.Settings.MusicLevel, 0.0f, 1f);
-            if (Global.Settings.MusicLevel != fBuffer)
-                Global.Settings.MusicLevel = fBuffer;
+            fBuffer = GUI.HorizontalSlider(new Rect(0, 40, 340, 13), settingsLocal.MusicLevel, 0.0f, 100f);
+            if (settingsLocal.MusicLevel != fBuffer)
+                settingsLocal.MusicLevel = fBuffer;
             GUI.EndGroup();
 
-            if (Screen.width != 1280)
+            GUI.BeginGroup(UIUtil.GetRect(new Vector2(500, 180), PositionAnchor.Up, Windows[windowID].rect.size, new Vector2(0, 210)));
+            UIUtil.TextStyle2(new Rect(0, 30, 500, 30), Global.Texts("UI Settings"));
+            GUI.BeginGroup(new Rect(0, 60, 200, 145));
+            UIUtil.TextStyle1(new Rect(10, 25, 180, 25), Global.Texts("Show unit Frame"));
+            UIUtil.TextStyle1(new Rect(10, 50, 180, 25), Global.Texts("Show unit Icon"));
+            UIUtil.TextStyle1(new Rect(10, 75, 180, 25), Global.Texts("Show unit Name"));
+            UIUtil.TextStyle1(new Rect(10, 100, 180, 25), Global.Texts("Show unit Status"));
+            GUI.EndGroup();
+
+            UISettings UIbuff = new UISettings();
+            GUI.BeginGroup(new Rect(200, 37, 100, 145));
+            UIUtil.Label(new Rect(0, 0, 100, 25), Global.Texts("Allies"));
+            UIbuff.ShowUnitFrame = UIUtil.Toggle(new Vector2(35, 40), settingsLocal.AliesUI.ShowUnitFrame, "");
+            UIbuff.ShowUnitIcon = UIUtil.Toggle(new Vector2(35, 65), settingsLocal.AliesUI.ShowUnitIcon, "");
+            UIbuff.ShowUnitName = UIUtil.Toggle(new Vector2(35, 90), settingsLocal.AliesUI.ShowUnitName, "");
+            UIbuff.ShowUnitStatus = UIUtil.Toggle(new Vector2(35, 115), settingsLocal.AliesUI.ShowUnitStatus, "");
+            GUI.EndGroup();
+            if (!settingsLocal.AliesUI.Equals(UIbuff))
+                settingsLocal.AliesUI = UIbuff;
+
+            GUI.BeginGroup(new Rect(300, 37, 100, 145));
+            UIUtil.Label(new Rect(0, 0, 100, 25), Global.Texts("Selected"));
+            UIbuff.ShowUnitFrame = UIUtil.Toggle(new Vector2(35, 40), settingsLocal.SelectedUI.ShowUnitFrame, "");
+            UIbuff.ShowUnitIcon = UIUtil.Toggle(new Vector2(35, 65), settingsLocal.SelectedUI.ShowUnitIcon, "");
+            UIbuff.ShowUnitName = UIUtil.Toggle(new Vector2(35, 90), settingsLocal.SelectedUI.ShowUnitName, "");
+            UIbuff.ShowUnitStatus = UIUtil.Toggle(new Vector2(35, 115), settingsLocal.SelectedUI.ShowUnitStatus, "");
+            GUI.EndGroup();
+            if (!settingsLocal.SelectedUI.Equals(UIbuff))
+                settingsLocal.SelectedUI = UIbuff;
+
+            GUI.BeginGroup(new Rect(400, 37, 100, 145));
+            UIUtil.Label(new Rect(0, 0, 100, 25), Global.Texts("Enemys"));
+            UIbuff.ShowUnitFrame = UIUtil.Toggle(new Vector2(35, 40), settingsLocal.EnemyUI.ShowUnitFrame, "");
+            UIbuff.ShowUnitIcon = UIUtil.Toggle(new Vector2(35, 65), settingsLocal.EnemyUI.ShowUnitIcon, "");
+            UIbuff.ShowUnitName = UIUtil.Toggle(new Vector2(35, 90), settingsLocal.EnemyUI.ShowUnitName, "");
+            UIbuff.ShowUnitStatus = UIUtil.Toggle(new Vector2(35, 115), settingsLocal.EnemyUI.ShowUnitStatus, "");
+            GUI.EndGroup();
+            if (!settingsLocal.EnemyUI.Equals(UIbuff))
+                settingsLocal.EnemyUI = UIbuff;
+            GUI.EndGroup();
+            {
+                string[] radios = new string[2];
+                radios[0] = "English";
+                radios[1] = "Русский";
+                int langueageRadioSelected = (int)settingsLocal.Localisation;
+                GUI.BeginGroup(UIUtil.GetRect(new Vector2(150, 110), PositionAnchor.LeftDown, Windows[windowID].rect.size, new Vector2(100, -100)));
+                UIUtil.Label(new Rect(0, 0, 150, 20), Global.Texts("Language"));
+                langueageRadioSelected = UIUtil.ToggleList(new Rect(10, 40, 140, 74), langueageRadioSelected, radios);
+                GUI.EndGroup();
+                if (langueageRadioSelected != (int)settingsLocal.Localisation)
+                {
+                    settingsLocal.Localisation = (Languages)langueageRadioSelected;
+                    langChanged = true;
+                }
+            }
+
+            if (false)
             {
                 string[] radios = new string[2];
                 radios[0] = "Static size";
                 radios[1] = "Static proportion";
                 int screenRadioSelected;
-                if (Global.Settings.StaticProportion)
+                if (settingsLocal.StaticProportion)
                     screenRadioSelected = 1;
                 else screenRadioSelected = 0;
                 GUI.BeginGroup(UIUtil.GetRect(new Vector2(150, 110), PositionAnchor.RightDown, Windows[windowID].rect.size, new Vector2(-100, -100)));
@@ -265,26 +337,26 @@ namespace SpaceCommander
                 GUI.EndGroup();
                 if (screenRadioSelected != screenRadioBuffer)
                 {
-                    Global.Settings.StaticProportion = (screenRadioBuffer == 1);
+                    settingsLocal.StaticProportion = (screenRadioBuffer == 1);
                 }
             }
 
-            if (Global.Settings.SettingsSaved)
+            if (UIUtil.ButtonBig(UIUtil.GetRect(new Vector2(200, 50), PositionAnchor.Down, Windows[windowID].rect.size, new Vector2(0, -50)), Global.Texts("Back")))
             {
-                if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - UIUtil.Scaled(100), Windows[windowID].Bottom - 100, UIUtil.Scaled(200), 50), Global.Texts("Back")))
-                {
-                    CurWin = PauseWindow.Main;
-                }
+                CurWin = PauseWindow.Main;
             }
-            else
+            if (!settingsLocal.Equals(Global.Settings))
             {
-                if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - UIUtil.Scaled(100), Windows[windowID].Bottom - 100, UIUtil.Scaled(200), 50), Global.Texts("Save")))
+                if (UIUtil.ButtonBig(UIUtil.GetRect(new Vector2(200, 50), PositionAnchor.Down, Windows[windowID].rect.size, new Vector2(220, -50)), Global.Texts("Save")))
                 {
+                    Global.Settings = settingsLocal.Copy();
                     Global.Settings.Save();
+                    if (langChanged)
+                        Global.LoadTexts();
                 }
             }
         }
-        void DrawAboutW(int windowID)
+        void DrawBriefW(int windowID)
         {
             UIUtil.WindowTitle(Windows[windowID], Global.MissionName);
             Vector2 W6x4 = new Vector2(600, 400);

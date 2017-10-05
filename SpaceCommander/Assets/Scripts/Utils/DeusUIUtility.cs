@@ -548,6 +548,40 @@ namespace DeusUtility.UI
 
             return result;
         }
+        public static Texture2D ProgressUpdate(float progress, Texture2D tex)
+        {
+            Texture2D thisTex = new Texture2D(tex.width, tex.height);
+            Vector2 centre = new Vector2(Mathf.Ceil(thisTex.width / 2f), Mathf.Ceil(thisTex.height / 2f)); //find the centre pixel
+            for (int y = 0; y < thisTex.height; y++)
+            {
+                for (int x = 0; x < thisTex.width; x++)
+                {
+                    var angle = Mathf.Atan2(x - centre.x, y - centre.y) * Mathf.Rad2Deg; //find the angle between the centre and this pixel (between -180 and 180)
+                    if (angle < 0)
+                    {
+                        angle += 360; //change angles to go from 0 to 360
+                    }
+                    var pixColor = tex.GetPixel(x, y);
+                    if (angle <= progress * 360.0)
+                    { //if the angle is less than the progress angle blend the overlay colour
+                        pixColor = new Color(0, 0, 0, 0);
+                        thisTex.SetPixel(x, y, pixColor);
+                    }
+                    else
+                    {
+                        thisTex.SetPixel(x, y, pixColor);
+                    }
+                }
+            }
+            thisTex.Apply(); //apply the cahnges we made to the texture
+            return thisTex;
+        }
+        public static Rect TransformBar(Rect origin, float progress)
+        {
+            Rect outp = new Rect(origin);
+            outp.width = outp.width * progress;
+            return outp;
+        }
     }
     public static class ValidString
     {

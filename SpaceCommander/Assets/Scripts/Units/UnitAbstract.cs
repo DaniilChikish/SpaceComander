@@ -31,6 +31,7 @@ namespace SpaceCommander
 
 
         public abstract float ShellResist { get; }
+        public abstract float EnergyResist { get; }
         public float ResistMultiplacator { set; get; }
         public abstract float ShieldForce { set; get; }
         public abstract float ShieldRecharging { get; }
@@ -94,6 +95,7 @@ namespace SpaceCommander
         public override float ShieldCampacity { get { return shield.maxCampacity * (1 + ShieldCampacityMultiplacator); } }
         public override Unit CurrentTarget { get { return Gunner.Target; } }
         public override float ShellResist { get { return armor.shellResist * (1 + ResistMultiplacator); } }
+        public override float EnergyResist { get { return armor.energyResist * (1 + ResistMultiplacator); } }
 
         //own properties
         public bool ShieldOwerheat { get { return shield.isOwerheat; } }
@@ -437,16 +439,16 @@ namespace SpaceCommander
 
                 if (!true || distance < 400) //perspective
                     distance = 400;
-
-                frameSize = frameSize * (200 / distance) * scaleLocal;
-                frameY = crd.y - frameSize.y / 2f - (12 * (200 / distance) * scaleLocal);
-                iconSize = iconSize * (200 / distance) * scaleLocal;
+                float distFactor = (400 / distance) * scaleLocal;
+                frameSize = frameSize * distFactor;
+                frameY = crd.y - frameSize.y / 2f - (12 * distFactor);
+                iconSize = iconSize * distFactor;
                 frameX = crd.x - frameSize.x / 2f;
                 iconX = crd.x - iconSize.x / 2f;
                 if (!outOfBorder)
                     iconY = frameY - iconSize.y * 1.2f;
                 else
-                    iconY = frameY - (iconSize.y - ((border + 20) * (200 / distance) * scaleLocal)) * 1.2f;
+                    iconY = frameY - (iconSize.y - ((border + 20) * distFactor)) * 1.2f;
                 GUIStyle style = new GUIStyle();
                 style.fontSize = Mathf.RoundToInt(12 * scaleLocal);
                 //style.font = GuiProcessor.getI.rusfont;
@@ -455,45 +457,74 @@ namespace SpaceCommander
                 //style.fontStyle = FontStyle.Italic;
                 Texture frameToDraw = null;
                 Texture iconToDraw = null;
+                bool drawStatBars = false;
                 if (team == Global.playerArmy)
                 {
                     if (isSelected)
                     {
                         style.normal.textColor = Color.cyan;
-
-                        if (!outOfBorder && !outOfPlane)
-                            frameToDraw = Global.AlliesSelectedGUIFrame;
-                        else
-                            frameToDraw = Global.AlliesSelectedOutscreenPoint;
-                        iconToDraw = selectedIcon;
-                        GUI.Label(new Rect(crd.x - 120, crd.y - (frameSize.y / 2) * 1.1f, 240, 18), UnitName, style);
+                        if (Global.Settings.SelectedUI.ShowUnitFrame)
+                        {
+                            if (!outOfBorder && !outOfPlane)
+                                frameToDraw = Global.AlliesSelectedGUIFrame;
+                            else
+                                frameToDraw = Global.AlliesSelectedOutscreenPoint;
+                        }
+                        if (Global.Settings.SelectedUI.ShowUnitIcon)
+                            iconToDraw = selectedIcon;
+                        if (Global.Settings.SelectedUI.ShowUnitName)
+                            GUI.Label(new Rect(crd.x - 120, crd.y - (frameSize.y / 2) * 1.1f, 240, 18), UnitName, style);
+                        drawStatBars = Global.Settings.SelectedUI.ShowUnitStatus;
                     }
                     else
                     {
-                        if (!outOfBorder && !outOfPlane)
-                            frameToDraw = Global.AlliesGUIFrame;
-                        else
-                            frameToDraw = Global.AlliesOutscreenPoint;
-                        iconToDraw = aliesIcon;
+                        style.normal.textColor = Color.green;
+                        if (Global.Settings.AliesUI.ShowUnitFrame)
+                        {
+                            if (!outOfBorder && !outOfPlane)
+                                frameToDraw = Global.AlliesGUIFrame;
+                            else
+                                frameToDraw = Global.AlliesOutscreenPoint;
+                        }
+                        if (Global.Settings.AliesUI.ShowUnitIcon)
+                            iconToDraw = aliesIcon;
+                        if (Global.Settings.AliesUI.ShowUnitName)
+                            GUI.Label(new Rect(crd.x - 120, crd.y - (frameSize.y / 2) * 1.1f, 240, 18), UnitName, style);
+                        drawStatBars = Global.Settings.AliesUI.ShowUnitStatus;
                     }
                 }
                 else if (cooldownDetected > 0)
                 {
                     style.normal.textColor = Color.red;
-
-                    if (!outOfBorder && !outOfPlane)
-                        frameToDraw = Global.EnemyGUIFrame;
-                    else
-                        frameToDraw = Global.EnemyOutscreenPoint;
-                    iconToDraw = enemyIcon;
-                    //GUI.Label(new Rect(crd.x - 120, crd.y - Global.NameFrameOffset, 240, 18), UnitName, style);
+                    if (Global.Settings.EnemyUI.ShowUnitFrame)
+                    {
+                        if (!outOfBorder && !outOfPlane)
+                            frameToDraw = Global.EnemyGUIFrame;
+                        else
+                            frameToDraw = Global.EnemyOutscreenPoint;
+                    }
+                    if (Global.Settings.EnemyUI.ShowUnitFrame)
+                        iconToDraw = enemyIcon;
+                    if (Global.Settings.EnemyUI.ShowUnitName)
+                        GUI.Label(new Rect(crd.x - 100, crd.y - (frameSize.y / 2) * 1.1f, 200, 18), UnitName, style);
+                    drawStatBars = Global.Settings.EnemyUI.ShowUnitStatus;
                 }
 
                 if (frameToDraw != null)
                     GUI.DrawTexture(new Rect(new Vector2(frameX, frameY), frameSize), frameToDraw);
                 if (iconToDraw != null)
                     GUI.DrawTexture(new Rect(new Vector2(iconX, iconY), iconSize), iconToDraw);
-
+                if (drawStatBars && !outOfBorder && !outOfPlane)
+                {
+                    Vector2 backSize = new Vector2(200, 32) * distFactor;
+                    Vector2 lineSize = new Vector2(200 - 24, 4) * distFactor;
+                    Vector2 backPos = new Vector2(crd.x - backSize.x / 2, crd.y - (frameSize.y / 2) * 1f);
+                    Vector2 linePos1 = new Vector2(backPos.x + (12 * distFactor), backPos.y + (12 * distFactor));
+                    Vector2 linePos2 = new Vector2(backPos.x + (12 * distFactor), backPos.y + (16 * distFactor));
+                    GUI.DrawTexture(new Rect(backPos, backSize), hud.UnitStatBack);
+                    GUI.DrawTexture(UIUtil.TransformBar(new Rect(linePos1, lineSize), (this.ShieldForce / this.ShieldCampacity)), hud.UnitShieldLine);
+                    GUI.DrawTexture(UIUtil.TransformBar(new Rect(linePos2, lineSize), (this.Health / this.MaxHealth)), hud.UnitArmorLine);
+                }
             }
         }
         public void SelectUnit(bool isSelect)

@@ -303,9 +303,15 @@ namespace SpaceCommander
                     maincam.TargetFollow = observable.GetTransform();
                     maincam.mode = OrbitalCamMode.ThirthPerson;
                     mode = ObserverMode.Full;
-                    if (previevIsOpen)
+                    if (observable.CurrentTarget == null)
                     {
-                        previevIsOpen = false;
+                        if (previevIsOpen)
+                            previevIsOpen = false;
+                    }
+                    else
+                    {
+                        if (!previevIsOpen)
+                            previevIsOpen = true;
                     }
                 }
                 else
@@ -347,20 +353,7 @@ namespace SpaceCommander
                     previevIsOpen = false;
                 }
             }
-            if (mode == ObserverMode.None)
-            {
-                if (statusCount > 0)
-                {
-                    statusCount -= Time.deltaTime;
-                    if (statusCount < 0) statusCount = 0;
-                    float speedFactor = 1;// Mathf.Cos((MovDuratuon - statusCount) * Mathf.PI * 2 / MovDuratuon + Mathf.PI) + 1;
-                    float statusSpeedMotion = status.GetComponent<RectTransform>().rect.height * hud.scale / MovDuratuon * speedFactor;
-                    float weaponSpeedMotion = weaponPanel.GetComponent<RectTransform>().rect.width * hud.scale / MovDuratuon * speedFactor;
-                    status.transform.Translate(0, -statusSpeedMotion * Time.deltaTime, 0);
-                    weaponPanel.transform.Translate(-weaponSpeedMotion * Time.deltaTime, 0, 0);
-                }
-            }
-            else
+            if (statusIsOpen)
             {
                 if (statusCount < MovDuratuon)
                 {
@@ -373,7 +366,20 @@ namespace SpaceCommander
                     weaponPanel.transform.Translate(weaponSpeedMotion * Time.deltaTime, 0, 0);
                 }
             }
-            if (mode == ObserverMode.Half)
+            else
+            {
+                if (statusCount > 0)
+                {
+                    statusCount -= Time.deltaTime;
+                    if (statusCount < 0) statusCount = 0;
+                    float speedFactor = 1;// Mathf.Cos((MovDuratuon - statusCount) * Mathf.PI * 2 / MovDuratuon + Mathf.PI) + 1;
+                    float statusSpeedMotion = status.GetComponent<RectTransform>().rect.height * hud.scale / MovDuratuon * speedFactor;
+                    float weaponSpeedMotion = weaponPanel.GetComponent<RectTransform>().rect.width * hud.scale / MovDuratuon * speedFactor;
+                    status.transform.Translate(0, -statusSpeedMotion * Time.deltaTime, 0);
+                    weaponPanel.transform.Translate(-weaponSpeedMotion * Time.deltaTime, 0, 0);
+                }
+            }
+            if (previevIsOpen)
             {
                 if (previevCount < MovDuratuon)
                 {
@@ -530,12 +536,6 @@ namespace SpaceCommander
             }
             thisTex.Apply(); //apply the cahnges we made to the texture
             return thisTex;
-        }
-        public Rect TransformBar(Rect origin, float progress)
-        {
-            Rect outp = new Rect(origin);
-            outp.width = outp.width * progress;
-            return outp;
         }
         public void SwichHandControl()
         {

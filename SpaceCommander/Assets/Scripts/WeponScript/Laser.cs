@@ -11,11 +11,18 @@ namespace SpaceCommander.Weapons
         private LayerMask ignoreMask; // фильтр по слоям
         private float impulseBackount;
         private GameObject beam;
+        public float damage;
+        public float armorPiersing;
+        public float ArmorPiersing { get { return armorPiersing * (1 + APMultiplacator); } }
+        public float Damage { get { return damage * (1 + DamageMultiplacator); } }
+
 
         protected override void StatUp()
         {
             base.StatUp();
             type = WeaponType.Laser;
+            damage = 10;
+            armorPiersing = 4;
             //gameObject.GetComponent<MeshRenderer>().enabled = true;
             beam = gameObject.transform.GetChild(0).gameObject;
             beam.GetComponent<LaserImpulse>().StatUp(AmmoType);
@@ -33,6 +40,20 @@ namespace SpaceCommander.Weapons
                     if (!x.collider.isTrigger)
                     {
                         dist = Vector3.Distance(gameObject.transform.position, x.point) + 0.5f;
+                            Unit enemy = x.collider.gameObject.GetComponentInParent<Unit>();
+
+                        if (enemy!=null)
+                        {
+                            float difference = this.ArmorPiersing - enemy.EnergyResist;
+                            float multiplicator;
+                            if (difference > 0.5)
+                                multiplicator = 1f;
+                            else if (difference > -3)
+                                multiplicator = (Mathf.Sin((difference / 1.1f) + 1f) + 1f) * 0.5f;
+                            else
+                                multiplicator = 0.0f;
+                            enemy.MakeDamage(Damage * multiplicator * Time.deltaTime);
+                        }
                         //break;
                     }
                 }

@@ -18,6 +18,7 @@ namespace SpaceCommander
         IWeapon[] PrimaryWeapon { get; }
         IWeapon[] SecondaryWeapon { get; }
         bool ManualControl { get; set; }
+        Unit CurrentTarget { get; }
         Transform GetTransform();
     }
     public interface IDriver

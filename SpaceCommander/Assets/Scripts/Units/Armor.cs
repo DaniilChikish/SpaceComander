@@ -6,15 +6,23 @@ namespace SpaceCommander
 {
     public class Armor : MonoBehaviour
     {
+        [SerializeField]
         public float maxHitpoints;
+        [SerializeField]
         public float hitpoints;
+        [SerializeField]
         public float shellResist;
+        [SerializeField]
         public float energyResist;
+        [SerializeField]
         public float blastResist;
         private float hitCount;
         private SpaceShip owner;
         private GlobalController Global;
         // Use this for initialization
+        public float ShellResist { get { return this.shellResist * (1 + owner.ResistMultiplacator); } }
+        public float EnergyResist { get { return this.energyResist * (1 + owner.ResistMultiplacator); } }
+        public float BlastResist { get { return this.blastResist * (1 + owner.ResistMultiplacator); } }
         void Start()
         {
             owner = transform.GetComponentInParent<SpaceShip>();
@@ -51,7 +59,7 @@ namespace SpaceCommander
                     {
                         hitCount += 1;
                         //Debug.Log(collision.gameObject.name + " hit " + owner.name);
-                        float difference = collision.gameObject.GetComponent<IShell>().ArmorPiersing - owner.ShellResist;
+                        float difference = collision.gameObject.GetComponent<IShell>().ArmorPiersing - ShellResist;
                         if (difference > 1.5)
                             multiplicator = 1.2f;
                         else if (difference > -3)
@@ -65,7 +73,7 @@ namespace SpaceCommander
                 case "Energy":
                     {
                         hitCount += 3;
-                        float difference = collision.gameObject.GetComponent<IEnergy>().ArmorPiersing - energyResist;
+                        float difference = collision.gameObject.GetComponent<IEnergy>().ArmorPiersing - EnergyResist;
                         if (difference > 0.6)
                             multiplicator = 1f;
                         else if (difference > -2.8)
@@ -79,16 +87,21 @@ namespace SpaceCommander
                 case "Unit":
                     {
                         Unit uncknown = collision.gameObject.GetComponent<Unit>();
-                        Vector3 kick = Vector3.Project(uncknown.Velocity, (uncknown.transform.position - this.transform.position).normalized);
-                        this.hitpoints -= kick.magnitude * (uncknown.GetComponent<Rigidbody>().mass / this.GetComponent<Rigidbody>().mass);
+                        Vector3 normalSum = Vector3.zero;
+                        foreach (var x in collision.contacts)
+                            normalSum += x.normal;
+                        Vector3 kick = Vector3.Project(uncknown.Velocity - owner.Velocity, normalSum.normalized);
+                        this.hitpoints -= kick.magnitude;
                         break;
                     }
                 case "Terrain":
                     {
-                        Vector3 kick = Vector3.Project(owner.Velocity, (this.transform.position-collision.gameObject.transform.position).normalized);
-                        this.hitpoints -= kick.magnitude * (this.GetComponent<Rigidbody>().mass/10000);
-                        this.transform.position = Vector3.MoveTowards(this.transform.position, (collision.gameObject.transform.position - this.transform.position) * -5, Time.deltaTime * owner.ShiftSpeed * 0.2f);
-
+                        Vector3 normalSum = Vector3.zero;
+                        foreach (var x in collision.contacts)
+                            normalSum += x.normal;
+                        Vector3 kick = Vector3.Project(owner.Velocity, normalSum.normalized);
+                        this.hitpoints -= kick.magnitude;
+                        //this.transform.position = Vector3.MoveTowards(this.transform.position, normalSum * 5, Time.deltaTime * owner.ShiftSpeed * 0.2f);
                         break;
                     }
             }
@@ -116,7 +129,7 @@ namespace SpaceCommander
                 case "Energy":
                     {
                         hitCount += 3;
-                        float difference = collision.gameObject.GetComponent<IEnergy>().ArmorPiersing - energyResist;
+                        float difference = collision.gameObject.GetComponent<IEnergy>().ArmorPiersing - EnergyResist;
                         if (difference > 0.5)
                             multiplicator = 1f;
                         else if (difference > -3)
@@ -128,7 +141,7 @@ namespace SpaceCommander
                     }
                 case "Explosion":
                     {
-                        multiplicator = (1f - blastResist) * Mathf.Pow(((-Vector3.Distance(this.gameObject.transform.position, collision.gameObject.transform.position) + collision.gameObject.GetComponent<Explosion>().MaxRadius) * 0.01f), (1f / 3f));
+                        multiplicator = (1f - BlastResist) * Mathf.Pow(((-Vector3.Distance(this.gameObject.transform.position, collision.gameObject.transform.position) + collision.gameObject.GetComponent<Explosion>().MaxRadius) * 0.01f), (1f / 3f));
                         this.hitpoints -= collision.gameObject.GetComponent<Explosion>().Damage * multiplicator;
                         break;
                     }
@@ -142,8 +155,9 @@ namespace SpaceCommander
             {
                 case "Energy":
                     {
+                        //Debug.Log(this.owner.name + ": Laser pierse by" + trigger.gameObject.GetComponentInParent<SpaceShip>().name);
                         hitCount += 3;
-                        float difference = trigger.gameObject.GetComponent<IEnergy>().ArmorPiersing - energyResist;
+                        float difference = trigger.gameObject.GetComponent<IEnergy>().ArmorPiersing - EnergyResist;
                         if (difference > 0.5)
                             multiplicator = 1f;
                         else if (difference > -3)
@@ -162,7 +176,7 @@ namespace SpaceCommander
                             sizeFactor = 5;
                         if (Vector3.Distance(trigger.transform.position, this.transform.position) < trigger.gameObject.GetComponent<Explosion>().MaxRadius + sizeFactor)
                         {
-                            multiplicator = (1 - blastResist) * (trigger.gameObject.GetComponent<Explosion>().MaxRadius + sizeFactor - Vector3.Distance(trigger.transform.position, this.transform.position)) / trigger.gameObject.GetComponent<Explosion>().MaxRadius;
+                            multiplicator = (1 - BlastResist) * (trigger.gameObject.GetComponent<Explosion>().MaxRadius + sizeFactor - Vector3.Distance(trigger.transform.position, this.transform.position)) / trigger.gameObject.GetComponent<Explosion>().MaxRadius;
                             if (multiplicator > 1) multiplicator = 1;
                             if (multiplicator < 0) multiplicator = 0;
                             this.hitpoints -= trigger.gameObject.GetComponent<Explosion>().Damage * multiplicator;
