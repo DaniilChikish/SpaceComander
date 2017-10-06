@@ -582,6 +582,88 @@ namespace DeusUtility.UI
             outp.width = outp.width * progress;
             return outp;
         }
+        public static Vector3 WorldToScreenFrame(Vector3 worldPosition, float border, out bool outOfBorder)
+        {
+            outOfBorder = false;
+            bool outOfPlane = false;
+            Vector3 crd = Camera.main.WorldToScreenPoint(worldPosition);
+            crd.y = Screen.height - crd.y;
+
+            if (crd.x > Screen.width - border || crd.x < border || crd.y > Screen.height - (border - 35) || crd.y < border)
+                outOfBorder = true;
+            if (crd.z < 0)
+                outOfPlane = true;
+            //crd.z = 0;
+
+            if (outOfBorder || outOfPlane)
+            {
+                Vector3 center = new Vector3(Screen.width / 2, Screen.height / 2);
+                Vector3 originC = crd - center;
+                Vector3 vC = originC;
+                float a = center.x - border;
+                float b = center.y - border;
+                float r = 0;
+
+                //float comX = a, comY = b;
+
+                if (vC.x < 0) vC.x = -vC.x;
+                if (vC.y < 0) vC.y = -vC.y;
+                if (vC.x / vC.y > a / b || vC.x / vC.y < -(a / b))
+                {
+                    r = vC.magnitude * a / vC.x;
+                }
+                else
+                {
+                    r = vC.magnitude * b / vC.y;
+                }
+                crd = center + originC.normalized * r;
+            }
+            if (outOfPlane)
+            {
+                crd.x = Screen.width - crd.x;
+                crd.y = Screen.height - border;
+                outOfBorder = true;
+            }
+            return crd;
+        }
+        public static Vector3 WorldToScreenCircle(Vector3 worldPosition, float border, out bool outOfBorder)
+        {
+            outOfBorder = false;
+            bool outOfPlane = false;
+            Vector3 crd = Camera.main.WorldToScreenPoint(worldPosition);
+            crd.y = Screen.height - crd.y;
+
+            Vector3 center = new Vector3(Screen.width / 2, Screen.height / 2);
+            Vector3 originC = crd - center;
+            Vector3 vC = originC;
+            float a = center.x - border;
+            float b = center.y - border;
+            float r = b;
+
+            if (vC.x < 0) vC.x = -vC.x;
+            if (vC.y < 0) vC.y = -vC.y;
+            //float e2 = 1f - (b * b) / (a * a);
+            //float angle = Vector3.Angle(Vector3.ProjectOnPlane(vC, Vector3.forward), Vector3.right);
+            //r = b / (1 - (e2 * Mathf.Cos(angle) * Mathf.Cos(angle)));
+
+            if (Vector3.ProjectOnPlane(vC, Vector3.forward).magnitude > r)
+                outOfBorder = true;
+            if (crd.z < 0)
+                outOfPlane = true;
+
+            if (outOfBorder || outOfPlane)
+            {
+                crd = center + Vector3.ProjectOnPlane(originC, Vector3.forward).normalized * r;
+            }
+            if (outOfPlane)
+            {
+                crd.x = Screen.width - crd.x;
+                crd.y = Screen.height - crd.y;
+                outOfBorder = true;
+            }
+            return crd;
+        }
+
     }
     public static class ValidString
     {

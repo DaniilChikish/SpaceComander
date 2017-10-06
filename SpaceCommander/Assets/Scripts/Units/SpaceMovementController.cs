@@ -9,6 +9,9 @@ namespace SpaceCommander
     public enum DriverStatus { Navigating, Maneuvering, Waiting};
     class SpaceMovementController : IDriver
     {
+        private const float thrustDead = 0.3f;
+        private float maxShift = 1f;
+        private float maxThrust = 2.5f;
         private DriverStatus status;
         private bool calculating;
         public DriverStatus Status { get { return status; } }
@@ -49,7 +52,38 @@ namespace SpaceCommander
             walkerTransform = walker.GetComponent<Transform>();
             walkerBody = walker.GetComponent<Rigidbody>();
             Global = GameObject.FindObjectOfType<GlobalController>();
+            SetThrust();
             Debug.Log("Driver online");
+        }
+        private void SetThrust()
+        {
+            switch (walker.Type)
+            {
+                case UnitClass.Scout:
+                case UnitClass.Recon:
+                case UnitClass.ECM:
+                    {
+                        maxThrust = 2.5f;
+                        maxShift = 1;
+                        break;
+                    }
+                case UnitClass.Figther:
+                case UnitClass.Bomber:
+                case UnitClass.Command:
+                    {
+                        maxThrust = 3.5f;
+                        maxShift = 1.1f;
+                        break;
+                    }
+                case UnitClass.LR_Corvette:
+                case UnitClass.Support_Corvette:
+                case UnitClass.Guard_Corvette:
+                    {
+                        maxThrust = 8f;
+                        maxShift = 3f;
+                        break;
+                    }
+            }
         }
         public void Update()
         {
@@ -412,7 +446,7 @@ namespace SpaceCommander
             //debug
             GameObject worldpoint = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             worldpoint.GetComponent<SphereCollider>().enabled = false;
-            worldpoint.AddComponent<Service.SelfDestructor>().ttl = 1f;
+            worldpoint.AddComponent<Service.SelfDestructor>().ttl = maxShift;
 
             foreach (Vector3 direction in directions)
             {
@@ -512,24 +546,24 @@ namespace SpaceCommander
         private void Move()
         {
             float mainThrustLocal = ThrustAxis();
-            if (mainThrust <= 2.5 && mainThrust >= -1)
+            if (mainThrust <= maxThrust && mainThrust >= -maxShift)
                 mainThrust += mainThrustLocal * Time.deltaTime;
 
             if (mainThrustLocal == 0)
             {
-                if (mainThrust <= 0.3 && mainThrust >= -0.3)
+                if (mainThrust <= thrustDead && mainThrust >= -thrustDead)
                     mainThrust = mainThrust * 0.7f;
-                else if (mainThrust > 0.3f)
-                    mainThrust -= Time.deltaTime * 0.3f;
-                else if (mainThrust < -0.3f)
+                else if (mainThrust > thrustDead)
+                    mainThrust -= Time.deltaTime * thrustDead;
+                else if (mainThrust < -thrustDead)
                     mainThrust += Time.deltaTime * 0.5f;
             }
-            if (mainThrust > 2.5) mainThrust = 2.5f;
+            if (mainThrust > maxThrust) mainThrust = maxThrust;
             if (mainThrust < 0.0001 && mainThrust > -0.0001) mainThrust = 0;
-            if (mainThrust < -1) mainThrust = -1;
+            if (mainThrust < -maxShift) mainThrust = -maxShift;
 
             float horisontalShiftLocal = HorizontalShiftAxis();
-            if (horisontalShiftThrust <= 1 && horisontalShiftThrust >= -1)
+            if (horisontalShiftThrust <= maxShift && horisontalShiftThrust >= -maxShift)
                 horisontalShiftThrust += horisontalShiftLocal * Time.deltaTime;
 
             if (horisontalShiftLocal == 0)
@@ -541,31 +575,31 @@ namespace SpaceCommander
                 else if (horisontalShiftThrust < -0.1f)
                     horisontalShiftThrust += Time.deltaTime * 0.7f;
             }
-            if (horisontalShiftThrust > 1) horisontalShiftThrust = 1;
+            if (horisontalShiftThrust > maxShift) horisontalShiftThrust = maxShift;
             if (horisontalShiftThrust < 0.0001 && horisontalShiftThrust > -0.0001) horisontalShiftThrust = 0;
-            if (horisontalShiftThrust < -1) horisontalShiftThrust = -1;
+            if (horisontalShiftThrust < -maxShift) horisontalShiftThrust = -maxShift;
 
             if (tridimensional)
             {
                 float vertikalShiftLocal = VerticalShiftAxis();
-                if (verticalShiftThrust <= 1 && verticalShiftThrust >= -1)
+                if (verticalShiftThrust <= maxShift && verticalShiftThrust >= -maxShift)
                     verticalShiftThrust += vertikalShiftLocal * Time.deltaTime;
 
                 if (vertikalShiftLocal == 0)
                 {
-                    if (verticalShiftThrust <= 0.1 && verticalShiftThrust >= -0.1)
+                    if (verticalShiftThrust <= 0.1f && verticalShiftThrust >= -0.1f)
                         verticalShiftThrust = verticalShiftThrust * 0.7f;
                     else if (verticalShiftThrust > 0.1f)
                         verticalShiftThrust -= Time.deltaTime * 0.7f;
                     else if (verticalShiftThrust < -0.1f)
                         verticalShiftThrust += Time.deltaTime * 0.7f;
                 }
-                if (verticalShiftThrust > 1) verticalShiftThrust = 1;
-                if (verticalShiftThrust < 0.0001 && verticalShiftThrust > -0.0001) verticalShiftThrust = 0;
-                if (verticalShiftThrust < -1) verticalShiftThrust = -1;
+                if (verticalShiftThrust > maxShift) verticalShiftThrust = maxShift;
+                if (verticalShiftThrust < 0.0001f && verticalShiftThrust > -0.0001f) verticalShiftThrust = 0;
+                if (verticalShiftThrust < -maxShift) verticalShiftThrust = -maxShift;
             }
             //Debug.Log("\t mT = " + mainThrust + "\t hT = " + horisontalShiftThrust + "\t vT = " + verticalShiftThrust);
-            Vector3 shiftLocal = (walkerTransform.right * horisontalShiftThrust * walker.ShiftSpeed + walkerTransform.up * verticalShiftThrust * walker.ShiftSpeed + walkerTransform.forward * mainThrust * walker.Speed) * 25;
+            Vector3 shiftLocal = (walkerTransform.right * horisontalShiftThrust * walker.ShiftSpeed + walkerTransform.up * verticalShiftThrust * walker.ShiftSpeed + walkerTransform.forward * mainThrust * walker.Speed);
             walkerBody.AddForce(shiftLocal, ForceMode.Acceleration);
         }
 
@@ -582,7 +616,7 @@ namespace SpaceCommander
                 float targetPojection = Vector3.Project(targetMotion, walkerTransform.forward).magnitude;
                 if (targetPojection > 0.1f)
                     //if (Mathf.Abs(targetPojection) > (Mathf.Abs(velocityPojection) * 2.5))
-                        return 1f * sign;
+                        return maxShift * sign;
             }
             else
             {

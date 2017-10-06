@@ -19,6 +19,9 @@ namespace SpaceCommander
         private HUDBase hud;
         public enum AimStateType { Default, Locking, Locked}
         private const float lockdownDuration = 1.5f;
+        private float maxThrust = 2.5f;
+        private const float tgrustDeah = 0.3f;
+        private float maxShift = 1f;
         private float lockdownCount;
         private Unit targetBuffer;
         public Unit TargetBuffer
@@ -79,6 +82,7 @@ namespace SpaceCommander
             owner.SendTo(owner.transform.position);
             //tridimensional = true;
             owner.Gunner.ResetAim();
+            SetThrust();
             body = owner.gameObject.GetComponent<Rigidbody>();
             //folowCam = FindObjectOfType<RTS_Cam.RTS_Camera>();
             //folowCam.followingSpeed = owner.Speed * 5f;
@@ -87,6 +91,36 @@ namespace SpaceCommander
         {
             //owner.gameObject.GetComponent<NavMeshAgent>().enabled = true;
             TargetBuffer = null;
+        }
+        private void SetThrust()
+        {
+            switch (owner.Type)
+            {
+                case UnitClass.Scout:
+                case UnitClass.Recon:
+                case UnitClass.ECM:
+                    {
+                        maxThrust = 2.5f;
+                        maxShift = 1f;
+                        break;
+                    }
+                case UnitClass.Figther:
+                case UnitClass.Bomber:
+                case UnitClass.Command:
+                    {
+                        maxThrust = 3.5f;
+                        maxShift = 1.1f;
+                        break;
+                    }
+                case UnitClass.LR_Corvette:
+                case UnitClass.Support_Corvette:
+                case UnitClass.Guard_Corvette:
+                    {
+                        maxThrust = 8f;
+                        maxShift = 3f;
+                        break;
+                    }
+            }
         }
         private void Update()
         {
@@ -113,7 +147,7 @@ namespace SpaceCommander
                 Vector3 enemyPos;
                 Vector3 aim = Camera.main.WorldToScreenPoint(owner.transform.position + owner.transform.forward * (owner.Gunner.Weapon[0][0].Range + owner.Gunner.Weapon[1][0].Range) / 2);
                 aim.z = 0;
-                float minDistance = Screen.width / 4f;
+                float minDistance = Screen.height / 2f;
                 int enemyIndex = -1;
                 Unit[] enemys = owner.GetEnemys();
                 float dist;
@@ -217,23 +251,17 @@ namespace SpaceCommander
             //GUI.skin = hud.Skin;
             //if (Global.StaticProportion && hud.scale != 1)
             //    GUI.matrix = Matrix4x4.Scale(Vector3.one * hud.scale);
-            float scaleLocal = hud.scale / 1.5f;
+            float scaleLocal = (hud.scale / 1.5f) * Global.Settings.IconsScale;
 
             //mainAimPoint
-            Vector3 crd = Camera.main.WorldToScreenPoint(owner.transform.position + owner.transform.forward * (owner.Gunner.Weapon[0][0].Range + owner.Gunner.Weapon[1][0].Range) / 2);
-            crd.y = Screen.height - crd.y;
-            Vector2 texSize = new Vector2(DefaultMainAim.width, DefaultMainAim.height) * scaleLocal;
-            float texXPos = crd.x - texSize.x / 2f;
-            float texYPos = crd.y - texSize.y / 2f + guiTexOffsetY;
-            Texture aimTexture = DefaultMainAim;
+            Vector3 aim = owner.transform.position + owner.transform.forward * (owner.Gunner.Weapon[0][0].Range + owner.Gunner.Weapon[1][0].Range) / 2f;
 
+            Vector3 crd = Camera.main.WorldToScreenPoint(aim);
+            crd.y = Screen.height - crd.y;
+
+            Texture aimTexture;
             switch (aimState)
             {
-                case AimStateType.Default:
-                    {
-                        aimTexture = DefaultMainAim;
-                        break;
-                    }
                 case AimStateType.Locked:
                     {
                         aimTexture = LockedAim;
@@ -247,31 +275,42 @@ namespace SpaceCommander
                             aimTexture = LockingAimSecond;
                         break;
                     }
+                case AimStateType.Default:
+                default:
+                    {
+                        aimTexture = DefaultMainAim;
+                        break;
+                    }
             }
+            Vector2 texSize = new Vector2(aimTexture.width, aimTexture.height) * scaleLocal;
+            float texXPos = crd.x - texSize.x / 2f;
+            float texYPos = crd.y - texSize.y / 2f + guiTexOffsetY;
+
             GUI.DrawTexture(new Rect(new Vector2(texXPos, texYPos), texSize), aimTexture);
+
+            float border = 40;
+            bool outOfBorder = false;
 
             //current target point
             if (TargetBuffer != null)
             {
-                crd = Camera.main.WorldToScreenPoint(TargetBuffer.transform.position);
-                crd.y = Screen.height - crd.y;
-                texSize = new Vector2(TargetDott.width, TargetDott.height) * scaleLocal;
+
+                crd = UIUtil.WorldToScreenCircle(TargetBuffer.transform.position, border, out outOfBorder);
+                //texSize = new Vector2(TargetDott.width, TargetDott.height) * scaleLocal;
                 texXPos = crd.x - texSize.x / 2f;
                 texYPos = crd.y - texSize.y / 2f + guiTexOffsetY;
                 if (aimState == AimStateType.Locked)
-                    GUI.DrawTexture(new Rect(new Vector2(texXPos, texYPos) * scaleLocal, texSize), FireAim);
+                    GUI.DrawTexture(new Rect(new Vector2(texXPos, texYPos), texSize), FireAim);
                 else
-                    GUI.DrawTexture(new Rect(new Vector2(texXPos, texYPos) * scaleLocal, texSize), TargetDott);
-
+                    GUI.DrawTexture(new Rect(new Vector2(texXPos, texYPos), texSize), TargetDott);
             }
 
             //locked Aim
-            texSize = new Vector2(TargetFrame.width, TargetFrame.height);
+            //texSize = new Vector2(TargetFrame.width, TargetFrame.height);
 
             foreach (Unit x in owner.GetEnemys())
             {
-                crd = Camera.main.WorldToScreenPoint(x.transform.position);
-                crd.y = Screen.height - crd.y;
+                crd = UIUtil.WorldToScreenCircle(x.transform.position, border, out outOfBorder);
                 texXPos = crd.x - texSize.x / 2f;
                 texYPos = crd.y - texSize.y / 2f + guiTexOffsetY;
                 GUI.DrawTexture(new Rect(new Vector2(texXPos, texYPos), texSize), TargetFrame);
@@ -300,24 +339,24 @@ namespace SpaceCommander
         private void Move()
         {
             float mainThrustLocal = Input.GetAxis(thrustAxis);
-            if (mainThrust <= 2.5 && mainThrust >= -1)
+            if (mainThrust <= maxThrust && mainThrust >= -maxShift)
                 mainThrust += mainThrustLocal * Time.deltaTime;
 
             if (mainThrustLocal == 0)
             {
-                if (mainThrust <= 0.3 && mainThrust >= -0.3)
+                if (mainThrust <= tgrustDeah && mainThrust >= -tgrustDeah)
                     mainThrust = mainThrust * 0.7f;
-                else if (mainThrust > 0.3f)
-                    mainThrust -= Time.deltaTime * 0.3f;
-                else if (mainThrust < -0.3f)
-                    mainThrust += Time.deltaTime * 0.5f;
+                else if (mainThrust > tgrustDeah)
+                    mainThrust -= Time.deltaTime * tgrustDeah;
+                else if (mainThrust < -tgrustDeah)
+                    mainThrust += Time.deltaTime * tgrustDeah;
             }
-            if (mainThrust > 2.5) mainThrust = 2.5f;
+            if (mainThrust > maxThrust) mainThrust = maxThrust;
             if (mainThrust < 0.0001 && mainThrust > -0.0001) mainThrust = 0;
-            if (mainThrust < -1) mainThrust = -1;
+            if (mainThrust < -maxShift) mainThrust = -maxShift;
 
             float horisontalShiftLocal = Input.GetAxis(horizontalShiftAxis);
-            if (horisontalShiftThrust <= 1 && horisontalShiftThrust >= -1)
+            if (horisontalShiftThrust <= maxShift && horisontalShiftThrust >= -maxShift)
                 horisontalShiftThrust += horisontalShiftLocal * Time.deltaTime;
 
             if (horisontalShiftLocal == 0)
@@ -329,14 +368,14 @@ namespace SpaceCommander
                 else if (horisontalShiftThrust < -0.1f)
                     horisontalShiftThrust += Time.deltaTime * 0.7f;
             }
-            if (horisontalShiftThrust > 1) horisontalShiftThrust = 1;
+            if (horisontalShiftThrust > maxShift) horisontalShiftThrust = maxShift;
             if (horisontalShiftThrust < 0.0001 && horisontalShiftThrust > -0.0001) horisontalShiftThrust = 0;
-            if (horisontalShiftThrust < -1) horisontalShiftThrust = -1;
+            if (horisontalShiftThrust < -maxShift) horisontalShiftThrust = -maxShift;
 
             if (tridimensional)
             {
                 float vertikalShiftLocal = Input.GetAxis(verticalShiftAxis);
-                if (verticalShiftThrust <= 1 && verticalShiftThrust >= -1)
+                if (verticalShiftThrust <= maxShift && verticalShiftThrust >= -maxShift)
                     verticalShiftThrust += vertikalShiftLocal * Time.deltaTime;
 
                 if (vertikalShiftLocal == 0)
@@ -348,11 +387,11 @@ namespace SpaceCommander
                     else if (verticalShiftThrust < -0.1f)
                         verticalShiftThrust += Time.deltaTime * 0.7f;
                 }
-                if (verticalShiftThrust > 1) verticalShiftThrust = 1;
+                if (verticalShiftThrust > maxShift) verticalShiftThrust = maxShift;
                 if (verticalShiftThrust < 0.0001 && verticalShiftThrust > -0.0001) verticalShiftThrust = 0;
-                if (verticalShiftThrust < -1) verticalShiftThrust = -1;
+                if (verticalShiftThrust < -maxShift) verticalShiftThrust = -maxShift;
             }
-            Vector3 shiftLocal = (owner.transform.right * horisontalShiftThrust * owner.ShiftSpeed + owner.transform.up * verticalShiftThrust * owner.ShiftSpeed + owner.transform.forward * mainThrust * owner.Speed) * 25;
+            Vector3 shiftLocal = (owner.transform.right * horisontalShiftThrust * owner.ShiftSpeed + owner.transform.up * verticalShiftThrust * owner.ShiftSpeed + owner.transform.forward * mainThrust * owner.Speed);
 
             body.AddForce(shiftLocal, ForceMode.Acceleration);
         }

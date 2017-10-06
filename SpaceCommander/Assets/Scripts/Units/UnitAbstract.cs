@@ -368,65 +368,13 @@ namespace SpaceCommander
                 //if (Global.StaticProportion && hud.scale != 1)
                 //    GUI.matrix = Matrix4x4.Scale(Vector3.one * hud.scale);
 
-                float scaleLocal = hud.scale / 1.5f;
+                float scaleLocal = (hud.scale / 1.5f) * Global.Settings.IconsScale;
+
+                float distance = Vector3.Distance(this.transform.position, Camera.main.transform.position);
+
                 float border = 40;
                 bool outOfBorder = false;
-                bool outOfPlane = false;
-                Vector3 crd = Camera.main.WorldToScreenPoint(transform.position);
-                float distance = Vector3.Distance(this.transform.position, Camera.main.transform.position);
-                crd.y = Screen.height - crd.y;
-
-                if (crd.x > Screen.width - 40 || crd.x < 40 || crd.y > Screen.height - 5 || crd.y < 40)
-                    outOfBorder = true;
-                if (crd.z < 0)
-                    outOfPlane = true;
-                //crd.z = 0;
-
-                if (outOfBorder || outOfPlane)
-                {
-                    Vector3 center = new Vector3(Screen.width / 2, Screen.height / 2);
-                    Vector3 originC = crd - center;
-                    Vector3 vC = originC;
-                    float a = center.x - border;
-                    float b = center.y - border;
-                    float r = 0;
-
-                    //float comX = a, comY = b;
-
-                    if (vC.x < 0) vC.x = -vC.x;
-                    if (vC.y < 0) vC.y = -vC.y;
-                    if (vC.x / vC.y > a / b || vC.x / vC.y < -(a / b))
-                    {
-                        r = vC.magnitude * a / vC.x;
-                    }
-                    else
-                    {
-                        r = vC.magnitude * b / vC.y;
-                    }
-                    crd = center + originC.normalized * r;
-
-                    if (manualController.enabled && false) //in hud elipse
-                    {
-                        crd = Camera.main.WorldToScreenPoint(transform.position);
-                        if (crd.x < 0)
-                        {
-                            crd.x = border;
-                        }
-                        else
-                        if (crd.x > Screen.width)
-                        {
-                            crd.x = Screen.width - border;
-                        }
-                        crd.y = center.y + (b * (1 - crd.z / distance));
-
-                    }
-                }
-                if (outOfPlane)
-                {
-                    crd.x = Screen.width - crd.x;
-                    crd.y = Screen.height - border;
-                    outOfBorder = true;
-                }
+                Vector3 crd = UIUtil.WorldToScreenCircle(this.transform.position, border, out outOfBorder);
 
                 Vector2 frameSize;
                 if (!outOfBorder) frameSize = new Vector2(Global.AlliesGUIFrame.width, Global.AlliesGUIFrame.height);// * hud.scale;
@@ -439,18 +387,21 @@ namespace SpaceCommander
 
                 if (!true || distance < 400) //perspective
                     distance = 400;
-                float distFactor = (400 / distance) * scaleLocal;
-                frameSize = frameSize * distFactor;
-                frameY = crd.y - frameSize.y / 2f - (12 * distFactor);
-                iconSize = iconSize * distFactor;
+                float distFactor = 1000 / distance;
+                if (!outOfBorder)
+                    frameSize = frameSize * distFactor * scaleLocal;
+                else
+                    frameSize = Vector2.zero;
+                frameY = crd.y - frameSize.y / 2f - (12 * distFactor * scaleLocal);
+                iconSize = iconSize * scaleLocal;
                 frameX = crd.x - frameSize.x / 2f;
                 iconX = crd.x - iconSize.x / 2f;
                 if (!outOfBorder)
                     iconY = frameY - iconSize.y * 1.2f;
                 else
-                    iconY = frameY - (iconSize.y - ((border + 20) * distFactor)) * 1.2f;
+                    iconY = crd.y - iconSize.y / 2;//frameY - (iconSize.y - ((border + 20))) * 1.2f;
                 GUIStyle style = new GUIStyle();
-                style.fontSize = Mathf.RoundToInt(12 * scaleLocal);
+                style.fontSize = Mathf.RoundToInt(24 * scaleLocal);
                 //style.font = GuiProcessor.getI.rusfont;
                 style.normal.textColor = Color.red;
                 style.alignment = TextAnchor.MiddleCenter;
@@ -465,10 +416,8 @@ namespace SpaceCommander
                         style.normal.textColor = Color.cyan;
                         if (Global.Settings.SelectedUI.ShowUnitFrame)
                         {
-                            if (!outOfBorder && !outOfPlane)
+                            if (!outOfBorder)
                                 frameToDraw = Global.AlliesSelectedGUIFrame;
-                            else
-                                frameToDraw = Global.AlliesSelectedOutscreenPoint;
                         }
                         if (Global.Settings.SelectedUI.ShowUnitIcon)
                             iconToDraw = selectedIcon;
@@ -481,10 +430,8 @@ namespace SpaceCommander
                         style.normal.textColor = Color.green;
                         if (Global.Settings.AliesUI.ShowUnitFrame)
                         {
-                            if (!outOfBorder && !outOfPlane)
+                            if (!outOfBorder)
                                 frameToDraw = Global.AlliesGUIFrame;
-                            else
-                                frameToDraw = Global.AlliesOutscreenPoint;
                         }
                         if (Global.Settings.AliesUI.ShowUnitIcon)
                             iconToDraw = aliesIcon;
@@ -498,10 +445,8 @@ namespace SpaceCommander
                     style.normal.textColor = Color.red;
                     if (Global.Settings.EnemyUI.ShowUnitFrame)
                     {
-                        if (!outOfBorder && !outOfPlane)
+                        if (!outOfBorder)
                             frameToDraw = Global.EnemyGUIFrame;
-                        else
-                            frameToDraw = Global.EnemyOutscreenPoint;
                     }
                     if (Global.Settings.EnemyUI.ShowUnitFrame)
                         iconToDraw = enemyIcon;
@@ -514,13 +459,13 @@ namespace SpaceCommander
                     GUI.DrawTexture(new Rect(new Vector2(frameX, frameY), frameSize), frameToDraw);
                 if (iconToDraw != null)
                     GUI.DrawTexture(new Rect(new Vector2(iconX, iconY), iconSize), iconToDraw);
-                if (drawStatBars && !outOfBorder && !outOfPlane)
+                if (drawStatBars && !outOfBorder)
                 {
-                    Vector2 backSize = new Vector2(200, 32) * distFactor;
-                    Vector2 lineSize = new Vector2(200 - 24, 4) * distFactor;
+                    Vector2 backSize = new Vector2(200, 32) * distFactor * scaleLocal;
+                    Vector2 lineSize = new Vector2(200 - 24, 4) * distFactor * scaleLocal;
                     Vector2 backPos = new Vector2(crd.x - backSize.x / 2, crd.y - (frameSize.y / 2) * 1f);
-                    Vector2 linePos1 = new Vector2(backPos.x + (12 * distFactor), backPos.y + (12 * distFactor));
-                    Vector2 linePos2 = new Vector2(backPos.x + (12 * distFactor), backPos.y + (16 * distFactor));
+                    Vector2 linePos1 = new Vector2(backPos.x + (12 * scaleLocal * distFactor), backPos.y + (12 * scaleLocal * distFactor));
+                    Vector2 linePos2 = new Vector2(backPos.x + (12 * scaleLocal * distFactor), backPos.y + (16 * scaleLocal * distFactor));
                     GUI.DrawTexture(new Rect(backPos, backSize), hud.UnitStatBack);
                     GUI.DrawTexture(UIUtil.TransformBar(new Rect(linePos1, lineSize), (this.ShieldForce / this.ShieldCampacity)), hud.UnitShieldLine);
                     GUI.DrawTexture(UIUtil.TransformBar(new Rect(linePos2, lineSize), (this.Health / this.MaxHealth)), hud.UnitArmorLine);

@@ -53,6 +53,7 @@ namespace SpaceCommander
         private bool staticProportion;
         private float soundLevel;
         private float musicLevel;
+        private float iconsScale;
         private string[] users;
         private UISettings aliesUISettings;
         private UISettings selectedUISettings;
@@ -65,7 +66,7 @@ namespace SpaceCommander
         public float SoundLevel { get { return soundLevel; } set { SettingsSaved = false; soundLevel = value; } }
         public float MusicLevel { get { return musicLevel; } set { SettingsSaved = false; musicLevel = value; } }
         public bool StaticProportion { get { return staticProportion; } set { SettingsSaved = false; staticProportion = value; } }
-
+        public float IconsScale { get { return iconsScale; } set { SettingsSaved = false; iconsScale = value; } }
         public UISettings AliesUI { get { return aliesUISettings; } set { SettingsSaved = false; aliesUISettings = value; } }
         public UISettings SelectedUI { get { return selectedUISettings; } set { SettingsSaved = false; selectedUISettings = value; } }
         public UISettings EnemyUI { get { return enemyUISettings; } set { SettingsSaved = false; enemyUISettings = value; } }
@@ -144,6 +145,7 @@ namespace SpaceCommander
             staticProportion = true;
             musicLevel = 100;
             soundLevel = 100;
+            iconsScale = 0.6f;
             users = new string[0];
 
             aliesUISettings = new UISettings();

@@ -14,7 +14,7 @@ namespace SpaceCommander.Units
             speedThrust = 12; //set in child
             speedRotation = 14;
             speedShift = 12;
-            stealthness = 1f; //set in child
+            stealthness = 0.1f; //set in child
             radiolink = 2f;
             movementAiEnabled = false;
             combatAIEnabled = false;
