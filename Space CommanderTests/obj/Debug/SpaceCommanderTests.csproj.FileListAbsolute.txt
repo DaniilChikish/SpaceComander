@@ -17,3 +17,6 @@ D:\Archive\_Repository\Space Commander Project\Space CommanderTests\bin\Debug\Un
 D:\Archive\_Repository\Space Commander Project\Space CommanderTests\bin\Debug\UnityEngine.UI.xml
 D:\Archive\_Repository\Space Commander Project\Space CommanderTests\bin\Debug\UnityEditor.xml
 D:\Archive\_Repository\Space Commander Project\Space CommanderTests\bin\Debug\ru\Microsoft.VisualStudio.QualityTools.UnitTestFramework.resources.dll
+D:\Archive\_Repository\Space Commander Project\Space CommanderTests\bin\Debug\Unity.UNetWeaver.dll
+D:\Archive\_Repository\Space Commander Project\Space CommanderTests\bin\Debug\Mono.Cecil.Pdb.dll
+D:\Archive\_Repository\Space Commander Project\Space CommanderTests\bin\Debug\Mono.Cecil.Mdb.dll

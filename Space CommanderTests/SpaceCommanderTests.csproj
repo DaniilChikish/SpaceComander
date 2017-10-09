@@ -54,6 +54,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Assets\Scripts\Utils\UIUtilTests.cs" />
+    <Compile Include="Assets\Scripts\Utils\ValidStringTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -148,16 +148,6 @@ namespace SpaceCommander
             selfDefenceModuleEnabled = true;
             EnemySortDelegate = SortEnemysBase;
             radarPover = 1;
-            StatsUp();//
-
-            //Global.SpecINI.Write(this.GetType().ToString(), "speedThrust", speedThrust.ToString());
-            //Global.SpecINI.Write(this.GetType().ToString(), "speedRotation", speedRotation.ToString());
-            //Global.SpecINI.Write(this.GetType().ToString(), "speedShift", speedShift.ToString());
-            //Global.SpecINI.Write(this.GetType().ToString(), "radarRange", radarRange.ToString());
-            //Global.SpecINI.Write(this.GetType().ToString(), "radarPover", radarPover.ToString());
-            //Global.SpecINI.Write(this.GetType().ToString(), "stealthness", stealthness.ToString());
-            //Global.SpecINI.Write(this.GetType().ToString(), "radiolink", radiolink.ToString());
-
             //Health = MaxHealth;
             cooldownDetected = 0;
             //waitingBackCount = 0.2f;
@@ -169,6 +159,8 @@ namespace SpaceCommander
             //
             armor = this.gameObject.GetComponent<Armor>();
             shield = this.gameObject.GetComponent<ForceShield>();
+            //
+            StatsUp();
             //
             gunner = new ShootController(this);
             //Driver = new NavmeshMovementController(this.gameObject);
@@ -203,6 +195,16 @@ namespace SpaceCommander
             radarPover = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "radarPover"));
             stealthness = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "stealthness"));
             radiolink = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "radiolink"));
+
+            armor.maxHitpoints = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "maxHitpoints"));
+            armor.hitpoints = armor.maxHitpoints;
+            armor.shellResist = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "shellResist"));
+            armor.energyResist = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "energyResist"));
+            armor.blastResist = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "blastResist"));
+
+            shield.maxCampacity = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "maxCampacity"));
+            shield.force = shield.maxCampacity;
+            shield.recharging = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "recharging"));
         }
         protected void Update()//______________________Update
         {
@@ -301,11 +303,9 @@ namespace SpaceCommander
                 else
                 {
                     if (combatAIEnabled)
-                    {
                         CombatFunction();
-                        if (selfDefenceModuleEnabled)
-                            SelfDefenceFunction();
-                    }
+                    if (selfDefenceModuleEnabled)
+                        SelfDefenceFunction();
                 }
             }
         }

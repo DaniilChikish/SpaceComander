@@ -31,13 +31,6 @@ namespace SpaceCommander
             secondField = this.transform.FindChild("SecondField").GetComponent<MeshRenderer>();
             owner = transform.GetComponentInParent<SpaceShip>();
             Global = FindObjectOfType<GlobalController>();
-
-            //Global.SpecINI.Write(owner.GetType().ToString(), "maxCampacity", maxCampacity.ToString());
-            //Global.SpecINI.Write(owner.GetType().ToString(), "recharging", recharging.ToString());
-            maxCampacity = Convert.ToSingle(Global.SpecINI.ReadINI(owner.GetType().ToString(), "maxCampacity"));
-            recharging = Convert.ToSingle(Global.SpecINI.ReadINI(owner.GetType().ToString(), "recharging"));
-
-            force = maxCampacity;
         }
 
         // Update is called once per frame
