@@ -8,36 +8,82 @@ namespace SpaceCommander.Weapons
         // цель для ракеты
         public Transform target;
         // скорость поворота
-        public float TurnSpeed;
-        public float ScaleSpeed; // Скорость волны
+        public float scaleFactor; // Скорость волны
         private float liveTime;
+        private Rigidbody body;
+        private float maxDamage;
 
-        protected void Start()       {        }
+        protected void Start()
+        {
+            body = this.gameObject.GetComponent<Rigidbody>();
+        }
         public void StatUp(EnergyType type)
         {
+            body = this.gameObject.GetComponent<Rigidbody>();
             damage = 10f; // + 10 along second
+            maxDamage = damage;
             speed = 50;
             ttl = 8f;
             liveTime = ttl;
             armorPiersing = 2;
-            this.GetComponent<Rigidbody>().AddForce(transform.forward * Speed, ForceMode.Impulse);
+            body.AddForce(this.gameObject.transform.forward * Speed * body.mass, ForceMode.Impulse);
         }
         public new void Update()
         {
-
+            transform.localScale = new Vector3(scaleFactor * (damage / maxDamage), scaleFactor * (damage / maxDamage), scaleFactor * (damage / maxDamage));
+            damage -= maxDamage * (1 / liveTime) * Time.deltaTime;
             if (target != null)
-            {
-                transform.localScale += new Vector3(ScaleSpeed, ScaleSpeed, ScaleSpeed);
-                gameObject.GetComponent<Rigidbody>().AddForce((target.position - this.transform.position).normalized * Speed, ForceMode.Force);
-            }
+                body.AddForce((target.position - this.transform.position).normalized * Speed, ForceMode.Acceleration);
             else
-                gameObject.GetComponent<Rigidbody>().AddForce(transform.forward * Speed, ForceMode.Force);
+                body.AddForce(transform.forward * Speed, ForceMode.Acceleration);
             if (ttl < 0 || damage < 1)
                 Destroy();
             else
                 ttl -= Time.deltaTime;
         }
-        protected override void OnCollisionEnter(Collision collision) { }
+        protected void OnTriggerEnter(Collider collision)
+        {
+            switch (collision.gameObject.tag)
+            {
+                case "Shell":
+                    {
+                        Debug.Log("Triggered shell");
+                        damage -= collision.gameObject.GetComponent<Rigidbody>().mass;
+                        Destroy(collision.gameObject);
+                        break;
+                    }
+            }
+        }
+        protected void OnTriggerStay(Collider collision)
+        {
+            switch (collision.gameObject.tag)
+            {
+                case "Unit":
+                    {
+                        damage -= damage * Time.deltaTime;
+                        break;
+                    }
+                case "Shell":
+                    {
+                        Debug.Log("Triggered shell");
+                        damage -= collision.gameObject.GetComponent<Rigidbody>().mass;
+                        Destroy(collision.gameObject);
+                        break;
+                    }
+            }
+        }
+        protected override void OnCollisionEnter(Collision collision)
+        {
+            switch (collision.gameObject.tag)
+            {
+                case "Shell":
+                    {
+                        damage -= collision.gameObject.GetComponent<Rigidbody>().mass;
+                        Destroy(collision.gameObject);
+                        break;
+                    }
+            }
+        }
         protected void OnCollisionStay(Collision collision)
         {
             switch (collision.gameObject.tag)

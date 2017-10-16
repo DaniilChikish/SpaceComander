@@ -137,6 +137,43 @@ namespace SpaceCommander
             }
             //}
         }
+        //protected void OnTriggerEnter(Collider trigger)
+        //{
+        //    float multiplicator;
+        //    switch (trigger.gameObject.tag)
+        //    {
+        //        case "Energy":
+        //            {
+        //                //Debug.Log(this.owner.name + ": Laser pierse by" + trigger.gameObject.GetComponentInParent<SpaceShip>().name);
+        //                hitCount += 3;
+        //                float difference = trigger.gameObject.GetComponent<IEnergy>().ArmorPiersing - EnergyResist;
+        //                if (difference > 0.5)
+        //                    multiplicator = 1f;
+        //                else if (difference > -3)
+        //                    multiplicator = (Mathf.Sin((difference / 1.1f) + 1f) + 1f) * 0.5f;
+        //                else
+        //                    multiplicator = 0.0f;
+        //                this.hitpoints -= trigger.gameObject.GetComponent<IEnergy>().Damage * multiplicator * Time.deltaTime;
+        //                break;
+        //            }
+        //        case "Explosion":
+        //            {
+        //                float sizeFactor = 0;
+        //                if (owner.Type == UnitClass.LR_Corvette)
+        //                    sizeFactor = 10;
+        //                else if (owner.Type == UnitClass.Guard_Corvette || owner.Type == UnitClass.Support_Corvette)
+        //                    sizeFactor = 5;
+        //                if (Vector3.Distance(trigger.transform.position, this.transform.position) < trigger.gameObject.GetComponent<Explosion>().MaxRadius + sizeFactor)
+        //                {
+        //                    multiplicator = (1 - BlastResist) * (trigger.gameObject.GetComponent<Explosion>().MaxRadius + sizeFactor - Vector3.Distance(trigger.transform.position, this.transform.position)) / trigger.gameObject.GetComponent<Explosion>().MaxRadius;
+        //                    if (multiplicator > 1) multiplicator = 1;
+        //                    if (multiplicator < 0) multiplicator = 0;
+        //                    this.hitpoints -= trigger.gameObject.GetComponent<Explosion>().Damage * multiplicator;
+        //                }
+        //                break;
+        //            }
+        //    }
+        //}
         protected void OnTriggerStay(Collider trigger)
         {
             float multiplicator;

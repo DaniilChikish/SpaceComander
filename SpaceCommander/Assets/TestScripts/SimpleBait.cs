@@ -1,8 +1,9 @@
-﻿using System.Collections;
+﻿using SpaceCommander;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace SpaceCommander.Units
+namespace Assets.TestScripts
 {
     public class SimpleBait : SpaceShip
     {

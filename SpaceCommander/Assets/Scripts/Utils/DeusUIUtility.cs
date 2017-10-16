@@ -38,6 +38,9 @@ namespace DeusUtility.UI
             this.Speed = 2.0f;
         }
     }
+    /**
+     * Фасад-утилиты и специализированные математические преобразования для отрисовки UI элеменов.
+     * **/
     public static class UIUtil
     {
         public static float Scaled(float x)
@@ -63,6 +66,7 @@ namespace DeusUtility.UI
         {
             return GetRatio(new Vector2(Screen.width, Screen.height));
         }
+        /* Возвращает Vector2 со стандартной пропорцией экрана по заданному разширению */
         public static Vector2 GetRatio(Vector2 rectSize)
         {
             Vector2 rectProp = new Vector2();
@@ -157,6 +161,7 @@ namespace DeusUtility.UI
         {
             return GetRect(size, anchor, parent, Vector2.zero);
         }
+        /* Возвращает Rect окна с привязкой к размерам родительского и относительной позиции */ 
         public static Rect GetRect(Vector2 size, PositionAnchor anchor, Vector2 parent, Vector2 positionRelAnchor)
         {
             Vector2 position = new Vector2();
@@ -219,6 +224,7 @@ namespace DeusUtility.UI
             }
             return new Rect(position, size);
         }
+        //...//
         public static bool InArea(Vector2 position, Rect area)
         {
             return InArea(position, area, 1f);
@@ -665,6 +671,9 @@ namespace DeusUtility.UI
         }
 
     }
+    /**
+     * Утилита для парсинга входных строк
+     * **/
     public static class ValidString
     {
         public static string NumberInt(string text)
@@ -674,7 +683,8 @@ namespace DeusUtility.UI
             else
                 return Regex.Replace(text, "[\\D]", "");
         }
-        public static int FormatInt(string text)
+        /* Удаляет из строки символы кроме цифр и преобразует в целое без знака */
+        public static int FormatUnsigned(string text)
         {
             int outp;
             if (text == "")
@@ -693,9 +703,9 @@ namespace DeusUtility.UI
             }
             return outp;
         }
-        public static int FormatIntRange(string text, int minVal, int maxVal)
+        public static int FormatUnsignedRange(string text, int minVal, int maxVal)
         {
-            int outp = FormatInt(text);
+            int outp = FormatUnsigned(text);
             if (outp > maxVal)
                 return maxVal;
             else if (outp < minVal)

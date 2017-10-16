@@ -29,7 +29,7 @@ namespace SpaceCommander.Weapons
                 direction.y = direction.y + (Convert.ToSingle(random[1] - (random.Min() + random.Max()) / 2) * dispersion);
             else
                 direction.y = direction.y + (Convert.ToSingle(random[1] - (random.Min() + random.Max()) / 2) * -dispersion);
-            GameObject sphere = Instantiate(FindObjectsOfType<GlobalController>()[0].PlasmaSphere, gameObject.transform.position, transform.rotation);
+            GameObject sphere = Instantiate(FindObjectOfType<GlobalController>().PlasmaSphere, gameObject.transform.position, transform.rotation);
             sphere.GetComponent<PlazmaSphere>().SetTarget(target);
             sphere.GetComponent<PlazmaSphere>().StatUp(EnergyType.Plazma);
         }
