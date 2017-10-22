@@ -7,6 +7,7 @@ using SpaceCommander;
 using UnityEngine.AI;
 using DeusUtility.Random;
 using DeusUtility.UI;
+using DeusUtility;
 
 namespace SpaceCommander
 {
@@ -21,6 +22,8 @@ namespace SpaceCommander
         public abstract Unit CurrentTarget { get; }
         public abstract float Speed { get; }
         public float SpeedMultiplicator { set; get; }
+        public abstract float Acceleration { get; }
+        public float AccelerationMultiplicator { set; get; }
         public abstract float RotationSpeed { get; }
         public float RotationSpeedMultiplicator { set; get; }
         public abstract float ShiftSpeed { get; }
@@ -72,6 +75,7 @@ namespace SpaceCommander
         protected float radarRange; //set in child
         protected float radarPover; // default 1
         protected float speedThrust; //set in child
+        protected float acceleration;
         protected float speedRotation;
         protected float speedShift;
         //override properties
@@ -86,6 +90,22 @@ namespace SpaceCommander
                 else return Driver.Velocity;
             }
         }
+        private GameObject[] reams;
+        public virtual Vector3 ScaleJetream
+        {
+            get
+            {
+                if (reams.Length > 0)
+                    return reams[0].transform.localScale;
+                else return Vector3.zero;
+            }
+            set
+            {
+                for (int i = 0; i < reams.Length; i++)
+                    reams[i].transform.localScale = value;
+            }
+        }
+        public override float Acceleration { get { return acceleration * (1 + AccelerationMultiplicator); } }
         public override float Speed { get { return speedThrust * (1 + SpeedMultiplicator); } }
         public override float RotationSpeed { get { return speedRotation * (1 + RotationSpeedMultiplicator); } }
         public override float ShiftSpeed { get { return speedShift * (1 + ShiftSpeedMultiplicator); } }
@@ -159,6 +179,7 @@ namespace SpaceCommander
             //
             armor = this.gameObject.GetComponent<Armor>();
             shield = this.gameObject.GetComponent<ForceShield>();
+            reams = GameObjectUtility.GetChildObjectByName(this.transform, "Jetream").ToArray();
             //
             StatsUp();
             //
@@ -188,6 +209,7 @@ namespace SpaceCommander
         }
         protected virtual void StatsUp()
         {
+            acceleration = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "acceleration"));
             speedThrust = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "speedThrust"));
             speedRotation = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "speedRotation"));
             speedShift = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "speedShift"));
@@ -385,8 +407,11 @@ namespace SpaceCommander
                 float iconX;
                 float iconY;
 
-                if (!true || distance < 400) //perspective
-                    distance = 400;
+                if (true) //perspective
+                    if (distance < 400)
+                        distance = 400;
+                    else if (distance > 1000)
+                        distance = 1000;
                 float distFactor = 1000 / distance;
                 if (!outOfBorder)
                     frameSize = frameSize * distFactor * scaleLocal;
@@ -1107,26 +1132,22 @@ namespace SpaceCommander
         protected bool OpenFire(Unit target, float lockdown)
         {
             Gunner.SetAim(target, false, lockdown);
-            bool shot = false;
-            float distance = Vector3.Distance(this.transform.position, CurrentTarget.transform.position);
-            RaycastHit hit;
-            Physics.Raycast(this.transform.position, CurrentTarget.transform.position - this.transform.position, out hit);
-            if (hit.transform == CurrentTarget.transform)
+            if (Gunner.SeeTarget())
             {
                 targetStatus = TargetStateType.Captured;//наведение
-                if (distance < Gunner.GetRange(1) && distance > 50)
-                {
-                    targetStatus = TargetStateType.InSecondaryRange;
-                    shot = Gunner.ShootHim(1);
-                }
-                if (distance < Gunner.GetRange(0))//выбор оружия
+                if (Gunner.TargetInRange(0))//выбор оружия
                 {
                     targetStatus = TargetStateType.InPrimaryRange;
-                    shot = Gunner.ShootHim(0);
+                    return Gunner.ShootHim(0);
+                }
+                if (Gunner.TargetInRange(1))
+                {
+                    targetStatus = TargetStateType.InSecondaryRange;
+                    return Gunner.ShootHim(1);
                 }
             }
             else targetStatus = TargetStateType.BehindABarrier;
-            return shot;
+            return false;
         } //_________OpenFire
         public override void ResetTarget()
         {

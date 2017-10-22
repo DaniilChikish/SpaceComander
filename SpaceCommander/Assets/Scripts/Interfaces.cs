@@ -44,6 +44,9 @@ namespace SpaceCommander
         bool Volley(int slot);
         bool ResetAim();
         float GetRange(int slot);
+        bool SeeTarget();
+        bool AimOnTarget();
+        bool TargetInRange(int slot);
     }
     public interface IWeapon
     {
@@ -66,7 +69,7 @@ namespace SpaceCommander
         float Speed { get; }
         float Damage { get; }
         float ArmorPiersing { get; }
-        void StatUp(float speed, float damage, float armorPiersing, float mass, bool canRicochet, GameObject explosionPrefab);
+        void StatUp(Vector3 speed, float damage, float armorPiersing, float mass, bool canRicochet, GameObject explosionPrefab);
     }
     public interface IEnergy
     {

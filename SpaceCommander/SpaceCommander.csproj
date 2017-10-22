@@ -105,7 +105,7 @@
     <Compile Include="Assets\Scripts\SelfDestructor.cs" />
     <Compile Include="Assets\Scripts\SerializeData.cs" />
     <Compile Include="Assets\Scripts\ShipManualController.cs" />
-    <Compile Include="Assets\Scripts\Speedometer.cs" />
+    <Compile Include="Assets\TestScripts\Speedometer.cs" />
     <Compile Include="Assets\Scripts\Units\Armor.cs" />
     <Compile Include="Assets\Scripts\Units\Bomber.cs" />
     <Compile Include="Assets\Scripts\Units\Command.cs" />

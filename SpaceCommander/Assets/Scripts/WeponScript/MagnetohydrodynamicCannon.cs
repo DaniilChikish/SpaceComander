@@ -35,7 +35,7 @@ namespace SpaceCommander.Weapons
             else
                 direction.y = direction.y + (Convert.ToSingle(Global.RandomNormalPool[Convert.ToInt32(randomOffset[1])] - Convert.ToSingle(Global.RandomNormalAverage)) * -localDisp);
             GameObject shell = Instantiate(Global.MagnetoShell, gameObject.transform.position, direction);
-            shell.GetComponent<IShell>().StatUp(speed * (1 + RoundspeedMultiplacator), damage * (1 + DamageMultiplacator), armorPiersing * (1 + APMultiplacator), mass, false, null);
+            shell.GetComponent<IShell>().StatUp(owner.Velocity + (speed * (1 + RoundspeedMultiplacator) * this.transform.forward), damage * (1 + DamageMultiplacator), armorPiersing * (1 + APMultiplacator), mass, false, null);
         }
     }
 }

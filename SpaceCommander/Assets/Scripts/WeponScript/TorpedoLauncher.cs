@@ -5,7 +5,6 @@ namespace SpaceCommander.Weapons
 {
     public class TorpedoLauncher : ShellWeapon
     {
-        private SpaceShip owner;
         public TorpedoType AmmoType;
         protected override void StatUp()
         {

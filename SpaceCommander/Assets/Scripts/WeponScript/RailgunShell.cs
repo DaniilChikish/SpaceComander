@@ -21,9 +21,9 @@ namespace SpaceCommander.Weapons
             this.canRicochet = true;
         }
 
-        public void StatUp(float speed, float damage, float armorPiersing, float mass, bool canRicochet, GameObject explosionPrefab)
+        public void StatUp(Vector3 speed, float damage, float armorPiersing, float mass, bool canRicochet, GameObject explosionPrefab)
         {
-            this.speed = speed;
+            this.speed = speed.magnitude;
             this.damage = damage;
             this.armorPiersing = armorPiersing;
             this.canRicochet = canRicochet;
@@ -31,7 +31,7 @@ namespace SpaceCommander.Weapons
             body = this.GetComponent<Rigidbody>();
 
             body.mass = mass;
-            body.AddForce(transform.forward * Speed, ForceMode.VelocityChange);
+            body.AddForce(speed, ForceMode.VelocityChange);
         }
 
         public override void Update()

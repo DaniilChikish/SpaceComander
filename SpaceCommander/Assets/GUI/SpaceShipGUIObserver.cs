@@ -401,6 +401,8 @@ namespace SpaceCommander
                     previev.transform.Translate(previevSpeedMotion * Time.deltaTime, 0, 0);
                 }
             }
+            if (Input.GetKeyDown(KeyCode.Space))
+                SwichHandControl();
         }
         private void OnGUI()
         {

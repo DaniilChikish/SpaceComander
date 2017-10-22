@@ -316,7 +316,7 @@ namespace SpaceCommander
             for (int slot = 0; slot < weapons.Length; slot++)
                 if (synchWeapons[slot] > 0)
                     synchWeapons[slot] -= Time.deltaTime;
-            if (!owner.ManualControl && target != null)
+            if (!owner.ManualControl && target != null&&SeeTarget()&&(TargetInRange(0)||TargetInRange(1)))
             {
                 targetLockdownCount -= Time.deltaTime;
                 //Debug.Log("target - " + Target.transform.position);
@@ -329,7 +329,26 @@ namespace SpaceCommander
                 }
             }
         }
-
+        public bool SeeTarget()
+        {
+            if (target != null)
+            {
+                RaycastHit hit;
+                Physics.Raycast(owner.transform.position, target.transform.position - owner.transform.position, out hit, 100000, 1);
+                return (hit.transform == target.transform);
+            }
+            else return false;
+        }
+        public bool AimOnTarget()
+        {
+            if (target != null)
+                return (Vector3.Angle(owner.transform.forward, target.transform.position - owner.transform.position) < 5f);
+            else return false;
+        }
+        public bool TargetInRange(int slot)
+        {
+            return (target != null && Vector3.Distance(target.transform.position, owner.transform.position) < weapons[slot][0].Range);
+        }
         public bool SetAim(Unit target, bool immediately, float lockdown)
         {
             if (this.target == null || targetLockdownCount < 0 || immediately)
@@ -381,6 +400,8 @@ namespace SpaceCommander
 
         protected WeaponType type;
         protected GlobalController Global;
+        protected Unit owner;
+
         protected Unit target;
         public Unit Target { set { target = value; } get { return target; } }
         protected float dispersion; //dafault 0;
@@ -406,6 +427,7 @@ namespace SpaceCommander
         protected void Start()
         {
             Global = FindObjectOfType<GlobalController>();
+            owner = this.transform.GetComponentInParent<Unit>();
             roundSpeed = 150;
             shildBlinkTime = 0.01f;
             StatUp();
@@ -432,17 +454,14 @@ namespace SpaceCommander
                     float approachTime;
                     Vector3 aimPoint = target.transform.position;
                     //Debug.Log(target.GetComponent<NavMeshAgent>().velocity);
+                    Vector3 targetVelocity = target.Velocity - owner.Velocity;
 
                     distance = Vector3.Distance(this.gameObject.transform.position, aimPoint); //расстояние до цели
                     approachTime = distance / RoundSpeed;
-                    Vector3 targetVelocity = target.Velocity;
-                    targetVelocity.y = 0; //исключаем вертикальную компоненту
                     aimPoint = target.transform.position + targetVelocity * approachTime; //первое приближение
 
                     distance = Vector3.Distance(this.gameObject.transform.position, aimPoint); //расстояние до точки первого приближения
                     approachTime = distance / RoundSpeed;
-                    targetVelocity = target.Velocity;
-                    targetVelocity.y = 0;
                     aimPoint = target.transform.position + targetVelocity * approachTime * 1.01f; //второе приближение
 
                     //distance = Vector3.Distance(this.gameObject.transform.position, aimPoint);

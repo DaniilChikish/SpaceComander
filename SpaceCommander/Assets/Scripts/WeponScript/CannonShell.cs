@@ -7,9 +7,9 @@ namespace SpaceCommander.Weapons
     {
         protected bool explosive;
         protected GameObject explosionPrefab;
-        public void StatUp(float speed, float damage, float armorPiersing, float mass, bool canRicochet, GameObject explosionPrefab)
+        public void StatUp(Vector3 speed, float damage, float armorPiersing, float mass, bool canRicochet, GameObject explosionPrefab)
         {
-            this.speed = speed;
+            this.speed = speed.magnitude;
             this.damage = damage;
             this.armorPiersing = armorPiersing;
             this.canRicochet = canRicochet;
@@ -21,7 +21,7 @@ namespace SpaceCommander.Weapons
             this.ttl = 5f;
             this.GetComponent<Rigidbody>().mass = mass;
 
-            this.GetComponent<Rigidbody>().AddForce(transform.forward * Speed, ForceMode.VelocityChange);
+            this.GetComponent<Rigidbody>().AddForce(speed, ForceMode.VelocityChange);
         }
         public override void Destroy()
         {

@@ -29,7 +29,7 @@ namespace SpaceCommander.Weapons
             Quaternion direction = transform.rotation;
             GameObject shell = Instantiate(Global.RailgunShell, gameObject.transform.position, direction);
 
-            shell.GetComponent<IShell>().StatUp(speed * (1 + RoundspeedMultiplacator), damage * (1 + DamageMultiplacator), armorPiersing * (1 + APMultiplacator), mass * (1 + ShellmassMultiplacator), true, null);
+            shell.GetComponent<IShell>().StatUp(owner.Velocity + (speed * (1 + RoundspeedMultiplacator) * this.transform.forward), damage * (1 + DamageMultiplacator), armorPiersing * (1 + APMultiplacator), mass * (1 + ShellmassMultiplacator), true, null);
         }
     }
 }
