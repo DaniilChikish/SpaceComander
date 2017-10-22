@@ -36,11 +36,11 @@ namespace SpaceCommander.Units
                     }
                 case TargetStateType.InPrimaryRange:
                     {
-                        return IncreaseDistance();
+                        return Driver.ExeceteTargetManeuver(TatgetManeuverType.IncreaseDistance, Gunner.Target.transform);
                     }
                 case TargetStateType.InSecondaryRange:
                     {
-                        return Evasion(CurrentTarget.transform.right);
+                        return Driver.ExeceteTargetManeuver(TatgetManeuverType.Evasion, CurrentTarget.transform);
                     }
                 case TargetStateType.BehindABarrier:
                     {
@@ -54,8 +54,8 @@ namespace SpaceCommander.Units
         {
             idleFulag = !idleFulag;
             if (idleFulag)
-                return PatroolLineParallel(150);
-            else return PatroolLineParallel(50);
+                return Driver.ExecetePointManeuver(PointManeuverType.PatroolLine, this.transform.position, this.transform.forward * 150);
+            else return Driver.ExecetePointManeuver(PointManeuverType.PatroolLine, this.transform.position, this.transform.forward * 50);
         }
     }
 }

@@ -15,7 +15,6 @@ namespace SpaceCommander
     {
         protected UnitClass type;
         protected string unitName;
-
         public UnitClass Type { get { return type; } }
         public string UnitName { get { return unitName; } }
         public abstract Army Team { get; }
@@ -31,8 +30,6 @@ namespace SpaceCommander
         public abstract float Health { set; get; }
         public abstract float MaxHealth { get; }
         public float MaxHealthMultiplacator { set; get; }
-
-
         public abstract float ShellResist { get; }
         public abstract float EnergyResist { get; }
         public float ResistMultiplacator { set; get; }
@@ -41,7 +38,6 @@ namespace SpaceCommander
         public float ShieldRechargingMultiplacator { set; get; }
         public abstract float ShieldCampacity { get; }
         public float ShieldCampacityMultiplacator { set; get; }
-
         public abstract float RadarRange { get; }
         public float RadarRangeMultiplacator { set; get; }
         public abstract Vector3 Velocity { get; }
@@ -51,6 +47,43 @@ namespace SpaceCommander
         public abstract void MakeDamage(float damage);
         public abstract void Die();
         public abstract void ResetTarget();
+        protected Dictionary<Unit, Vector3> followers;
+        private const float followingDistance = 50;
+        public Dictionary<Unit, Vector3> Followers { get { return followers; } }
+        public void AddFollower(Unit follower, Vector3 point)
+        {
+            followers.Add(follower, point);
+        }
+        public virtual Vector3 AddFollower(Unit follower)
+        {
+            Vector3[] defaultFollowingPoints =
+            {
+                (Vector3.right * followingDistance + -Vector3.forward * followingDistance/2f),
+                (-Vector3.right * followingDistance + -Vector3.forward * followingDistance/2f),
+                (Vector3.up * followingDistance + -Vector3.forward * followingDistance/2+ Vector3.right * followingDistance * Mathf.Sqrt(3f)/2f),
+                (Vector3.up * followingDistance + -Vector3.forward * followingDistance/2+ -Vector3.right * followingDistance * Mathf.Sqrt(3f)/2f),
+                (-Vector3.up * followingDistance + -Vector3.forward * followingDistance/2+ Vector3.right * followingDistance * Mathf.Sqrt(3f)/2f),
+                (-Vector3.up * followingDistance + -Vector3.forward * followingDistance/2+ -Vector3.right * followingDistance * Mathf.Sqrt(3f)/2f),
+            };
+            foreach (Vector3 p in defaultFollowingPoints)
+                if (!followers.ContainsValue(p))
+                {
+                    followers.Add(follower, p);
+                    return p;
+                }
+            foreach (var u in followers.Keys)
+                if (u.Followers.Keys.Count < defaultFollowingPoints.Length)
+                   return u.AddFollower(follower);
+            return Vector3.zero;
+        }
+        public Vector3 GetFollowPoint(Unit follower)
+        {
+            return followers[follower];
+        }
+        public void RemoveFollower(Unit follower)
+        {
+            followers.Remove(follower);
+        }
     }
     public delegate int SortUnit(Unit x, Unit y);
     public abstract class SpaceShip : Unit, ISpaceShipObservable
@@ -152,7 +185,6 @@ namespace SpaceCommander
         protected List<Unit> enemys = new List<Unit>();
         protected List<Unit> allies = new List<Unit>();
         protected List<Unit> capByTarget;
-        public string ManeuverName; //debug only
         public string GunnerTarget; //debug only
         protected SortUnit EnemySortDelegate;
         protected SortUnit AlliesSortDelegate;
@@ -576,7 +608,7 @@ namespace SpaceCommander
                     }
                 case TargetStateType.InPrimaryRange:
                     {
-                        return IncreaseDistance();
+                        return Driver.ExeceteTargetManeuver(TatgetManeuverType.IncreaseDistance, Gunner.Target.transform);
                     }
                 case TargetStateType.InSecondaryRange:
                     {
@@ -596,19 +628,19 @@ namespace SpaceCommander
             {
                 case TargetStateType.Captured:
                     {
-                        return PatroolPoint();
+                        return Driver.ExecetePointManeuver(PointManeuverType.PatroolPyramid, this.transform.position, this.transform.forward * 250);
                     }
                 case TargetStateType.InPrimaryRange:
                     {
-                        return Evasion(CurrentTarget.transform.right);
+                        return Driver.ExeceteTargetManeuver(TatgetManeuverType.Evasion, CurrentTarget.transform);
                     }
                 case TargetStateType.InSecondaryRange:
                     {
-                        return PatroolLinePerpendicularly();
+                        return Driver.ExecetePointManeuver(PointManeuverType.PatroolLine, this.transform.position, this.transform.right * 250);
                     }
                 case TargetStateType.BehindABarrier:
                     {
-                        return PatroolLinePerpendicularly();
+                        return Driver.ExecetePointManeuver(PointManeuverType.PatroolPyramid, this.transform.position, this.transform.forward * 250);
                     }
                 default:
                     return false;
@@ -645,9 +677,9 @@ namespace SpaceCommander
         }
         protected virtual bool IdleManeuverFunction()
         {
-            if (Vector3.Distance(this.transform.position, Anchor) > 300)
+            if (Vector3.Distance(this.transform.position, Anchor) > 1000)
                 return BackToAncour();
-            return PatroolPoint();
+            return Driver.ExecetePointManeuver(PointManeuverType.PatroolDiamond, this.transform.position, this.transform.forward * 50);
         }
         protected bool CombatFunction()
         {
@@ -777,260 +809,33 @@ namespace SpaceCommander
         }
         //sevice function
         //base maneuvers
-        protected bool PatroolPoint()
-        {
-            ManeuverName = "Patrool";
-            //waitingBackCount = 30f;
-            Vector3 target1 = new Vector3(0, 0, 40); //Vector3 target1 = this.transform.forward * 40f;
-            target1 += this.transform.position + new Vector3(0, 0.5f, 0);
-            //            Debug.Log(target1);
-            Driver.MoveToQueue(target1);
 
-            float random = Convert.ToSingle(Randomizer.Uniform(-10, 10, 1)[0]);
-            Vector3 target2;
-            if (random > 0)
-                target2 = new Vector3(40, 0, 0); //target2 = this.transform.right * 40f;
-            else
-                target2 = new Vector3(-40, 0, 0); //target2 = this.transform.right * -40f;
-            target2 += this.transform.position + new Vector3(0, 0.5f, 0);
-            //      Debug.Log(target2);
-            Driver.MoveToQueue(target2);
-
-            Vector3 target4;
-            if (random < 0)
-                target4 = new Vector3(40, 0, 0); //target4 = this.transform.right * 40f;
-            else
-                target4 = new Vector3(-40, 0, 0); //target4 = this.transform.right * -40f;
-            target4 += this.transform.position + new Vector3(0, 0.5f, 0);
-            //          Debug.Log(target4);
-            Driver.MoveToQueue(target4);
-
-            Vector3 target3 = new Vector3(0, 0, -40);//Vector3 target3 = -this.transform.forward * 40f;
-            target3 += this.transform.position + new Vector3(0, 0.5f, 0);
-            //        Debug.Log(target3);
-            Driver.MoveToQueue(target3);
-
-            Vector3 target5;
-            target5 = this.transform.position;
-
-            return Driver.MoveToQueue(target5);
-        }
-        protected bool PatroolLineForward()
-        {
-            ManeuverName = "Patrool";
-            Vector3 target2;
-            target2 = this.transform.forward * 60f;
-            target2 += this.transform.position + new Vector3(0, 0.5f, 0);
-            //      Debug.Log(target2);
-            Driver.MoveToQueue(target2);
-
-            Vector3 target5;
-            target5 = this.transform.position;
-
-            return Driver.MoveToQueue(target5);
-        }
-        protected bool PatroolLineForward(float length)
-        {
-            ManeuverName = "Patrool";
-            Vector3 target2;
-            target2 = this.transform.forward * length;
-            target2 += this.transform.position + new Vector3(0, 0.5f, 0);
-            //      Debug.Log(target2);
-            Driver.MoveToQueue(target2);
-
-            Vector3 target5;
-            target5 = this.transform.position;
-
-            return Driver.MoveToQueue(target5);
-        }
-        protected bool PatroolLinePerpendicularly()
-        {
-            ManeuverName = "Patrool";
-
-            float random = Convert.ToSingle(Randomizer.Uniform(-10, 10, 1)[0]);
-            Vector3 target2;
-            if (random > 0)
-                /*target2 = new Vector3(60, 0, 0);*/
-                target2 = this.transform.right * 60f;
-            else
-                /*target2 = new Vector3(-60, 0, 0);*/
-                target2 = this.transform.right * -60f;
-            target2 += this.transform.position + new Vector3(0, 0.5f, 0);
-            //      Debug.Log(target2);
-            Driver.MoveToQueue(target2);
-
-            Vector3 target4;
-            if (random < 0)
-                /*target4 = new Vector3(60, 0, 0);*/
-                target4 = this.transform.right * 60f;
-            else
-                /*target4 = new Vector3(-60, 0, 0);*/
-                target4 = this.transform.right * -60f;
-            target4 += this.transform.position + new Vector3(0, 0.5f, 0);
-            //          Debug.Log(target4);
-            Driver.MoveToQueue(target4);
-
-            Vector3 target5;
-            target5 = this.transform.position;
-
-            return Driver.MoveToQueue(target5);
-        }
-        protected bool PatroolLinePerpendicularly(float length)
-        {
-            ManeuverName = "Patrool";
-
-            float random = Convert.ToSingle(Randomizer.Uniform(-10, 10, 1)[0]);
-            Vector3 target2;
-            if (random > 0)
-                /*target2 = new Vector3(60, 0, 0);*/
-                target2 = this.transform.right * length;
-            else
-                /*target2 = new Vector3(-60, 0, 0);*/
-                target2 = this.transform.right * -length;
-            target2 += this.transform.position + new Vector3(0, 0.5f, 0);
-            //      Debug.Log(target2);
-            Driver.MoveToQueue(target2);
-
-            Vector3 target4;
-            if (random < 0)
-                /*target4 = new Vector3(60, 0, 0);*/
-                target4 = this.transform.right * length;
-            else
-                /*target4 = new Vector3(-60, 0, 0);*/
-                target4 = this.transform.right * -length;
-            target4 += this.transform.position + new Vector3(0, 0.5f, 0);
-            //          Debug.Log(target4);
-            Driver.MoveToQueue(target4);
-
-            Vector3 target5;
-            target5 = this.transform.position;
-
-            return Driver.MoveToQueue(target5);
-        }
-        protected bool PatroolLineParallel()
-        {
-            ManeuverName = "Patrool";
-            Vector3 target2;
-            target2 = this.transform.forward * 60f;
-            target2 += this.transform.position + new Vector3(0, 0.5f, 0);
-            //      Debug.Log(target2);
-            Driver.MoveToQueue(target2);
-
-            Vector3 target4;
-            target4 = this.transform.forward * -60f;
-            target4 += this.transform.position + new Vector3(0, 0.5f, 0);
-            //          Debug.Log(target4);
-            Driver.MoveToQueue(target4);
-
-            Vector3 target5;
-            target5 = this.transform.position;
-
-            return Driver.MoveToQueue(target5);
-        }
-        protected bool PatroolLineParallel(float length)
-        {
-            ManeuverName = "Patrool";
-            Vector3 target2;
-            target2 = this.transform.forward * length;
-            target2 += this.transform.position + new Vector3(0, 0.5f, 0);
-            //      Debug.Log(target2);
-            Driver.MoveToQueue(target2);
-
-            Vector3 target4;
-            target4 = this.transform.forward * -length;
-            target4 += this.transform.position + new Vector3(0, 0.5f, 0);
-            //          Debug.Log(target4);
-            Driver.MoveToQueue(target4);
-
-            Vector3 target5;
-            target5 = this.transform.position;
-
-            return Driver.MoveToQueue(target5);
-        }
         protected bool ToPrimaryDistance()
         {
-            ManeuverName = "ToPrimaryDistance";
             Vector3 target = CurrentTarget.transform.position + (this.transform.position - CurrentTarget.transform.position).normalized * Gunner.GetRange(0) * 0.9f + new Vector3(0, 0.5f, 0);
             //target += this.transform.position + new Vector3(0, 0.5f, 0);
             return Driver.MoveToQueue(target);
         }
         protected bool ToSecondaryDistance()
         {
-            ManeuverName = "ToSecondaryDistance";
             Vector3 target = CurrentTarget.transform.position + (this.transform.position - CurrentTarget.transform.position).normalized * Gunner.GetRange(1) * 0.9f + new Vector3(0, 0.5f, 0);
             //target += this.transform.position;
             return Driver.MoveToQueue(target);
         }
-        protected bool ShortenDistance()
-        {
-            ManeuverName = "ShortenDistance";
-            Vector3 target = this.transform.forward * 30f;
-            target += this.transform.position + new Vector3(0, 0.5f, 0);
-            return Driver.MoveToQueue(target);
-        }
-        protected bool IncreaseDistance()
-        {
-            ManeuverName = "IncreaseDistance";
-            Vector3 target = this.transform.forward * -30f;
-            target += this.transform.position + new Vector3(0, 0.5f, 0);
-            return Driver.MoveToQueue(target);
-        }
-        protected bool Evasion(Vector3 hazardRight)
-        {
-            ManeuverName = "Evasion";
-            //waitingBackCount = 1f;
-            float random = Convert.ToSingle(Randomizer.Uniform(-10, 10, 1)[0]);
-            Vector3 target;
-            if (random > 0)
-                target = hazardRight * (random + 20f);
-            else
-                target = hazardRight * (random - 20f);
-            target += this.transform.position + new Vector3(0, 0.5f, 0);
-            return Driver.MoveToQueue(target);
-        }
+
         protected bool Rush()
         {
-            ManeuverName = "Ruch";
             //waitingBackCount = 5f;
             Vector3 target = CurrentTarget.transform.position + CurrentTarget.transform.forward * Gunner.GetRange(0) * 0.4f;
             return Driver.MoveToQueue(target);
         }
         protected bool BackToAncour()
         {
-            ManeuverName = "BackToAncour";
             return Driver.MoveToQueue(Anchor);
         }
         protected bool GoToBase()
         {
-            //Base[] bases = FindObjectsOfType<Base>();
-            //if (bases.Length > 0)
-            //{
-            //    foreach (Base x in bases)
-            //        if (x.team == this.Team)
-            //            return Driver.MoveToQueue(x.GetInQueue(this));
-            //    return BackToAncour();
-            //}
-            //else 
             return BackToAncour();
-        }
-        private bool CanPatrool(Vector3[] path)
-        {
-            for (int i = 1; i < path.Length; i++)
-            {
-                if (!CanWalk(path[i - 1], path[i]))
-                    return false;
-            }
-            return true;
-        }
-        private bool CanWalk(Vector3 position, Vector3 destination)
-        {
-            RaycastHit[] hits = Physics.RaycastAll(position, (destination - position), (destination - position).magnitude); //9 is Terrain layer
-            for (int i = 0; i < hits.Length; i++)
-            {
-                if (hits[i].collider.tag == "Terrain")
-                    return false;
-            }
-            return true;
         }
         //sensors
         protected void Scan() //___________Scan
@@ -1208,12 +1013,12 @@ namespace SpaceCommander
                 Driver.ClearQueue();
                 aiStatus = UnitStateType.MoveAI;
                 situation = TacticSituation.Defense;
-                Evasion(hazard.transform.right);
+                Driver.ExeceteTargetManeuver(TatgetManeuverType.Evasion, hazard.transform);
             }
             else if (Driver.PathPoints == 0)
             {
                 aiStatus = UnitStateType.MoveAI;
-                Evasion(hazard.transform.right);
+                Driver.ExeceteTargetManeuver(TatgetManeuverType.Evasion, hazard.transform);
             }
         }
         //group interaction
@@ -2115,10 +1920,7 @@ namespace SpaceCommander
         protected virtual void SendToQueue(Vector3[] path)
         {
             aiStatus = UnitStateType.UnderControl;
-            for (int i = 0; i < path.Length; i++)
-            {
-                Driver.MoveToQueue(path[i]);
-            }
+                Driver.MoveToQueue(path);
             if (Team == Global.playerArmy)
                 Driver.BuildPathArrows();
         }

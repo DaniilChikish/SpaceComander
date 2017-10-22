@@ -64,7 +64,7 @@ namespace Assets.TestScripts
                 case TargetStateType.InPrimaryRange:
                     {
                         UseModule(new SpellFunction[] { SpellFunction.Self, SpellFunction.Buff });
-                        return Evasion(CurrentTarget.transform.right);
+                        return Driver.ExeceteTargetManeuver(TatgetManeuverType.Evasion, CurrentTarget.transform);
                     }
                 case TargetStateType.InSecondaryRange:
                     {
@@ -84,8 +84,8 @@ namespace Assets.TestScripts
             //Debug.Log("new loop");
             idleFulag = !idleFulag;
             if (idleFulag)
-                return PatroolTriangle();
-            else return PatroolPoint();
+                return Driver.ExecetePointManeuver(PointManeuverType.PatroolSpiral, this.transform.position, this.transform.forward * 50);
+            else return Driver.ExecetePointManeuver(PointManeuverType.PatroolDiamond, this.transform.position, this.transform.forward * 50);
         }
         private bool PatroolTriangle()
         {

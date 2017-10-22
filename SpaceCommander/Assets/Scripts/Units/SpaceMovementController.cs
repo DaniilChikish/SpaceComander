@@ -6,7 +6,9 @@ using UnityEngine;
 
 namespace SpaceCommander
 {
-    public enum DriverStatus { Navigating, Maneuvering, Waiting};
+    public enum DriverStatus { Navigating, Maneuvering, Waiting, Following};
+    public enum PointManeuverType { PatroolLine, PatroolDiamond, PatroolPyramid, PatroolSpiral}
+    public enum TatgetManeuverType { Evasion, Flank, BoomZoom, SternFollow, SideFollow, ToSternDethZone, IncreaseDistance, DecreaseDistance}
     /**
  * v 0.6
  * **/
@@ -738,6 +740,10 @@ namespace SpaceCommander
         private float verticalShiftThrust;
         private float horisontalShiftThrust;
 
+        private float aimLock;
+        private Transform followTarget;
+        private Vector3 followPoint;
+        private Vector3 followPointRelative;
         private Queue<Vector3> path; //очередь путевых точек
         List<PathNode> closedSet = new List<PathNode>();
         List<PathNode> openSet = new List<PathNode>();
@@ -766,12 +772,16 @@ namespace SpaceCommander
         }
         public void Update()
         {
+            if (followTarget != null)
+                UpdateFollowPoint();
         }
         public void FixedUpdate()
         {
             if (calculating && openSet.Count > 0 && calculatingStep < 240)
                 PathfindingStep(navDestination, navAccurancyFactor);
             else calculating = false;
+            if (aimLock > 0)
+                aimLock -= Time.deltaTime;
             switch (status)
             {
                 case DriverStatus.Navigating:
@@ -789,7 +799,27 @@ namespace SpaceCommander
                         else
                         {
                             status = DriverStatus.Waiting;
-
+                        }
+                        break;
+                    }
+                case DriverStatus.Following:
+                    {
+                        if (path.Count > 0)
+                        {
+                            //MoveSimple();
+                            Move();
+                            Rotate();
+                            if ((path.Peek() - walkerTransform.position).magnitude < accurancy)
+                            {
+                                path.Dequeue();
+                            }
+                        }
+                        else
+                        {
+                            if (followTarget != null)
+                                MoveTo(followPoint);
+                            else
+                                status = DriverStatus.Waiting;
                         }
                         break;
                     }
@@ -807,6 +837,7 @@ namespace SpaceCommander
                     }
             }
         }
+
         public bool MoveTo(Vector3 destination)
         {
             ClearQueue();
@@ -832,6 +863,33 @@ namespace SpaceCommander
                 path.Enqueue(destination);
                 return true;
             }
+        }
+        public bool MoveToQueue(Vector3[] path)
+        {
+            if (CanWalk(path))
+            {
+                foreach (Vector3 point in path)
+                    MoveToQueue(point);
+                return true;
+            }
+            else return false;
+        }
+        public bool Follow(Unit target)
+        {
+            Vector3 followPoint = target.AddFollower(walker);
+            if (followPoint!= Vector3.zero)
+            {
+                followTarget = target.transform;
+                followPointRelative = followPoint;
+                UpdateFollowPoint();
+                status = DriverStatus.Following;
+                return true;
+            }
+            return false;
+        }
+        private void UpdateFollowPoint()
+        {
+            followPoint = followTarget.transform.forward * followPointRelative.z + followTarget.transform.right * followPointRelative.x + followTarget.transform.up * followPointRelative.y;
         }
         public void BuildPathArrows()
         {
@@ -1050,17 +1108,11 @@ namespace SpaceCommander
             }
             return result;
         }
-        private bool CanWalk(Vector3 position, Vector3 destination)
+        public bool CanWalk(Vector3 position, Vector3 destination)
         {
-            RaycastHit[] hits = Physics.RaycastAll(position, (destination - position), (destination - position).magnitude); //9 is Terrain layer
-            for (int i = 0; i < hits.Length; i++)
-            {
-                if (hits[i].collider.tag == "Terrain")
-                    return false;
-            }
-            return true;
+            return !(Physics.Raycast(position, (destination - position), (destination - position).magnitude, (1 << 9))); //9 is Terrain layer
         }
-        private bool CanWalk(Vector3 position, Vector3 destination, float accuracyFactor)
+        public bool CanWalk(Vector3 position, Vector3 destination, float accuracyFactor)
         {
             Vector3[] directions = new Vector3[6];
             directions[0] = Vector3.forward;//forward
@@ -1072,6 +1124,15 @@ namespace SpaceCommander
             foreach (Vector3 direction in directions)
             {
                 if (!CanWalk(position + gridStep * 0.5f * accuracyFactor * direction, destination))
+                    return false;
+            }
+            return true;
+        }
+        public bool CanWalk(Vector3[] path)
+        {
+            for (int i = 1; i < path.Length; i++)
+            {
+                if (!CanWalk(path[i - 1], path[i]))
                     return false;
             }
             return true;
@@ -1235,23 +1296,33 @@ namespace SpaceCommander
             if (targetMotion != Vector3.zero)
             {
                 float signTarget;
-                float targetPojectionZ = Vector3.Project(targetMotion, walkerTransform.forward).magnitude;
-                if (Vector3.Angle(targetMotion, walkerTransform.forward) < 90)
-                    signTarget = 1;
-                else signTarget = -1;
-                mainThrust = Mathf.Clamp(targetPojectionZ * signTarget, -walker.ShiftSpeed, walker.Speed);
-
-                float targetPojectionX = Vector3.Project(targetMotion, walkerTransform.right).magnitude;
-                if (Vector3.Angle(targetMotion, walkerTransform.right) < 90)
-                    signTarget = 1;
-                else signTarget = -1;
-                horisontalShiftThrust = Mathf.Clamp(targetPojectionX * signTarget, -walker.ShiftSpeed, walker.ShiftSpeed);
-
-                float targetPojectionY = Vector3.Project(targetMotion, walkerTransform.up).magnitude;
-                if (Vector3.Angle(targetMotion, walkerTransform.up) < 90)
-                    signTarget = 1;
-                else signTarget = -1;
-                verticalShiftThrust = Mathf.Clamp(targetPojectionY * signTarget, -walker.ShiftSpeed, walker.ShiftSpeed);
+                {
+                    float targetPojectionZ = Vector3.Project(targetMotion, walkerTransform.forward).magnitude;
+                    if (Vector3.Angle(targetMotion, walkerTransform.forward) < 90)
+                        signTarget = 1;
+                    else signTarget = -1;
+                    mainThrust = Mathf.Clamp(targetPojectionZ * signTarget, -walker.ShiftSpeed, walker.Speed);
+                    if (targetPojectionZ < SpaceMovementController.MotionToStop(mainThrust, walker.Acceleration * -Mathf.Sign(mainThrust)))
+                        mainThrust = 0;
+                }
+                {
+                    float targetPojectionX = Vector3.Project(targetMotion, walkerTransform.right).magnitude;
+                    if (Vector3.Angle(targetMotion, walkerTransform.right) < 90)
+                        signTarget = 1;
+                    else signTarget = -1;
+                    horisontalShiftThrust = Mathf.Clamp(targetPojectionX * signTarget, -walker.ShiftSpeed, walker.ShiftSpeed);
+                    if (targetPojectionX < SpaceMovementController.MotionToStop(horisontalShiftThrust, -walker.Acceleration * -Mathf.Sign(mainThrust)))
+                        horisontalShiftThrust = 0;
+                }
+                {
+                    float targetPojectionY = Vector3.Project(targetMotion, walkerTransform.up).magnitude;
+                    if (Vector3.Angle(targetMotion, walkerTransform.up) < 90)
+                        signTarget = 1;
+                    else signTarget = -1;
+                    verticalShiftThrust = Mathf.Clamp(targetPojectionY * signTarget, -walker.ShiftSpeed, walker.ShiftSpeed);
+                    if (targetPojectionY < SpaceMovementController.MotionToStop(verticalShiftThrust, -walker.Acceleration * -Mathf.Sign(mainThrust)))
+                       verticalShiftThrust = 0;
+                }
             }
             else
             {
@@ -1286,17 +1357,21 @@ namespace SpaceCommander
             ScaleJetream(shift.z);
             walkerBody.AddRelativeForce(shift * walker.Acceleration, ForceMode.Acceleration);
         }
-
         private void Rotate()
         {
-            if (!walker.Gunner.SeeTarget())
+            Vector3 targetDirection;
+            if (aimLock <= 0 && walker.Gunner.SeeTarget() && ((walker.Gunner.TargetInRange(0) && walker.Gunner.CanShoot(0)) || (walker.Gunner.TargetInRange(1) && walker.Gunner.CanShoot(1))))
+                targetDirection = walker.Gunner.Target.transform.position - walker.transform.position;
+            else
+                targetDirection = path.Peek() - walker.transform.position;
+            LookOn(targetDirection);
+        }
+        private void LookOn(Vector3 direction)
+        {
+            if (direction != Vector3.zero)
             {
-                Vector3 targetDirection = path.Peek() - walker.transform.position;
-                if (targetDirection != Vector3.zero)
-                {
-                    Quaternion targetRotation = Quaternion.LookRotation(targetDirection, new Vector3(0, 1, 0));
-                    walker.transform.rotation = Quaternion.RotateTowards(walker.transform.rotation, targetRotation, Time.deltaTime * walker.RotationSpeed);
-                }
+                Quaternion targetRotation = Quaternion.LookRotation(direction, new Vector3(0, 1, 0));
+                walker.transform.rotation = Quaternion.RotateTowards(walker.transform.rotation, targetRotation, Time.deltaTime * walker.RotationSpeed);
             }
         }
         private void Stabilisation()
@@ -1316,6 +1391,98 @@ namespace SpaceCommander
         private void ScaleJetream(float scale)
         {
             walker.ScaleJetream = new Vector3(Mathf.Clamp01(scale), 0, 1);
+        }
+        public bool ExecetePointManeuver(PointManeuverType type, Vector3 point, Vector3 direction)
+        {
+            Debug.Log(walker.name + " execute " + type.ToString());
+            aimLock = 2;
+            switch (type)
+            {
+                case PointManeuverType.PatroolLine:
+                    return PatroolLine(point, direction);
+                case PointManeuverType.PatroolDiamond:
+                    return PatroolDiamond(point, direction.magnitude);
+                case PointManeuverType.PatroolPyramid:
+                    return PatroolPyramid(point, direction.magnitude);
+                case PointManeuverType.PatroolSpiral:
+                    return PatroolLine(point, direction);
+            }
+            return false;
+        }
+        public bool ExeceteTargetManeuver(TatgetManeuverType type, Transform target)
+        {
+            Debug.Log(walker.name + " execute " + type.ToString());
+            switch (type)
+            {
+                case TatgetManeuverType.Evasion:
+                        return Evasion(target);
+                case TatgetManeuverType.Flank:
+                        return Evasion(target);
+                case TatgetManeuverType.BoomZoom:
+                        return Evasion(target);
+                case TatgetManeuverType.IncreaseDistance:
+                        return Evasion(target);
+                case TatgetManeuverType.DecreaseDistance:
+                        return Evasion(target);
+                case TatgetManeuverType.SternFollow:
+                        return Evasion(target);
+                case TatgetManeuverType.SideFollow:
+                        return Evasion(target);
+                case TatgetManeuverType.ToSternDethZone:
+                        return Evasion(target);
+            }
+            return false;
+        }
+        private bool PatroolLine(Vector3 point, Vector3 direction)
+        {
+            Vector3[] path = new Vector3[3];
+            path[0] = point + direction;
+            path[1] = point - direction;
+            path[2] = point;
+            return MoveToQueue(path);
+        }
+        private bool PatroolDiamond(Vector3 point, float distance)
+        {
+            Vector3[] path = new Vector3[7];
+            float randomRight = UnityEngine.Random.Range(-1f, 1f);
+            float randomUp = UnityEngine.Random.Range(-1f, 1f);
+            path[0] = point + Vector3.forward * distance;
+            path[1] = point + Vector3.right * distance * Mathf.Sign(randomRight);
+            path[2] = point + Vector3.up * distance * Mathf.Sign(randomUp);
+            path[3] = point + Vector3.right * distance * -Mathf.Sign(randomRight);
+            path[4] = point + Vector3.forward * distance * -1;
+            path[5] = point + Vector3.forward * distance * -Mathf.Sign(randomUp);
+            path[6] = point;
+            return MoveToQueue(path);
+        }
+        private bool PatroolPyramid(Vector3 point, float distance)
+        {
+            Vector3[] path = new Vector3[5];
+            float randomRight = UnityEngine.Random.Range(-1f, 1f);
+            path[0] = point + Vector3.up * distance * (Mathf.Sqrt(6f) / 4f);
+            path[1] = point + Vector3.up * distance * (Mathf.Sqrt(6f) / 12f) + Vector3.forward * distance * -(Mathf.Sqrt(3f) / 6f) + Vector3.right * distance * (1f / 2f) * Mathf.Sign(randomRight);
+            path[2] = point + Vector3.up * distance * (Mathf.Sqrt(6f) / 12f) + Vector3.forward * distance * -(Mathf.Sqrt(3f) / 6f) + Vector3.right * distance * (1f / 2f) * -Mathf.Sign(randomRight);
+            path[3] = point + Vector3.up * distance * (Mathf.Sqrt(6f) / 12f) + Vector3.forward * distance * -(Mathf.Sqrt(3f) / 3f);
+            path[4] = point;
+            return MoveToQueue(path);
+        }
+        protected bool Evasion(Transform hazard)
+        {
+            float randomDistanceRight = UnityEngine.Random.Range(30f, 50f);
+            float randomDistanceUp = UnityEngine.Random.Range(30f, 50f);
+            float randomRight = UnityEngine.Random.Range(-1f, 1f);
+            float randomUp = UnityEngine.Random.Range(-1f, 1f);
+            Vector3 point = walker.transform.position + Vector3.right * randomDistanceRight * Mathf.Sign(randomRight) + Vector3.right * randomDistanceRight * Mathf.Sign(randomRight);
+            aimLock = 2; //locked by seconds
+            return MoveTo(point);
+        }
+        public static float MotionToStop(float V, float A)
+        {
+            return (Mathf.Pow(V, 2f)) / (2f * A);
+        }
+        public static float Motion(float V0, float V, float A)
+        {
+            return (Mathf.Pow(V, 2f) - Mathf.Pow(V0, 2f)) / 2f * A;
         }
     }
     public class PathNode

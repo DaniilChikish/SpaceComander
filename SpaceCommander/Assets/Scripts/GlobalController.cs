@@ -134,7 +134,10 @@ namespace SpaceCommander
             }
         }
     }
-    public class NavmeshMovementController : IDriver
+    /**
+     * Deprecated
+     * **/
+    public class NavmeshMovementController// : IDriver
     {
         private DriverStatus status;
         private SpaceShip walker;
@@ -316,25 +319,15 @@ namespace SpaceCommander
             for (int slot = 0; slot < weapons.Length; slot++)
                 if (synchWeapons[slot] > 0)
                     synchWeapons[slot] -= Time.deltaTime;
-            if (!owner.ManualControl && target != null&&SeeTarget()&&(TargetInRange(0)||TargetInRange(1)))
-            {
+            if (targetLockdownCount > 0)
                 targetLockdownCount -= Time.deltaTime;
-                //Debug.Log("target - " + Target.transform.position);
-                //Debug.Log("aim - " + aimPoint);
-                //наведение на цель
-                if ((target.transform.position - owner.transform.position).normalized != Vector3.zero)
-                {
-                    Quaternion targetRotation = Quaternion.LookRotation(target.transform.position - owner.transform.position, new Vector3(0, 1, 0));
-                    owner.transform.rotation = Quaternion.RotateTowards(owner.transform.rotation, targetRotation, Time.deltaTime * owner.RotationSpeed);
-                }
-            }
         }
         public bool SeeTarget()
         {
             if (target != null)
             {
                 RaycastHit hit;
-                Physics.Raycast(owner.transform.position, target.transform.position - owner.transform.position, out hit, 100000, 1);
+                Physics.Raycast(owner.transform.position, target.transform.position - owner.transform.position, out hit, 100000, (1 << 0 | 1 << 8)); //1 - default layer, 9 - terrain layer -1
                 return (hit.transform == target.transform);
             }
             else return false;
@@ -348,6 +341,12 @@ namespace SpaceCommander
         public bool TargetInRange(int slot)
         {
             return (target != null && Vector3.Distance(target.transform.position, owner.transform.position) < weapons[slot][0].Range);
+        }
+        public bool CanShoot(int slot)
+        {
+            if (indexWeapons[slot] >= weapons[slot].Length)
+                indexWeapons[slot] = 0;
+            return weapons[slot][indexWeapons[slot]].IsReady;
         }
         public bool SetAim(Unit target, bool immediately, float lockdown)
         {
@@ -670,7 +669,6 @@ namespace SpaceCommander
                 if (target != null)
                     Shoot(target.transform);
                 else Shoot(null);
-                heat++;
                 backCount = 60f / Firerate;
                 return true;
             }

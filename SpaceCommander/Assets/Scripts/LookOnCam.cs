@@ -17,7 +17,8 @@ namespace SpaceCommander.Service
         {
             if (cam)
             {
-                this.transform.up = -cam.transform.forward;
+                this.transform.forward = -cam.transform.forward;
+                //this.transform.right = -cam.transform.right;
             }
         }
     }

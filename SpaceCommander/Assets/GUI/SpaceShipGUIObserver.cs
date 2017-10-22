@@ -11,11 +11,6 @@ namespace SpaceCommander
     public enum ObserverMode { None, Half, Full }
     public class SpaceShipGUIObserver : MonoBehaviour
     {
-        //public Texture2D healthPanel;
-        //public Texture2D healthBarBack;
-        //public Texture2D healthBarFill;
-        //public Texture2D shieldBarBack;
-        //public Texture2D shieldBarFill;
         private const float MovDuratuon = 0.8f;
         private Image ShieldBar;
         private Text ShieldCount;
@@ -546,11 +541,22 @@ namespace SpaceCommander
                 if (observable != null)
                 {
                     observable.ManualControl = true;
-                    if (observable.Type == UnitClass.LR_Corvette || observable.Type == UnitClass.Guard_Corvette || observable.Type == UnitClass.Support_Corvette)
-                        maincam.targetOffset = new Vector3(0, 10, -15);
-                    else if (observable.Type == UnitClass.Figther || observable.Type == UnitClass.Command || observable.Type == UnitClass.Bomber)
-                        maincam.targetOffset = new Vector3(0, 5, -10);
-                    else maincam.targetOffset = new Vector3(0, 1, -5);
+                    switch (observable.Type)
+                    {
+                        case UnitClass.LR_Corvette:
+                        case UnitClass.Guard_Corvette:
+                        case UnitClass.Support_Corvette:
+                            maincam.targetOffset = new Vector3(0, 10, -30);
+                            break;
+                        case UnitClass.Figther:
+                        case UnitClass.Command:
+                        case UnitClass.Bomber:
+                            maincam.targetOffset = new Vector3(0, 5, -15);
+                            break;
+                        default:
+                            maincam.targetOffset = new Vector3(0, 1, -5);
+                            break;
+                    }
                     maincam.TargetFollow = observable.GetTransform();
                     FindObjectOfType<ShipManualController>().owner = observable.GetTransform().GetComponent<SpaceShip>();
                     FindObjectOfType<ShipManualController>().enabled = true;

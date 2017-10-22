@@ -573,15 +573,26 @@ namespace SpaceCommander
         {
             //owner.gameObject.GetComponent<NavMeshAgent>().enabled = true;
             TargetBuffer = null;
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
         }
         private void Update()
         {
             Fire();
             ActivateModule();
             TagetLockdown();
+            if (!Input.GetKey(freeCursor))
+            {
+                Cursor.visible = false;
+                Cursor.lockState = CursorLockMode.Locked;
+                RotateByMouse();
+            }
+            else
+            {
+                Cursor.visible = true;
+                Cursor.lockState = CursorLockMode.None;
+            }
         }
-
-
         private void Fire()
         {
             if (Input.GetAxis(primaryWeaponAxis) != 0)
@@ -773,17 +784,6 @@ namespace SpaceCommander
         {
             Move();
             Rotate();
-            if (!Input.GetKey(freeCursor))
-            {
-                Cursor.visible = false;
-                Cursor.lockState = CursorLockMode.Locked;
-                RotateByMouse();
-            }
-            else
-            {
-                Cursor.visible = true;
-                Cursor.lockState = CursorLockMode.None;
-            }
             if (!tridimensional)
                 Stabilisation();
             if (Input.GetKeyDown(switchCompensator))

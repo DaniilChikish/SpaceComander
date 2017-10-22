@@ -64,18 +64,18 @@ namespace SpaceCommander.Units
                 case TargetStateType.Captured:
                     {
                         UseModule(new SpellFunction[] { SpellFunction.Attack, SpellFunction.Debuff });
-                        return ShortenDistance();
+                        return Driver.ExeceteTargetManeuver(TatgetManeuverType.DecreaseDistance, Gunner.Target.transform);
                     }
                 case TargetStateType.InPrimaryRange:
                     {
                         UseModule(new SpellFunction[] { SpellFunction.Attack });
                         UseModule(new SpellFunction[] { SpellFunction.Self, SpellFunction.Buff });
-                        return IncreaseDistance();
+                        return Driver.ExeceteTargetManeuver(TatgetManeuverType.IncreaseDistance, Gunner.Target.transform);
                     }
                 case TargetStateType.InSecondaryRange:
                     {
                         UseModule(new SpellFunction[] { SpellFunction.Attack, SpellFunction.Debuff });
-                        return ShortenDistance();
+                        return Driver.ExeceteTargetManeuver(TatgetManeuverType.DecreaseDistance, Gunner.Target.transform);
                     }
                 case TargetStateType.BehindABarrier:
                     {

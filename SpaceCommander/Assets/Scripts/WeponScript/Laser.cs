@@ -68,12 +68,10 @@ namespace SpaceCommander.Weapons
             }
             else beam.SetActive(false);
         }
-        public override bool IsReady { get { return (!overheat && backCount <= 0 &&!beam.activeInHierarchy); } }
-
         protected override void Shoot(Transform target)
         {
             //GlobalController Global = FindObjectsOfType<GlobalController>()[0];
-            impulseBackount = 1;
+            impulseBackount = 0.1f;
         }
 
         public override void Reset()

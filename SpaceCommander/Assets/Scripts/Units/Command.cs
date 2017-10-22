@@ -41,12 +41,12 @@ namespace SpaceCommander.Units
                 case TargetStateType.InPrimaryRange:
                     {
                         UseModule(new SpellFunction[] { SpellFunction.Defence, SpellFunction.Buff });
-                        return IncreaseDistance();
+                        return Driver.ExeceteTargetManeuver(TatgetManeuverType.IncreaseDistance, Gunner.Target.transform);
                     }
                 case TargetStateType.InSecondaryRange:
                     {
                         UseModule(new SpellFunction[] { SpellFunction.Attack, SpellFunction.Buff });
-                        return Evasion(CurrentTarget.transform.right);
+                        return Driver.ExeceteTargetManeuver(TatgetManeuverType.Evasion, CurrentTarget.transform);
                     }
                 case TargetStateType.BehindABarrier:
                     {

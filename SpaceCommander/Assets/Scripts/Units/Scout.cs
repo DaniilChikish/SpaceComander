@@ -45,7 +45,7 @@ namespace SpaceCommander.Units
                 case TargetStateType.InPrimaryRange:
                     {
                         UseModule(new SpellFunction[] { SpellFunction.Self, SpellFunction.Buff });
-                        return Evasion(CurrentTarget.transform.right);
+                        return Driver.ExeceteTargetManeuver(TatgetManeuverType.Evasion, CurrentTarget.transform);
                     }
                 case TargetStateType.InSecondaryRange:
                     {
@@ -65,30 +65,9 @@ namespace SpaceCommander.Units
             //Debug.Log("new loop");
             idleFulag = !idleFulag;
             if (idleFulag)
-                return PatroolTriangle();
-            else return PatroolPoint();
+                return Driver.ExecetePointManeuver(PointManeuverType.PatroolSpiral, this.transform.position, this.transform.forward * 50);
+            else return Driver.ExecetePointManeuver(PointManeuverType.PatroolDiamond, this.transform.position, this.transform.forward * 50);
         }
-        private bool PatroolTriangle()
-        {
-            //waitingBackCount = 40f;
-            float dirflag;
-            if (Randomizer.Uniform(-10, 10, 1)[0] > 0)
-                dirflag = -1;
-            else dirflag = 1;
-            Vector3 point;
-            float n = Convert.ToSingle(Randomizer.Uniform(10, 25, 1)[0]);
-            float j = 1;
-            for (float i = 1; i < 8; i++)
-            {
-                point = (transform.forward * n * i) + (transform.right * j * dirflag * n) + new Vector3(0, 0.5f, 0) + this.transform.position;
-                dirflag = dirflag * -1;
-                Driver.MoveToQueue(point);
-                j++;
-            }
-            Driver.MoveToQueue(this.transform.position);
-            return true;
-        }
-
         public override void SendTo(Vector3 destination)
         {
             UseModule(new SpellFunction[] { SpellFunction.Attack, SpellFunction.Buff });

@@ -50,7 +50,7 @@ namespace SpaceCommander.Units
                     {
                         UseModule(new SpellFunction[] { SpellFunction.Self, SpellFunction.Buff });
                         UseModule(new SpellFunction[] { SpellFunction.Attack, SpellFunction.Buff });
-                        return Evasion(CurrentTarget.transform.right);
+                        return Driver.ExeceteTargetManeuver(TatgetManeuverType.Evasion, CurrentTarget.transform);
                     }
                 case TargetStateType.InSecondaryRange:
                     {
@@ -71,7 +71,7 @@ namespace SpaceCommander.Units
             idleFulag = !idleFulag;
             if (idleFulag)
                 return PatroolTriangle();
-            else return PatroolPoint();
+            return Driver.ExecetePointManeuver(PointManeuverType.PatroolDiamond, this.transform.position, this.transform.forward * 50);
         }
         private bool PatroolTriangle()
         {

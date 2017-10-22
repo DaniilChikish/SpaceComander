@@ -30,8 +30,8 @@ namespace SpaceCommander.Units
         {
             idleFulag = !idleFulag;
             if (idleFulag)
-                return PatroolLinePerpendicularly(150);
-            else return PatroolPoint();
+                return Driver.ExecetePointManeuver(PointManeuverType.PatroolLine, this.transform.position, this.transform.right * 150);
+            else return Driver.ExecetePointManeuver(PointManeuverType.PatroolDiamond, this.transform.position, this.transform.forward * 50);
         }
     }
 }

@@ -28,6 +28,10 @@ namespace SpaceCommander
         void FixedUpdate();
         bool MoveTo(Vector3 destination);
         bool MoveToQueue(Vector3 destination);
+        bool MoveToQueue(Vector3[] path);
+        bool Follow(Unit target);
+        bool ExecetePointManeuver(PointManeuverType type, Vector3 point, Vector3 direction);
+        bool ExeceteTargetManeuver(TatgetManeuverType type, Transform target);
         void BuildPathArrows();
         void ClearQueue();
         int PathPoints { get; }
@@ -46,6 +50,7 @@ namespace SpaceCommander
         float GetRange(int slot);
         bool SeeTarget();
         bool AimOnTarget();
+        bool CanShoot(int slot);
         bool TargetInRange(int slot);
     }
     public interface IWeapon
