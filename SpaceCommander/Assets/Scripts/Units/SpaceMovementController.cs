@@ -730,6 +730,7 @@ namespace SpaceCommander
         public float accurancy = 10f;
         private const float thrustAccel = 1f;
         private const float thrustDeah = 0.3f;
+        private const float speedSigma = 0.1f;
 
         private SpaceShip walker;
         private Transform walkerTransform;
@@ -782,6 +783,8 @@ namespace SpaceCommander
             else calculating = false;
             if (aimLock > 0)
                 aimLock -= Time.deltaTime;
+            Move();
+            Rotate();
             switch (status)
             {
                 case DriverStatus.Navigating:
@@ -789,8 +792,8 @@ namespace SpaceCommander
                         if (path.Count > 0)
                         {
                             //MoveSimple();
-                            Move();
-                            Rotate();
+                            //Move();
+                            //Rotate();
                             if ((path.Peek() - walkerTransform.position).magnitude < accurancy)
                             {
                                 path.Dequeue();
@@ -807,8 +810,8 @@ namespace SpaceCommander
                         if (path.Count > 0)
                         {
                             //MoveSimple();
-                            Move();
-                            Rotate();
+                            //Move();
+                            //Rotate();
                             if ((path.Peek() - walkerTransform.position).magnitude < accurancy)
                             {
                                 path.Dequeue();
@@ -825,12 +828,12 @@ namespace SpaceCommander
                     }
                 case DriverStatus.Maneuvering:
                     {
-                        Move();
+                        //Move();
                         break;
                     }
                 default:
                     {
-                        Move();
+                        //Move();
                         if (!walker.ManualControl && walker.Gunner.Target == null)
                             Stabilisation();
                         break;
@@ -1321,7 +1324,7 @@ namespace SpaceCommander
                     else signTarget = -1;
                     verticalShiftThrust = Mathf.Clamp(targetPojectionY * signTarget, -walker.ShiftSpeed, walker.ShiftSpeed);
                     if (targetPojectionY < SpaceMovementController.MotionToStop(verticalShiftThrust, -walker.Acceleration * -Mathf.Sign(mainThrust)))
-                       verticalShiftThrust = 0;
+                        verticalShiftThrust = 0;
                 }
             }
             else
@@ -1330,8 +1333,8 @@ namespace SpaceCommander
                 horisontalShiftThrust = 0;
                 verticalShiftThrust = 0;
             }
-
             float mainSpeed = Vector3.Project(walkerBody.velocity, walkerBody.transform.forward).magnitude;
+            if (!(mainSpeed < speedSigma && Mathf.Abs(mainThrust) < speedSigma))
             {
                 if (Vector3.Angle(walkerBody.velocity, walkerBody.transform.forward) < 90)
                     signVelocity = 1;
@@ -1340,6 +1343,7 @@ namespace SpaceCommander
             }
 
             float horisontalSpeed = Vector3.Project(walkerBody.velocity, walkerBody.transform.right).magnitude;
+            if (!(horisontalSpeed < speedSigma && Mathf.Abs(horisontalShiftThrust) < speedSigma))
             {
                 if (Vector3.Angle(walkerBody.velocity, walkerBody.transform.right) < 90)
                     signVelocity = 1;
@@ -1348,6 +1352,7 @@ namespace SpaceCommander
             }
 
             float verticalSpeed = Vector3.Project(walkerBody.velocity, walkerBody.transform.up).magnitude;
+            if (!(verticalSpeed < speedSigma && Mathf.Abs(verticalShiftThrust) < speedSigma))
             {
                 if (Vector3.Angle(walkerBody.velocity, walkerBody.transform.up) < 90)
                     signVelocity = 1;
@@ -1359,10 +1364,10 @@ namespace SpaceCommander
         }
         private void Rotate()
         {
-            Vector3 targetDirection;
+            Vector3 targetDirection = walkerTransform.forward;
             if (aimLock <= 0 && walker.Gunner.SeeTarget() && ((walker.Gunner.TargetInRange(0) && walker.Gunner.CanShoot(0)) || (walker.Gunner.TargetInRange(1) && walker.Gunner.CanShoot(1))))
                 targetDirection = walker.Gunner.Target.transform.position - walker.transform.position;
-            else
+            else if (path.Count>0)
                 targetDirection = path.Peek() - walker.transform.position;
             LookOn(targetDirection);
         }

@@ -5,16 +5,24 @@ using UnityEngine;
 
 namespace SpaceCommander
 {
-    public class ForceShield : MonoBehaviour
+    public class ForceShield : MonoBehaviour, IShield
     {
-        public float maxCampacity;
-        public float force;
-        public float recharging;
-        public bool isOwerheat;
-        public float cooldownChield;
-        public float firstBlinker;
-        public float secondBlinker;
-        public float shootCount;
+        [SerializeField]
+        private float maxCampacity;
+        [SerializeField]
+        private float force;
+        [SerializeField]
+        private float recharging;
+        [SerializeField]
+        private bool isOverheat;
+        [SerializeField]
+        private float cooldownChield;
+        [SerializeField]
+        private float firstBlinker;
+        [SerializeField]
+        private float secondBlinker;
+        [SerializeField]
+        private float shootCount;
         MeshRenderer firstFieldRend;
         Collider firstFieldColl;
         MeshRenderer secondField;
@@ -22,7 +30,10 @@ namespace SpaceCommander
         private SpaceShip owner;
         private GlobalController Global;
 
-        // Use this for initialization
+        public float Force { get { return force; } set { force = value; } }
+        public float MaxCampacity { get { return maxCampacity; } set { maxCampacity = value; } }
+        public float Recharging { get { return recharging; } set { recharging = value; } }
+        public bool IsOverheat { get { return isOverheat; } }
         void Start()
         {
             firstFieldRend = this.transform.FindChild("FirstField").GetComponent<MeshRenderer>();
@@ -38,7 +49,7 @@ namespace SpaceCommander
         {
             if (shootCount > 0)
                 shootCount = shootCount * 0.95f;
-            if (force < 0 && !isOwerheat)
+            if (force < 0 && !isOverheat)
                 Owerheat();
             else if (cooldownChield <= 0 && secondBlinker <= 0 && force < owner.ShieldCampacity)
             {
@@ -46,7 +57,7 @@ namespace SpaceCommander
             }
             if (cooldownChield > 0)
                 cooldownChield -= Time.deltaTime;
-            if (!isOwerheat)
+            if (!isOverheat)
             {
                 if (firstBlinker <= 0)
                     firstFieldColl.enabled = true;
@@ -91,7 +102,7 @@ namespace SpaceCommander
         protected void OnTriggerEnter(Collider collision)
         {
 
-            if (!isOwerheat)
+            if (!isOverheat)
             {
                 switch (collision.gameObject.tag)
                 {
@@ -108,7 +119,8 @@ namespace SpaceCommander
                         }
                     case "Missile":
                         {
-                            collision.GetComponent<SelfguidedMissile>().Arm();
+                            SelfguidedMissile armtrigger = collision.GetComponent<SelfguidedMissile>();
+                            if (armtrigger) armtrigger.Arm();
                             break;
                         }
                     case "Explosion":
@@ -121,7 +133,7 @@ namespace SpaceCommander
         }
         protected void OnTriggerStay(Collider collision)
         {
-            if (!isOwerheat)
+            if (!isOverheat)
             {
                 switch (collision.gameObject.tag)
                 {
@@ -146,7 +158,8 @@ namespace SpaceCommander
                         {
                             secondField.enabled = true;
                             Rigidbody shell = collision.GetComponent<Rigidbody>();
-                            collision.GetComponent<SelfguidedMissile>().Arm();
+                            SelfguidedMissile armtrigger = collision.GetComponent<SelfguidedMissile>();
+                                if (armtrigger) armtrigger.Arm();
                             secondBlinker = 1.5f;
                             shell.AddForce((collision.transform.position - this.transform.position).normalized * Mathf.Sqrt(shell.mass * maxCampacity * 10), ForceMode.Force);//velocity = collision.GetComponent<Rigidbody>().velocity / 2;
                             break;
@@ -166,7 +179,7 @@ namespace SpaceCommander
         }
         public void Owerheat()
         {
-            isOwerheat = true;
+            isOverheat = true;
             firstFieldRend.enabled = false;
             firstFieldColl.enabled = false;
             shildCollaps.Play();
@@ -175,7 +188,7 @@ namespace SpaceCommander
         }
         public void Reload()
         {
-            isOwerheat = false;
+            isOverheat = false;
             firstFieldRend.enabled = true;
             firstFieldColl.enabled = true;
         }

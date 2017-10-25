@@ -4,13 +4,12 @@ using UnityEngine;
 
 namespace SpaceCommander.Weapons
 {
-    class BombardierMissile : Torpedo
+    class BombardierMissile : UnguidedMissile
     {
         protected override void Start()
         {
             base.Start();
             gameObject.GetComponent<Rigidbody>().AddForce(transform.forward * DropImpulse, ForceMode.Impulse);
-            lt = 0;
         }
         public override void Explode()
         {

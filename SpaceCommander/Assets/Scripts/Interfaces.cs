@@ -21,6 +21,25 @@ namespace SpaceCommander
         Unit CurrentTarget { get; }
         Transform GetTransform();
     }
+    public interface IArmor
+    {
+        float Hitpoints { get; set; }
+        float MaxHitpoints { get; }
+        float ShellResist { get; }
+        float EnergyResist { get; }
+        float BlastResist { get; }
+        void StatUp(float hitpoints, float maxHitpoints, float shellResist, float energyResist, float blastResist);
+    }
+    public interface IShield
+    {
+        float Force { get; set; }
+        float MaxCampacity { get; set; }
+        float Recharging { get; set; }
+        bool IsOverheat { get; }
+        void Owerheat();
+        void Reload();
+        void Blink(float blink);
+    }
     public interface IDriver
     {
         Vector3 Velocity { get; }

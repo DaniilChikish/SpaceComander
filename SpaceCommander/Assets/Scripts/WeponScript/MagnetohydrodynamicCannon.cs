@@ -14,28 +14,20 @@ namespace SpaceCommander.Weapons
         }
         protected override void UpdateLocal()
         {
-            firerate = (200 + 800 * (heat / maxHeat)) * (1 + FirerateMultiplacator);
+            Firerate = (200 + 800 * (heat / maxHeat));
         }
         protected override void Shoot(Transform target)
         {
-            float speed = roundSpeed;
             float damage = 10f;
             float armorPiersing = 9f;
             float mass = 20f;
             heat += 3;
             float localDisp = (Dispersion * heat / 50);
-            Quaternion direction = transform.rotation;
-            double[] randomOffset = Randomizer.Uniform(0, 100, 2);
-            if (randomOffset[0] > 50)
-                direction.x = direction.x + (Convert.ToSingle(Global.RandomNormalPool[Convert.ToInt32(randomOffset[0])] - Convert.ToSingle(Global.RandomNormalAverage)) * localDisp);
-            else
-                direction.x = direction.x + (Convert.ToSingle(Global.RandomNormalPool[Convert.ToInt32(randomOffset[0])] - Convert.ToSingle(Global.RandomNormalAverage)) * -localDisp);
-            if (randomOffset[1] > 50)
-                direction.y = direction.y + (Convert.ToSingle(Global.RandomNormalPool[Convert.ToInt32(randomOffset[1])] - Convert.ToSingle(Global.RandomNormalAverage)) * localDisp);
-            else
-                direction.y = direction.y + (Convert.ToSingle(Global.RandomNormalPool[Convert.ToInt32(randomOffset[1])] - Convert.ToSingle(Global.RandomNormalAverage)) * -localDisp);
-            GameObject shell = Instantiate(Global.MagnetoShell, gameObject.transform.position, direction);
-            shell.GetComponent<IShell>().StatUp(owner.Velocity + (speed * (1 + RoundspeedMultiplacator) * this.transform.forward), damage * (1 + DamageMultiplacator), armorPiersing * (1 + APMultiplacator), mass, false, null);
+            Quaternion dispersionDelta = RandomDirectionNormal(localDisp);
+
+            GameObject shell = Instantiate(Global.MagnetoShell, gameObject.transform.position, this.transform.rotation * dispersionDelta);
+            shell.GetComponent<IShell>().StatUp(owner.Velocity + (RoundSpeed * (dispersionDelta * this.transform.forward)), damage * (1 + DamageMultiplacator), armorPiersing * (1 + APMultiplacator), mass, false, null);
+            ownerBody.AddForceAtPosition(-this.transform.forward * mass * RoundSpeed, this.transform.position, ForceMode.Impulse);
         }
     }
 }

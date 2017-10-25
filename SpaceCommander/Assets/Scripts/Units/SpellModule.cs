@@ -925,6 +925,7 @@ namespace SpaceCommander
     public class TeamSpirit : SpellModule
     {
         Unit[] alies;
+        List<Weapon> weapons;
         public TeamSpirit(SpaceShip owner) : base(owner)
         {
             backCount = 0;
@@ -940,7 +941,7 @@ namespace SpaceCommander
         {
             base.Enable();
             alies = owner.GetAllies();
-            List<Weapon> weapons = new List<Weapon>();
+            weapons = new List<Weapon>();
             weapons.AddRange(owner.transform.GetComponentsInChildren<Weapon>());
             owner.SpeedMultiplicator += 0.1f;
             owner.RotationSpeedMultiplicator += 0.2f;
@@ -982,10 +983,10 @@ namespace SpaceCommander
     }
     public class ForcedTargetDesignator : SpellModule
     {
-        List<SpaceShip> alies;
+        Unit[] alies;
+        List<Weapon> weapons;
         public ForcedTargetDesignator(SpaceShip owner) : base(owner)
         {
-            alies = new List<SpaceShip>();
             backCount = 0;
             type = SpellType.Activated;
             //coolingTime = 60;
@@ -998,15 +999,11 @@ namespace SpaceCommander
         public override void Enable()
         {
             base.Enable();
-            GlobalController global = GameObject.FindObjectOfType<GlobalController>();
-            foreach (SpaceShip x in global.unitList)
-            {
-                if (x.Allies(owner.Team))
-                    alies.Add(x);
-            }
-            List<Weapon> weapons = new List<Weapon>();
+            alies = owner.GetAllies();
+            weapons = new List<Weapon>();
+            weapons.AddRange(owner.transform.GetComponentsInChildren<Weapon>());
             owner.RotationSpeedMultiplicator += 0.3f;
-            foreach (SpaceShip x in alies)
+            foreach (Unit x in alies)
             {
                 weapons.AddRange(x.transform.GetComponentsInChildren<Weapon>());
                 x.RotationSpeedMultiplicator += 0.3f;
@@ -1023,13 +1020,9 @@ namespace SpaceCommander
 
         protected override void Disable()
         {
-            GlobalController global = GameObject.FindObjectOfType<GlobalController>();
-            List<Weapon> weapons = new List<Weapon>();
-            weapons.AddRange(owner.transform.GetComponentsInChildren<Weapon>());
             owner.RotationSpeedMultiplicator -= 0.3f;
             foreach (SpaceShip x in alies)
             {
-                weapons.AddRange(x.transform.GetComponentsInChildren<Weapon>());
                 x.RotationSpeedMultiplicator -= 0.3f;
                 x.RadarRangeMultiplacator -= 0.5f;
             }

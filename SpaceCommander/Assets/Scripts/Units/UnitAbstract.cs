@@ -32,6 +32,7 @@ namespace SpaceCommander
         public float MaxHealthMultiplacator { set; get; }
         public abstract float ShellResist { get; }
         public abstract float EnergyResist { get; }
+        public abstract float BlastResist { get; }
         public float ResistMultiplacator { set; get; }
         public abstract float ShieldForce { set; get; }
         public abstract float ShieldRecharging { get; }
@@ -84,6 +85,7 @@ namespace SpaceCommander
         {
             followers.Remove(follower);
         }
+        public abstract void GetFireSupport(Unit Target);
     }
     public delegate int SortUnit(Unit x, Unit y);
     public abstract class SpaceShip : Unit, ISpaceShipObservable
@@ -112,8 +114,8 @@ namespace SpaceCommander
         protected float speedRotation;
         protected float speedShift;
         //override properties
-        public override float Health { set { armor.hitpoints = value; } get { return armor.hitpoints; } }
-        public override float MaxHealth { get { return armor.maxHitpoints * (1 + MaxHealthMultiplacator); } }
+        public override float Health { set { armor.Hitpoints = value; } get { return armor.Hitpoints; } }
+        public override float MaxHealth { get { return armor.MaxHitpoints * (1 + MaxHealthMultiplacator); } }
         public override Army Team { get { return team; } }
         public override Vector3 Velocity
         {
@@ -143,17 +145,18 @@ namespace SpaceCommander
         public override float RotationSpeed { get { return speedRotation * (1 + RotationSpeedMultiplicator); } }
         public override float ShiftSpeed { get { return speedShift * (1 + ShiftSpeedMultiplicator); } }
         public override float RadarRange { get { return radarRange * (1 + RadarRangeMultiplacator); } }
-        public override float ShieldForce { set { shield.force = value; } get { return shield.force; } }
-        public override float ShieldRecharging { get { return shield.recharging * (1 + ShieldRechargingMultiplacator); } }
-        public override float ShieldCampacity { get { return shield.maxCampacity * (1 + ShieldCampacityMultiplacator); } }
+        public override float ShieldForce { get { return shield.Force; } set { shield.Force = value; } }
+        public override float ShieldRecharging { get { return shield.Recharging * (1 + ShieldRechargingMultiplacator); } }
+        public override float ShieldCampacity { get { return shield.MaxCampacity * (1 + ShieldCampacityMultiplacator); } }
         public override Unit CurrentTarget { get { return Gunner.Target; } }
-        public override float ShellResist { get { return armor.shellResist * (1 + ResistMultiplacator); } }
-        public override float EnergyResist { get { return armor.energyResist * (1 + ResistMultiplacator); } }
+        public override float ShellResist { get { return armor.ShellResist * (1 + ResistMultiplacator); } }
+        public override float EnergyResist { get { return armor.EnergyResist * (1 + ResistMultiplacator); } }
+        public override float BlastResist { get { return armor.BlastResist * (1 + ResistMultiplacator); } }
 
         //own properties
-        public bool ShieldOwerheat { get { return shield.isOwerheat; } }
+        public bool ShieldOwerheat { get { return shield.IsOverheat; } }
         public float Stealthness { get { return stealthness; } set { stealthness = value; } }
-        public ForceShield GetShieldRef { get { return shield; } }
+        public IShield GetShieldRef { get { return shield; } }
         public SpellModule[] Module { get { return module; } }
 
         //interface
@@ -176,8 +179,8 @@ namespace SpaceCommander
         protected IGunner gunner;
         public IGunner Gunner { get { return gunner; } }
         protected GlobalController Global;
-        protected Armor armor;
-        protected ForceShield shield;
+        protected IArmor armor;
+        protected IShield shield;
         private List<IImpact> impacts;
         public SpellModule[] module;
         protected float synchAction;
@@ -209,8 +212,8 @@ namespace SpaceCommander
             Global.unitList.Add(this);
             Anchor = this.transform.position;
             //
-            armor = this.gameObject.GetComponent<Armor>();
-            shield = this.gameObject.GetComponent<ForceShield>();
+            armor = this.gameObject.GetComponent<IArmor>();
+            shield = this.gameObject.GetComponent<IShield>();
             reams = GameObjectUtility.GetChildObjectByName(this.transform, "Jetream").ToArray();
             //
             StatsUp();
@@ -250,15 +253,15 @@ namespace SpaceCommander
             stealthness = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "stealthness"));
             radiolink = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "radiolink"));
 
-            armor.maxHitpoints = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "maxHitpoints"));
-            armor.hitpoints = armor.maxHitpoints;
-            armor.shellResist = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "shellResist"));
-            armor.energyResist = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "energyResist"));
-            armor.blastResist = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "blastResist"));
+            float maxHitpoints = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "maxHitpoints"));
+            float shellResist = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "shellResist"));
+            float energyResist = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "energyResist"));
+            float blastResist = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "blastResist"));
+            armor.StatUp(maxHitpoints, maxHitpoints, shellResist, energyResist, blastResist);
 
-            shield.maxCampacity = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "maxCampacity"));
-            shield.force = shield.maxCampacity;
-            shield.recharging = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "recharging"));
+            shield.MaxCampacity = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "maxCampacity"));
+            shield.Force = shield.MaxCampacity;
+            shield.Recharging = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "recharging"));
         }
         protected void Update()//______________________Update
         {
@@ -1070,7 +1073,7 @@ namespace SpaceCommander
                 }
             }
         }
-        public void GetFireSupport(Unit Target)
+        public override void GetFireSupport(Unit Target)
         {
             if (Target.transform != this.transform)
                 Gunner.SetAim(Target, true, 20);

@@ -1,7 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+/**
+ * Торпедоносец/бомбардировщик (Bomber)
+ * Физические параметры: (по образу B-25)
+ *      Масса = 20000кг
+ *      Длина ~ 14м
+ * **/
 namespace SpaceCommander.Units
 {
     public class Bomber : SpaceShip

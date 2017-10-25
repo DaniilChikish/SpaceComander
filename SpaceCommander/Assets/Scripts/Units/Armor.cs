@@ -4,31 +4,39 @@ using System.Collections.Generic;
 using UnityEngine;
 namespace SpaceCommander
 {
-    public class Armor : MonoBehaviour
+    public class Armor : MonoBehaviour, IArmor
     {
         [SerializeField]
-        public float maxHitpoints;
+        private float maxHitpoints;
         [SerializeField]
-        public float hitpoints;
+        private float hitpoints;
         [SerializeField]
-        public float shellResist;
+        private float shellResist;
         [SerializeField]
-        public float energyResist;
+        private float energyResist;
         [SerializeField]
-        public float blastResist;
+        private float blastResist;
         private float hitCount;
         private SpaceShip owner;
         private GlobalController Global;
-        // Use this for initialization
-        public float ShellResist { get { return this.shellResist * (1 + owner.ResistMultiplacator); } }
-        public float EnergyResist { get { return this.energyResist * (1 + owner.ResistMultiplacator); } }
-        public float BlastResist { get { return this.blastResist * (1 + owner.ResistMultiplacator); } }
-        void Start()
+        public float Hitpoints { get { return hitpoints; } set { hitpoints = value; } }
+        public float MaxHitpoints { get { return this.maxHitpoints; } }
+        public float ShellResist { get { return this.shellResist; } }
+        public float EnergyResist { get { return this.energyResist; } }
+        public float BlastResist { get { return this.blastResist; } }
+        private void Start()
         {
             owner = transform.GetComponentInParent<SpaceShip>();
             Global = FindObjectOfType<GlobalController>();
         }
-
+        public void StatUp(float hitpoints, float maxHitpoints, float shellResist, float energyResist, float blastResist)
+        {
+            this.hitpoints = hitpoints;
+            this.maxHitpoints = maxHitpoints;
+            this.shellResist = shellResist;
+            this.energyResist = energyResist;
+            this.blastResist = blastResist;
+        }
         // Update is called once per frame
         void Update()
         {
@@ -46,31 +54,21 @@ namespace SpaceCommander
             {
                 case "Shell":
                     {
-                        hitCount += 1;
-                        //Debug.Log(collision.gameObject.name + " hit " + owner.name);
-                        float difference = collision.gameObject.GetComponent<IShell>().ArmorPiersing - ShellResist;
-                        if (difference > 1.5)
-                            multiplicator = 1.2f;
-                        else if (difference > -3)
-                            multiplicator = (Mathf.Sin((difference / 1.4f) + 0.5f) + 1f) * 0.6f;
-                        else
-                            multiplicator = 0.0f;
+                        float difference = Mathf.Clamp(collision.gameObject.GetComponent<IShell>().ArmorPiersing - ShellResist + 3, 0, 4f);
+                        multiplicator = difference / 3;
                         if (!owner.ShieldOwerheat) multiplicator = multiplicator * (1 - owner.ShieldForce / owner.ShieldCampacity);
-                        this.hitpoints -= collision.gameObject.GetComponent<IShell>().Damage * multiplicator;
+                        float damage = collision.gameObject.GetComponent<IShell>().Damage * multiplicator;
+                        this.hitpoints -= damage;
                         break;
                     }
                 case "Energy":
                     {
                         hitCount += 3;
-                        float difference = collision.gameObject.GetComponent<IEnergy>().ArmorPiersing - EnergyResist;
-                        if (difference > 0.6)
-                            multiplicator = 1f;
-                        else if (difference > -2.8)
-                            multiplicator = (Mathf.Sin((difference / 1.1f) + 1f) + 1f) * 0.5f;
-                        else
-                            multiplicator = 0.0f;
+                        float difference = Mathf.Clamp(collision.gameObject.GetComponent<IEnergy>().ArmorPiersing - EnergyResist + 2, 0, 4f);
+                        multiplicator = difference / 2;
                         if (!owner.ShieldOwerheat) multiplicator = multiplicator * 0.3f;
-                        this.hitpoints -= collision.gameObject.GetComponent<IEnergy>().Damage * multiplicator;
+                        float damage = collision.gameObject.GetComponent<IEnergy>().Damage * multiplicator;
+                        this.hitpoints -= damage;
                         break;
                     }
                 case "Unit":
@@ -97,35 +95,17 @@ namespace SpaceCommander
         }
         protected void OnCollisionStay(Collision collision)
         {
-            //Debug.Log("Hit armor");
-            //if (owner.GetShieldRef.force < 0)
-            //{
             float multiplicator;
             switch (collision.gameObject.tag)
             {
-                //case "Shell":
-                //    {
-                //        float difference = collision.gameObject.GetComponent<IShell>().ArmorPiersing - shellResist;
-                //        if (difference > 1.5)
-                //            multiplicator = 1.2f;
-                //        else if (difference > -3)
-                //            multiplicator = (Mathf.Sin((difference / 1.4f) + 0.5f) + 1f) * 0.6f;
-                //        else
-                //            multiplicator = 0.0f;
-                //        this.hitpoints -= collision.gameObject.GetComponent<IShell>().Damage * multiplicator;
-                //        break;
-                //    }
                 case "Energy":
                     {
                         hitCount += 3;
-                        float difference = collision.gameObject.GetComponent<IEnergy>().ArmorPiersing - EnergyResist;
-                        if (difference > 0.5)
-                            multiplicator = 1f;
-                        else if (difference > -3)
-                            multiplicator = (Mathf.Sin((difference / 1.1f) + 1f) + 1f) * 0.5f;
-                        else
-                            multiplicator = 0.0f;
-                        this.hitpoints -= collision.gameObject.GetComponent<IEnergy>().Damage * multiplicator * Time.deltaTime;
+                        float difference = Mathf.Clamp(collision.gameObject.GetComponent<IEnergy>().ArmorPiersing - EnergyResist + 2, 0, 4f);
+                        multiplicator = difference / 2;
+                        if (!owner.ShieldOwerheat) multiplicator = multiplicator * 0.3f;
+                        float damage = collision.gameObject.GetComponent<IEnergy>().Damage * multiplicator;
+                        this.hitpoints -= damage;
                         break;
                     }
                 case "Explosion":
@@ -135,45 +115,7 @@ namespace SpaceCommander
                         break;
                     }
             }
-            //}
         }
-        //protected void OnTriggerEnter(Collider trigger)
-        //{
-        //    float multiplicator;
-        //    switch (trigger.gameObject.tag)
-        //    {
-        //        case "Energy":
-        //            {
-        //                //Debug.Log(this.owner.name + ": Laser pierse by" + trigger.gameObject.GetComponentInParent<SpaceShip>().name);
-        //                hitCount += 3;
-        //                float difference = trigger.gameObject.GetComponent<IEnergy>().ArmorPiersing - EnergyResist;
-        //                if (difference > 0.5)
-        //                    multiplicator = 1f;
-        //                else if (difference > -3)
-        //                    multiplicator = (Mathf.Sin((difference / 1.1f) + 1f) + 1f) * 0.5f;
-        //                else
-        //                    multiplicator = 0.0f;
-        //                this.hitpoints -= trigger.gameObject.GetComponent<IEnergy>().Damage * multiplicator * Time.deltaTime;
-        //                break;
-        //            }
-        //        case "Explosion":
-        //            {
-        //                float sizeFactor = 0;
-        //                if (owner.Type == UnitClass.LR_Corvette)
-        //                    sizeFactor = 10;
-        //                else if (owner.Type == UnitClass.Guard_Corvette || owner.Type == UnitClass.Support_Corvette)
-        //                    sizeFactor = 5;
-        //                if (Vector3.Distance(trigger.transform.position, this.transform.position) < trigger.gameObject.GetComponent<Explosion>().MaxRadius + sizeFactor)
-        //                {
-        //                    multiplicator = (1 - BlastResist) * (trigger.gameObject.GetComponent<Explosion>().MaxRadius + sizeFactor - Vector3.Distance(trigger.transform.position, this.transform.position)) / trigger.gameObject.GetComponent<Explosion>().MaxRadius;
-        //                    if (multiplicator > 1) multiplicator = 1;
-        //                    if (multiplicator < 0) multiplicator = 0;
-        //                    this.hitpoints -= trigger.gameObject.GetComponent<Explosion>().Damage * multiplicator;
-        //                }
-        //                break;
-        //            }
-        //    }
-        //}
         protected void OnTriggerStay(Collider trigger)
         {
             float multiplicator;
@@ -183,28 +125,23 @@ namespace SpaceCommander
                     {
                         //Debug.Log(this.owner.name + ": Laser pierse by" + trigger.gameObject.GetComponentInParent<SpaceShip>().name);
                         hitCount += 3;
-                        float difference = trigger.gameObject.GetComponent<IEnergy>().ArmorPiersing - EnergyResist;
-                        if (difference > 0.5)
-                            multiplicator = 1f;
-                        else if (difference > -3)
-                            multiplicator = (Mathf.Sin((difference / 1.1f) + 1f) + 1f) * 0.5f;
-                        else
-                            multiplicator = 0.0f;
-                        this.hitpoints -= trigger.gameObject.GetComponent<IEnergy>().Damage * multiplicator * Time.deltaTime;
+                        float difference = Mathf.Clamp(trigger.gameObject.GetComponent<IEnergy>().ArmorPiersing - EnergyResist + 2, 0, 4f);
+                        multiplicator = difference / 2;
+                        if (!owner.ShieldOwerheat) multiplicator = multiplicator * 0.3f;
+                        float damage = trigger.gameObject.GetComponent<IEnergy>().Damage * multiplicator;
+                        this.hitpoints -= damage;
                         break;
                     }
                 case "Explosion":
                     {
                         float sizeFactor = 0;
                         if (owner.Type == UnitClass.LR_Corvette)
-                            sizeFactor = 10;
+                            sizeFactor = 30;
                         else if (owner.Type == UnitClass.Guard_Corvette || owner.Type == UnitClass.Support_Corvette)
-                            sizeFactor = 5;
+                            sizeFactor = 15;
                         if (Vector3.Distance(trigger.transform.position, this.transform.position) < trigger.gameObject.GetComponent<Explosion>().MaxRadius + sizeFactor)
                         {
-                            multiplicator = (1 - BlastResist) * (trigger.gameObject.GetComponent<Explosion>().MaxRadius + sizeFactor - Vector3.Distance(trigger.transform.position, this.transform.position)) / trigger.gameObject.GetComponent<Explosion>().MaxRadius;
-                            if (multiplicator > 1) multiplicator = 1;
-                            if (multiplicator < 0) multiplicator = 0;
+                            multiplicator = Mathf.Clamp01((1 - BlastResist) * (trigger.gameObject.GetComponent<Explosion>().MaxRadius + sizeFactor - Vector3.Distance(trigger.transform.position, this.transform.position)) / trigger.gameObject.GetComponent<Explosion>().MaxRadius);
                             this.hitpoints -= trigger.gameObject.GetComponent<Explosion>().Damage * multiplicator;
                         }
                         break;

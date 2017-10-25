@@ -14,11 +14,11 @@ namespace SpaceCommander.Weapons
         }
         protected override void Shoot(Transform target)
         {
-            Quaternion direction = transform.rotation;
-            GameObject mine = Instantiate(Global.MagMine, gameObject.transform.position, direction);
+            Quaternion dispersionDelta = RandomDirectionNormal(Dispersion);
+            GameObject mine = Instantiate(Global.MagMine, gameObject.transform.position, this.transform.rotation * dispersionDelta);
             mine.GetComponent<MagnetoMine>().team = owner.Team;
-            mine.GetComponent<Rigidbody>().AddForce(owner.Velocity + (DropImpulse * (1 + RoundspeedMultiplacator) * this.transform.forward), ForceMode.VelocityChange);
+            mine.GetComponent<Rigidbody>().AddForce(owner.Velocity + (DropImpulse * (1 + RoundspeedMultiplacator) * (dispersionDelta * this.transform.forward)), ForceMode.VelocityChange);
+            ownerBody.AddForceAtPosition(-this.transform.forward * DropImpulse, this.transform.position, ForceMode.Impulse);
         }
     }
 }
-

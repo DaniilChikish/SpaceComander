@@ -10,7 +10,7 @@ namespace Assets.TestScripts
     {
         protected override void StatsUp()
         {
-            type = UnitClass.Scout;
+            type = UnitClass.Support_Corvette;
             radarRange = 3000; //set in child
             radarPover = 10;
             speedThrust = 12; //set in child

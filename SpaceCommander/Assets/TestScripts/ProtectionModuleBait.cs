@@ -17,10 +17,6 @@ namespace Assets.TestScripts
             speedShift = 12;
             stealthness = 0.1f; //set in child
             radiolink = 2f;
-            armor.maxHitpoints = 100;
-            armor.hitpoints = armor.maxHitpoints;
-            shield.maxCampacity = 100;
-            shield.force = shield.maxCampacity;
             movementAiEnabled = false;
             combatAIEnabled = false;
             selfDefenceModuleEnabled = true;

@@ -105,6 +105,10 @@
     <Compile Include="Assets\Scripts\SelfDestructor.cs" />
     <Compile Include="Assets\Scripts\SerializeData.cs" />
     <Compile Include="Assets\Scripts\ShipManualController.cs" />
+    <Compile Include="Assets\Scripts\WeponScript\FirestormLauncher.cs" />
+    <Compile Include="Assets\TestScripts\Rangefinder.cs" />
+    <Compile Include="Assets\TestScripts\TestShield.cs" />
+    <Compile Include="Assets\TestScripts\TestArmor.cs" />
     <Compile Include="Assets\TestScripts\Speedometer.cs" />
     <Compile Include="Assets\Scripts\Units\Armor.cs" />
     <Compile Include="Assets\Scripts\Units\Bomber.cs" />

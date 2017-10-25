@@ -3,8 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DeusUtility.Random;
-
-
+/**
+  * Перехватчик-РЭБ (EMC)
+  * Физические параметры: (по образу самолета малой авиации)
+  *      Масса = 2000кг
+  *      Длина ~ 6м
+  * **/
 namespace SpaceCommander.Units
 {
     public class ECM : SpaceShip

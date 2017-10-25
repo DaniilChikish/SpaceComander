@@ -4,8 +4,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using DeusUtility.Random;
-
-
+/**
+ * Истребитель (Fighter)
+ * Физические параметры: (по образу F-16)
+ *      Масса = 15000кг
+ *      Длина ~ 12м
+ * **/
 namespace SpaceCommander.Units
 {
     public class Fighter : SpaceShip

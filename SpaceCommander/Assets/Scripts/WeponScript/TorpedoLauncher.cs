@@ -50,6 +50,7 @@ namespace SpaceCommander.Weapons
             else
                 torpedo.GetComponent<Torpedo>().SetTarget(this.transform.GetComponentInParent<Unit>().transform.position + this.transform.GetComponentInParent<Unit>().transform.forward * Range);
             torpedo.GetComponent<Torpedo>().SetTeam(owner.Team);
+            torpedo.GetComponent<Rigidbody>().AddForce(ownerBody.velocity, ForceMode.VelocityChange);
         }
     }
 }

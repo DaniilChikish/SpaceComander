@@ -546,15 +546,15 @@ namespace SpaceCommander
                         case UnitClass.LR_Corvette:
                         case UnitClass.Guard_Corvette:
                         case UnitClass.Support_Corvette:
-                            maincam.targetOffset = new Vector3(0, 10, -30);
+                            maincam.targetOffset = new Vector3(0, 20, -60);
                             break;
                         case UnitClass.Figther:
                         case UnitClass.Command:
                         case UnitClass.Bomber:
-                            maincam.targetOffset = new Vector3(0, 5, -15);
+                            maincam.targetOffset = new Vector3(0, 5, -20);
                             break;
                         default:
-                            maincam.targetOffset = new Vector3(0, 1, -5);
+                            maincam.targetOffset = new Vector3(0, 2, -10);
                             break;
                     }
                     maincam.TargetFollow = observable.GetTransform();

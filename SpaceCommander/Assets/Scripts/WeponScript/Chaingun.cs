@@ -4,6 +4,14 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 using DeusUtility.Random;
+/**
+* Автоматическая пушка
+* Физические параметры: (по образу M61 Vulcan)
+*      Скорострельность ~ 5000 в/м
+*      Начальная скорость ~ 1000 м/с
+*      Боезапас ~ 2000
+*      Масса снаряда ~ 0.2кг
+* **/
 
 namespace SpaceCommander.Weapons
 {
@@ -77,16 +85,16 @@ namespace SpaceCommander.Weapons
             if (rotSpeed > 2f)
             {
                 rotSpeed -= Time.deltaTime * 2;
-                firerate = (100 + 12000 * (rotSpeed / 5)) * (1 + FirerateMultiplacator);
+                Firerate = (100 + 6000 * (rotSpeed / 5)) * (1 + FirerateMultiplacator);
             }
             else if (rotSpeed > 0)
             {
                 rotSpeed -= Time.deltaTime;
-                firerate = (100 + 12000 * (rotSpeed / 5)) * (1 + FirerateMultiplacator);
+                Firerate = (100 + 6000 * (rotSpeed / 5)) * (1 + FirerateMultiplacator);
             }
             else
             {
-                firerate = 100;
+                Firerate = 100;
                 rotSpeed = 0;
             }
         }
@@ -94,38 +102,28 @@ namespace SpaceCommander.Weapons
         {
             this.rotSpeed += 0.75f - (0.75f * rotSpeed / 5) + Time.deltaTime;
             float localDisp = Dispersion + (Dispersion * this.rotSpeed / 2);
-            Quaternion direction = transform.rotation;
-            double[] randomOffset = Randomizer.Uniform(0, 100, 2);
-            if (randomOffset[0] > 50)
-                direction.x = direction.x + (Convert.ToSingle(Global.RandomNormalPool[Convert.ToInt32(randomOffset[0])] - Convert.ToSingle(Global.RandomNormalAverage)) * localDisp);
-            else
-                direction.x = direction.x + (Convert.ToSingle(Global.RandomNormalPool[Convert.ToInt32(randomOffset[0])] - Convert.ToSingle(Global.RandomNormalAverage)) * -localDisp);
-            if (randomOffset[1] > 50)
-                direction.y = direction.y + (Convert.ToSingle(Global.RandomNormalPool[Convert.ToInt32(randomOffset[1])] - Convert.ToSingle(Global.RandomNormalAverage)) * localDisp);
-            else
-                direction.y = direction.y + (Convert.ToSingle(Global.RandomNormalPool[Convert.ToInt32(randomOffset[1])] - Convert.ToSingle(Global.RandomNormalAverage)) * -localDisp);
-            GameObject shell = Instantiate(Global.UnitaryShell, gameObject.transform.position, direction);
+            Quaternion dispersionDelta = RandomDirectionNormal(localDisp);
+            GameObject shell = Instantiate(Global.UnitaryShell, gameObject.transform.position, this.transform.rotation * dispersionDelta);
             if (shellPosition >= ShellLine.Length)
                 shellPosition = 0;
 
-            float speed, damage, armorPiersing, mass;
+            float damage, armorPiersing, mass;
             bool canRicochet = false;
             GameObject explosionPrefab = null;
-            speed = roundSpeed;
             switch (ShellLine[shellPosition])
             {
                 case SmallShellType.SemiShell:
                     {
                         damage = 25f;
                         armorPiersing = 1.5f;
-                        mass = 0.75f;
+                        mass = 0.18f;
                         break;
                     }
                 case SmallShellType.APShell:
                     {
                         damage = 15f;
                         armorPiersing = 4;
-                        mass = 1.05f;
+                        mass = 0.22f;
                         canRicochet = true;
                         break;
                     }
@@ -133,7 +131,7 @@ namespace SpaceCommander.Weapons
                     {
                         damage = 5f;
                         armorPiersing = 1;
-                        mass = 1;
+                        mass = 0.2f;
                         explosionPrefab = Global.ShellBlast;
                         break;
                     }
@@ -141,7 +139,7 @@ namespace SpaceCommander.Weapons
                     {
                         damage = 30f;
                         armorPiersing = 1;
-                        mass = 0.6f;
+                        mass = 0.3f;
                         canRicochet = true;
                         break;
                     }
@@ -150,13 +148,14 @@ namespace SpaceCommander.Weapons
                     {
                         damage = 20f;
                         armorPiersing = 2;
-                        mass = 1;
+                        mass = 0.2f;
                         canRicochet = true;
                         break;
                     }
             }
             armorPiersing = armorPiersing * 1.5f;
-            shell.GetComponent<IShell>().StatUp(owner.Velocity + (speed * (1 + RoundspeedMultiplacator) * this.transform.forward), damage * (1 + DamageMultiplacator), armorPiersing * (1 + APMultiplacator), mass * (1 + ShellmassMultiplacator), canRicochet, explosionPrefab);
+            shell.GetComponent<IShell>().StatUp(owner.Velocity + (RoundSpeed * (dispersionDelta * this.transform.forward)), damage * (1 + DamageMultiplacator), armorPiersing * (1 + APMultiplacator), mass * (1 + ShellmassMultiplacator), canRicochet, explosionPrefab);
+            ownerBody.AddForceAtPosition((dispersionDelta * -this.transform.forward) * mass * RoundSpeed, this.transform.position, ForceMode.Impulse);
             shellPosition++;
         }
     }

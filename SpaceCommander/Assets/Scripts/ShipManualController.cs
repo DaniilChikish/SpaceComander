@@ -492,7 +492,8 @@ namespace SpaceCommander
         public enum AimStateType { Default, Locking, Locked }
         private const float lockdownDuration = 1.5f;
         private const float thrustAccel = 1f;
-        private const float thrustDeah = 0.3f;
+        private const float thrustDeah = 0.1f;
+        private const float speedSigma = 1f;
         private float lockdownCount;
         private Unit targetBuffer;
         public bool accelCompensator;
@@ -549,7 +550,7 @@ namespace SpaceCommander
         private string lockTargetAxis = "LockTarget";
         private string swithTargetAxis = "SwitchTarget";
         private KeyCode freeCursor = KeyCode.LeftAlt;
-        private KeyCode switchCompensator = KeyCode.Space;
+        private KeyCode switchCompensator = KeyCode.C;
         private void OnEnable()
         {
             Global = FindObjectOfType<GlobalController>();
@@ -824,7 +825,7 @@ namespace SpaceCommander
                 Vector3 velocity = body.velocity;
                 float sign;
                 float mainSpeed = Vector3.Project(body.velocity, body.transform.forward).magnitude;
-                if (Mathf.Abs(shift.z) < thrustDeah || mainSpeed > owner.Speed)
+                if ((Mathf.Abs(shift.z) < thrustDeah || mainSpeed > owner.Speed) && !(mainSpeed < speedSigma && Mathf.Abs(mainThrust) < speedSigma))
                 {
                     if (Vector3.Angle(body.velocity, body.transform.forward) < 90)
                         sign = 1;
@@ -832,7 +833,7 @@ namespace SpaceCommander
                     shift.z = Mathf.Clamp((mainThrust) - (mainSpeed * sign), -1, 1);
                 }
                 float horisontalSpeed = Vector3.Project(body.velocity, body.transform.right).magnitude;
-                if (Mathf.Abs(shift.x) < thrustDeah || horisontalSpeed > owner.ShiftSpeed)
+                if ((Mathf.Abs(shift.x) < thrustDeah || horisontalSpeed > owner.ShiftSpeed) && !(horisontalSpeed < speedSigma && Mathf.Abs(horisontalShiftThrust) < speedSigma))
                 {
                     if (Vector3.Angle(body.velocity, body.transform.right) < 90)
                         sign = 1;
@@ -840,7 +841,7 @@ namespace SpaceCommander
                     shift.x = Mathf.Clamp((horisontalShiftThrust) - (horisontalSpeed * sign), -1, 1);
                 }
                 float verticalSpeed = Vector3.Project(body.velocity, body.transform.up).magnitude;
-                if (Mathf.Abs(shift.y) < thrustDeah || verticalSpeed > owner.ShiftSpeed)
+                if ((Mathf.Abs(shift.y) < thrustDeah || verticalSpeed > owner.ShiftSpeed) && !(verticalSpeed < speedSigma && Mathf.Abs(verticalShiftThrust) < speedSigma))
                 {
                     if (Vector3.Angle(body.velocity, body.transform.up) < 90)
                         sign = 1;

@@ -245,7 +245,7 @@ namespace SpaceCommander
         private float targetLockdownCount;
         //private Vector3 oldTargetPosition;
         //private Vector3 aimPoint; //точка сведения
-        private ForceShield shield;
+        private IShield shield;
         private float[] synchWeapons;
         private int[] indexWeapons;
         //private float averageRoundSpeed;
@@ -346,7 +346,7 @@ namespace SpaceCommander
         {
             if (indexWeapons[slot] >= weapons[slot].Length)
                 indexWeapons[slot] = 0;
-            return weapons[slot][indexWeapons[slot]].IsReady;
+            return (weapons[slot][indexWeapons[slot]].IsReady || weapons[slot][indexWeapons[slot]].BackCounter <= 2);
         }
         public bool SetAim(Unit target, bool immediately, float lockdown)
         {
@@ -400,38 +400,46 @@ namespace SpaceCommander
         protected WeaponType type;
         protected GlobalController Global;
         protected Unit owner;
-
+        protected Rigidbody ownerBody;
         protected Unit target;
         public Unit Target { set { target = value; } get { return target; } }
-        protected float dispersion; //dafault 0;
-        protected float shildBlinkTime; //default 0.01
-        protected float roundSpeed; //default 1000;
-        protected float firerate;
+        private float dispersion; //dafault 0;
+        private float shildBlinkTime; //default 0.01
+        private float roundSpeed; //default 1000;
+        private float firerate;
+        private float range;
 
         protected bool PreAiming;
-        protected float range;
-
         protected float backCount;
 
-        public float Range { get { return range * (1 + RangeMultiplacator); } }
-        public float RoundSpeed { get { return roundSpeed * (1 + RoundspeedMultiplacator); } }
-        public float Dispersion { get { return dispersion * (1 + DispersionMultiplicator); } }
-        public float ShildBlink { get { return shildBlinkTime; } }
+        public float Range { get { return range * (1 + RangeMultiplacator); } protected set { range = value; } }
+        public float RoundSpeed { get { return roundSpeed * (1 + RoundspeedMultiplacator); } protected set { roundSpeed = value; } }
+        public float Dispersion { get { return dispersion * (1 + DispersionMultiplicator); } protected set { dispersion = value; } }
+        public float Firerate { get { return firerate * (1 + FirerateMultiplacator); } protected set { firerate = value; } }
+        public float ShildBlink { get { return shildBlinkTime; } protected set { shildBlinkTime = value; } }
         public float BackCounter { get { return backCount; } }
 
         public WeaponType Type { get { return type; } }
 
-        public float Firerate { get { return firerate * (1 + FirerateMultiplacator); } }
 
         protected void Start()
         {
             Global = FindObjectOfType<GlobalController>();
             owner = this.transform.GetComponentInParent<Unit>();
+            ownerBody = owner.GetComponent<Rigidbody>();
             roundSpeed = 150;
             shildBlinkTime = 0.01f;
             StatUp();
         }
         protected abstract void StatUp();
+        protected void StatUp(float dispersion,float shildBlinkTime,float roundSpeed, float firerate, float range)
+        {
+            this.dispersion = dispersion;
+            this.shildBlinkTime = shildBlinkTime;
+            this.roundSpeed = roundSpeed;
+            this.firerate = firerate;
+            this.range = range;
+        }
         // Update is called once per frame
         public virtual void Update()
         {
@@ -487,6 +495,22 @@ namespace SpaceCommander
         public abstract float MaxShootCounter { get; }
         public abstract bool Fire();
         protected abstract void Shoot(Transform target);
+        protected Quaternion RandomDirection(float dispersion)
+        {
+            Vector3 direction = Vector3.zero;
+            direction.x += dispersion * UnityEngine.Random.Range(-1, 1);
+            direction.y += dispersion * UnityEngine.Random.Range(-1, 1);
+            return Quaternion.Euler(direction);
+        }
+        protected Quaternion RandomDirectionNormal( float dispersion)
+        {
+            float vertComp = UnityEngine.Random.Range(-(Global.RandomNormalPool.Length - 2), Global.RandomNormalPool.Length - 2);
+            float horComp = UnityEngine.Random.Range(-(Global.RandomNormalPool.Length - 2), Global.RandomNormalPool.Length - 2);
+            Vector3 direction = Vector3.zero;
+            direction.x += (Convert.ToSingle(Global.RandomNormalPool[Convert.ToInt32(Mathf.Abs(vertComp))]) - Convert.ToSingle(Global.RandomNormalAverage)) * dispersion * Mathf.Sign(vertComp);
+            direction.y += (Convert.ToSingle(Global.RandomNormalPool[Convert.ToInt32(Mathf.Abs(horComp))]) - Convert.ToSingle(Global.RandomNormalAverage)) * dispersion * Mathf.Sign(horComp);
+            return Quaternion.Euler(direction);
+        }
     }
     public abstract class MagWeapon : Weapon
     {
@@ -494,9 +518,10 @@ namespace SpaceCommander
         public float AmmocampacityMultiplacator { set; get; }
         public float ShellmassMultiplacator { set; get; }
 
-        protected float reloadingTime;
-        protected int ammo;
-        protected int ammoCampacity;
+        private float reloadingTime;
+        private int ammoCampacity;
+        private int ammo;
+        protected int Ammo { get { return ammo; } }
         protected int AmmoCampacity { get { return Mathf.RoundToInt(ammoCampacity * (1 + AmmocampacityMultiplacator)); } }
         protected override void StatUp()
         {
@@ -510,14 +535,16 @@ namespace SpaceCommander
             //Global.SpecINI.Write(this.GetType().ToString(), "PreAiming", PreAiming.ToString());
             //Global.SpecINI.Write(this.GetType().ToString(), "roundSpeed", roundSpeed.ToString());
 
-            range = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "range"));
-            dispersion = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "dispersion"));
-            shildBlinkTime = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "shildBlinkTime"));
-            firerate = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "firerate"));
+            float dispersion = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "dispersion"));
+            float shildBlinkTime = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "shildBlinkTime"));
+            float firerate = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "firerate"));
+            float roundSpeed = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "roundSpeed"));
+            float range = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "range"));
+            base.StatUp(dispersion, shildBlinkTime, roundSpeed, firerate, range);
+
             ammoCampacity = Convert.ToInt32(Global.SpecINI.ReadINI(this.GetType().ToString(), "ammoCampacity"));
             reloadingTime = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "reloadingTime"));
             PreAiming = Convert.ToBoolean(Global.SpecINI.ReadINI(this.GetType().ToString(), "PreAiming"));
-            roundSpeed = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "roundSpeed"));
 
             ammo = AmmoCampacity;
         }
@@ -569,6 +596,7 @@ namespace SpaceCommander
         protected float reloadBackCount;
         protected int ammo;
         protected int ammoCampacity;
+        protected int Ammo { get { return ammo; } }
         protected int AmmoCampacity { get { return Mathf.RoundToInt(ammoCampacity * (1 + AmmocampacityMultiplacator)); } }
         protected override void StatUp()
         {
@@ -582,14 +610,16 @@ namespace SpaceCommander
             //Global.SpecINI.Write(this.GetType().ToString(), "PreAiming", PreAiming.ToString());
             //Global.SpecINI.Write(this.GetType().ToString(), "roundSpeed", roundSpeed.ToString());
 
-            range = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "range"));
-            dispersion = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "dispersion"));
-            shildBlinkTime = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "shildBlinkTime"));
-            firerate = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "firerate"));
+            float dispersion = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "dispersion"));
+            float shildBlinkTime = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "shildBlinkTime"));
+            float firerate = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "firerate"));
+            float roundSpeed = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "roundSpeed"));
+            float range = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "range"));
+            base.StatUp(dispersion, shildBlinkTime, roundSpeed, firerate, range);
+
             ammoCampacity = Convert.ToInt32(Global.SpecINI.ReadINI(this.GetType().ToString(), "ammoCampacity"));
             reloadingTime = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "reloadingTime"));
             PreAiming = Convert.ToBoolean(Global.SpecINI.ReadINI(this.GetType().ToString(), "PreAiming"));
-            roundSpeed = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "roundSpeed"));
 
             ammo = AmmoCampacity;
         }
@@ -602,6 +632,7 @@ namespace SpaceCommander
                     Shoot(target.transform);
                 else Shoot(null);
                 ammo--;
+                backCount = reloadingTime * (1 + ReloadMultiplacator);
                 reloadBackCount = 60f / Firerate;
                 return true;
             }
@@ -611,10 +642,9 @@ namespace SpaceCommander
         {
             base.Update();
             if (ammo < AmmoCampacity && backCount <= 0)
-            {
                 ammo++;
+            if (ammo < AmmoCampacity && backCount <= 0)
                 backCount = reloadingTime * (1 + ReloadMultiplacator);
-            }
             if (reloadBackCount > 0) reloadBackCount -= Time.deltaTime;
         }
         public override bool IsReady
@@ -653,13 +683,15 @@ namespace SpaceCommander
             //Global.SpecINI.Write(this.GetType().ToString(), "PreAiming", PreAiming.ToString());
             //Global.SpecINI.Write(this.GetType().ToString(), "roundSpeed", roundSpeed.ToString());
 
-            range = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "range"));
-            dispersion = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "dispersion"));
-            shildBlinkTime = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "shildBlinkTime"));
-            firerate = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "firerate"));
+            float dispersion = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "dispersion"));
+            float shildBlinkTime = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "shildBlinkTime"));
+            float firerate = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "firerate"));
+            float roundSpeed = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "roundSpeed"));
+            float range = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "range"));
+            base.StatUp(dispersion, shildBlinkTime, roundSpeed, firerate, range);
+
             maxHeat = Convert.ToInt32(Global.SpecINI.ReadINI(this.GetType().ToString(), "maxHeat"));
             PreAiming = Convert.ToBoolean(Global.SpecINI.ReadINI(this.GetType().ToString(), "PreAiming"));
-            roundSpeed = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "roundSpeed"));
         }
         public override bool Fire()
         {
@@ -739,10 +771,11 @@ namespace SpaceCommander
     public abstract class SelfguidedMissile : MonoBehaviour
     {
         protected GlobalController Global;
+        protected Rigidbody body;
         public Transform target;// цель для ракеты       
         //public GameObject Blast;// префаб взрыва   
         protected MissileType Type;
-        protected float Speed;// скорость ракеты           
+        protected float Acceleration;// ускорение ракеты           
         public float DropImpulse;//импульс сброса          
         protected float TurnSpeed;// скорость поворота ракеты            
         protected float explosionTime;// длительность жизни
@@ -754,7 +787,9 @@ namespace SpaceCommander
         protected virtual void Start()
         {
             Global = FindObjectOfType<GlobalController>();
-            Speed = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "Speed"));
+            body = gameObject.GetComponent<Rigidbody>();
+
+            Acceleration = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "Speed"));
             DropImpulse = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "DropImpulse"));
             TurnSpeed = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "TurnSpeed"));
             explosionTime = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "explosionTime"));
@@ -807,11 +842,24 @@ namespace SpaceCommander
                 //Debug.Log(gameObject.GetComponent<Rigidbody>().velocity.magnitude);
 
                 //полет по прямой
-                float multiplicator = Mathf.Pow((lifeTime * 0.05f), (1f / 4f));
-                //Debug.Log(multiplicator);
-                //Debug.Log(Convert.ToSingle(multiplicator));
-                //gameObject.GetComponent<Rigidbody>().velocity = transform.forward * Speed * Convert.ToSingle(multiplicator); 
-                gameObject.GetComponent<Rigidbody>().AddForce(transform.forward * Speed * multiplicator, ForceMode.Acceleration);
+                Vector3 shift = Vector3.zero;
+                //полет по прямой
+                shift.z = Acceleration;
+                //компенсирование боковых инерций
+                float signVelocity;
+
+                float horisontalSpeed = Vector3.Project(body.velocity, body.transform.right).magnitude;
+                if (Vector3.Angle(body.velocity, body.transform.right) < 90)
+                    signVelocity = 1;
+                else signVelocity = -1;
+                shift.x = Mathf.Clamp(-(horisontalSpeed * signVelocity), -Acceleration, Acceleration);
+
+                float verticalSpeed = Vector3.Project(body.velocity, body.transform.up).magnitude;
+                if (Vector3.Angle(body.velocity, body.transform.up) < 90)
+                    signVelocity = 1;
+                else signVelocity = -1;
+                shift.y = Mathf.Clamp(-(verticalSpeed * signVelocity), -Acceleration, Acceleration);
+                body.AddRelativeForce(shift, ForceMode.Acceleration);
             }
         }
         protected abstract void Explode();
@@ -820,7 +868,7 @@ namespace SpaceCommander
             if (!isArmed && lifeTime > 2.5)
             {
                 isArmed = true;
-                detonateTimer = 0.2f;
+                detonateTimer = 0.1f;
             }
         }
         // взрываем при коллизии
@@ -858,33 +906,119 @@ namespace SpaceCommander
             this.target = target;
         }
     }
+    public abstract class UnguidedMissile : MonoBehaviour
+    {
+        protected GlobalController Global;
+        protected Rigidbody body;
+        //public GameObject Blast;// префаб взрыва   
+        protected MissileType Type;
+        protected float Acceleration;// ускорение ракеты           
+        public float DropImpulse;//импульс сброса          
+        protected float lifeTime;// длительность жизни
+
+        protected virtual void Start()
+        {
+            Global = FindObjectOfType<GlobalController>();
+            body = gameObject.GetComponent<Rigidbody>();
+
+            Acceleration = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "Speed"));
+            DropImpulse = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "DropImpulse"));
+            //Global.SpecINI.Write(this.GetType().ToString(), "Speed", Speed.ToString());
+            //Global.SpecINI.Write(this.GetType().ToString(), "DropImpulse", DropImpulse.ToString());
+            //Global.SpecINI.Write(this.GetType().ToString(), "TurnSpeed", TurnSpeed.ToString());
+            //Global.SpecINI.Write(this.GetType().ToString(), "explosionTime", explosionTime.ToString());
+            //Global.SpecINI.Write(this.GetType().ToString(), "AimCone", AimCone.ToString());
+        }
+        private void Update()
+        {
+            if (lifeTime > 10)
+                Explode();
+            lifeTime += Time.deltaTime;
+            //Debug.Log(gameObject.GetComponent<Rigidbody>().velocity.magnitude);
+
+            //полет по прямой
+            Vector3 shift = Vector3.zero;
+            //полет по прямой
+            shift.z = Acceleration;
+            //компенсирование боковых инерций
+            float signVelocity;
+
+            float horisontalSpeed = Vector3.Project(body.velocity, body.transform.right).magnitude;
+            if (Vector3.Angle(body.velocity, body.transform.right) < 90)
+                signVelocity = 1;
+            else signVelocity = -1;
+            shift.x = Mathf.Clamp(-(horisontalSpeed * signVelocity), -Acceleration, Acceleration);
+
+            float verticalSpeed = Vector3.Project(body.velocity, body.transform.up).magnitude;
+            if (Vector3.Angle(body.velocity, body.transform.up) < 90)
+                signVelocity = 1;
+            else signVelocity = -1;
+            shift.y = Mathf.Clamp(-(verticalSpeed * signVelocity), -Acceleration, Acceleration);
+            body.AddRelativeForce(shift, ForceMode.Acceleration);
+        }
+        public abstract void Explode();
+        // взрываем при коллизии
+        public virtual void OnCollisionEnter(Collision collision)
+        {
+            switch (collision.gameObject.tag)
+            {
+                case "Unit":
+                    {
+                        if (lifeTime > 1)
+                            Explode();
+                        break;
+                    }
+                default:
+                    {
+                        Explode();
+                        break;
+                    }
+            }
+        }
+        private void OnTriggerStay(Collider collision)
+        {
+            switch (collision.gameObject.tag)
+            {
+                case "Explosion":
+                    {
+                        if (lifeTime >1)
+                            Explode();
+                        break;
+                    }
+            }
+        }
+    }
+
     public abstract class Torpedo : MonoBehaviour
     {
         protected GlobalController Global;
+        protected Rigidbody body;
         public Vector3 target;
         public Vector3 midPoint;
         public bool midPassed;
         public Army Team;
-        public float Speed;// скорость ракеты      
+        public float Acceleration;// скорость ракеты      
         public float TurnSpeed;// скорость поворота ракеты            
         public float DropImpulse;//импульс сброса                  
         public float explosionRange; //расстояние детонации
+        public float fuel; //количество топлива(время разгона)
         protected float lt;//продолжительность жизни
+        
         protected virtual void Start()
         {
             Global = FindObjectOfType<GlobalController>();
-
+            body = gameObject.GetComponent<Rigidbody>();
             //Global.SpecINI.Write(this.GetType().ToString(), "Speed", Speed.ToString());
             //Global.SpecINI.Write(this.GetType().ToString(), "DropImpulse", DropImpulse.ToString());
             //Global.SpecINI.Write(this.GetType().ToString(), "TurnSpeed", TurnSpeed.ToString());
             //Global.SpecINI.Write(this.GetType().ToString(), "explosionRange", explosionRange.ToString());
 
-            Speed = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "Speed"));
+            Acceleration = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "Speed"));
             DropImpulse = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "DropImpulse"));
             TurnSpeed = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "TurnSpeed"));
             explosionRange = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "explosionRange"));
         }
-        public virtual void Update()
+        public void Update()
         {
             if (Vector3.Distance(this.transform.position, midPoint) < 1)
                 midPassed = true;
@@ -902,9 +1036,24 @@ namespace SpaceCommander
                     targetRotation = Quaternion.LookRotation(target - this.transform.position, new Vector3(0, 1, 0));
 
                 this.transform.rotation = Quaternion.Slerp(this.transform.rotation, targetRotation, Time.deltaTime * TurnSpeed);
+                Vector3 shift = Vector3.zero;
                 //полет по прямой
-                float multiplicator = Mathf.Pow((lt * 0.5f), (1f / 8f)) * 0.7f;
-                gameObject.GetComponent<Rigidbody>().velocity = transform.forward * Speed * multiplicator;//AddForce(transform.forward * Speed * multiplicator, ForceMode.Acceleration);
+                shift.z = Acceleration;
+                //компенсирование боковых инерций
+                float signVelocity;
+
+                float horisontalSpeed = Vector3.Project(body.velocity, body.transform.right).magnitude;
+                if (Vector3.Angle(body.velocity, body.transform.right) < 90)
+                    signVelocity = 1;
+                else signVelocity = -1;
+                shift.x = Mathf.Clamp(-(horisontalSpeed * signVelocity), -Acceleration / 2f, Acceleration / 2f);
+
+                float verticalSpeed = Vector3.Project(body.velocity, body.transform.up).magnitude;
+                if (Vector3.Angle(body.velocity, body.transform.up) < 90)
+                    signVelocity = 1;
+                else signVelocity = -1;
+                shift.y = Mathf.Clamp(-(verticalSpeed * signVelocity), -Acceleration / 2f, Acceleration / 2f);
+                body.AddRelativeForce(shift, ForceMode.Acceleration);
             }
             else if (lt > 20)
                 Explode();

@@ -37,7 +37,7 @@ namespace SpaceCommander.Weapons
         protected override void OnCollisionEnter(Collision collision)
         {
             if (explosive) Destroy();
-            else if (! canRicochet && collision.gameObject.tag == "Unit" && armorPiersing - collision.gameObject.GetComponent<Unit>().ShellResist > -2) Destroy();
+            else if (!canRicochet || (collision.gameObject.tag == "Unit" && armorPiersing - collision.gameObject.GetComponent<Unit>().ShellResist >= 0)) Destroy();
         }
 
     }

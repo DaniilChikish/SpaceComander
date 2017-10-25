@@ -31,6 +31,7 @@ namespace SpaceCommander.Weapons
         public new void Update()
         {
             transform.localScale = new Vector3(scaleFactor * (damage / maxDamage), scaleFactor * (damage / maxDamage), scaleFactor * (damage / maxDamage));
+            body.mass = scaleFactor * (damage / maxDamage) * 10;
             damage -= maxDamage * (1 / liveTime) * Time.deltaTime;
             if (target != null)
                 body.AddForce((target.position - this.transform.position).normalized * Speed, ForceMode.Acceleration);

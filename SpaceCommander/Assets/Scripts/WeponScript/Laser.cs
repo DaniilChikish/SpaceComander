@@ -33,7 +33,7 @@ namespace SpaceCommander.Weapons
             {
                 this.GetComponentInChildren<ParticleSystem>().Play();
                 heat += Time.deltaTime * 25 * ((heat + 20) / maxHeat);
-                float dist = range;
+                float dist = Range;
                 RaycastHit[] hits = Physics.RaycastAll(this.transform.position, this.transform.forward);
                 foreach (RaycastHit x in hits)
                 {
