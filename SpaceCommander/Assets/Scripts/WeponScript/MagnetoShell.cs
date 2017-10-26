@@ -24,7 +24,7 @@ namespace SpaceCommander.Weapons
             damage = damage - (damage / 2 * Time.deltaTime);
             body.mass = body.mass - (body.mass / 2 * Time.deltaTime);
         }
-        public void StatUp(Vector3 speed, float damage, float armorPiersing, float mass, bool canRicochet, GameObject explosionPrefab)
+        public void StatUp(Vector3 speed, float damage, float armorPiersing, float mass, bool canRicochet)
         {
             this.speed = speed.magnitude;
             this.damage = damage;
@@ -39,6 +39,16 @@ namespace SpaceCommander.Weapons
         public override void Destroy()
         {
             Destroy(this.gameObject);
+        }
+
+        public void StatUp(Vector3 speed, float damage, float armorPiersing, float mass, bool canRicochet, GameObject explosionPrefab)
+        {
+            StatUp(speed, damage, armorPiersing, mass, canRicochet);
+        }
+
+        public void StatUp(Vector3 speed, float damage, float armorPiersing, float mass, bool canRicochet, GameObject explosionPrefab, float ttl)
+        {
+            StatUp(speed, damage, armorPiersing, mass, canRicochet);
         }
     }
 }

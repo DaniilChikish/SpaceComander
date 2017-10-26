@@ -9,7 +9,7 @@ namespace SpaceCommander
 {
     public enum SpellModuleState { Ready, Active, Cooldown};
     public enum SpellType { Passive, Activated, LongAction }
-    public enum SpellFunction { Self, Enemy, Allies, Shield, Health, Buff, Debuff, Attack, Support, Defence, Emergency}
+    public enum SpellFunction { Self, Enemy, Allies, Shield, Hull, Buff, Debuff, Attack, Support, Defence, Emergency}
     public abstract class SpellModule
     {
         protected float backCount;
@@ -209,6 +209,12 @@ namespace SpaceCommander
     }
     public class Warp : SpellModule
     {
+        private float jumpForce;
+        private float jumpCold;
+        private float jumpCount;
+        Vector3 current;
+        Vector3 next;
+        Rigidbody body;
         public Warp(SpaceShip owner) : base(owner)
         {
             backCount = 0;
@@ -223,52 +229,95 @@ namespace SpaceCommander
 
         protected override void Disable()
         {
+            body.collisionDetectionMode = CollisionDetectionMode.Discrete;
         }
 
         public override void Enable()
         {
             base.Enable();
-            owner.MakeImpact(new WarpImpact(owner));
+            body = owner.transform.GetComponent<Rigidbody>();
+            jumpForce = 1500;
+            body.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
         }
-    }
-    public class WarpImpact : IImpact
-    {
-        public string Name { get { return "WarpImpact"; } }
-        float ttl;
-        SpaceShip owner;
-        private float ownerMassPrev;
-        public WarpImpact(SpaceShip owner)
+        protected override void Act()
         {
-            this.owner = owner;
-            ownerMassPrev = owner.GetComponent<Rigidbody>().mass;
-            if (owner.HaveImpact(this.Name))
-                ttl = 0;
-            else
+            float dist = 0;
+            jumpCold -= Time.deltaTime;
+            jumpCount -= Time.deltaTime;
+            if (jumpForce > 250 && jumpCold <= 0)
             {
-                if (owner.HaveImpact("TrusterInhibitorImpact"))
-                    ttl = 0;
+                if (!owner.ManualControl)
+                {
+                    next = owner.Driver.NextPoint;
+                    if (next != Vector3.zero)
+                    {
+                        dist = Vector3.Distance(owner.transform.position, next);
+                        dist = Mathf.Clamp(dist, 0, jumpForce);
+                        //current = owner.transform.position;
+                        //next = current + (next - owner.transform.position).normalized * dist;
+                        current = body.velocity;
+                        next = (next - owner.transform.position).normalized * dist * 10;
+                        body.velocity = next;
+                    }
+                }
                 else
                 {
-                    ttl = 4;
-                    owner.SpeedMultiplicator += 6;
-                    owner.GetComponent<Rigidbody>().mass = owner.GetComponent<Rigidbody>().mass / 10;
+                    dist = Mathf.Clamp(500, 0, jumpForce);
+                    //current = owner.transform.position;
+                    //next = current + owner.transform.forward * dist;
+                    current = body.velocity;
+                    next = owner.transform.forward * dist * 10;
+                    body.velocity = next;
                 }
+                jumpForce -= dist;
+                jumpCold = 0.5f;
+                jumpCount = 0.1f;
             }
-        }
-        public void ActImpact()
-        {
-            if (ttl > 0)
-                ttl -= Time.deltaTime;
-            else CompleteImpact();
-        }
-
-        public void CompleteImpact()
-        {
-            owner.SpeedMultiplicator -= 6;
-            owner.GetComponent<Rigidbody>().mass = ownerMassPrev;
-            owner.RemoveImpact(this);
+            if (next != Vector3.zero && jumpCount <= 0)
+                //owner.transform.position = Vector3.Lerp(current, next, (1 - (jumpCount / 0.1f)));
+                body.velocity = current;
         }
     }
+    //public class WarpImpact : IImpact
+    //{
+    //    public string Name { get { return "WarpImpact"; } }
+    //    float ttl;
+    //    SpaceShip owner;
+    //    private float ownerMassPrev;
+    //    public WarpImpact(SpaceShip owner)
+    //    {
+    //        this.owner = owner;
+    //        ownerMassPrev = owner.GetComponent<Rigidbody>().mass;
+    //        if (owner.HaveImpact(this.Name))
+    //            ttl = 0;
+    //        else
+    //        {
+    //            if (owner.HaveImpact("TrusterInhibitorImpact"))
+    //                ttl = 0;
+    //            else
+    //            {
+    //                ttl = 4;
+    //                owner.SpeedMultiplicator += 4;
+    //                owner.AccelerationMultiplicator += 9;
+    //                owner.GetComponent<Rigidbody>().mass = owner.GetComponent<Rigidbody>().mass / 10;
+    //            }
+    //        }
+    //    }
+    //    public void ActImpact()
+    //    {
+    //        if (ttl > 0)
+    //            ttl -= Time.deltaTime;
+    //        else CompleteImpact();
+    //    }
+
+    //    public void CompleteImpact()
+    //    {
+    //        owner.SpeedMultiplicator -= 4;
+    //        owner.AccelerationMultiplicator -= 9;
+    //        owner.GetComponent<Rigidbody>().mass = ownerMassPrev;
+    //        owner.RemoveImpact(this);
+    //    }
+    //}
     public class RadarBooster : SpellModule
     {
         public RadarBooster(SpaceShip owner) : base(owner)
@@ -566,11 +615,11 @@ namespace SpaceCommander
             state = SpellModuleState.Ready;
             function.Add(SpellFunction.Self);
             function.Add(SpellFunction.Emergency);
-            function.Add(SpellFunction.Health);
+            function.Add(SpellFunction.Hull);
         }
         public override void EnableIfReady()
         {
-            if (owner.Health < owner.MaxHealth * 0.4f)
+            if (owner.Hull < owner.MaxHull * 0.4f)
                 if (state == SpellModuleState.Ready)
                     Enable();
             //base.EnableIfReady();
@@ -582,12 +631,12 @@ namespace SpaceCommander
         public override void Enable()
         {
             base.Enable();
-            repairSpeed = owner.MaxHealth / 5f;
+            repairSpeed = owner.MaxHull / 5f;
         }
 
         protected override void Act()
         {
-            owner.Health += repairSpeed * Time.deltaTime;
+            owner.Hull += repairSpeed * Time.deltaTime;
         }
     }
     public class EmergencyShieldRecharging : SpellModule
@@ -695,9 +744,9 @@ namespace SpaceCommander
         }
         public void ActImpact()
         {
-            if (ttl > 0 && owner.Health < (owner.MaxHealth * 1.2))
+            if (ttl > 0 && owner.Hull < (owner.MaxHull * 1.2))
             {
-                owner.Health += repairSpeed * Time.deltaTime;
+                owner.Hull += repairSpeed * Time.deltaTime;
                 ttl -= Time.deltaTime;
             }
             else CompleteImpact();
@@ -781,8 +830,8 @@ namespace SpaceCommander
         }
         public void ActImpact()
         {
-            if (owner.Health < owner.MaxHealth)
-                owner.Health += repairSpeed * Time.deltaTime;
+            if (owner.Hull < owner.MaxHull)
+                owner.Hull += repairSpeed * Time.deltaTime;
             else CompleteImpact();
         }
         public void CompleteImpact()
@@ -922,17 +971,18 @@ namespace SpaceCommander
         {
         }
     }
-    public class TeamSpirit : SpellModule
+    public class Inspiration : SpellModule
     {
         Unit[] alies;
         List<Weapon> weapons;
-        public TeamSpirit(SpaceShip owner) : base(owner)
+        public Inspiration(SpaceShip owner) : base(owner)
         {
             backCount = 0;
             type = SpellType.Activated;
             //coolingTime = 120;
             //activeTime = 20;
             state = SpellModuleState.Ready;
+            function.Add(SpellFunction.Support);
             function.Add(SpellFunction.Allies);
             function.Add(SpellFunction.Buff);
             function.Add(SpellFunction.Attack);
@@ -992,6 +1042,7 @@ namespace SpaceCommander
             //coolingTime = 60;
             //activeTime = 15;
             state = SpellModuleState.Ready;
+            function.Add(SpellFunction.Support);
             function.Add(SpellFunction.Allies);
             function.Add(SpellFunction.Buff);
             function.Add(SpellFunction.Attack);

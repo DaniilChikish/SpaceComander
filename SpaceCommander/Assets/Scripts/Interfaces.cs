@@ -10,8 +10,8 @@ namespace SpaceCommander
     public interface ISpaceShipObservable
     {
         UnitClass Type { get; }
-        float Health { get; }
-        float MaxHealth { get; }
+        float Hull { get; }
+        float MaxHull { get; }
         float ShieldForce { get; }
         float ShieldCampacity { get; }
         SpellModule[] Module { get; }
@@ -93,7 +93,9 @@ namespace SpaceCommander
         float Speed { get; }
         float Damage { get; }
         float ArmorPiersing { get; }
+        void StatUp(Vector3 speed, float damage, float armorPiersing, float mass, bool canRicochet);
         void StatUp(Vector3 speed, float damage, float armorPiersing, float mass, bool canRicochet, GameObject explosionPrefab);
+        void StatUp(Vector3 speed, float damage, float armorPiersing, float mass, bool canRicochet, GameObject explosionPrefab, float ttl);
     }
     public interface IEnergy
     {

@@ -27,9 +27,9 @@ namespace SpaceCommander
         public float RotationSpeedMultiplicator { set; get; }
         public abstract float ShiftSpeed { get; }
         public float ShiftSpeedMultiplicator { set; get; }
-        public abstract float Health { set; get; }
-        public abstract float MaxHealth { get; }
-        public float MaxHealthMultiplacator { set; get; }
+        public abstract float Hull { set; get; }
+        public abstract float MaxHull { get; }
+        public float MaxHullMultiplacator { set; get; }
         public abstract float ShellResist { get; }
         public abstract float EnergyResist { get; }
         public abstract float BlastResist { get; }
@@ -114,8 +114,8 @@ namespace SpaceCommander
         protected float speedRotation;
         protected float speedShift;
         //override properties
-        public override float Health { set { armor.Hitpoints = value; } get { return armor.Hitpoints; } }
-        public override float MaxHealth { get { return armor.MaxHitpoints * (1 + MaxHealthMultiplacator); } }
+        public override float Hull { set { armor.Hitpoints = value; } get { return armor.Hitpoints; } }
+        public override float MaxHull { get { return armor.MaxHitpoints * (1 + MaxHullMultiplacator); } }
         public override Army Team { get { return team; } }
         public override Vector3 Velocity
         {
@@ -431,7 +431,9 @@ namespace SpaceCommander
 
                 float border = 40;
                 bool outOfBorder = false;
-                Vector3 crd = UIUtil.WorldToScreenCircle(this.transform.position, border, out outOfBorder);
+                Vector3 crd;
+                if (Global.ManualController.enabled) crd = UIUtil.WorldToScreenCircle(this.transform.position, border, out outOfBorder);
+                else crd = UIUtil.WorldToScreenFrame(this.transform.position, border, out outOfBorder);
 
                 Vector2 frameSize;
                 if (!outOfBorder) frameSize = new Vector2(Global.AlliesGUIFrame.width, Global.AlliesGUIFrame.height);// * hud.scale;
@@ -528,7 +530,7 @@ namespace SpaceCommander
                     Vector2 linePos2 = new Vector2(backPos.x + (12 * scaleLocal * distFactor), backPos.y + (16 * scaleLocal * distFactor));
                     GUI.DrawTexture(new Rect(backPos, backSize), hud.UnitStatBack);
                     GUI.DrawTexture(UIUtil.TransformBar(new Rect(linePos1, lineSize), (this.ShieldForce / this.ShieldCampacity)), hud.UnitShieldLine);
-                    GUI.DrawTexture(UIUtil.TransformBar(new Rect(linePos2, lineSize), (this.Health / this.MaxHealth)), hud.UnitArmorLine);
+                    GUI.DrawTexture(UIUtil.TransformBar(new Rect(linePos2, lineSize), (this.Hull / this.MaxHull)), hud.UnitArmorLine);
                 }
             }
         }
@@ -548,7 +550,7 @@ namespace SpaceCommander
         }
         public override void MakeDamage(float damage)
         {
-            this.Health = this.Health - damage;
+            this.Hull = this.Hull - damage;
         }
         public override void MakeImpact(IImpact impact)
         {
@@ -919,7 +921,7 @@ namespace SpaceCommander
         }
         public void ArmorCriticalAlarm()
         {
-            UseModule(new SpellFunction[] { SpellFunction.Emergency, SpellFunction.Health });
+            UseModule(new SpellFunction[] { SpellFunction.Emergency, SpellFunction.Hull });
             situation = TacticSituation.ExitTheBattle;
         }
         public void ShieldCriticalAlarm()
@@ -946,7 +948,8 @@ namespace SpaceCommander
                 if (Gunner.TargetInRange(0))//выбор оружия
                 {
                     targetStatus = TargetStateType.InPrimaryRange;
-                    return Gunner.ShootHim(0);
+                    if (Gunner.ShootHim(0))
+                        return true;
                 }
                 if (Gunner.TargetInRange(1))
                 {

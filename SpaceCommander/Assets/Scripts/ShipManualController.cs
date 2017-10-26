@@ -482,7 +482,7 @@ namespace SpaceCommander
     /**
  * v 0.7
  * **/
-    class ShipManualController : MonoBehaviour
+    public class ShipManualController : MonoBehaviour
     {
         public float guiTexOffsetY;
         public SpaceShip owner;

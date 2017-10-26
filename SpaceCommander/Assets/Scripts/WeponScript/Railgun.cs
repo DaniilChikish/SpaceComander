@@ -5,22 +5,33 @@ using UnityEngine;
 namespace SpaceCommander.Weapons
 {
     public class Railgun : ShellWeapon {
+        private float accumulate;
         protected override void StatUp()
         {
             base.StatUp();
             type = WeaponType.Railgun;
             gameObject.GetComponent<MeshRenderer>().enabled = false;
         }
+        protected override void UpdateLocal()
+        {
+            if (backCount <= 0 && accumulate < 5)
+            {
+                accumulate += Time.deltaTime;
+                owner.ShieldForce -= owner.ShieldRecharging * 0.25f * Time.deltaTime;
+            }
+            RoundSpeed = 400 * accumulate;
+        }
         protected override void Shoot(Transform target)
         {
-            float damage = 400f;
-            float armorPiersing = 6f;
+            float damage = 100f * accumulate;
+            float armorPiersing = 3f + (1 * accumulate);
             float mass = 400f;
+            accumulate = 1;
 
-            Quaternion direction = transform.rotation;
-            GameObject shell = Instantiate(Global.RailgunShell, gameObject.transform.position, direction);
+            Quaternion dispersionDelta = RandomDirectionNormal(Dispersion);
+            GameObject shell = Instantiate(Global.RailgunShell, gameObject.transform.position, this.transform.rotation * dispersionDelta);
 
-            shell.GetComponent<IShell>().StatUp(owner.Velocity + (RoundSpeed * (1 + RoundspeedMultiplacator) * this.transform.forward), damage * (1 + DamageMultiplacator), armorPiersing * (1 + APMultiplacator), mass * (1 + ShellmassMultiplacator), true, null);
+            shell.GetComponent<IShell>().StatUp(owner.Velocity + (RoundSpeed * (dispersionDelta * this.transform.forward)), damage * (1 + DamageMultiplacator), armorPiersing * (1 + APMultiplacator), mass * (1 + ShellmassMultiplacator), true, null);
             ownerBody.AddForceAtPosition(-this.transform.forward * mass * RoundSpeed, this.transform.position, ForceMode.Impulse);
         }
     }

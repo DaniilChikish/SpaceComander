@@ -18,7 +18,7 @@ namespace SpaceCommander.Units
             module[0] = new MissileTrapLauncher(this);
             module[1] = new EmergencyShieldRecharging(this);
             module[2] = new ForcedTargetDesignator(this);
-            module[3] = new TeamSpirit(this);
+            module[3] = new Inspiration(this);
         }
         protected override void DecrementLocalCounters()
         {

@@ -76,12 +76,15 @@ namespace SpaceCommander
                 else return "Eliminate all enemies!";
             }
         }
+        private ShipManualController manualController;
+        public ShipManualController ManualController { get { return manualController; } }
         private void OnEnable()
         {
             LoadSettings();
             LoadTexts();
             LoadSpec();
             Mission = FindObjectOfType<Scenario>();
+            manualController = FindObjectOfType<ShipManualController>();
         }
         private void LoadSettings()
         {
@@ -879,7 +882,7 @@ namespace SpaceCommander
                 case "Unit":
                     {
                         if (lifeTime > explosionTime / 20)
-                            Arm();
+                            Explode();
                         break;
                     }
                 default:

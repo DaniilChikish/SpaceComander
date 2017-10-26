@@ -42,7 +42,7 @@ namespace SpaceCommander
         public Texture AcceleratingCoilsSpellIcon;
         public Texture RechargeAcceleratorPassiveSpellIcon;
         public Texture ExtendedAmmoPackSpellIcon;
-        public Texture TeamSpiritSpellIcon;
+        public Texture InspirationSpellIcon;
         public Texture ForcedTargetDesignatorSpellIcon;
 
         public ISpaceShipObservable observable;
@@ -278,8 +278,8 @@ namespace SpaceCommander
                 return RechargeAcceleratorPassiveSpellIcon;
             else if (type == typeof(ExtendedAmmoPack))
                 return ExtendedAmmoPackSpellIcon;
-            else if (type == typeof(TeamSpirit))
-                return TeamSpiritSpellIcon;
+            else if (type == typeof(Inspiration))
+                return InspirationSpellIcon;
             else if (type == typeof(ForcedTargetDesignator))
                 return ForcedTargetDesignatorSpellIcon;
         //    else if (type == typeof(type))
@@ -443,8 +443,8 @@ namespace SpaceCommander
                 {
                     ShieldBar.fillAmount = observable.ShieldForce / observable.ShieldCampacity;
                     ShieldCount.text = Mathf.Round(observable.ShieldForce).ToString();
-                    HealthBar.fillAmount = observable.Health / observable.MaxHealth;
-                    HealthCount.text = Mathf.Round(observable.Health).ToString();
+                    HealthBar.fillAmount = observable.Hull / observable.MaxHull;
+                    HealthCount.text = Mathf.Round(observable.Hull).ToString();
                     //Rect panelRect = UIUtil.GetRect(new Vector2(healthPanel.width, healthPanel.height), PositionAnchor.LeftDown, hud.mainRect.size, new Vector2(10, -10));
                     //GUI.BeginGroup(panelRect, healthPanel);
                     //{

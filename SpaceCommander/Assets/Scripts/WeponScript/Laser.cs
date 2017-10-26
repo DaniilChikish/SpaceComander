@@ -34,7 +34,7 @@ namespace SpaceCommander.Weapons
                 this.GetComponentInChildren<ParticleSystem>().Play();
                 heat += Time.deltaTime * 25 * ((heat + 20) / maxHeat);
                 float dist = Range;
-                RaycastHit[] hits = Physics.RaycastAll(this.transform.position, this.transform.forward);
+                RaycastHit[] hits = Physics.RaycastAll(this.transform.position, this.transform.forward, Range);
                 foreach (RaycastHit x in hits)
                 {
                     if (!x.collider.isTrigger)
@@ -44,15 +44,9 @@ namespace SpaceCommander.Weapons
 
                         if (enemy!=null)
                         {
-                            float difference = this.ArmorPiersing - enemy.EnergyResist;
-                            float multiplicator;
-                            if (difference > 0.5)
-                                multiplicator = 1f;
-                            else if (difference > -3)
-                                multiplicator = (Mathf.Sin((difference / 1.1f) + 1f) + 1f) * 0.5f;
-                            else
-                                multiplicator = 0.0f;
-                            enemy.MakeDamage(Damage * multiplicator * Time.deltaTime);
+                            float difference = Mathf.Clamp(this.ArmorPiersing - enemy.EnergyResist + 2, 0, 4f);
+                            float multiplicator = difference / 2;
+                            enemy.MakeDamage(Damage * multiplicator * (dist / Range) * Time.deltaTime);
                         }
                         //break;
                     }
@@ -61,7 +55,7 @@ namespace SpaceCommander.Weapons
                 beam.transform.localScale = new Vector3(1, 1, dist);
                 beam.transform.position = this.transform.position + this.transform.forward.normalized * dist/2;
 
-                beam.GetComponent<IEnergy>().StatUp(AmmoType);
+                //beam.GetComponent<IEnergy>().StatUp(AmmoType);
                 impulseBackount -= Time.deltaTime;
 
                 beam.SetActive(true);

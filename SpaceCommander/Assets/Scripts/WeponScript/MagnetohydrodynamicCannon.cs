@@ -22,7 +22,7 @@ namespace SpaceCommander.Weapons
             float armorPiersing = 9f;
             float mass = 20f;
             heat += 3;
-            float localDisp = (Dispersion * heat / 50);
+            float localDisp = (Dispersion * heat / 25);
             Quaternion dispersionDelta = RandomDirectionNormal(localDisp);
 
             GameObject shell = Instantiate(Global.MagnetoShell, gameObject.transform.position, this.transform.rotation * dispersionDelta);
