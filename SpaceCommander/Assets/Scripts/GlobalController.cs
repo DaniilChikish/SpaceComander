@@ -10,6 +10,7 @@ using UnityEngine.AI;
 using UnityEngine.SceneManagement;
 //using SpaceCommander.Units;
 using DeusUtility.Random;
+using DeusUtility.UI;
 
 namespace SpaceCommander
 {
@@ -505,7 +506,16 @@ namespace SpaceCommander
             direction.y += dispersion * UnityEngine.Random.Range(-1, 1);
             return Quaternion.Euler(direction);
         }
-        protected Quaternion RandomDirectionNormal( float dispersion)
+        protected Quaternion RandomDirectionNormal(float dispersion)
+        {
+            float vertComp = UnityEngine.Random.Range(-(Global.RandomNormalPool.Length - 2), Global.RandomNormalPool.Length - 2);
+            float horComp = UnityEngine.Random.Range(-(Global.RandomNormalPool.Length - 2), Global.RandomNormalPool.Length - 2);
+            Vector3 direction = Vector3.zero;
+            direction.x += (Convert.ToSingle(Global.RandomNormalPool[Convert.ToInt32(Mathf.Abs(vertComp))]) - Convert.ToSingle(Global.RandomNormalAverage)) * dispersion * Mathf.Sign(vertComp);
+            direction.y += (Convert.ToSingle(Global.RandomNormalPool[Convert.ToInt32(Mathf.Abs(horComp))]) - Convert.ToSingle(Global.RandomNormalAverage)) * dispersion * Mathf.Sign(horComp);
+            return Quaternion.Euler(direction);
+        }
+        public static Quaternion RandomDirectionNormal(float dispersion, GlobalController Global)
         {
             float vertComp = UnityEngine.Random.Range(-(Global.RandomNormalPool.Length - 2), Global.RandomNormalPool.Length - 2);
             float horComp = UnityEngine.Random.Range(-(Global.RandomNormalPool.Length - 2), Global.RandomNormalPool.Length - 2);
@@ -771,203 +781,66 @@ namespace SpaceCommander
         }
         public abstract void Destroy();
     }
-    public abstract class SelfguidedMissile : MonoBehaviour
+    public abstract class Missile: MonoBehaviour
     {
         protected GlobalController Global;
         protected Rigidbody body;
-        public Transform target;// цель для ракеты       
-        //public GameObject Blast;// префаб взрыва   
-        protected MissileType Type;
-        protected float Acceleration;// ускорение ракеты           
-        public float DropImpulse;//импульс сброса          
-        protected float TurnSpeed;// скорость поворота ракеты            
+        protected Army Team;
+        protected float acceleration;// ускорение ракеты           
+        protected float dropImpulse;//импульс сброса          
+        protected float lifeTime;// время жизни
         protected float explosionTime;// длительность жизни
-        public float AimCone;
-        protected float lifeTime;//продолжительность жизни
-        protected float detonateTimer;
-        protected bool isArmed;
 
-        protected virtual void Start()
+        protected virtual void Start ()
         {
             Global = FindObjectOfType<GlobalController>();
             body = gameObject.GetComponent<Rigidbody>();
-
-            Acceleration = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "Speed"));
-            DropImpulse = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "DropImpulse"));
-            TurnSpeed = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "TurnSpeed"));
+            acceleration = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "acceleration"));
+            dropImpulse = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "dropImpulse"));
             explosionTime = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "explosionTime"));
-            AimCone = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "AimCone"));
-
-            //Global.SpecINI.Write(this.GetType().ToString(), "Speed", Speed.ToString());
-            //Global.SpecINI.Write(this.GetType().ToString(), "DropImpulse", DropImpulse.ToString());
-            //Global.SpecINI.Write(this.GetType().ToString(), "TurnSpeed", TurnSpeed.ToString());
-            //Global.SpecINI.Write(this.GetType().ToString(), "explosionTime", explosionTime.ToString());
-            //Global.SpecINI.Write(this.GetType().ToString(), "AimCone", AimCone.ToString());
         }
-        private void Update()
+        protected virtual void Update()
         {
-
-            if (isArmed)
-            {
-                if (detonateTimer > 0)
-                    detonateTimer -= Time.deltaTime;
-                else Explode();
-            }
-            else
-            {
-                if (lifeTime > explosionTime)
-                    Explode();
-                else
-                    lifeTime += Time.deltaTime;
-            }
-            if (lifeTime > 0.5)//задержка старта
-            {
-                if (target != null)//наведение
-                {
-                    Quaternion targetRotation = Quaternion.LookRotation(target.position - this.transform.position, new Vector3(0, 1, 0));
-                    this.transform.rotation = Quaternion.RotateTowards(this.transform.rotation, targetRotation, Time.deltaTime * TurnSpeed);
-                    // угол между направлением на цель и направлением ракеты порядок имеет значение.
-                    Weapons.MissileTrap[] traps = FindObjectsOfType<Weapons.MissileTrap>();
-                    if (traps.Length > 0)
-                    {
-                        foreach (Weapons.MissileTrap x in traps)
-                        {
-                            if (Vector3.Angle(x.transform.position - this.transform.position, this.transform.forward) < AimCone)
-                            {
-                                target = null;
-                                break;
-                            }
-                        }
-                    }
-                }
-                if (target != null && Vector3.Angle(target.transform.position - this.transform.position, this.transform.forward) > AimCone)
-                    target = null;
-                //Debug.Log(gameObject.GetComponent<Rigidbody>().velocity.magnitude);
-
-                //полет по прямой
-                Vector3 shift = Vector3.zero;
-                //полет по прямой
-                shift.z = Acceleration;
-                //компенсирование боковых инерций
-                float signVelocity;
-
-                float horisontalSpeed = Vector3.Project(body.velocity, body.transform.right).magnitude;
-                if (Vector3.Angle(body.velocity, body.transform.right) < 90)
-                    signVelocity = 1;
-                else signVelocity = -1;
-                shift.x = Mathf.Clamp(-(horisontalSpeed * signVelocity), -Acceleration, Acceleration);
-
-                float verticalSpeed = Vector3.Project(body.velocity, body.transform.up).magnitude;
-                if (Vector3.Angle(body.velocity, body.transform.up) < 90)
-                    signVelocity = 1;
-                else signVelocity = -1;
-                shift.y = Mathf.Clamp(-(verticalSpeed * signVelocity), -Acceleration, Acceleration);
-                body.AddRelativeForce(shift, ForceMode.Acceleration);
-            }
-        }
-        protected abstract void Explode();
-        public void Arm()
-        {
-            if (!isArmed && lifeTime > 2.5)
-            {
-                isArmed = true;
-                detonateTimer = 0.1f;
-            }
-        }
-        // взрываем при коллизии
-        public virtual void OnCollisionEnter(Collision collision)
-        {
-            switch (collision.gameObject.tag)
-            {
-                case "Unit":
-                    {
-                        if (lifeTime > explosionTime / 20)
-                            Explode();
-                        break;
-                    }
-                default:
-                    {
-                        Arm();
-                        break;
-                    }
-            }
-        }
-        private void OnTriggerStay(Collider collision)
-        {
-            switch (collision.gameObject.tag)
-            {
-                case "Explosion":
-                    {
-                        if (lifeTime > explosionTime / 20)
-                            Arm();
-                        break;
-                    }
-            }
-        }
-        public void SetTarget(Transform target)
-        {
-            this.target = target;
-        }
-    }
-    public abstract class UnguidedMissile : MonoBehaviour
-    {
-        protected GlobalController Global;
-        protected Rigidbody body;
-        //public GameObject Blast;// префаб взрыва   
-        protected MissileType Type;
-        protected float Acceleration;// ускорение ракеты           
-        public float DropImpulse;//импульс сброса          
-        protected float lifeTime;// длительность жизни
-
-        protected virtual void Start()
-        {
-            Global = FindObjectOfType<GlobalController>();
-            body = gameObject.GetComponent<Rigidbody>();
-
-            Acceleration = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "Speed"));
-            DropImpulse = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "DropImpulse"));
-            //Global.SpecINI.Write(this.GetType().ToString(), "Speed", Speed.ToString());
-            //Global.SpecINI.Write(this.GetType().ToString(), "DropImpulse", DropImpulse.ToString());
-            //Global.SpecINI.Write(this.GetType().ToString(), "TurnSpeed", TurnSpeed.ToString());
-            //Global.SpecINI.Write(this.GetType().ToString(), "explosionTime", explosionTime.ToString());
-            //Global.SpecINI.Write(this.GetType().ToString(), "AimCone", AimCone.ToString());
-        }
-        private void Update()
-        {
-            if (lifeTime > 10)
+            if (lifeTime > explosionTime)
                 Explode();
-            lifeTime += Time.deltaTime;
+            else
+                lifeTime += Time.deltaTime;
             //Debug.Log(gameObject.GetComponent<Rigidbody>().velocity.magnitude);
 
             //полет по прямой
             Vector3 shift = Vector3.zero;
             //полет по прямой
-            shift.z = Acceleration;
-            //компенсирование боковых инерций
             float signVelocity;
+            float mainSpeed = Vector3.Project(body.velocity, body.transform.right).magnitude;
+            if (Vector3.Angle(body.velocity, body.transform.right) < 90)
+                signVelocity = 1;
+            else signVelocity = -1;
+            shift.z = Mathf.Clamp((acceleration * 10) - (mainSpeed * signVelocity), -acceleration, acceleration);
+            //shift.x = acceleration;
+            //компенсирование боковых инерций
 
             float horisontalSpeed = Vector3.Project(body.velocity, body.transform.right).magnitude;
             if (Vector3.Angle(body.velocity, body.transform.right) < 90)
                 signVelocity = 1;
             else signVelocity = -1;
-            shift.x = Mathf.Clamp(-(horisontalSpeed * signVelocity), -Acceleration, Acceleration);
+            shift.x = Mathf.Clamp(-(horisontalSpeed * signVelocity), -acceleration, acceleration);
 
             float verticalSpeed = Vector3.Project(body.velocity, body.transform.up).magnitude;
             if (Vector3.Angle(body.velocity, body.transform.up) < 90)
                 signVelocity = 1;
             else signVelocity = -1;
-            shift.y = Mathf.Clamp(-(verticalSpeed * signVelocity), -Acceleration, Acceleration);
+            shift.y = Mathf.Clamp(-(verticalSpeed * signVelocity), -acceleration, acceleration);
             body.AddRelativeForce(shift, ForceMode.Acceleration);
         }
+        protected virtual void UpdateLocal() { }
         public abstract void Explode();
-        // взрываем при коллизии
-        public virtual void OnCollisionEnter(Collision collision)
+        private void OnCollisionEnter(Collision collision)
         {
             switch (collision.gameObject.tag)
             {
                 case "Unit":
                     {
-                        if (lifeTime > 1)
+                        if (lifeTime > explosionTime / 20)
                             Explode();
                         break;
                     }
@@ -984,129 +857,105 @@ namespace SpaceCommander
             {
                 case "Explosion":
                     {
-                        if (lifeTime >1)
+                        if (lifeTime > explosionTime / 20)
                             Explode();
                         break;
                     }
             }
         }
-    }
-
-    public abstract class Torpedo : MonoBehaviour
-    {
-        protected GlobalController Global;
-        protected Rigidbody body;
-        public Vector3 target;
-        public Vector3 midPoint;
-        public bool midPassed;
-        public Army Team;
-        public float Acceleration;// скорость ракеты      
-        public float TurnSpeed;// скорость поворота ракеты            
-        public float DropImpulse;//импульс сброса                  
-        public float explosionRange; //расстояние детонации
-        public float fuel; //количество топлива(время разгона)
-        protected float lt;//продолжительность жизни
-        
-        protected virtual void Start()
+        private void OnGUI()
         {
-            Global = FindObjectOfType<GlobalController>();
-            body = gameObject.GetComponent<Rigidbody>();
-            //Global.SpecINI.Write(this.GetType().ToString(), "Speed", Speed.ToString());
-            //Global.SpecINI.Write(this.GetType().ToString(), "DropImpulse", DropImpulse.ToString());
-            //Global.SpecINI.Write(this.GetType().ToString(), "TurnSpeed", TurnSpeed.ToString());
-            //Global.SpecINI.Write(this.GetType().ToString(), "explosionRange", explosionRange.ToString());
+            //GUI.skin = hud.Skin;
+            //if (Global.StaticProportion && hud.scale != 1)
+            //    GUI.matrix = Matrix4x4.Scale(Vector3.one * hud.scale);
 
-            Acceleration = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "Speed"));
-            DropImpulse = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "DropImpulse"));
-            TurnSpeed = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "TurnSpeed"));
-            explosionRange = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "explosionRange"));
-        }
-        public void Update()
-        {
-            if (Vector3.Distance(this.transform.position, midPoint) < 1)
-                midPassed = true;
+            float scaleLocal = 0.5f * Global.Settings.IconsScale;
 
-            if (Vector3.Distance(this.transform.position, target) < explosionRange)
-                Explode();
-            else
-                lt += Time.deltaTime;
-            if (lt > 0.5)//задержка старта
+            float distance = Vector3.Distance(this.transform.position, Camera.main.transform.position);
+
+            float border = 40;
+            bool outOfBorder = false;
+            Vector3 crd;
+            if (Global.ManualController.enabled) crd = UIUtil.WorldToScreenCircle(this.transform.position, border, out outOfBorder);
+            else crd = UIUtil.WorldToScreenFrame(this.transform.position, border, out outOfBorder);
+            if (!outOfBorder)
             {
-                Quaternion targetRotation = Quaternion.Euler(0, this.transform.rotation.eulerAngles.y, 0);//контроль курса
-                if (!midPassed && midPoint != Vector3.zero)
-                    targetRotation = Quaternion.LookRotation(midPoint - this.transform.position, new Vector3(0, 1, 0));
-                else if (target != Vector3.zero)
-                    targetRotation = Quaternion.LookRotation(target - this.transform.position, new Vector3(0, 1, 0));
-
-                this.transform.rotation = Quaternion.Slerp(this.transform.rotation, targetRotation, Time.deltaTime * TurnSpeed);
-                Vector3 shift = Vector3.zero;
-                //полет по прямой
-                shift.z = Acceleration;
-                //компенсирование боковых инерций
-                float signVelocity;
-
-                float horisontalSpeed = Vector3.Project(body.velocity, body.transform.right).magnitude;
-                if (Vector3.Angle(body.velocity, body.transform.right) < 90)
-                    signVelocity = 1;
-                else signVelocity = -1;
-                shift.x = Mathf.Clamp(-(horisontalSpeed * signVelocity), -Acceleration / 2f, Acceleration / 2f);
-
-                float verticalSpeed = Vector3.Project(body.velocity, body.transform.up).magnitude;
-                if (Vector3.Angle(body.velocity, body.transform.up) < 90)
-                    signVelocity = 1;
-                else signVelocity = -1;
-                shift.y = Mathf.Clamp(-(verticalSpeed * signVelocity), -Acceleration / 2f, Acceleration / 2f);
-                body.AddRelativeForce(shift, ForceMode.Acceleration);
-            }
-            else if (lt > 20)
-                Explode();
-        }
-        public virtual void Explode()
-        {
-            GameObject blast = Instantiate(Global.ExplosiveBlast, this.transform.position, this.transform.rotation);
-            blast.GetComponent<Explosion>().StatUp(BlastType.UnitaryTorpedo);
-            Destroy(gameObject);
-        }
-        // взрываем при коллизии
-        public virtual void OnCollisionEnter(Collision collision)
-        {
-            switch (collision.gameObject.tag)
-            {
-                case "Shell":
-                    {
-                        if (lt > 1)
-                            Explode();
-                        break;
-                    }
-                case "Terrain":
-                    {
-                        if (lt > 1)
-                            Explode();
-                        break;
-                    }
-                case "Unit":
-                    {
-                        if (lt > 1.5)
-                            Explode();
-                        break;
-                    }
+                Vector2 frameSize = new Vector2(Global.AlliesGUIFrame.width, Global.AlliesGUIFrame.height);
+                if (true) //perspective
+                    if (distance < 400)
+                        distance = 400;
+                float distFactor = 1000 / distance;
+                frameSize = frameSize * distFactor * scaleLocal;
+                float frameY = crd.y - frameSize.y / 2f - (12 * distFactor * scaleLocal);
+                float frameX = crd.x - frameSize.x / 2f;
+                Texture frameToDraw;
+                if (Team == Global.playerArmy)
+                    frameToDraw = Global.AlliesGUIFrame;
+                else
+                    frameToDraw = Global.EnemyGUIFrame;
+                GUI.DrawTexture(new Rect(new Vector2(frameX, frameY), frameSize), frameToDraw);
             }
         }
-        public virtual void SetTarget(Vector3 target)
-        {
-            this.target = target;
-        }
-        public virtual void SetMidpoint(Vector3 target)
-        {
-            this.midPoint = target;
-        }
-        public virtual void SetTeam(Army allies)
+        public void SetTeam(Army allies)
         {
             this.Team = allies;
         }
-        public virtual bool Allies(Army army)
+        public bool Allies(Army army)
         {
             return (Team == army);
         }
+    }
+    public abstract class SelfguidedMissile : Missile
+    {
+        public Transform target;// цель для ракеты       
+        //public GameObject Blast;// префаб взрыва   
+        protected float turnSpeed;// скорость поворота ракеты            
+        protected float aimCone;
+        protected float explosionRange; //расстояние детонации
+
+        protected override void Start()
+        {
+            base.Start();
+
+            turnSpeed = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "turnSpeed"));
+            aimCone = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "aimCone"));
+            explosionRange = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "explosionRange"));
+        }
+        protected override void Update()
+        {
+            base.Update();
+            UpdateLocal();
+            if (target!=null && Vector3.Distance(this.transform.position, target.transform.position) < explosionRange)
+                Explode();
+
+            if (lifeTime > 0.5)//задержка старта
+            {
+                if (target != null)//наведение
+                {
+                    Quaternion targetRotation = Quaternion.LookRotation(target.position - this.transform.position, new Vector3(0, 1, 0));
+                    this.transform.rotation = Quaternion.RotateTowards(this.transform.rotation, targetRotation, Time.deltaTime * turnSpeed);
+                    // угол между направлением на цель и направлением ракеты порядок имеет значение.
+                    Weapons.MissileTrap[] traps = FindObjectsOfType<Weapons.MissileTrap>();
+                    if (traps.Length > 0)
+                    {
+                        foreach (Weapons.MissileTrap x in traps)
+                        {
+                            if (Vector3.Angle(x.transform.position - this.transform.position, this.transform.forward) < aimCone)
+                            {
+                                target = null;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (target != null && Vector3.Angle(target.transform.position - this.transform.position, this.transform.forward) > aimCone)
+                    target = null;
+            }
+        }
+        public void SetTarget(Transform target)
+        {
+            this.target = target;
+        }
+
     }
 }

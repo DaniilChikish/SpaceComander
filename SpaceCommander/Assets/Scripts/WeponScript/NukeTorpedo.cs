@@ -5,15 +5,14 @@ using UnityEngine;
 
 namespace SpaceCommander.Weapons
 {
-    class NukeTorpedo : Torpedo
+    class NukeTorpedo : SelfguidedMissile
     {
         protected override void Start()
         {
             base.Start();
             gameObject.GetComponent<Rigidbody>().mass = 300;
-            gameObject.GetComponent<Rigidbody>().AddForce(-transform.up * DropImpulse, ForceMode.Impulse);
+            gameObject.GetComponent<Rigidbody>().AddForce(-transform.up * dropImpulse, ForceMode.Impulse);
             Global = FindObjectOfType<GlobalController>();
-            lt = 0;
         }
         public override void Explode()
         {

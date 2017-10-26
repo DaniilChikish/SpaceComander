@@ -90,7 +90,6 @@ namespace SpaceCommander
                         }
                     case "Missile":
                         {
-                            collision.GetComponent<SelfguidedMissile>().Arm();
                             break;
                         }
                     case "Explosion":
@@ -128,7 +127,6 @@ namespace SpaceCommander
                         {
                             secondField.enabled = true;
                             Rigidbody shell = collision.GetComponent<Rigidbody>();
-                            collision.GetComponent<SelfguidedMissile>().Arm();
                             secondBlinker = 1.5f;
                             shell.AddForce((collision.transform.position - this.transform.position).normalized * Mathf.Sqrt(shell.mass * maxCampacity * 10), ForceMode.Force);//velocity = collision.GetComponent<Rigidbody>().velocity / 2;
                             break;

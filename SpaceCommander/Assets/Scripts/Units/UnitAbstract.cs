@@ -445,10 +445,7 @@ namespace SpaceCommander
                 float iconY;
 
                 if (true) //perspective
-                    if (distance < 400)
-                        distance = 400;
-                    else if (distance > 1000)
-                        distance = 1000;
+                    distance = Mathf.Clamp(distance, 400, 2000);
                 float distFactor = 1000 / distance;
                 if (!outOfBorder)
                     frameSize = frameSize * distFactor * scaleLocal;
@@ -880,7 +877,7 @@ namespace SpaceCommander
             hazard.AddRange(GameObject.FindGameObjectsWithTag("Torpedo"));
             foreach (GameObject x in hazard)
             {
-                if (Vector3.Distance(x.transform.position, this.transform.position) < radarRange * 0.5 && !x.GetComponent<Torpedo>().Allies(team))
+                if (Vector3.Distance(x.transform.position, this.transform.position) < radarRange * 0.5 && !x.GetComponent<Missile>().Allies(team))
                     return x;
             }
             return null;

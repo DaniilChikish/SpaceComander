@@ -14,24 +14,26 @@ namespace SpaceCommander.Weapons
         protected override void Shoot(Transform target)
         {
             GameObject missile;
+            Transform targetTr = null;
+            if (Target != null) targetTr = Target.transform;
             switch (AmmoType)
             {
                 case MissileType.Interceptor:
                     {
                         missile = Instantiate(Global.Missile, gameObject.transform.position, transform.rotation);
-                        missile.AddComponent<InterceptorMissile>().SetTarget(target);
+                        missile.AddComponent<InterceptorMissile>().SetTarget(targetTr);
                         break;
                     }
                 case MissileType.Hunter:
                     {
                          missile = Instantiate(Global.Missile, gameObject.transform.position, transform.rotation);
-                        missile.AddComponent<HunterMissile>().SetTarget(target);
+                        missile.AddComponent<HunterMissile>().SetTarget(targetTr);
                         break;
                     }
                 case MissileType.Metheor:
                     {
                          missile = Instantiate(Global.Missile, gameObject.transform.position, transform.rotation);
-                        missile.AddComponent<MetheorMissile>().SetTarget(target);
+                        missile.AddComponent<MetheorMissile>().SetTarget(targetTr);
                         break;
                     }
                 case MissileType.Bombardier:

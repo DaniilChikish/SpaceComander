@@ -106,6 +106,7 @@
     <Compile Include="Assets\Scripts\SerializeData.cs" />
     <Compile Include="Assets\Scripts\ShipManualController.cs" />
     <Compile Include="Assets\Scripts\WeponScript\FirestormLauncher.cs" />
+    <Compile Include="Assets\Scripts\WeponScript\ThunderbolthHeavyRocket.cs" />
     <Compile Include="Assets\TestScripts\Rangefinder.cs" />
     <Compile Include="Assets\TestScripts\TestShield.cs" />
     <Compile Include="Assets\TestScripts\TestArmor.cs" />

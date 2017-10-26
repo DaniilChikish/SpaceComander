@@ -9,11 +9,9 @@ namespace SpaceCommander.Weapons
         protected override void Start()
         {
             base.Start();
-            Type = MissileType.Metheor;
-            gameObject.GetComponent<Rigidbody>().AddForce(transform.forward * DropImpulse, ForceMode.Impulse);
-            lifeTime = 0;
+            body.AddForce(transform.forward * dropImpulse, ForceMode.Impulse);
         }
-        protected override void Explode()
+        public override void Explode()
         {
             GameObject blast = Instantiate(Global.ExplosiveBlast, this.transform.position, this.transform.rotation);
             blast.GetComponent<Explosion>().StatUp(BlastType.Missile);

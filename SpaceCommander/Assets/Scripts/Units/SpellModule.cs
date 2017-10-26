@@ -1119,9 +1119,9 @@ namespace SpaceCommander
                 for (int i = 0; i < torpedo.Length; i++)
                 {
                     dist = Vector3.Distance(torpedo[i].transform.position, owner.transform.position);
-                    if (torpedo[i].GetComponent<Torpedo>().Team != owner.Team && dist < 300)
+                    if (!torpedo[i].GetComponent<Missile>().Allies(owner.Team) && dist < 300)
                     {
-                        torpedo[i].GetComponent<Torpedo>().Explode();
+                        torpedo[i].GetComponent<Missile>().Explode();
                         GameObject beam;
                         beam = GameObject.Instantiate(Global.greenBeam);
                         Vector3.Distance(owner.transform.position, torpedo[i].transform.position);

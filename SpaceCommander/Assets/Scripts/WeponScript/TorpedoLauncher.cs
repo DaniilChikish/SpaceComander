@@ -14,43 +14,45 @@ namespace SpaceCommander.Weapons
         }
         protected override void Shoot(Transform target)
         {
-            GameObject torpedo;
+            GameObject missile;
+            Transform targetTr = null;
+            if (Target != null) targetTr = Target.transform;
             switch (AmmoType)
             {
                 case TorpedoType.Nuke:
                     {
-                        torpedo = Instantiate(Global.Torpedo, gameObject.transform.position, transform.rotation);
-                        torpedo.AddComponent<NukeTorpedo>();
+                        missile = Instantiate(Global.Torpedo, gameObject.transform.position, transform.rotation);
+                        missile.AddComponent<NukeTorpedo>().SetTarget(targetTr);
                         break;
                     }
                 case TorpedoType.Sprute:
                     {
-                        torpedo = Instantiate(Global.Torpedo, gameObject.transform.position, transform.rotation);
-                        torpedo.AddComponent<SpruteTorpedo>();
+                        missile = Instantiate(Global.Torpedo, gameObject.transform.position, transform.rotation);
+                        missile.AddComponent<SpruteTorpedo>().SetTarget(targetTr);
                         break;
                     }
                 case TorpedoType.ShieldsBreaker:
                     {
-                        torpedo = Instantiate(Global.Torpedo, gameObject.transform.position, transform.rotation);
-                        torpedo.AddComponent<ShieldBreakerTorpedo>();
+                        missile = Instantiate(Global.Torpedo, gameObject.transform.position, transform.rotation);
+                        missile.AddComponent<ShieldBreakerTorpedo>().SetTarget(targetTr);
+                        break;
+                    }
+                case TorpedoType.Thunderbolth:
+                    {
+                        missile = Instantiate(Global.Torpedo, gameObject.transform.position, transform.rotation);
+                        missile.AddComponent<ThunderbolthHeavyRocket>().SetTarget(targetTr);
                         break;
                     }
                 case TorpedoType.Unitary:
                 default:
                     {
-                        torpedo = Instantiate(Global.Torpedo, gameObject.transform.position, transform.rotation);
-                        torpedo.AddComponent<UnitaryTorpedo>();
-                        if (target == null)
-                            torpedo.GetComponent<Torpedo>().SetMidpoint(this.transform.GetComponentInParent<Unit>().transform.position + this.transform.GetComponentInParent<Unit>().transform.forward * 100);
+                        missile = Instantiate(Global.Torpedo, gameObject.transform.position, transform.rotation);
+                        missile.AddComponent<UnitaryTorpedo>().SetTarget(targetTr);
                         break;
                     }
             }
-            if (target != null)
-                torpedo.GetComponent<Torpedo>().SetTarget(target.position);
-            else
-                torpedo.GetComponent<Torpedo>().SetTarget(this.transform.GetComponentInParent<Unit>().transform.position + this.transform.GetComponentInParent<Unit>().transform.forward * Range);
-            torpedo.GetComponent<Torpedo>().SetTeam(owner.Team);
-            torpedo.GetComponent<Rigidbody>().AddForce(ownerBody.velocity, ForceMode.VelocityChange);
+            missile.GetComponent<Missile>().SetTeam(owner.Team);
+            missile.GetComponent<Rigidbody>().AddForce(ownerBody.velocity, ForceMode.VelocityChange);
         }
     }
 }

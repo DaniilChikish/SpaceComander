@@ -4,14 +4,12 @@ using UnityEngine;
 
 namespace SpaceCommander.Weapons
 {
-    class SpruteTorpedo : Torpedo
+    class SpruteTorpedo : SelfguidedMissile
     {
         protected override void Start()
         {
             base.Start();
-            gameObject.GetComponent<Rigidbody>().AddForce(-transform.up * DropImpulse, ForceMode.Impulse);
-            Global = FindObjectOfType<GlobalController>();
-            lt = 0;
+            body.AddForce(-transform.up * dropImpulse, ForceMode.Impulse);
         }
         public override void Explode()
         {
