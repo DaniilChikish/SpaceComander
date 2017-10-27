@@ -373,6 +373,24 @@ namespace DeusUtility.UI
             GUI.DrawTexture(new Rect(4, 4, imageTexture.width, imageTexture.height), imageTexture);
             GUI.EndGroup();
         }
+        public static void Image(Vector2 offset, Vector2 size, Texture2D imageTexture)
+        {
+            Vector2 frameSize = new Vector2(size.x + 8, size.y + 8);
+
+            GUI.BeginGroup(new Rect(offset.x, offset.y, frameSize.x, frameSize.y));
+            GUI.Label(new Rect(0, 0, frameSize.x, frameSize.y), "", "imageFrame");
+            GUI.DrawTexture(new Rect(4, 4, size.x, size.y), imageTexture);
+            GUI.EndGroup();
+        }
+        public static void Image(Rect frame, Texture2D imageTexture)
+        {
+            Vector2 size = new Vector2(frame.width - 8, frame.height - 8);
+
+            GUI.BeginGroup(frame);
+            GUI.Label(new Rect(0, 0, frame.width, frame.height), "", "imageFrame");
+            GUI.DrawTexture(new Rect(4, 4, size.x, size.y), imageTexture);
+            GUI.EndGroup();
+        }
 
         public static void TextWithShadow(Rect rect, GUIContent content, GUIStyle style, Color txtColor, Color shadowColor, Vector2 direction)
         {

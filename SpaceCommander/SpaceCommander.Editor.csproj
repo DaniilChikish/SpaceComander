@@ -103,6 +103,9 @@
     <Reference Include="UnityEngine.VR">
       <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/UnityVR/RuntimeEditor/UnityEngine.VR.dll</HintPath>
     </Reference>
+    <Reference Include="NSubstitute">
+      <HintPath>Assets/UnityTestTools/UnitTesting/Editor/NSubstitute/NSubstitute.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEditor.Graphs">
       <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEditor.Graphs.dll</HintPath>
     </Reference>
@@ -120,9 +123,6 @@
     </Reference>
     <Reference Include="SyntaxTree.VisualStudio.Unity.Bridge">
       <HintPath>C:/Program Files (x86)/Microsoft Visual Studio Tools for Unity/2015/Editor/SyntaxTree.VisualStudio.Unity.Bridge.dll</HintPath>
-    </Reference>
-    <Reference Include="NSubstitute">
-      <HintPath>Assets/UnityTestTools/UnitTesting/Editor/NSubstitute/NSubstitute.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -184,8 +184,6 @@
   <ItemGroup>
     <None Include="Assets\Effects\Shaders\SFE_TransparentAntiRim.shader" />
     <None Include="Assets\Effects\Shaders\SFE_TransparentRim.shader" />
-    <None Include="Assets\GUI\Selection\Projector\ProjectorAdditiveTint.shader" />
-    <None Include="Assets\GUI\Selection\ProjectorAdditiveTint.shader" />
     <None Include="Assets\Scripts\ClassDiagram1.cd" />
     <None Include="Assets\SpaceD\readme.txt" />
     <None Include="Assets\Standard Assets\Cameras\CameraGuidelines.txt" />
