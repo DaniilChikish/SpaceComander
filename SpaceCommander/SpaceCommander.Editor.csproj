@@ -192,10 +192,12 @@
     <None Include="Assets\StreamingAssets\local\eng\eng.xml" />
     <None Include="Assets\StreamingAssets\local\eng\mission1_brief_eng.xml" />
     <None Include="Assets\StreamingAssets\local\eng\mission2_brief_eng.xml" />
+    <None Include="Assets\StreamingAssets\local\eng\training_brief_eng.xml" />
     <None Include="Assets\StreamingAssets\local\rus\base_rus.xml" />
     <None Include="Assets\StreamingAssets\local\rus\mission1_brief_rus.xml" />
     <None Include="Assets\StreamingAssets\local\rus\mission2_brief_rus.xml" />
     <None Include="Assets\StreamingAssets\local\rus\rus.xml" />
+    <None Include="Assets\StreamingAssets\local\rus\training_brief_rus.xml" />
     <None Include="Assets\StreamingAssets\local\temp.xml" />
     <None Include="Assets\UnityTestTools\LICENSE.txt" />
     <None Include="Assets\UnityTestTools\changelog.txt" />

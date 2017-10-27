@@ -1085,11 +1085,11 @@ namespace SpaceCommander
             }
         }
     }
-    public class TorpedoEliminator : SpellModule
+    public class MissileEliminator : SpellModule
     {
         private float Count;
 
-        public TorpedoEliminator(SpaceShip owner) : base(owner)
+        public MissileEliminator(SpaceShip owner) : base(owner)
         {
             base.backCount = 0;
             type = SpellType.LongAction;

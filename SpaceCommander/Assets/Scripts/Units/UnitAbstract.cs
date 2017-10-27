@@ -997,7 +997,7 @@ namespace SpaceCommander
                 {
                     foreach (SpellModule m in module)
                     {
-                        if (m.GetType() == typeof(TorpedoEliminator))
+                        if (m.GetType() == typeof(MissileEliminator))
                         {
                             m.EnableIfReady();
                             break;

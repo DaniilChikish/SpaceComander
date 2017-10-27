@@ -17,7 +17,7 @@ namespace SpaceCommander.Units
 
             module = new SpellModule[3];
             module[0] = new EmergencySelfRapairing(this);
-            module[1] = new TorpedoEliminator(this);
+            module[1] = new MissileEliminator(this);
             module[2] = new ProtectionMatrix(this);
         }
         protected override void Explosion()

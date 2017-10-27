@@ -17,7 +17,7 @@ namespace SpaceCommander
         private Image HealthBar;
         private Text HealthCount;
 
-        //weapon
+        [Header("Wapon")]
         public Texture CanonIcon;
         public Texture AutocannonIcon;
         public Texture ShotCannonIcon;
@@ -28,7 +28,9 @@ namespace SpaceCommander
         public Texture MagnetoIcon;
         public Texture MissileIcon;
         public Texture TorpedoIcon;
-        //Module
+
+        [Space]
+        [Header("Module")]
         public Texture DefaultSpellIcon;
         public Texture MissoleTrapSpellIcon;
         public Texture JammerSpellIcon;
@@ -39,16 +41,27 @@ namespace SpaceCommander
         public Texture ShieldStunnerSpellIcon;
         public Texture EmergencySelfRapairingSpellIcon;
         public Texture EmergencyShieldRechargingSpellIcon;
+        public Texture ShieldBoosterSpellIcon;
         public Texture AcceleratingCoilsSpellIcon;
         public Texture RechargeAcceleratorPassiveSpellIcon;
         public Texture ExtendedAmmoPackSpellIcon;
         public Texture InspirationSpellIcon;
         public Texture ForcedTargetDesignatorSpellIcon;
+        public Texture MissileEliminatorSpellIcon;
+        public Texture ProtectionMatrixSpellIcon;
+        public Texture ReactorOverheatSpellIcon;
+        public Texture NukeTorpedoSpellIcon;
+        public Texture MagnetMineSpellIcon;
+        public Texture TurretSpellIcon;
+        public Texture DroneSpellIcon;
+        public Texture GravityStrikeSpellIcon;
 
-        public ISpaceShipObservable observable;
+        [Space]
+        [Header("Data")]
+        private ISpaceShipObservable observable;
         private HUDBase hud;
         private GlobalController Global;
-        public GUIStyle localStyle;
+        private GUIStyle localStyle;
         private float statusCount;
         private bool statusIsOpen;
         private float previevCount;
@@ -282,8 +295,12 @@ namespace SpaceCommander
                 return InspirationSpellIcon;
             else if (type == typeof(ForcedTargetDesignator))
                 return ForcedTargetDesignatorSpellIcon;
-        //    else if (type == typeof(type))
-        //        return SpellIcon;
+            else if (type == typeof(ProtectionMatrix))
+                return ProtectionMatrixSpellIcon;
+            else if (type == typeof(MissileEliminator))
+                return MissileEliminatorSpellIcon;
+            //    else if (type == typeof(type))
+            //        return SpellIcon;
             else return DefaultSpellIcon;
         }
 
