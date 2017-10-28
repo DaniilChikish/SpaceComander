@@ -62,15 +62,21 @@ namespace SpaceCommander
         private HUDBase hud;
         private GlobalController Global;
         private GUIStyle localStyle;
-        private float statusCount;
+        private float statusPosition;
+        private Vector3 statusOpenedPosition;
+        private Vector3 statusClosedPosition;
+        private GameObject weaponPanel;
+        private Vector3 weaponPanelOpenedPosition;
+        private Vector3 weaponPanelClosedPosition;
         private bool statusIsOpen;
-        private float previevCount;
+        private float previevPosition;
+        private Vector3 previevOpenedPosition;
+        private Vector3 previevClosedPosition;
         private bool previevIsOpen;
         private GameObject canvas;
         private GameObject status;
         private GameObject previev;
         private GameObject spellPanel;
-        private GameObject weaponPanel;
         private GameObject primaryWeaponSlot;
         private GameObject secondaryWeaponSlot;
         private Image[] PrimaryCooldown;
@@ -80,26 +86,29 @@ namespace SpaceCommander
         private Image[] moduleCooldown;
         private Image[] moduleActive;
         private ObserverMode mode;
-        private float statusOpenedY;
-        private float previevOpenedX;
+        public ObserverMode Mode {  get { return mode; } }
         private OrbitalCamera maincam;
 
 
         private void OnEnable()
         {
-            statusCount = MovDuratuon;
-            statusIsOpen = true;
-            previevCount = MovDuratuon;
-            previevIsOpen = true;
             maincam = FindObjectOfType<OrbitalCamera>();
             hud = FindObjectOfType<HUDBase>();
             Global = FindObjectOfType<GlobalController>();
             canvas = GameObject.Find("Canvas");
             status = GameObject.Find("StatusPanel");
-            statusOpenedY = status.transform.position.y;
-            previev = GameObject.Find("UnitPreviewPanel");
-            previevOpenedX = previev.transform.position.x;
+            statusOpenedPosition = status.transform.position;
+            statusClosedPosition = status.transform.position + (Vector3.up * status.GetComponent<RectTransform>().rect.height * -1.5f);
+            statusPosition = 0;
+            statusIsOpen = false;
             weaponPanel = GameObject.Find("WeaponPanel");
+            weaponPanelOpenedPosition = weaponPanel.transform.position;
+            weaponPanelClosedPosition = weaponPanel.transform.position + (Vector3.right * weaponPanel.GetComponent<RectTransform>().rect.width * -1.15f);
+            previev = GameObject.Find("UnitPreviewPanel");
+            previevOpenedPosition = previev.transform.position;
+            previevClosedPosition = previev.transform.position + (Vector3.right * previev.GetComponent<RectTransform>().rect.width * 1.5f);
+            previevPosition = 0;
+            previevIsOpen = false;
             primaryWeaponSlot = weaponPanel.transform.Find("PrimarySlot").gameObject;
             secondaryWeaponSlot = weaponPanel.transform.Find("SecondarySlot").gameObject;
             spellPanel = GameObject.Find("SpellButtons");
@@ -306,6 +315,13 @@ namespace SpaceCommander
 
         private void Update()
         {
+            CheckMode();
+
+            if (Input.GetKeyDown(KeyCode.Space))
+                SwichHandControl();
+        }
+        private void CheckMode()
+        {
             if (Global.selectedList.Count == 1)
             {
                 if ((object)observable != Global.selectedList[0])
@@ -365,159 +381,141 @@ namespace SpaceCommander
                     previevIsOpen = false;
                 }
             }
+        }
+        private void MoveStatus()
+        {
+            float speedFactor = 1f / MovDuratuon;// * (1f / Time.timeScale);
+            float delta = speedFactor * Time.deltaTime;
             if (statusIsOpen)
-            {
-                if (statusCount < MovDuratuon)
-                {
-                    statusCount += Time.deltaTime;
-                    if (statusCount > MovDuratuon) statusCount = MovDuratuon;
-                    float speedFactor = 1;// Mathf.Cos((MovDuratuon - statusCount) * Mathf.PI * 2 / MovDuratuon + Mathf.PI) + 1;
-                    float statusSpeedMotion = status.GetComponent<RectTransform>().rect.height * hud.scale / MovDuratuon * speedFactor;
-                    float weaponSpeedMotion = weaponPanel.GetComponent<RectTransform>().rect.width * hud.scale / MovDuratuon * speedFactor;
-                    status.transform.Translate(0, statusSpeedMotion * Time.deltaTime, 0);
-                    weaponPanel.transform.Translate(weaponSpeedMotion * Time.deltaTime, 0, 0);
-                }
-            }
+                statusPosition = Mathf.Clamp01(statusPosition + delta);
             else
-            {
-                if (statusCount > 0)
-                {
-                    statusCount -= Time.deltaTime;
-                    if (statusCount < 0) statusCount = 0;
-                    float speedFactor = 1;// Mathf.Cos((MovDuratuon - statusCount) * Mathf.PI * 2 / MovDuratuon + Mathf.PI) + 1;
-                    float statusSpeedMotion = status.GetComponent<RectTransform>().rect.height * hud.scale / MovDuratuon * speedFactor;
-                    float weaponSpeedMotion = weaponPanel.GetComponent<RectTransform>().rect.width * hud.scale / MovDuratuon * speedFactor;
-                    status.transform.Translate(0, -statusSpeedMotion * Time.deltaTime, 0);
-                    weaponPanel.transform.Translate(-weaponSpeedMotion * Time.deltaTime, 0, 0);
-                }
-            }
+                statusPosition = Mathf.Clamp01(statusPosition - delta);
+            status.transform.position = Vector3.Lerp(statusClosedPosition, statusOpenedPosition, Mathf.Sin(statusPosition * Mathf.PI / 2f));
+            weaponPanel.transform.position = Vector3.Lerp(weaponPanelClosedPosition, weaponPanelOpenedPosition, Mathf.Sin(statusPosition * Mathf.PI / 2f));
+        }
+        private void MovePreviev()
+        {
+            float speedFactor = 1f / MovDuratuon;// * (1f / Time.timeScale);
+            float delta = speedFactor * Time.deltaTime;
             if (previevIsOpen)
-            {
-                if (previevCount < MovDuratuon)
-                {
-                    previevCount += Time.deltaTime;
-                    if (previevCount > MovDuratuon) previevCount = MovDuratuon;
-                    float speedFactor = 1;// Mathf.Cos((MovDuratuon - previevCount) * Mathf.PI * 2 / MovDuratuon + Mathf.PI) + 1;
-                    float previevSpeedMotion = previev.GetComponent<RectTransform>().rect.height * hud.scale / MovDuratuon * speedFactor;
-                    previev.transform.Translate(-previevSpeedMotion * Time.deltaTime, 0, 0);
-                }
-            }
+                previevPosition = Mathf.Clamp01(previevPosition + delta);
             else
-            {
-                if (previevCount > 0)
-                {
-                    previevCount -= Time.deltaTime;
-                    if (previevCount < 0) previevCount = 0;
-                    float speedFactor = 1;// Mathf.Cos((MovDuratuon - previevCount) * Mathf.PI * 2 / MovDuratuon + Mathf.PI) + 1;
-                    float previevSpeedMotion = previev.GetComponent<RectTransform>().rect.height * hud.scale / MovDuratuon * speedFactor;
-                    previev.transform.Translate(previevSpeedMotion * Time.deltaTime, 0, 0);
-                }
-            }
-            if (Input.GetKeyDown(KeyCode.Space))
-                SwichHandControl();
+                previevPosition = Mathf.Clamp01(previevPosition - delta);
+            previev.transform.position = Vector3.Lerp(previevClosedPosition, previevOpenedPosition, Mathf.Sin(previevPosition * Mathf.PI / 2f));
         }
         private void OnGUI()
         {
-            //GUI.skin = hud.Skin;
+            MoveStatus();
+            MovePreviev();            //GUI.skin = hud.Skin;
             //if (Global.StaticProportion && hud.scale != 1)
             //    GUI.matrix = Matrix4x4.Scale(Vector3.one * hud.scale);
             if (mode != ObserverMode.None)
             {
-                //modules
-                if (observable.Module != null && observable.Module.Length > 0)
-                {
-                    for (int i = 0; i < observable.Module.Length; i++)
-                    {
-                        float current;
+                UpdateModules();
+                UpdateHull();
+                UpdateWeapons();
+            }
 
-                        switch (observable.Module[i].State)
-                        {
-                            case SpellModuleState.Active:
-                                {
-                                    current = observable.Module[i].BackCount / observable.Module[i].ActiveTime;
-                                    moduleActive[i].fillAmount = current;
-                                    moduleCooldown[i].fillAmount = 0;
-                                    break;
-                                }
-                            case SpellModuleState.Cooldown:
-                                {
-                                    current = observable.Module[i].BackCount / observable.Module[i].CoolingTime;
-                                    moduleActive[i].fillAmount = 0;
-                                    moduleCooldown[i].fillAmount = current;
-                                    break;
-                                }
-                            case SpellModuleState.Ready:
-                                {
-                                    current = 0f;
-                                    moduleActive[i].fillAmount = 0;
-                                    moduleCooldown[i].fillAmount = 0;
-                                    break;
-                                }
-                        }
-                    }
-                }
-                //health
-                {
-                    ShieldBar.fillAmount = observable.ShieldForce / observable.ShieldCampacity;
-                    ShieldCount.text = Mathf.Round(observable.ShieldForce).ToString();
-                    HealthBar.fillAmount = observable.Hull / observable.MaxHull;
-                    HealthCount.text = Mathf.Round(observable.Hull).ToString();
-                    //Rect panelRect = UIUtil.GetRect(new Vector2(healthPanel.width, healthPanel.height), PositionAnchor.LeftDown, hud.mainRect.size, new Vector2(10, -10));
-                    //GUI.BeginGroup(panelRect, healthPanel);
-                    //{
-                    //    Rect healthBackRect = UIUtil.GetRect(new Vector2(healthBarBack.width, healthBarBack.height), PositionAnchor.LeftUp, panelRect.size, new Vector2(4, 4));
-                    //    GUI.BeginGroup(healthBackRect, healthBarBack);
+        }
 
-                    //}
-                    //GUI.EndGroup();
-                }
-                //weapon
+        private void UpdateWeapons()
+        {
+            for (int i = 0; i < observable.PrimaryWeapon.Length; i++)
+            {
+                if (observable.PrimaryWeapon[i].GetType() == typeof(EnergyWeapon))
                 {
-                    for (int i = 0; i < observable.PrimaryWeapon.Length; i++)
+                    float fill = observable.PrimaryWeapon[i].ShootCounter / observable.PrimaryWeapon[i].MaxShootCounter;
+                    PrimaryCooldown[i].fillAmount = fill;
+                    PrimaryCounters[i].color = new Color(255 * fill, 0, 255 * (1 - fill));
+                }
+                else if (observable.PrimaryWeapon[i].GetType() == typeof(MagWeapon))
+                {
+                    if (observable.PrimaryWeapon[i].BackCounter < (60f / observable.PrimaryWeapon[i].Firerate))
+                        PrimaryCooldown[i].fillAmount = observable.PrimaryWeapon[i].BackCounter / (60f / observable.PrimaryWeapon[i].Firerate);
+                    else
+                        PrimaryCooldown[i].fillAmount = observable.PrimaryWeapon[i].BackCounter / observable.PrimaryWeapon[i].MaxShootCounter;
+                }
+                else
+                {
+                    PrimaryCooldown[i].fillAmount = observable.PrimaryWeapon[i].BackCounter / observable.PrimaryWeapon[i].MaxShootCounter;
+                }
+                PrimaryCounters[i].text = Mathf.RoundToInt(observable.PrimaryWeapon[i].ShootCounter).ToString();
+            }
+            for (int i = 0; i < observable.SecondaryWeapon.Length; i++)
+            {
+                if (observable.SecondaryWeapon[i].GetType() == typeof(EnergyWeapon))
+                {
+                    float fill = observable.SecondaryWeapon[i].ShootCounter / observable.SecondaryWeapon[i].MaxShootCounter;
+                    SecondaryCooldown[i].fillAmount = fill;
+                    SecondaryCounters[i].color = new Color(255 * fill, 0, 255 * (1 - fill));
+                }
+                else if (observable.SecondaryWeapon[i].GetType() == typeof(MagWeapon))
+                {
+                    if (observable.SecondaryWeapon[i].BackCounter < (60f / observable.SecondaryWeapon[i].Firerate))
+                        SecondaryCooldown[i].fillAmount = observable.SecondaryWeapon[i].BackCounter / (60f / observable.SecondaryWeapon[i].Firerate);
+                    else
+                        SecondaryCooldown[i].fillAmount = observable.SecondaryWeapon[i].BackCounter / observable.SecondaryWeapon[i].MaxShootCounter;
+                }
+                else
+                {
+                    SecondaryCooldown[i].fillAmount = observable.SecondaryWeapon[i].BackCounter / observable.SecondaryWeapon[i].MaxShootCounter;
+                }
+                SecondaryCounters[i].text = Mathf.RoundToInt(observable.SecondaryWeapon[i].ShootCounter).ToString();
+            }
+        }
+
+        private void UpdateHull()
+        {
+            ShieldBar.fillAmount = observable.ShieldForce / observable.ShieldCampacity;
+            ShieldCount.text = Mathf.Round(observable.ShieldForce).ToString();
+            HealthBar.fillAmount = observable.Hull / observable.MaxHull;
+            HealthCount.text = Mathf.Round(observable.Hull).ToString();
+            //Rect panelRect = UIUtil.GetRect(new Vector2(healthPanel.width, healthPanel.height), PositionAnchor.LeftDown, hud.mainRect.size, new Vector2(10, -10));
+            //GUI.BeginGroup(panelRect, healthPanel);
+            //{
+            //    Rect healthBackRect = UIUtil.GetRect(new Vector2(healthBarBack.width, healthBarBack.height), PositionAnchor.LeftUp, panelRect.size, new Vector2(4, 4));
+            //    GUI.BeginGroup(healthBackRect, healthBarBack);
+
+            //}
+            //GUI.EndGroup();
+        }
+
+        private void UpdateModules()
+        {
+            if (observable.Module != null && observable.Module.Length > 0)
+            {
+                for (int i = 0; i < observable.Module.Length; i++)
+                {
+                    float current;
+
+                    switch (observable.Module[i].State)
                     {
-                        if (observable.PrimaryWeapon[i].GetType() == typeof(EnergyWeapon))
-                        {
-                            float fill= observable.PrimaryWeapon[i].ShootCounter / observable.PrimaryWeapon[i].MaxShootCounter;
-                            PrimaryCooldown[i].fillAmount = fill;
-                            PrimaryCounters[i].color = new Color(255 * fill, 0, 255 * (1 - fill));
-                        }
-                        else if (observable.PrimaryWeapon[i].GetType() == typeof(MagWeapon))
-                        {
-                            if (observable.PrimaryWeapon[i].BackCounter < (60f / observable.PrimaryWeapon[i].Firerate))
-                                PrimaryCooldown[i].fillAmount = observable.PrimaryWeapon[i].BackCounter / (60f / observable.PrimaryWeapon[i].Firerate);
-                            else
-                                PrimaryCooldown[i].fillAmount = observable.PrimaryWeapon[i].BackCounter / observable.PrimaryWeapon[i].MaxShootCounter;
-                        }
-                        else
-                        {
-                                PrimaryCooldown[i].fillAmount = observable.PrimaryWeapon[i].BackCounter / observable.PrimaryWeapon[i].MaxShootCounter;
-                        }
-                        PrimaryCounters[i].text = Mathf.RoundToInt(observable.PrimaryWeapon[i].ShootCounter).ToString();
-                    }
-                    for (int i = 0; i < observable.SecondaryWeapon.Length; i++)
-                    {
-                        if (observable.SecondaryWeapon[i].GetType() == typeof(EnergyWeapon))
-                        {
-                            float fill = observable.SecondaryWeapon[i].ShootCounter / observable.SecondaryWeapon[i].MaxShootCounter;
-                            SecondaryCooldown[i].fillAmount = fill;
-                            SecondaryCounters[i].color = new Color(255 * fill, 0, 255 * (1 - fill));
-                        }
-                        else if (observable.SecondaryWeapon[i].GetType() == typeof(MagWeapon))
-                        {
-                            if (observable.SecondaryWeapon[i].BackCounter < (60f / observable.SecondaryWeapon[i].Firerate))
-                                SecondaryCooldown[i].fillAmount = observable.SecondaryWeapon[i].BackCounter / (60f / observable.SecondaryWeapon[i].Firerate);
-                            else
-                                SecondaryCooldown[i].fillAmount = observable.SecondaryWeapon[i].BackCounter / observable.SecondaryWeapon[i].MaxShootCounter;
-                        }
-                        else
-                        {
-                            SecondaryCooldown[i].fillAmount = observable.SecondaryWeapon[i].BackCounter / observable.SecondaryWeapon[i].MaxShootCounter;
-                        }
-                        SecondaryCounters[i].text = Mathf.RoundToInt(observable.SecondaryWeapon[i].ShootCounter).ToString();
+                        case SpellModuleState.Active:
+                            {
+                                current = observable.Module[i].BackCount / observable.Module[i].ActiveTime;
+                                moduleActive[i].fillAmount = current;
+                                moduleCooldown[i].fillAmount = 0;
+                                break;
+                            }
+                        case SpellModuleState.Cooldown:
+                            {
+                                current = observable.Module[i].BackCount / observable.Module[i].CoolingTime;
+                                moduleActive[i].fillAmount = 0;
+                                moduleCooldown[i].fillAmount = current;
+                                break;
+                            }
+                        case SpellModuleState.Ready:
+                            {
+                                current = 0f;
+                                moduleActive[i].fillAmount = 0;
+                                moduleCooldown[i].fillAmount = 0;
+                                break;
+                            }
                     }
                 }
             }
         }
+
         public void ActiveModule(int index)
         {
             if (observable != null && index < observable.Module.Length && observable.Module[index].State == SpellModuleState.Ready)
@@ -595,21 +593,21 @@ namespace SpaceCommander
         }
         private void ButtonOff()
         {
-                var colors = GameObject.Find("HandControlButton").GetComponent<Button>().colors;
-                colors.normalColor = new Color(255, 0, 0, 255);
-                colors.highlightedColor = new Color(255, 0, 255, 255);
-                GameObject.Find("HandControlButton").GetComponent<Button>().colors = colors;
-                GameObject.Find("HandControlButton").transform.GetChild(0).GetComponent<Text>().text = "OFF";
-                GameObject.Find("HandControlButton").transform.GetChild(0).GetComponent<Text>().color = new Color(255, 0, 0, 255);
+            var colors = GameObject.Find("HandControlButton").GetComponent<Button>().colors;
+            colors.normalColor = new Color(255, 0, 0, 255);
+            colors.highlightedColor = new Color(255, 0, 255, 255);
+            GameObject.Find("HandControlButton").GetComponent<Button>().colors = colors;
+            GameObject.Find("HandControlButton").transform.GetChild(0).GetComponent<Text>().text = "OFF";
+            GameObject.Find("HandControlButton").transform.GetChild(0).GetComponent<Text>().color = new Color(255, 0, 0, 255);
         }
         private void ButtonOn()
         {
-                var colors = GameObject.Find("HandControlButton").GetComponent<Button>().colors;
-                colors.normalColor = new Color(0, 255, 0, 255);
-                colors.highlightedColor = new Color(0, 255, 255, 255);
-                GameObject.Find("HandControlButton").GetComponent<Button>().colors = colors;
-                GameObject.Find("HandControlButton").transform.GetChild(0).GetComponent<Text>().text = "ON";
-                GameObject.Find("HandControlButton").transform.GetChild(0).GetComponent<Text>().color = new Color(0, 255, 75, 255);
+            var colors = GameObject.Find("HandControlButton").GetComponent<Button>().colors;
+            colors.normalColor = new Color(0, 255, 0, 255);
+            colors.highlightedColor = new Color(0, 255, 255, 255);
+            GameObject.Find("HandControlButton").GetComponent<Button>().colors = colors;
+            GameObject.Find("HandControlButton").transform.GetChild(0).GetComponent<Text>().text = "ON";
+            GameObject.Find("HandControlButton").transform.GetChild(0).GetComponent<Text>().color = new Color(0, 255, 75, 255);
         }
     }
 }

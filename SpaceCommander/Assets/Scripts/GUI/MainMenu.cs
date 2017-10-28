@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using DeusUtility.UI;
 
 namespace SpaceCommander
@@ -23,11 +22,13 @@ namespace SpaceCommander
         private const float scrollSpeedFactor = 0.5f;
         private const float scrollDrag = 1;
         GlobalController Global;
+        LoadManager Loader;
         private bool langChanged;
         private GameSettings settingsLocal;
         void Start()
         {
             Global = FindObjectOfType<GlobalController>();
+            Loader = FindObjectOfType<LoadManager>();
             Time.timeScale = 1;
             CurWin = MenuWindow.Main;
             Windows = new UIWindowInfo[5];
@@ -68,7 +69,7 @@ namespace SpaceCommander
             else
                 mainRect = new Rect(0, 0, Screen.width, Screen.height);
 
-            Windows[0].rect = UIUtil.GetRect(new Vector2(400, 400), PositionAnchor.Center, mainRect.size);//main
+            Windows[0].rect = UIUtil.GetRect(new Vector2(600, 400), PositionAnchor.Center, mainRect.size);//main
             Windows[1].rect = UIUtil.GetRect(new Vector2(1100, 600), PositionAnchor.Center, mainRect.size);//options
             Windows[2].rect = UIUtil.GetRect(new Vector2(600, 200), PositionAnchor.Center, mainRect.size);//question
         }
@@ -138,18 +139,18 @@ namespace SpaceCommander
         {
             UIUtil.WindowTitle(Windows[windowID], Global.Texts("Start level"));
             //UIUtil.Label(new Rect(50, 10, 180, 43), "Выберите уровень");
-            Rect scrollContent = new Rect(0, 0, 270, 50 * SceneManager.sceneCountInBuildSettings);
-            Rect scrollView = UIUtil.GetRect(new Vector2(280, 180), PositionAnchor.Up, Windows[windowID].rect.size, new Vector2(0, 110));
+            Rect scrollContent = new Rect(0, 0, 485, 50 * Loader.ScenesCount);
+            Rect scrollView = UIUtil.GetRect(new Vector2(500, 180), PositionAnchor.Up, Windows[windowID].rect.size, new Vector2(0, 110));
             scrollLevelsPosition += scrollSpeed;
             Vector2 speedBuff = UIUtil.MouseScroll(scrollLevelsPosition, scrollView, scrollSpeedFactor, scale) - scrollLevelsPosition;
             if (speedBuff != Vector2.zero)
                 scrollSpeed = speedBuff;
             scrollLevelsPosition = GUI.BeginScrollView(scrollView, scrollLevelsPosition, scrollContent);
-            for (int i = 1; i < SceneManager.sceneCountInBuildSettings; i++)
+            for (int i = 2; i < Loader.ScenesCount; i++)
             {
-                if (UIUtil.ButtonBig(UIUtil.GetRect(new Vector2(200, 50), PositionAnchor.Up, scrollContent.size, new Vector2(5, (i - 1) * 50 + 5)), Global.Texts("Level") + " " + i))
+                if (UIUtil.ButtonBig(UIUtil.GetRect(new Vector2(450, 50), PositionAnchor.Up, scrollContent.size, new Vector2(5, (i - 2) * 50 + 5)), Global.Texts("Level") + " " + (i - 1)))
                 {
-                    SceneManager.LoadScene(i);
+                    Loader.LoadScene(i);
                 }
             }
             GUI.EndScrollView();

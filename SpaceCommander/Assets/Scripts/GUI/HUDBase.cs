@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+//using UnityEngine.SceneManagement;
 using DeusUtility.UI;
 
 namespace SpaceCommander
@@ -26,7 +26,9 @@ namespace SpaceCommander
         private Vector2 pauseButtonBoxSize;
         private bool Pause;
         private UIWindowInfo[] Windows;
-        GlobalController Global;
+        private GlobalController Global;
+        private LoadManager Loader;
+        private SpaceShipGUIObserver observer;
         private bool langChanged;
         private GameSettings settingsLocal;
         // Use this for initialization
@@ -34,6 +36,8 @@ namespace SpaceCommander
         {
             //Debug.Log("HUD started");
             Global = FindObjectOfType<GlobalController>();
+            Loader = FindObjectOfType<LoadManager>();
+            observer = FindObjectOfType<SpaceShipGUIObserver>();
             VictoryBannerSize.x = 1784f / 2f;
             VictoryBannerSize.y = 758f / 2f;
             pauseButtonBoxSize.x = 108f;
@@ -146,6 +150,8 @@ namespace SpaceCommander
         private void Victory()
         {
             CurWin = PauseWindow.Victory;
+            if (observer.Mode == ObserverMode.Full)
+                observer.SwichHandControl();
             GUI.DrawTexture(UIUtil.GetRect(VictoryBannerSize, PositionAnchor.Center, mainRect.size, new Vector2(0, -100)), VictoryBanner);
             GUI.Window(3, Windows[3].rect, DrawVictoryQW, "");
         }
@@ -155,16 +161,18 @@ namespace SpaceCommander
             //UIUtil.Label(new Rect(50, 10, 180, 43), "Running in fear?");
             if (UIUtil.ButtonBig(UIUtil.GetRect(new Vector2(180, 50), PositionAnchor.Down, Windows[windowID].rect.size, new Vector2(100, -50)), Global.Texts("Next mission")))
             {
-                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+                Loader.LoadNextScene();
             }
             if (UIUtil.ButtonBig(UIUtil.GetRect(new Vector2(180, 50), PositionAnchor.Down, Windows[windowID].rect.size, new Vector2(-100, -50)), Global.Texts("Main menu")))
             {
-                SceneManager.LoadScene(0);
+                Loader.LoadMenuScene();
             }
         }
         private void Defeat()
         {
             CurWin = PauseWindow.Defeat;
+            if (observer.Mode == ObserverMode.Full)
+                observer.SwichHandControl();
             GUI.DrawTexture(UIUtil.GetRect(VictoryBannerSize, PositionAnchor.Center, mainRect.size, new Vector2(0, -100)), DefeatBanner);
             GUI.Window(3, Windows[3].rect, DrawDefeatQW, "");
         }
@@ -174,11 +182,11 @@ namespace SpaceCommander
             //UIUtil.Label(new Rect(50, 10, 180, 43), "Running in fear?");
             if (UIUtil.ButtonBig(UIUtil.GetRect(new Vector2(180, 50), PositionAnchor.Down, Windows[windowID].rect.size, new Vector2(100, -50)), Global.Texts("Restart")))
             {
-                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+                Loader.ReloadScene();
             }
             if (UIUtil.ButtonBig(UIUtil.GetRect(new Vector2(180, 50), PositionAnchor.Down, Windows[windowID].rect.size, new Vector2(-100, -50)), Global.Texts("Main menu")))
             {
-                SceneManager.LoadScene(0);
+                Loader.LoadMenuScene();
             }
         }
         private void DrawPauseW(int windowID)
@@ -204,7 +212,6 @@ namespace SpaceCommander
                 CurWin = PauseWindow.Quit;
             }
         }
-
         private void DrawPauseButton()
         {
             GUI.BeginGroup(new Rect(new Vector2(0, 0), pauseButtonBoxSize));
@@ -236,12 +243,12 @@ namespace SpaceCommander
 
         private void Stop()
         {
-            Time.timeScale = 0;
+            Time.timeScale = 0.01f;
             Pause = true;
         }
         private void Continue()
         {
-            Time.timeScale = 1;
+            Time.timeScale = 1f;
             Pause = false;
             if (CurWin == PauseWindow.Restart || CurWin == PauseWindow.Quit || CurWin == PauseWindow.Start)
                 CurWin = PauseWindow.Main;
@@ -387,7 +394,7 @@ namespace SpaceCommander
         {
             int ansver = Question(windowID, Global.Texts("Restart_question"), Global.Texts("Restart_discription"), Global.Texts("Yes"), Global.Texts("No"));
             if (ansver == 1)
-                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+                Loader.ReloadScene();
             else if (ansver == -1)
                 CurWin = PauseWindow.Main;
         }
@@ -395,7 +402,7 @@ namespace SpaceCommander
         {
             int ansver = Question(windowID, Global.Texts("ExitMission_question"), Global.Texts("ExitMission_discription"), Global.Texts("Yes"), Global.Texts("No"));
             if (ansver == 1)
-                SceneManager.LoadScene(0);
+                Loader.LoadMenuScene();
             else if (ansver == -1)
                 CurWin = PauseWindow.Main;
         }
