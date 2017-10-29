@@ -875,7 +875,8 @@ namespace SpaceCommander
             {
                 rot.x -= Input.GetAxis(pitchAxisMouse);
             }
-            owner.transform.Rotate(rot, owner.RotationSpeed * Time.deltaTime);
+            owner.transform.Rotate(Vector3.up, rot.y * owner.RotationSpeed * Time.deltaTime);
+            owner.transform.Rotate(Vector3.right, rot.x * owner.RotationSpeed * Time.deltaTime);
         }
         private void SwitchCompensator()
         {

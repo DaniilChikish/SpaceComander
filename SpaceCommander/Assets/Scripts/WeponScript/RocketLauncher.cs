@@ -44,6 +44,7 @@ namespace SpaceCommander.Weapons
                         break;
                     }
             }
+            missile.GetComponent<Missile>().SetTeam(owner.Team);
             missile.GetComponent<Rigidbody>().AddForce(ownerBody.velocity, ForceMode.VelocityChange);
         }
     }

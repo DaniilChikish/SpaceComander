@@ -320,6 +320,7 @@ namespace SpaceCommander
     //}
     public class RadarBooster : SpellModule
     {
+        private float updateCount;
         public RadarBooster(SpaceShip owner) : base(owner)
         {
             backCount = 0;

@@ -27,7 +27,6 @@ namespace SpaceCommander
         public Texture AlliesOutscreenPoint;
         public Texture EnemyOutscreenPoint;
         public GameObject UnitaryShell;
-        public AudioClip CannonShootSound;
         public GameObject ShellBlast;
         public GameObject RailgunShell;
         public GameObject LaserBeam;
@@ -865,35 +864,36 @@ namespace SpaceCommander
         }
         private void OnGUI()
         {
-            //GUI.skin = hud.Skin;
-            //if (Global.StaticProportion && hud.scale != 1)
-            //    GUI.matrix = Matrix4x4.Scale(Vector3.one * hud.scale);
-
-            float scaleLocal = 0.5f * Global.Settings.IconsScale;
-
-            float distance = Vector3.Distance(this.transform.position, Camera.main.transform.position);
-
-            float border = 40;
-            bool outOfBorder = false;
-            Vector3 crd;
-            if (Global.ManualController.enabled) crd = UIUtil.WorldToScreenCircle(this.transform.position, border, out outOfBorder);
-            else crd = UIUtil.WorldToScreenFrame(this.transform.position, border, out outOfBorder);
-            if (!outOfBorder)
+            if (false)
             {
-                Vector2 frameSize = new Vector2(Global.AlliesGUIFrame.width, Global.AlliesGUIFrame.height);
-                if (true) //perspective
-                    if (distance < 400)
-                        distance = 400;
-                float distFactor = 1000 / distance;
-                frameSize = frameSize * distFactor * scaleLocal;
-                float frameY = crd.y - frameSize.y / 2f - (12 * distFactor * scaleLocal);
-                float frameX = crd.x - frameSize.x / 2f;
-                Texture frameToDraw;
-                if (Team == Global.playerArmy)
-                    frameToDraw = Global.AlliesGUIFrame;
-                else
-                    frameToDraw = Global.EnemyGUIFrame;
-                GUI.DrawTexture(new Rect(new Vector2(frameX, frameY), frameSize), frameToDraw);
+                float scaleLocal = 0.5f * Global.Settings.IconsScale;
+
+                float distance = Vector3.Distance(this.transform.position, Camera.main.transform.position);
+                if (distance < 500)
+                {
+                    float border = 40;
+                    bool outOfBorder = false;
+                    Vector3 crd;
+                    if (Global.ManualController.enabled) crd = UIUtil.WorldToScreenCircle(this.transform.position, border, out outOfBorder);
+                    else crd = UIUtil.WorldToScreenFrame(this.transform.position, border, out outOfBorder);
+                    if (!outOfBorder)
+                    {
+                        Vector2 frameSize = new Vector2(Global.AlliesGUIFrame.width, Global.AlliesGUIFrame.height);
+                        if (true) //perspective
+                            if (distance < 200)
+                                distance = 200;
+                        float distFactor = 500 / distance;
+                        frameSize = frameSize * distFactor * scaleLocal;
+                        float frameY = crd.y - frameSize.y / 2f - (12 * distFactor * scaleLocal);
+                        float frameX = crd.x - frameSize.x / 2f;
+                        Texture frameToDraw;
+                        if (Team == Global.playerArmy)
+                            frameToDraw = Global.AlliesGUIFrame;
+                        else
+                            frameToDraw = Global.EnemyGUIFrame;
+                        GUI.DrawTexture(new Rect(new Vector2(frameX, frameY), frameSize), frameToDraw);
+                    }
+                }
             }
         }
         public void SetTeam(Army allies)

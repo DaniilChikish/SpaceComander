@@ -86,9 +86,7 @@ namespace SpaceCommander.Units
                 return (team == army);
             }
             else
-            {
                 return true;
-            }
         }
     }
 }

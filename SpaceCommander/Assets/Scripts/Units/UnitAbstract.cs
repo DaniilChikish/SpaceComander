@@ -90,6 +90,7 @@ namespace SpaceCommander
     public delegate int SortUnit(Unit x, Unit y);
     public abstract class SpaceShip : Unit, ISpaceShipObservable
     {
+        public const float AIUpdateRate = 20f; //per second
         //base varibles
         protected UnitStateType aiStatus;
         protected TargetStateType targetStatus;
@@ -281,7 +282,7 @@ namespace SpaceCommander
             }
             else if (synchAction <= 0)
             {
-                synchAction = 0.05f;
+                synchAction = 1f / AIUpdateRate;
                 if (movementAiEnabled)
                 {
                     SituationAnalysys();
@@ -345,7 +346,7 @@ namespace SpaceCommander
                                 {
                                     if (situation == TacticSituation.SectorСlear)
                                         IdleManeuverFunction();
-                                    else if (movementAIDelay < 0)
+                                    else if (movementAIDelay <= 0)
                                     {
                                         aiStatus = UnitStateType.MoveAI;
                                         if (unitSquadStatus == SquadStatus.InSquad && Squad[0] != null)
@@ -679,7 +680,7 @@ namespace SpaceCommander
         }
         protected virtual bool IdleManeuverFunction()
         {
-            if (Vector3.Distance(this.transform.position, Anchor) > 1000)
+            if (Vector3.Distance(this.transform.position, Anchor) > 5000)
                 return BackToAncour();
             return Driver.ExecetePointManeuver(PointManeuverType.PatroolDiamond, this.transform.position, this.transform.forward * 50);
         }
@@ -742,7 +743,7 @@ namespace SpaceCommander
                     {
                         if (allies.Count == 0)
                             situation = TacticSituation.Retreat;
-                        else if (enemys.Count > allies.Count)
+                        else if (enemys.Count > allies.Count + 1)
                             situation = TacticSituation.Defense;
                         if (enemys.Count == 0 && CurrentTarget == null)
                             situation = TacticSituation.SectorСlear;
@@ -752,7 +753,7 @@ namespace SpaceCommander
                     {
                         if (allies.Count == 0)
                             situation = TacticSituation.Retreat;
-                        else if (enemys.Count < allies.Count)
+                        else if (enemys.Count <= allies.Count + 1)
                             situation = TacticSituation.Attack;
                         if (enemys.Count == 0 && CurrentTarget == null)
                             situation = TacticSituation.SectorСlear;
@@ -842,8 +843,8 @@ namespace SpaceCommander
         //sensors
         protected void Scan() //___________Scan
         {
-            enemys.Clear();
-            allies.Clear();
+            enemys.RemoveAll(x => x == null);
+            allies.RemoveAll(x => x == null);
             foreach (SpaceShip unknown in Global.unitList)
                 if (unknown != this)
                 {
@@ -854,18 +855,21 @@ namespace SpaceCommander
                         if (radarPover * multiplicator > unknown.Stealthness)
                             if (!unknown.Allies(team))
                             {
-                                enemys.Add(unknown);
+                                if (!enemys.Contains(unknown))
+                                    enemys.Add(unknown);
                             }
                             else
                             {
                                 if (!allies.Contains(unknown))// if ((distance < this.RadarRange * this.radiolink) && (distance < unknown.RadarRange * unknown.radiolink))
-                                {
                                     allies.Add(unknown);
-                                    //foreach (SpaceShip all2 in unknown.GetAllies())
-                                    //    if (!allies.Contains(all2) && all2 != this)
-                                    //        allies.Add(all2);
-                                }
                             }
+                    }
+                    else
+                    {
+                        if (enemys.Contains(unknown))
+                            enemys.Remove(unknown);
+                        if (allies.Contains(unknown))
+                            allies.Remove(unknown);
                     }
                 }
             enemys.Sort(delegate (Unit x, Unit y) { return EnemySortDelegate(x, y); });
@@ -888,14 +892,8 @@ namespace SpaceCommander
             hazard.AddRange(GameObject.FindGameObjectsWithTag("Missile"));
             foreach (GameObject x in hazard)
             {
-                if (Vector3.Distance(x.transform.position, this.transform.position) < radarRange * 0.3)
-                {
-                    float angel = Vector3.Angle(this.transform.position - x.transform.position, x.transform.forward);
-                    if (angel < 10)
-                    {
+                if (Vector3.Distance(x.transform.position, this.transform.position) < radarRange * 0.3 && !x.GetComponent<Missile>().Allies(team))
                         return x;
-                    }
-                }
             }
             return null;
         }

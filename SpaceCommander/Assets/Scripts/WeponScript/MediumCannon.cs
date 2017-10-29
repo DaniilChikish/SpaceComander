@@ -39,7 +39,7 @@ namespace SpaceCommander.Weapons
                     {
                         damage = 45f;
                         armorPiersing = 3f;
-                        mass = 5.8f;
+                        mass = 6f;
                         explosionPrefab = Global.ShellBlast;
                         break;
                     }
@@ -47,7 +47,7 @@ namespace SpaceCommander.Weapons
                     {
                         damage = 40f;
                         armorPiersing = 7;
-                        mass = 4;
+                        mass = 5;
                         break;
                     }
                 case MediumShellType.CamorousAP:
@@ -55,7 +55,7 @@ namespace SpaceCommander.Weapons
                     {
                         damage = 35f;
                         armorPiersing = 5;
-                        mass = 6f;
+                        mass = 6.2f;
                         canRicochet = true;
                         explosionPrefab = Global.ShellBlast;
                         break;
