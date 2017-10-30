@@ -15,6 +15,8 @@ namespace SpaceCommander.Weapons
             base.StatUp();
             type = WeaponType.ShootCannon;
             bucksotRate = 12;
+            audio.minDistance = 10 * 1.5f;
+            audio.maxDistance = 2000 * 1.5f;
         }
         protected override void Shoot(Transform target)
         {

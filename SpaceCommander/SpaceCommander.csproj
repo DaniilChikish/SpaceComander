@@ -13,13 +13,11 @@
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Unity Full v3.5</TargetFrameworkProfile>
-    <CompilerResponseFile>
-    </CompilerResponseFile>
+    <CompilerResponseFile></CompilerResponseFile>
     <UnityProjectType>Game:1</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows:5</UnityBuildTarget>
     <UnityVersion>5.5.4p4</UnityVersion>
-    <RootNamespace>
-    </RootNamespace>
+    <RootNamespace></RootNamespace>
     <LangVersion>4</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -103,6 +101,7 @@
     <Compile Include="Assets\Scripts\Service\OrbitalCamera.cs" />
     <Compile Include="Assets\Scripts\Service\SelfDestructor.cs" />
     <Compile Include="Assets\Scripts\Service\SerializeData.cs" />
+    <Compile Include="Assets\Scripts\Service\SoundStorage.cs" />
     <Compile Include="Assets\Scripts\Service\UnitSelectionComponent.cs" />
     <Compile Include="Assets\Scripts\Service\ZeroLoader.cs" />
     <Compile Include="Assets\Scripts\Units\Armor.cs" />
@@ -201,6 +200,7 @@
     <Compile Include="Assets\UnityTestTools\TestScripts\ScoutTDBait.cs" />
     <Compile Include="Assets\UnityTestTools\TestScripts\ShellSpawner.cs" />
     <Compile Include="Assets\UnityTestTools\TestScripts\SimpleBait.cs" />
+    <Compile Include="Assets\UnityTestTools\TestScripts\SoundTestWeapon.cs" />
     <Compile Include="Assets\UnityTestTools\TestScripts\Speedometer.cs" />
     <Compile Include="Assets\UnityTestTools\TestScripts\TestArmor.cs" />
     <Compile Include="Assets\UnityTestTools\TestScripts\TestShield.cs" />

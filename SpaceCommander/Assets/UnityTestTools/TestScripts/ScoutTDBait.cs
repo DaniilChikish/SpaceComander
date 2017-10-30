@@ -15,13 +15,13 @@ namespace SpaceCommander.Test
         {
             type = UnitClass.Scout;
 
-            speedThrust = Convert.ToSingle(Global.SpecINI.ReadINI(typeof(Scout).ToString(), "speedThrust"));
-            speedRotation = Convert.ToSingle(Global.SpecINI.ReadINI(typeof(Scout).ToString(), "speedRotation"));
-            speedShift = Convert.ToSingle(Global.SpecINI.ReadINI(typeof(Scout).ToString(), "speedShift"));
-            radarRange = Convert.ToSingle(Global.SpecINI.ReadINI(typeof(Scout).ToString(), "radarRange"));
-            radarPover = Convert.ToSingle(Global.SpecINI.ReadINI(typeof(Scout).ToString(), "radarPover"));
-            stealthness = Convert.ToSingle(Global.SpecINI.ReadINI(typeof(Scout).ToString(), "stealthness"));
-            radiolink = Convert.ToSingle(Global.SpecINI.ReadINI(typeof(Scout).ToString(), "radiolink"));
+            speedThrust = Convert.ToSingle(Global.SpecINI.GetValue(typeof(Scout).ToString(), "speedThrust"));
+            speedRotation = Convert.ToSingle(Global.SpecINI.GetValue(typeof(Scout).ToString(), "speedRotation"));
+            speedShift = Convert.ToSingle(Global.SpecINI.GetValue(typeof(Scout).ToString(), "speedShift"));
+            radarRange = Convert.ToSingle(Global.SpecINI.GetValue(typeof(Scout).ToString(), "radarRange"));
+            radarPover = Convert.ToSingle(Global.SpecINI.GetValue(typeof(Scout).ToString(), "radarPover"));
+            stealthness = Convert.ToSingle(Global.SpecINI.GetValue(typeof(Scout).ToString(), "stealthness"));
+            radiolink = Convert.ToSingle(Global.SpecINI.GetValue(typeof(Scout).ToString(), "radiolink"));
 
             //armor.maxHitpoints = Convert.ToSingle(Global.SpecINI.ReadINI(typeof(Scout).ToString(), "maxHitpoints"));
             //armor.hitpoints = armor.maxHitpoints;

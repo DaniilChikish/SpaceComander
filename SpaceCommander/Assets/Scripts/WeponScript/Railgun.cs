@@ -10,7 +10,8 @@ namespace SpaceCommander.Weapons
         {
             base.StatUp();
             type = WeaponType.Railgun;
-            gameObject.GetComponent<MeshRenderer>().enabled = false;
+            audio.minDistance = 10 * 2;
+            audio.maxDistance = 2000 * 2;
         }
         protected override void UpdateLocal()
         {

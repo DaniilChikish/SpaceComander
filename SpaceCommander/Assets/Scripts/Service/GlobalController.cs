@@ -11,6 +11,7 @@ using UnityEngine.SceneManagement;
 //using SpaceCommander.Units;
 using DeusUtility.Random;
 using DeusUtility.UI;
+using SpaceCommander.Service;
 
 namespace SpaceCommander
 {
@@ -47,10 +48,10 @@ namespace SpaceCommander
         //public double[] RandomExponentPool;
         private float randomPoolBackCoount;
         //settings
-        private INIHandler specINI;
-        public INIHandler SpecINI { get { return specINI; } }
         private GameSettings settings;
         public GameSettings Settings { get { return settings; } set { settings = value; }}
+        public SoundStorage Sound { get; private set; }
+        public SpecINIHandler SpecINI { get; private set; }
         //texts
         private TextINIHandler localTexts;
         public string Texts(string key)
@@ -83,6 +84,7 @@ namespace SpaceCommander
             LoadSettings();
             LoadTexts();
             LoadSpec();
+            Sound = FindObjectOfType<SoundStorage>();
             Mission = FindObjectOfType<Scenario>();
             manualController = FindObjectOfType<ShipManualController>();
         }
@@ -93,7 +95,7 @@ namespace SpaceCommander
         }
         private void LoadSpec()
         {
-            specINI = new INIHandler(Application.streamingAssetsPath + "\\spec.ini");
+            SpecINI = new SpecINIHandler(Application.streamingAssetsPath + "\\spec.ini");
         }
         private void Start()
         {
@@ -404,6 +406,8 @@ namespace SpaceCommander
         protected GlobalController Global;
         protected Unit owner;
         protected Rigidbody ownerBody;
+        protected ParticleSystem particle;
+        protected new AudioSource audio;
         protected Unit target;
         public Unit Target { set { target = value; } get { return target; } }
         private float dispersion; //dafault 0;
@@ -423,16 +427,32 @@ namespace SpaceCommander
         public float BackCounter { get { return backCount; } }
 
         public WeaponType Type { get { return type; } }
-
-
+        private void OnEnable()
+        {
+            particle = this.GetComponentInChildren<ParticleSystem>();
+            {
+                audio = this.gameObject.GetComponent<AudioSource>();
+                if (audio == null) CreateAudioSourse();
+            }            
+        }
         protected void Start()
         {
             Global = FindObjectOfType<GlobalController>();
             owner = this.transform.GetComponentInParent<Unit>();
             ownerBody = owner.GetComponent<Rigidbody>();
+
             roundSpeed = 150;
             shildBlinkTime = 0.01f;
             StatUp();
+        }
+        private void CreateAudioSourse()
+        {
+            audio = this.gameObject.AddComponent<AudioSource>();
+            audio.playOnAwake = false;
+            audio.spatialBlend = 1;
+            audio.minDistance = 10;
+            audio.maxDistance = 2000;
+            audio.rolloffMode = AudioRolloffMode.Logarithmic;
         }
         protected abstract void StatUp();
         protected void StatUp(float dispersion,float shildBlinkTime,float roundSpeed, float firerate, float range)
@@ -547,16 +567,16 @@ namespace SpaceCommander
             //Global.SpecINI.Write(this.GetType().ToString(), "PreAiming", PreAiming.ToString());
             //Global.SpecINI.Write(this.GetType().ToString(), "roundSpeed", roundSpeed.ToString());
 
-            float dispersion = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "dispersion"));
-            float shildBlinkTime = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "shildBlinkTime"));
-            float firerate = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "firerate"));
-            float roundSpeed = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "roundSpeed"));
-            float range = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "range"));
+            float dispersion = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "dispersion"));
+            float shildBlinkTime = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "shildBlinkTime"));
+            float firerate = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "firerate"));
+            float roundSpeed = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "roundSpeed"));
+            float range = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "range"));
             base.StatUp(dispersion, shildBlinkTime, roundSpeed, firerate, range);
 
-            ammoCampacity = Convert.ToInt32(Global.SpecINI.ReadINI(this.GetType().ToString(), "ammoCampacity"));
-            reloadingTime = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "reloadingTime"));
-            PreAiming = Convert.ToBoolean(Global.SpecINI.ReadINI(this.GetType().ToString(), "PreAiming"));
+            ammoCampacity = Convert.ToInt32(Global.SpecINI.GetValue(this.GetType().ToString(), "ammoCampacity"));
+            reloadingTime = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "reloadingTime"));
+            PreAiming = Convert.ToBoolean(Global.SpecINI.GetValue(this.GetType().ToString(), "PreAiming"));
 
             ammo = AmmoCampacity;
         }
@@ -564,7 +584,8 @@ namespace SpaceCommander
         {
             if (IsReady)
             {
-                this.GetComponentInChildren<ParticleSystem>().Play();
+                particle.Play();
+                audio.PlayOneShot(Global.Sound.GetClip(this.type), Global.Settings.SoundLevel);
                 if (target != null)
                     Shoot(target.transform);
                 else Shoot(null);
@@ -622,16 +643,16 @@ namespace SpaceCommander
             //Global.SpecINI.Write(this.GetType().ToString(), "PreAiming", PreAiming.ToString());
             //Global.SpecINI.Write(this.GetType().ToString(), "roundSpeed", roundSpeed.ToString());
 
-            float dispersion = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "dispersion"));
-            float shildBlinkTime = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "shildBlinkTime"));
-            float firerate = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "firerate"));
-            float roundSpeed = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "roundSpeed"));
-            float range = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "range"));
+            float dispersion = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "dispersion"));
+            float shildBlinkTime = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "shildBlinkTime"));
+            float firerate = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "firerate"));
+            float roundSpeed = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "roundSpeed"));
+            float range = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "range"));
             base.StatUp(dispersion, shildBlinkTime, roundSpeed, firerate, range);
 
-            ammoCampacity = Convert.ToInt32(Global.SpecINI.ReadINI(this.GetType().ToString(), "ammoCampacity"));
-            reloadingTime = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "reloadingTime"));
-            PreAiming = Convert.ToBoolean(Global.SpecINI.ReadINI(this.GetType().ToString(), "PreAiming"));
+            ammoCampacity = Convert.ToInt32(Global.SpecINI.GetValue(this.GetType().ToString(), "ammoCampacity"));
+            reloadingTime = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "reloadingTime"));
+            PreAiming = Convert.ToBoolean(Global.SpecINI.GetValue(this.GetType().ToString(), "PreAiming"));
 
             ammo = AmmoCampacity;
         }
@@ -639,7 +660,8 @@ namespace SpaceCommander
         {
             if (IsReady)
             {
-                this.GetComponentInChildren<ParticleSystem>().Play();
+                particle.Play();
+                audio.PlayOneShot(Global.Sound.GetClip(this.type), Global.Settings.SoundLevel);
                 if (target != null)
                     Shoot(target.transform);
                 else Shoot(null);
@@ -695,21 +717,22 @@ namespace SpaceCommander
             //Global.SpecINI.Write(this.GetType().ToString(), "PreAiming", PreAiming.ToString());
             //Global.SpecINI.Write(this.GetType().ToString(), "roundSpeed", roundSpeed.ToString());
 
-            float dispersion = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "dispersion"));
-            float shildBlinkTime = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "shildBlinkTime"));
-            float firerate = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "firerate"));
-            float roundSpeed = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "roundSpeed"));
-            float range = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "range"));
+            float dispersion = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "dispersion"));
+            float shildBlinkTime = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "shildBlinkTime"));
+            float firerate = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "firerate"));
+            float roundSpeed = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "roundSpeed"));
+            float range = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "range"));
             base.StatUp(dispersion, shildBlinkTime, roundSpeed, firerate, range);
 
-            maxHeat = Convert.ToInt32(Global.SpecINI.ReadINI(this.GetType().ToString(), "maxHeat"));
-            PreAiming = Convert.ToBoolean(Global.SpecINI.ReadINI(this.GetType().ToString(), "PreAiming"));
+            maxHeat = Convert.ToInt32(Global.SpecINI.GetValue(this.GetType().ToString(), "maxHeat"));
+            PreAiming = Convert.ToBoolean(Global.SpecINI.GetValue(this.GetType().ToString(), "PreAiming"));
         }
         public override bool Fire()
         {
             if (IsReady)
             {
-                this.GetComponentInChildren<ParticleSystem>().Play();
+                particle.Play();
+                audio.PlayOneShot(Global.Sound.GetClip(this.type), Global.Settings.SoundLevel);
                 if (target != null)
                     Shoot(target.transform);
                 else Shoot(null);
@@ -794,9 +817,9 @@ namespace SpaceCommander
         {
             Global = FindObjectOfType<GlobalController>();
             body = gameObject.GetComponent<Rigidbody>();
-            acceleration = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "acceleration"));
-            dropImpulse = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "dropImpulse"));
-            explosionTime = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "explosionTime"));
+            acceleration = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "acceleration"));
+            dropImpulse = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "dropImpulse"));
+            explosionTime = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "explosionTime"));
         }
         protected virtual void Update()
         {
@@ -917,9 +940,9 @@ namespace SpaceCommander
         {
             base.Start();
 
-            turnSpeed = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "turnSpeed"));
-            aimCone = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "aimCone"));
-            explosionRange = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "explosionRange"));
+            turnSpeed = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "turnSpeed"));
+            aimCone = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "aimCone"));
+            explosionRange = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "explosionRange"));
         }
         protected override void Update()
         {

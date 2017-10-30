@@ -126,7 +126,8 @@ namespace SpaceCommander
                 else return Driver.Velocity;
             }
         }
-        private GameObject[] reams;
+        private GameObject[] reams; //jetream particles
+        private AudioSource engineSound;
         public virtual Vector3 ScaleJetream
         {
             get
@@ -139,6 +140,8 @@ namespace SpaceCommander
             {
                 for (int i = 0; i < reams.Length; i++)
                     reams[i].transform.localScale = value;
+                engineSound.volume = Global.Settings.SoundLevel * (0.25f + value.x * 0.75f);
+                engineSound.pitch = 0.75f + value.x * 0.5f;
             }
         }
         public override float Acceleration { get { return acceleration * (1 + AccelerationMultiplicator); } }
@@ -204,9 +207,7 @@ namespace SpaceCommander
             selfDefenceModuleEnabled = true;
             EnemySortDelegate = SortEnemysBase;
             radarPover = 1;
-            //Health = MaxHealth;
             cooldownDetected = 0;
-            //waitingBackCount = 0.2f;
             aiStatus = UnitStateType.Waiting;
             unitName = type.ToString();
             hud = FindObjectOfType<HUDBase>();
@@ -216,6 +217,7 @@ namespace SpaceCommander
             armor = this.gameObject.GetComponent<IArmor>();
             shield = this.gameObject.GetComponent<IShield>();
             reams = GameObjectUtility.GetChildObjectByName(this.transform, "Jetream").ToArray();
+            engineSound = this.gameObject.GetComponent<AudioSource>();
             //
             StatsUp();
             //
@@ -245,24 +247,24 @@ namespace SpaceCommander
         }
         protected virtual void StatsUp()
         {
-            acceleration = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "acceleration"));
-            speedThrust = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "speedThrust"));
-            speedRotation = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "speedRotation"));
-            speedShift = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "speedShift"));
-            radarRange = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "radarRange"));
-            radarPover = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "radarPover"));
-            stealthness = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "stealthness"));
-            radiolink = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "radiolink"));
+            acceleration = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "acceleration"));
+            speedThrust = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "speedThrust"));
+            speedRotation = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "speedRotation"));
+            speedShift = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "speedShift"));
+            radarRange = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "radarRange"));
+            radarPover = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "radarPover"));
+            stealthness = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "stealthness"));
+            radiolink = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "radiolink"));
 
-            float maxHitpoints = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "maxHitpoints"));
-            float shellResist = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "shellResist"));
-            float energyResist = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "energyResist"));
-            float blastResist = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "blastResist"));
+            float maxHitpoints = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "maxHitpoints"));
+            float shellResist = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "shellResist"));
+            float energyResist = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "energyResist"));
+            float blastResist = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "blastResist"));
             armor.StatUp(maxHitpoints, maxHitpoints, shellResist, energyResist, blastResist);
 
-            shield.MaxCampacity = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "maxCampacity"));
+            shield.MaxCampacity = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "maxCampacity"));
             shield.Force = shield.MaxCampacity;
-            shield.Recharging = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "recharging"));
+            shield.Recharging = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "recharging"));
         }
         protected void Update()//______________________Update
         {

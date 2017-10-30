@@ -24,6 +24,8 @@ namespace SpaceCommander.Weapons
         {
             base.StatUp();
             type = WeaponType.MachineCannon;
+            audio.minDistance = 5;
+            audio.maxDistance = 1000;
             switch (AmmoType)
             {
                 case ShellLineType.Solid:

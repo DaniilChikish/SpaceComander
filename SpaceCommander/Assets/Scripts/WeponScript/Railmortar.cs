@@ -11,6 +11,8 @@ namespace SpaceCommander.Weapons
         {
             base.StatUp();
             type = WeaponType.Railmortar;
+            audio.minDistance = 10 * 2;
+            audio.maxDistance = 2000 * 2;
         }
         protected override void Shoot(Transform target)
         {

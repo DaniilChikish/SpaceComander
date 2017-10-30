@@ -44,8 +44,8 @@ namespace SpaceCommander
         {
             this.owner = owner;
             Global = GameObject.FindObjectOfType<GlobalController>();
-            activeTime = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "activeTime"));
-            coolingTime = Convert.ToSingle(Global.SpecINI.ReadINI(this.GetType().ToString(), "coolingTime"));
+            activeTime = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "activeTime"));
+            coolingTime = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "coolingTime"));
             this.function = new List<SpellFunction>();
         }
         public virtual void Enable()
@@ -191,14 +191,14 @@ namespace SpaceCommander
                 GameObject trap = GameObject.Instantiate(Global.MissileTrap, owner.transform.position, direction);
 
 
-                GameObject[] missiles = GameObject.FindGameObjectsWithTag("Missile");
+                SelfguidedMissile[] missiles = GameObject.FindObjectsOfType<SelfguidedMissile>();
                 if (missiles.Length > 0)
                 {
-                    foreach (GameObject x in missiles)
+                    foreach (SelfguidedMissile x in missiles)
                     {
-                        if (x.GetComponent<SelfguidedMissile>().target == owner.transform && Vector3.Distance(x.transform.position, owner.transform.position) < owner.RadarRange / 2f)
+                        if (x.target == owner.transform && Vector3.Distance(x.transform.position, owner.transform.position) < owner.RadarRange / 2f)
                         {
-                            x.GetComponent<SelfguidedMissile>().target = trap.transform;
+                            x.target = trap.transform;
                             break;
                         }
                     }

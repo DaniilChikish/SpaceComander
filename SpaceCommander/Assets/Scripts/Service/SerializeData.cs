@@ -269,4 +269,45 @@ namespace SpaceCommander
         }
 
     }
+    public class SpecINIHandler
+    {
+        private INIHandler dataStorage;
+        private Dictionary<string, Dictionary<string, string>> dataLocal;
+        public SpecINIHandler(string path)
+        {
+            dataStorage = new INIHandler(path);
+            dataLocal = new Dictionary<string, Dictionary<string, string>>();
+        }
+        public string GetValue(string section, string key)
+        {
+            Dictionary<string, string> sectionData;
+            if (!dataLocal.TryGetValue(section, out sectionData))
+            {
+                sectionData = new Dictionary<string, string>();
+                string value = dataStorage.ReadINI(section, key);
+                if (value != "")
+                    sectionData.Add(key, value);
+                else value = "null";
+                return value;
+            }
+            else
+            {
+                string value;
+                if (!dataLocal[section].TryGetValue(key, out value))
+                {
+                    value = dataStorage.ReadINI(section, key);
+                    if (value != "")
+                        dataLocal[section].Add(key, value);
+                    else value = "null";
+                }
+                return value;
+            }
+        }
+        public void SetText(string section, string key, string value)
+        {
+            dataStorage.Write(section, key, value);
+        }
+
+    }
+
 }

@@ -10,7 +10,8 @@ namespace SpaceCommander.Weapons
         {
             base.StatUp();
             type = WeaponType.Torpedo;
-            owner = this.transform.GetComponentInParent<SpaceShip>();
+            audio.minDistance = 10;
+            audio.maxDistance = 2000;
         }
         protected override void Shoot(Transform target)
         {

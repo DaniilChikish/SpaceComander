@@ -10,6 +10,8 @@ namespace SpaceCommander.Weapons
         {
             base.StatUp();
             type = WeaponType.Missile;
+            audio.minDistance = 5;
+            audio.maxDistance = 1000;
         }
         protected override void Shoot(Transform target)
         {
