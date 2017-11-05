@@ -17,7 +17,7 @@ namespace SpaceCommander.Weapons
         }
         public override void Explode()
         {
-            GameObject blast = Instantiate(FindObjectOfType<GlobalController>().ExplosiveBlast, this.transform.position, this.transform.rotation);
+            GameObject blast = Instantiate(FindObjectOfType<GlobalController>().Prefab.ExplosiveBlast, this.transform.position, this.transform.rotation);
             blast.GetComponent<Explosion>().StatUp(BlastType.Missile);
             float damage, armorPiersing, mass;
             bool canRicochet = true;
@@ -28,8 +28,8 @@ namespace SpaceCommander.Weapons
             Quaternion dispersionDelta;
             for (int i = 0; i < fragRate; i++)
             {
-                dispersionDelta = Weapon.RandomDirectionNormal(dispersion, Global);
-                GameObject shell = Instantiate(Global.UnitaryShell, gameObject.transform.position, this.transform.rotation * dispersionDelta);
+                dispersionDelta = WeaponBase.RandomDirectionNormal(dispersion, Global);
+                GameObject shell = Instantiate(Global.Prefab.UnitaryShell, gameObject.transform.position, this.transform.rotation * dispersionDelta);
                 shell.GetComponent<IShell>().StatUp(body.velocity + (fragSpeed * (dispersionDelta * this.transform.forward)), damage, armorPiersing, mass, canRicochet, explosionPrefab);
             }
             Destroy(gameObject);

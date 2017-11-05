@@ -19,7 +19,7 @@ namespace SpaceCommander.Weapons
         {
             heat += 5;
             Quaternion dispersionDelta = RandomDirectionNormal(Dispersion);
-            GameObject sphere = Instantiate(FindObjectOfType<GlobalController>().PlasmaSphere, gameObject.transform.position, transform.rotation * dispersionDelta);
+            GameObject sphere = Instantiate(Global.Prefab.PlasmaSphere, gameObject.transform.position, transform.rotation * dispersionDelta);
             sphere.GetComponent<PlazmaSphere>().SetTarget(target);
             sphere.GetComponent<PlazmaSphere>().StatUp(EnergyType.Plazma);
         }

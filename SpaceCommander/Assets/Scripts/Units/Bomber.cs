@@ -20,14 +20,15 @@ namespace SpaceCommander.Units
             EnemySortDelegate = BomberSortEnemys;
             AlliesSortDelegate = SupportCorvetteSortEnemys;
 
-            module = new SpellModule[2];
+            module = new SpellModule[3];
             module[0] = new MissileTrapLauncher(this);
-            module[1] = new RechargeAcceleratorPassive(this);
+            module[1] = new NukeTorpedoLauncher(this);
+            module[2] = new RechargeAcceleratorPassive(this);
         }
 
         protected override void Explosion()
         {
-            GameObject blast = Instantiate(Global.ShipDieBlast, gameObject.transform.position, gameObject.transform.rotation);
+            GameObject blast = Instantiate(Global.Prefab.ShipDieBlast, gameObject.transform.position, gameObject.transform.rotation);
             blast.GetComponent<Explosion>().StatUp(BlastType.MediumShip);
         }
         protected override void DecrementLocalCounters()

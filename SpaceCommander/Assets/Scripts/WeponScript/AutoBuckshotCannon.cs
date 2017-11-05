@@ -29,7 +29,7 @@ namespace SpaceCommander.Weapons
             for (int i = 0; i < bucksotRate; i++)
             {
                 Quaternion dispersionDelta = RandomDirectionNormal(Dispersion);
-                GameObject shell = Instantiate(Global.UnitaryShell, gameObject.transform.position, this.transform.rotation * dispersionDelta);
+                GameObject shell = Instantiate(Global.Prefab.UnitaryShell, gameObject.transform.position, this.transform.rotation * dispersionDelta);
 
 
 

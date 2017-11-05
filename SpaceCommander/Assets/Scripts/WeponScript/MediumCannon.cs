@@ -26,7 +26,7 @@ namespace SpaceCommander.Weapons
         {
             Quaternion dispersionDelta = RandomDirectionNormal(Dispersion);
 
-            GameObject shell = Instantiate(Global.UnitaryShell, gameObject.transform.position, this.transform.rotation * dispersionDelta);
+            GameObject shell = Instantiate(Global.Prefab.UnitaryShell, gameObject.transform.position, this.transform.rotation * dispersionDelta);
 
             shell.transform.localScale = shell.transform.localScale * 2;
 
@@ -40,7 +40,7 @@ namespace SpaceCommander.Weapons
                         damage = 45f;
                         armorPiersing = 3f;
                         mass = 6f;
-                        explosionPrefab = Global.ShellBlast;
+                        explosionPrefab = Global.Prefab.ShellBlast;
                         break;
                     }
                 case MediumShellType.Subcaliber:
@@ -57,7 +57,7 @@ namespace SpaceCommander.Weapons
                         armorPiersing = 5;
                         mass = 6.2f;
                         canRicochet = true;
-                        explosionPrefab = Global.ShellBlast;
+                        explosionPrefab = Global.Prefab.ShellBlast;
                         break;
                     }
             }

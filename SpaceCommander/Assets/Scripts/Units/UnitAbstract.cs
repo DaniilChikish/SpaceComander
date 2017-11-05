@@ -140,7 +140,7 @@ namespace SpaceCommander
             {
                 for (int i = 0; i < reams.Length; i++)
                     reams[i].transform.localScale = value;
-                engineSound.volume = Global.Settings.SoundLevel * (0.25f + value.x * 0.75f);
+                engineSound.volume = Global.Settings.SoundLevel * (0.4f + value.x * 0.4f);
                 engineSound.pitch = 0.75f + value.x * 0.5f;
             }
         }
@@ -439,8 +439,8 @@ namespace SpaceCommander
                 else crd = UIUtil.WorldToScreenFrame(this.transform.position, border, out outOfBorder);
 
                 Vector2 frameSize;
-                if (!outOfBorder) frameSize = new Vector2(Global.AlliesGUIFrame.width, Global.AlliesGUIFrame.height);// * hud.scale;
-                else frameSize = new Vector2(Global.AlliesOutscreenPoint.width, Global.AlliesOutscreenPoint.height);
+                if (!outOfBorder) frameSize = new Vector2(Global.Prefab.AlliesGUIFrame.width, Global.Prefab.AlliesGUIFrame.height);// * hud.scale;
+                else frameSize = new Vector2(Global.Prefab.AlliesOutscreenPoint.width, Global.Prefab.AlliesOutscreenPoint.height);
                 Vector2 iconSize = new Vector2(aliesIcon.width, aliesIcon.height);// * hud.scale;
                 float frameX;
                 float frameY;
@@ -479,7 +479,7 @@ namespace SpaceCommander
                         if (Global.Settings.SelectedUI.ShowUnitFrame)
                         {
                             if (!outOfBorder)
-                                frameToDraw = Global.AlliesSelectedGUIFrame;
+                                frameToDraw = Global.Prefab.AlliesSelectedGUIFrame;
                         }
                         if (Global.Settings.SelectedUI.ShowUnitIcon)
                             iconToDraw = selectedIcon;
@@ -493,7 +493,7 @@ namespace SpaceCommander
                         if (Global.Settings.AliesUI.ShowUnitFrame)
                         {
                             if (!outOfBorder)
-                                frameToDraw = Global.AlliesGUIFrame;
+                                frameToDraw = Global.Prefab.AlliesGUIFrame;
                         }
                         if (Global.Settings.AliesUI.ShowUnitIcon)
                             iconToDraw = aliesIcon;
@@ -508,7 +508,7 @@ namespace SpaceCommander
                     if (Global.Settings.EnemyUI.ShowUnitFrame)
                     {
                         if (!outOfBorder)
-                            frameToDraw = Global.EnemyGUIFrame;
+                            frameToDraw = Global.Prefab.EnemyGUIFrame;
                     }
                     if (Global.Settings.EnemyUI.ShowUnitFrame)
                         iconToDraw = enemyIcon;
@@ -575,7 +575,7 @@ namespace SpaceCommander
         }
         protected virtual void Explosion()
         {
-            GameObject blast = Instantiate(Global.ShipDieBlast, gameObject.transform.position, gameObject.transform.rotation);
+            GameObject blast = Instantiate(Global.Prefab.ShipDieBlast, gameObject.transform.position, gameObject.transform.rotation);
             blast.GetComponent<Explosion>().StatUp(BlastType.SmallShip);
         }
 

@@ -16,12 +16,12 @@ namespace SpaceCommander.Weapons
             GameObject[] missile = new GameObject[6];
             float a = 0.7f;
             float h = Mathf.Sqrt((a * a) - (a * a / 4));
-            missile[0] = Instantiate(Global.Missile, gameObject.transform.position + transform.up * a, Quaternion.Euler(gameObject.transform.eulerAngles.x, gameObject.transform.eulerAngles.y, 180));
-            missile[1] = Instantiate(Global.Missile, gameObject.transform.position - transform.up * a, Quaternion.Euler(gameObject.transform.eulerAngles.x, gameObject.transform.eulerAngles.y, 0));
-            missile[2] = Instantiate(Global.Missile, gameObject.transform.position + transform.up * a / 2 + transform.right * h, Quaternion.Euler(gameObject.transform.eulerAngles.x, gameObject.transform.eulerAngles.y, 130));
-            missile[3] = Instantiate(Global.Missile, gameObject.transform.position - transform.up * a / 2 + transform.right * h, Quaternion.Euler(gameObject.transform.eulerAngles.x, gameObject.transform.eulerAngles.y, 60));
-            missile[4] = Instantiate(Global.Missile, gameObject.transform.position + transform.up * a / 2 - transform.right * h, Quaternion.Euler(gameObject.transform.eulerAngles.x, gameObject.transform.eulerAngles.y, -130));
-            missile[5] = Instantiate(Global.Missile, gameObject.transform.position - transform.up * a / 2 - transform.right * h, Quaternion.Euler(gameObject.transform.eulerAngles.x, gameObject.transform.eulerAngles.y, -60));
+            missile[0] = Instantiate(Global.Prefab.Missile, gameObject.transform.position + transform.up * a, Quaternion.Euler(gameObject.transform.eulerAngles.x, gameObject.transform.eulerAngles.y, 180));
+            missile[1] = Instantiate(Global.Prefab.Missile, gameObject.transform.position - transform.up * a, Quaternion.Euler(gameObject.transform.eulerAngles.x, gameObject.transform.eulerAngles.y, 0));
+            missile[2] = Instantiate(Global.Prefab.Missile, gameObject.transform.position + transform.up * a / 2 + transform.right * h, Quaternion.Euler(gameObject.transform.eulerAngles.x, gameObject.transform.eulerAngles.y, 130));
+            missile[3] = Instantiate(Global.Prefab.Missile, gameObject.transform.position - transform.up * a / 2 + transform.right * h, Quaternion.Euler(gameObject.transform.eulerAngles.x, gameObject.transform.eulerAngles.y, 60));
+            missile[4] = Instantiate(Global.Prefab.Missile, gameObject.transform.position + transform.up * a / 2 - transform.right * h, Quaternion.Euler(gameObject.transform.eulerAngles.x, gameObject.transform.eulerAngles.y, -130));
+            missile[5] = Instantiate(Global.Prefab.Missile, gameObject.transform.position - transform.up * a / 2 - transform.right * h, Quaternion.Euler(gameObject.transform.eulerAngles.x, gameObject.transform.eulerAngles.y, -60));
             List<SpaceShip> enemys = new List<SpaceShip>();
             foreach (SpaceShip x in Global.unitList)
             {

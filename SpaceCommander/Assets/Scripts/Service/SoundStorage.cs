@@ -8,6 +8,21 @@ namespace SpaceCommander.Service
 {
     public class SoundStorage : MonoBehaviour
     {
+        public enum UISoundType { Click, Hover, Confirm, Denied}
+        public enum SpecialSoundType { Hit}
+        [Space]
+        [Header("UI Sound")]
+        [SerializeField]
+        private AudioClip UIButtonClick;
+        [SerializeField]
+        private AudioClip UIButtonHover;
+        [SerializeField]
+        private AudioClip UIButtonConfirm;
+        [SerializeField]
+        private AudioClip UIButtonDenied;
+
+        [Space]
+        [Header("Weapon Sound")]
         [SerializeField]
         private AudioClip cannonShot;
         [SerializeField]
@@ -30,11 +45,65 @@ namespace SpaceCommander.Service
         private AudioClip torpedoShot;
         [SerializeField]
         private AudioClip shotgunShot;
+
+        [Space]
+        [Header("Module Sound")]
+        [SerializeField]
+        private AudioClip DefaultModuleEnable;
+        [SerializeField]
+        private AudioClip DefaultModuleReady;
+
+        [Space]
+        [Header("Special Sound")]
+        [SerializeField]
+        private AudioClip armorHit;
+        public void InstantUI(UISoundType type, Vector3 position, float volume)
+        {
+            float timeScale = Time.timeScale; //костыль
+            Time.timeScale = 1;
+            AudioSource.PlayClipAtPoint(GetUI(type), position, volume);
+            Time.timeScale = timeScale;
+        }
+        public AudioClip GetUI(UISoundType type)
+        {
+            switch (type)
+            {
+                case UISoundType.Hover:
+                    return UIButtonHover;
+                case UISoundType.Confirm:
+                    return UIButtonConfirm;
+                case UISoundType.Denied:
+                    return UIButtonDenied;
+                case UISoundType.Click:
+                default:
+                    return UIButtonClick;
+            }
+        }
+        public void InstantModule(Type type, SpellModuleState state, Vector3 position, float volume)
+        {
+            AudioSource.PlayClipAtPoint(GetModule(type, state), position, volume);
+        }
+        public AudioClip GetModule(Type type, SpellModuleState state)
+        {
+            switch (state)
+            {
+                case SpellModuleState.Ready:
+                    {
+                        return DefaultModuleReady;
+                    }
+                case SpellModuleState.Active:
+                    {
+                        return DefaultModuleEnable;
+                    }
+                default:
+                    return DefaultModuleEnable;
+            }
+        }
         public void InstantShot(WeaponType type, Vector3 position, float volume)
         {
-            AudioSource.PlayClipAtPoint(GetClip(type), position, volume);
+            AudioSource.PlayClipAtPoint(GetShot(type), position, volume);
         }
-        public AudioClip GetClip(WeaponType type)
+        public AudioClip GetShot(WeaponType type)
         {
             switch (type)
             {
@@ -62,6 +131,19 @@ namespace SpaceCommander.Service
                     return torpedoShot;
                 default:
                     return cannonShot;
+            }
+        }
+        public void InstantSpecial(SpecialSoundType type, Vector3 position, float volume)
+        {
+            AudioSource.PlayClipAtPoint(GetSpecial(type), position, volume);
+        }
+        public AudioClip GetSpecial(SpecialSoundType type)
+        {
+            switch (type)
+            {
+                case SpecialSoundType.Hit:
+                default:
+                    return armorHit;
             }
         }
     }

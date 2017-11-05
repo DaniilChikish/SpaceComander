@@ -19,6 +19,10 @@ namespace SpaceCommander
         private Texture2D barBack;
         [SerializeField]
         private Texture2D barFill;
+        [SerializeField]
+        private Texture2D barBackFlip;
+        [SerializeField]
+        private Texture2D barFillFlip;
         private Rect mainRect;
         private AsyncOperation async;
         private float scale;
@@ -80,6 +84,8 @@ namespace SpaceCommander
                 UIUtil.Image(UIUtil.GetRect(new Vector2(960, 540), PositionAnchor.Center, mainRect.size), imagePool[imageIndex]); //new Vector2(720, 405)
                 GUI.DrawTexture(UIUtil.GetRect(new Vector2(barBack.width, barBack.height), PositionAnchor.Up, mainRect.size), barBack);
                 GUI.DrawTexture(UIUtil.TransformBar(UIUtil.GetRect(new Vector2(barFill.width, barFill.height), PositionAnchor.Up, mainRect.size), progress), barFill);
+                GUI.DrawTexture(UIUtil.GetRect(new Vector2(barBackFlip.width, barBackFlip.height), PositionAnchor.Down, mainRect.size), barBackFlip);
+                GUI.DrawTexture(UIUtil.TransformBar(UIUtil.GetRect(new Vector2(barFillFlip.width, barFillFlip.height), PositionAnchor.Down, mainRect.size), progress), barFillFlip);
             }
             UIUtil.Exclamation(UIUtil.GetRect(new Vector2(200, 50), PositionAnchor.LeftDown, mainRect.size), "Jogo Deus");
             UIUtil.Exclamation(UIUtil.GetRect(new Vector2(200, 50), PositionAnchor.RightDown, mainRect.size), "v. " + Application.version);

@@ -12,6 +12,11 @@ namespace SpaceCommander.Test
     {
         public int firerate;
         public float backCount;
+        private GlobalController Global;
+        private void Start()
+        {
+            Global = FindObjectOfType<GlobalController>();
+        }
         private void Update()
         {
             if (backCount > 0)
@@ -19,7 +24,7 @@ namespace SpaceCommander.Test
             else
             {
                 backCount = 60f / firerate;
-                GameObject sphere = Instantiate(FindObjectOfType<GlobalController>().PlasmaSphere, gameObject.transform.position, transform.rotation);
+                GameObject sphere = Instantiate(Global.Prefab.PlasmaSphere, gameObject.transform.position, transform.rotation);
                 sphere.GetComponent<PlazmaSphere>().StatUp(EnergyType.Plazma);
             }
         }

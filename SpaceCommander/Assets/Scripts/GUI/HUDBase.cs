@@ -195,20 +195,24 @@ namespace SpaceCommander
             //GUI.color.a = window.UIAlpha;
             if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - 100, 100, 200, 50), Global.Texts("Restart")))
             {
+                ClickSound();
                 CurWin = PauseWindow.Restart;
             }
             if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - 100, 150, 200, 50), Global.Texts("Options")))
             {
+                ClickSound();
                 langChanged = false;
                 settingsLocal = Global.Settings.Copy();
                 CurWin = PauseWindow.Options;
             }
             if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - 100, 200, 200, 50), Global.Texts("Briefing")))
             {
+                ClickSound();
                 CurWin = PauseWindow.About;
             }
             if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - 100, 250, 200, 50), Global.Texts("Exit mission")))
             {
+                ClickSound();
                 CurWin = PauseWindow.Quit;
             }
         }
@@ -350,12 +354,14 @@ namespace SpaceCommander
 
             if (UIUtil.ButtonBig(UIUtil.GetRect(new Vector2(200, 50), PositionAnchor.Down, Windows[windowID].rect.size, new Vector2(0, -50)), Global.Texts("Back")))
             {
+                ClickSound();
                 CurWin = PauseWindow.Main;
             }
             if (!settingsLocal.Equals(Global.Settings))
             {
                 if (UIUtil.ButtonBig(UIUtil.GetRect(new Vector2(200, 50), PositionAnchor.Down, Windows[windowID].rect.size, new Vector2(220, -50)), Global.Texts("Save")))
                 {
+                    ConfirmSound();
                     Global.Settings = settingsLocal.Copy();
                     Global.Settings.Save();
                     if (langChanged)
@@ -374,6 +380,7 @@ namespace SpaceCommander
             if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - UIUtil.Scaled(90), Windows[windowID].Bottom - 100, UIUtil.Scaled(180), 50), Global.Texts("Back")))
             {
                 CurWin = PauseWindow.Main;
+                ClickSound();
             }
         }
         void DrawStartW(int windowID)
@@ -387,6 +394,7 @@ namespace SpaceCommander
             if (UIUtil.ButtonBig(new Rect(Windows[windowID].CenterX - UIUtil.Scaled(90), Windows[windowID].Bottom - 100, UIUtil.Scaled(180), 50), Global.Texts("Start")))
             {
                 CurWin = PauseWindow.Main;
+                ConfirmSound();
                 Continue();
             }
         }
@@ -394,17 +402,29 @@ namespace SpaceCommander
         {
             int ansver = Question(windowID, Global.Texts("Restart_question"), Global.Texts("Restart_discription"), Global.Texts("Yes"), Global.Texts("No"));
             if (ansver == 1)
+            {
                 Loader.ReloadScene();
+                ConfirmSound();
+            }
             else if (ansver == -1)
+            {
                 CurWin = PauseWindow.Main;
+                DeniedSound();
+            }
         }
         void DrawQuitW(int windowID)
         {
             int ansver = Question(windowID, Global.Texts("ExitMission_question"), Global.Texts("ExitMission_discription"), Global.Texts("Yes"), Global.Texts("No"));
             if (ansver == 1)
+            {
                 Loader.LoadMenuScene();
+                ConfirmSound();
+            }
             else if (ansver == -1)
+            {
                 CurWin = PauseWindow.Main;
+                DeniedSound();
+            }
         }
         int Question(int windowID, string title, string text, string var1, string var2)
         {
@@ -426,6 +446,22 @@ namespace SpaceCommander
             if (Global.Settings.StaticProportion && scale != 1)
                 GUI.matrix = Matrix4x4.Scale(Vector3.one * scale);
             UIUtil.Exclamation(UIUtil.GetRect(new Vector2(200, 50), PositionAnchor.Up, mainRect.size, new Vector2(0, 10)), text);
+        }
+        private void ClickSound()
+        {
+            Global.Sound.InstantUI(Service.SoundStorage.UISoundType.Click, Camera.main.transform.position, Global.Settings.SoundLevel);
+        }
+        private void HoverSound()
+        {
+            Global.Sound.InstantUI(Service.SoundStorage.UISoundType.Hover, Camera.main.transform.position, Global.Settings.SoundLevel);
+        }
+        private void ConfirmSound()
+        {
+            Global.Sound.InstantUI(Service.SoundStorage.UISoundType.Confirm, Camera.main.transform.position, Global.Settings.SoundLevel);
+        }
+        private void DeniedSound()
+        {
+            Global.Sound.InstantUI(Service.SoundStorage.UISoundType.Denied, Camera.main.transform.position, Global.Settings.SoundLevel);
         }
     }
 }//

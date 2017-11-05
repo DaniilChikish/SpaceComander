@@ -22,26 +22,26 @@ namespace SpaceCommander.Weapons
             {
                 case MissileType.Interceptor:
                     {
-                        missile = Instantiate(Global.Missile, gameObject.transform.position, transform.rotation);
+                        missile = Instantiate(Global.Prefab.Missile, gameObject.transform.position, transform.rotation);
                         missile.AddComponent<InterceptorMissile>().SetTarget(targetTr);
                         break;
                     }
                 case MissileType.Hunter:
                     {
-                         missile = Instantiate(Global.Missile, gameObject.transform.position, transform.rotation);
+                         missile = Instantiate(Global.Prefab.Missile, gameObject.transform.position, transform.rotation);
                         missile.AddComponent<HunterMissile>().SetTarget(targetTr);
                         break;
                     }
                 case MissileType.Metheor:
                     {
-                         missile = Instantiate(Global.Missile, gameObject.transform.position, transform.rotation);
+                         missile = Instantiate(Global.Prefab.Missile, gameObject.transform.position, transform.rotation);
                         missile.AddComponent<MetheorMissile>().SetTarget(targetTr);
                         break;
                     }
                 case MissileType.Bombardier:
                 default:
                     {
-                         missile = Instantiate(Global.Missile, gameObject.transform.position, transform.rotation);
+                         missile = Instantiate(Global.Prefab.Missile, gameObject.transform.position, transform.rotation);
                             missile.AddComponent<BombardierMissile>();
                         break;
                     }

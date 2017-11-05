@@ -1,0 +1,51 @@
+fileFormatVersion: 2
+guid: 3646d91280ac8a740b644fe223209e1a
+timeCreated: 1509564352
+licenseType: Free
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - AlliesSelectedGUIFrame: {fileID: 2800000, guid: 854f91475cf63d44d970300b6bbddbdc,
+      type: 3}
+  - AlliesGUIFrame: {fileID: 2800000, guid: 6e4f0a5f3f986134780e18fd5740243c, type: 3}
+  - EnemyGUIFrame: {fileID: 2800000, guid: c7c7dd1eb462ec14caee13a40882b684, type: 3}
+  - AlliesSelectedOutscreenPoint: {fileID: 2800000, guid: 16823e3eca6dd654f9a39833c33c85e6,
+      type: 3}
+  - AlliesOutscreenPoint: {fileID: 2800000, guid: a6d86187ed9a8e1439b46e2ca5fdbf04,
+      type: 3}
+  - EnemyOutscreenPoint: {fileID: 2800000, guid: 2d97ca59aba7cba4a8955e340cebc656,
+      type: 3}
+  - UnitaryShell: {fileID: 1690359491151664, guid: 1da7b3de52073aa4cb2a16cd1868aad3,
+      type: 2}
+  - ShellBlast: {fileID: 1064865256610098, guid: ae37a820b86d4804f9548b1a5c93048d,
+      type: 2}
+  - RailgunShell: {fileID: 1448899909819292, guid: 988dea7049e32c94bbabb26ad2a97062,
+      type: 2}
+  - LaserBeam: {fileID: 1030094351119414, guid: 031a817ad5143c7459effd5540cd7239,
+      type: 2}
+  - PlasmaSphere: {fileID: 1500461563802772, guid: 8bae78204449249408f26330a1c120d4,
+      type: 2}
+  - Missile: {fileID: 1991208520018720, guid: b9a3970919d066544a4e8625b63486ce, type: 2}
+  - MissileTrap: {fileID: 1801412260635396, guid: 776af6cb9cbe64b43b6656d331b05dde,
+      type: 2}
+  - Torpedo: {fileID: 1727065111254996, guid: f833fbb1e13b9384cb7cecf63663c675, type: 2}
+  - MagMine: {fileID: 1554279569414450, guid: ade01fe0de24a1942bae4d6c403e5d9b, type: 2}
+  - MagnetoShell: {fileID: 1803019741599746, guid: f9587f44cc4dfc0409cb43809664f675,
+      type: 2}
+  - ExplosiveBlast: {fileID: 1057767273506188, guid: cf049adc3c7b431499ce69486b2c854f,
+      type: 2}
+  - EMIExplosionPrefab: {fileID: 1619185683336690, guid: fc7169b45eb3d9b4ca34f77ec1794ea8,
+      type: 2}
+  - NukeBlast: {fileID: 1976018747244400, guid: 81cbd995f712e8444b419766036d01f1,
+      type: 2}
+  - ShipDieBlast: {fileID: 1105160711594852, guid: 202df5c859fd6044596481fa511fc3da,
+      type: 2}
+  - pathArrow: {fileID: 1299462729551816, guid: 792847a3e4f689248bed4b08d8a8ab49,
+      type: 2}
+  - greenBeam: {fileID: 1030094351119414, guid: 031a817ad5143c7459effd5540cd7239,
+      type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

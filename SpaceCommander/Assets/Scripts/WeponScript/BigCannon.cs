@@ -21,7 +21,7 @@ namespace SpaceCommander.Weapons
         {
             Quaternion dispersionDelta = RandomDirectionNormal(Dispersion);
 
-            GameObject shell = Instantiate(Global.UnitaryShell, gameObject.transform.position, this.transform.rotation * dispersionDelta);
+            GameObject shell = Instantiate(Global.Prefab.UnitaryShell, gameObject.transform.position, this.transform.rotation * dispersionDelta);
 
             shell.transform.localScale = shell.transform.localScale * 3;
 
@@ -35,7 +35,7 @@ namespace SpaceCommander.Weapons
                         damage = 30f;
                         armorPiersing = 3f;
                         mass = 20f;
-                        explosionPrefab = Global.ExplosiveBlast;
+                        explosionPrefab = Global.Prefab.ExplosiveBlast;
                         break;
                     }
                 case BigShellType.UraniumIngot:

@@ -484,7 +484,6 @@ namespace SpaceCommander
  * **/
     public class ShipManualController : MonoBehaviour
     {
-        public float guiTexOffsetY;
         public SpaceShip owner;
         private Rigidbody body;
         private GlobalController Global;
@@ -497,6 +496,7 @@ namespace SpaceCommander
         private float lockdownCount;
         private Unit targetBuffer;
         public bool accelCompensator;
+        private bool cursorLock;
         public Unit TargetBuffer
         {
             set
@@ -523,7 +523,7 @@ namespace SpaceCommander
         private bool firstLookingTexture;
         private float lockingTextureSwichCoutn;
         public Texture LockedAim;
-        public Texture TargetDott;
+        public Texture AimDott;
         public Texture FireAim;
         //private RTS_Cam.RTS_Camera folowCam;
         public AimStateType aimState;
@@ -583,17 +583,28 @@ namespace SpaceCommander
             ActivateModule();
             TagetLockdown();
             if (!Input.GetKey(freeCursor))
-            {
-                Cursor.visible = false;
-                Cursor.lockState = CursorLockMode.Locked;
-                RotateByMouse();
-            }
+                cursorLock = true;
             else
-            {
-                Cursor.visible = true;
-                Cursor.lockState = CursorLockMode.None;
-            }
+                cursorLock = false;
+            if (!cursorLock || Time.timeScale <= 0.5f)
+                ReleaseCursor();
+            else LockCursor();
+            if (Input.GetKeyDown(switchCompensator))
+                SwitchCompensator();
         }
+
+        private void LockCursor()
+        {
+            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
+        }
+
+        private void ReleaseCursor()
+        {
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+        }
+
         private void Fire()
         {
             if (Input.GetAxis(primaryWeaponAxis) != 0)
@@ -700,15 +711,30 @@ namespace SpaceCommander
         private void ActivateModule()
         {
             if (Input.GetKeyDown(KeyCode.Alpha1) && owner.Module[0] != null && owner.Module[0].State == SpellModuleState.Ready)
+            {
                 owner.Module[0].EnableIfReady();
+                Global.Sound.InstantModule(owner.module[0].GetType(), SpellModuleState.Active, Camera.main.transform.position, Global.Settings.SoundLevel);
+            }
             if (Input.GetKeyDown(KeyCode.Alpha2) && owner.Module[1] != null && owner.Module[1].State == SpellModuleState.Ready)
+            {
                 owner.Module[1].EnableIfReady();
+                Global.Sound.InstantModule(owner.module[1].GetType(), SpellModuleState.Active, Camera.main.transform.position, Global.Settings.SoundLevel);
+            }
             if (Input.GetKeyDown(KeyCode.Alpha3) && owner.Module[2] != null && owner.Module[2].State == SpellModuleState.Ready)
+            {
                 owner.Module[2].EnableIfReady();
+                Global.Sound.InstantModule(owner.module[2].GetType(), SpellModuleState.Active, Camera.main.transform.position, Global.Settings.SoundLevel);
+            }
             if (Input.GetKeyDown(KeyCode.Alpha4) && owner.Module[3] != null && owner.Module[3].State == SpellModuleState.Ready)
+            {
                 owner.Module[3].EnableIfReady();
+                Global.Sound.InstantModule(owner.module[3].GetType(), SpellModuleState.Active, Camera.main.transform.position, Global.Settings.SoundLevel);
+            }
             if (Input.GetKeyDown(KeyCode.Alpha5) && owner.Module[4] != null && owner.Module[4].State == SpellModuleState.Ready)
+            {
                 owner.Module[4].EnableIfReady();
+                Global.Sound.InstantModule(owner.module[4].GetType(), SpellModuleState.Active, Camera.main.transform.position, Global.Settings.SoundLevel);
+            }
         }
         private void OnGUI()
         {
@@ -716,79 +742,106 @@ namespace SpaceCommander
             //if (Global.StaticProportion && hud.scale != 1)
             //    GUI.matrix = Matrix4x4.Scale(Vector3.one * hud.scale);
             float scaleLocal = (hud.scale / 1.5f) * Global.Settings.IconsScale;
-
-            //mainAimPoint
-            Vector3 aim = owner.transform.position + owner.transform.forward * (owner.Gunner.Weapon[0][0].Range + owner.Gunner.Weapon[1][0].Range) / 2f;
-
-            Vector3 crd = Camera.main.WorldToScreenPoint(aim);
-            crd.y = Screen.height - crd.y;
-
-            Texture aimTexture;
-            switch (aimState)
+            Vector3 crd;
+            Vector2 texSize;
+            //mainAimPoint    
             {
-                case AimStateType.Locked:
+                Vector3 aim = owner.transform.position + owner.transform.forward * ((owner.Gunner.Weapon[0][0].Range + owner.Gunner.Weapon[1][0].Range) / 2);
+                crd = Camera.main.WorldToScreenPoint(aim);
+                crd.y = Screen.height - crd.y;
+
+                Texture aimTexture;
+                switch (aimState)
+                {
+                    case AimStateType.Locked:
+                        {
+                            aimTexture = LockedAim;
+                            break;
+                        }
+                    case AimStateType.Locking:
+                        {
+                            if (firstLookingTexture)
+                                aimTexture = LockingAimFirst;
+                            else
+                                aimTexture = LockingAimSecond;
+                            break;
+                        }
+                    case AimStateType.Default:
+                    default:
+                        {
+                            aimTexture = DefaultMainAim;
+                            break;
+                        }
+                }
+                texSize = new Vector2(aimTexture.width, aimTexture.height) * scaleLocal;
+                float texXPos = crd.x - texSize.x / 2f;
+                float texYPos = crd.y - texSize.y / 2f - (12 * scaleLocal);
+
+                GUI.DrawTexture(new Rect(new Vector2(texXPos, texYPos), texSize), aimTexture);
+            }
+            //weapon direction point
+            {
+                texSize = new Vector2(AimDott.width, AimDott.height) * scaleLocal;
+                float texXPos;
+                float texYPos;
+                float range;
+                //if (TargetBuffer != null)
+                //    range = Vector3.Distance(owner.transform.position, TargetBuffer.transform.position);
+                //else range = 1000;
+                RaycastHit hit;
+                Vector3 aim;
+                for (int i = 0; i < owner.Gunner.Weapon.Length; i++)
+                    for (int j = 0; j < owner.Gunner.Weapon[i].Length; j++)
                     {
-                        aimTexture = LockedAim;
-                        break;
-                    }
-                case AimStateType.Locking:
-                    {
-                        if (firstLookingTexture)
-                            aimTexture = LockingAimFirst;
+                        if (Physics.Raycast(owner.Gunner.Weapon[i][j].transform.position, owner.Gunner.Weapon[i][j].transform.forward, out hit, owner.Gunner.Weapon[i][j].Range, (1 << 0 | 1 << 8)))
+                            aim = hit.point;
                         else
-                            aimTexture = LockingAimSecond;
-                        break;
-                    }
-                case AimStateType.Default:
-                default:
-                    {
-                        aimTexture = DefaultMainAim;
-                        break;
+                            aim = owner.Gunner.Weapon[i][j].transform.position + owner.Gunner.Weapon[i][j].transform.forward * owner.Gunner.Weapon[i][j].Range;
+                        crd = Camera.main.WorldToScreenPoint(aim);
+                        crd.y = Screen.height - crd.y;
+                        texXPos = crd.x - texSize.x / 2f;
+                        texYPos = crd.y - texSize.y / 2f - (12 * scaleLocal);
+                        GUI.DrawTexture(new Rect(new Vector2(texXPos, texYPos), texSize), AimDott);
                     }
             }
-            Vector2 texSize = new Vector2(aimTexture.width, aimTexture.height) * scaleLocal;
-            float texXPos = crd.x - texSize.x / 2f;
-            float texYPos = crd.y - texSize.y / 2f + guiTexOffsetY;
-
-            GUI.DrawTexture(new Rect(new Vector2(texXPos, texYPos), texSize), aimTexture);
-
-            float border = 40;
-            bool outOfBorder = false;
-
             //current target point
-            if (TargetBuffer != null)
             {
+                float border = 40;
+                bool outOfBorder = false;
 
-                crd = UIUtil.WorldToScreenCircle(TargetBuffer.transform.position, border, out outOfBorder);
-                //texSize = new Vector2(TargetDott.width, TargetDott.height) * scaleLocal;
-                texXPos = crd.x - texSize.x / 2f;
-                texYPos = crd.y - texSize.y / 2f + guiTexOffsetY;
-                if (aimState == AimStateType.Locked)
-                    GUI.DrawTexture(new Rect(new Vector2(texXPos, texYPos), texSize), FireAim);
-                else
-                    GUI.DrawTexture(new Rect(new Vector2(texXPos, texYPos), texSize), TargetDott);
+                if (TargetBuffer != null)
+                {
+
+                    crd = UIUtil.WorldToScreenCircle(TargetBuffer.transform.position, border, out outOfBorder);
+                    //texSize = new Vector2(TargetDott.width, TargetDott.height) * scaleLocal;
+                    float texXPos = crd.x - texSize.x / 2f;
+                    float texYPos = crd.y - texSize.y / 2f - (12 * scaleLocal);
+                    if (aimState == AimStateType.Locked)
+                        GUI.DrawTexture(new Rect(new Vector2(texXPos, texYPos), texSize), FireAim);
+                    else
+                        GUI.DrawTexture(new Rect(new Vector2(texXPos, texYPos), texSize), TargetFrame);
+                }
             }
-
-            //locked Aim
-            //texSize = new Vector2(TargetFrame.width, TargetFrame.height);
-
-            foreach (Unit x in owner.GetEnemys())
-            {
-                crd = UIUtil.WorldToScreenCircle(x.transform.position, border, out outOfBorder);
-                texXPos = crd.x - texSize.x / 2f;
-                texYPos = crd.y - texSize.y / 2f + guiTexOffsetY;
-                GUI.DrawTexture(new Rect(new Vector2(texXPos, texYPos), texSize), TargetFrame);
-            }
+            // enemys point
+            //{
+            //    foreach (Unit x in owner.GetEnemys())
+            //    {
+            //        crd = UIUtil.WorldToScreenCircle(x.transform.position, border, out outOfBorder);
+            //        texXPos = crd.x - texSize.x / 2f;
+            //        texYPos = crd.y - texSize.y / 2f + guiTexOffsetY;
+            //        GUI.DrawTexture(new Rect(new Vector2(texXPos, texYPos), texSize), TargetFrame);
+            //    }
+            //}
         }
 
         private void FixedUpdate()
         {
             Move();
             Rotate();
+            if (cursorLock)
+                RotateByMouse();
             if (!tridimensional)
                 Stabilisation();
-            if (Input.GetKeyDown(switchCompensator))
-                SwitchCompensator();
         }
 
         private void Move()
@@ -863,17 +916,18 @@ namespace SpaceCommander
                 rot.x -= Input.GetAxis(pitchAxis);
                 rot.z -= Input.GetAxis(rollAxis);
             }
-
-            owner.transform.Rotate(rot, owner.RotationSpeed * Time.deltaTime);
+            owner.transform.Rotate(Vector3.up, rot.y * owner.RotationSpeed * Time.deltaTime);
+            owner.transform.Rotate(Vector3.right, rot.x * owner.RotationSpeed * Time.deltaTime);
+            owner.transform.Rotate(Vector3.forward, rot.z * owner.RotationSpeed * Time.deltaTime);
         }
         private void RotateByMouse()
         {
             var rot = new Vector3(0f, 0f, 0f);
-            rot.y += Input.GetAxis(yawAxisMouse);
+            rot.y += Mathf.Clamp(Input.GetAxis(yawAxisMouse), -1, 1);
 
             if (tridimensional)
             {
-                rot.x -= Input.GetAxis(pitchAxisMouse);
+                rot.x -= Mathf.Clamp(Input.GetAxis(pitchAxisMouse), -1, 1);
             }
             owner.transform.Rotate(Vector3.up, rot.y * owner.RotationSpeed * Time.deltaTime);
             owner.transform.Rotate(Vector3.right, rot.x * owner.RotationSpeed * Time.deltaTime);

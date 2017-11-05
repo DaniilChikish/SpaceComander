@@ -80,7 +80,7 @@ namespace SpaceCommander.Weapons
 
         public void Explode()
         {
-            GameObject blast = Instantiate(FindObjectOfType<GlobalController>().ExplosiveBlast, this.transform.position, this.transform.rotation);
+            GameObject blast = Instantiate(FindObjectOfType<GlobalController>().Prefab.ExplosiveBlast, this.transform.position, this.transform.rotation);
             blast.GetComponent<Explosion>().StatUp(BlastType.UnitaryTorpedo);
             Destroy(gameObject);
         }

@@ -78,6 +78,7 @@ namespace SpaceCommander
         Unit Target { set; get; }
         float Firerate { get; } //per minute
         float Range { get; }
+        float AimAngle { get; }
         float RoundSpeed { get; }
         float Dispersion { get; }
         float ShildBlink { get; }
@@ -85,6 +86,7 @@ namespace SpaceCommander
         float ShootCounter { get; }
         float MaxShootCounter { get; }
         bool IsReady { get; }
+        Transform transform { get; }
         void Reset();
         bool Fire();
     }

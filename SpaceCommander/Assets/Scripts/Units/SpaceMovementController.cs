@@ -746,7 +746,7 @@ namespace SpaceCommander
         private Vector3 followPoint;
         private Vector3 followPointRelative;
         private Queue<Vector3> path; //очередь путевых точек
-        List<PathNode> closedSet = new List<PathNode>();
+        List<int> closedSet = new List<int>();
         List<PathNode> openSet = new List<PathNode>();
         private Vector3 navDestination;
         private float navAccurancyFactor;
@@ -902,7 +902,7 @@ namespace SpaceCommander
                 GameObject arrow;
                 float dist;
 
-                arrow = GameObject.Instantiate(Global.pathArrow);
+                arrow = GameObject.Instantiate(Global.Prefab.pathArrow);
                 dist = Vector3.Distance(walkerTransform.position, pathLocal[0]);
                 arrow.transform.localScale = new Vector3(1, 1, dist);
                 arrow.transform.position = walkerTransform.position + (pathLocal[0] - walkerTransform.position).normalized * dist / 2;
@@ -911,7 +911,7 @@ namespace SpaceCommander
 
                 for (int i = 0; i + 1 < pathLocal.Length; i++)
                 {
-                    arrow = GameObject.Instantiate(Global.pathArrow);
+                    arrow = GameObject.Instantiate(Global.Prefab.pathArrow);
                     dist = Vector3.Distance(pathLocal[i], pathLocal[i + 1]);
                     arrow.transform.localScale = new Vector3(1, 1, dist);
                     arrow.transform.position = pathLocal[i] + (pathLocal[i + 1] - pathLocal[i]).normalized * dist / 2;
@@ -926,7 +926,7 @@ namespace SpaceCommander
             navDestination = destination;
             calculatingStep = 0;
             calculating = true;
-            closedSet = new List<PathNode>();
+            closedSet = new List<int>();
             openSet = new List<PathNode>();
             Vector3 startPos;
             if (path.Count > 0)
@@ -957,13 +957,13 @@ namespace SpaceCommander
             }
             // Шаг 5.
             openSet.Remove(currentNode);
-            closedSet.Add(currentNode);
+            closedSet.Add(currentNode.GetHashCode());
             // Шаг 6.
             List<PathNode> neighbours = GetNeighbours(currentNode, destination, accuracyFactor);
             foreach (PathNode neighbourNode in neighbours)
             {
                 // Шаг 7.
-                if (closedSet.Count(node => node.Position == neighbourNode.Position) > 0)
+                if (closedSet.Count(node => node == neighbourNode.GetHashCode()) > 0)
                     continue;
                 PathNode openNode = openSet.Find(node => node.Position == neighbourNode.Position);
                 // Шаг 8.
@@ -1511,6 +1511,10 @@ namespace SpaceCommander
         public override string ToString()
         {
             return Position.ToString();
+        }
+        public override int GetHashCode()
+        {
+            return Position.GetHashCode();
         }
     }
 }

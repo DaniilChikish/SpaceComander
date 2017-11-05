@@ -54,7 +54,7 @@ namespace SpaceCommander.Test
                         multiplicator = difference / 3;
                         if (!owner.ShieldOwerheat) multiplicator = multiplicator * (1 - owner.ShieldForce / owner.ShieldCampacity);
                         float damage = collision.gameObject.GetComponent<IShell>().Damage * multiplicator;
-                        Debug.Log("Take " + damage + " damage by shell with " + collision.gameObject.GetComponent<IShell>().ArmorPiersing + " AP");
+                        Debug.Log(owner.transform.name + " take " + damage + " damage by shell with " + collision.gameObject.GetComponent<IShell>().ArmorPiersing + " AP");
                         break;
                     }
                 case "Energy":
@@ -64,7 +64,7 @@ namespace SpaceCommander.Test
                         multiplicator = difference / 2;
                         if (!owner.ShieldOwerheat) multiplicator = multiplicator * 0.3f;
                         float damage = collision.gameObject.GetComponent<IEnergy>().Damage * multiplicator;
-                        Debug.Log("Take " + damage + " damage by energy with " + collision.gameObject.GetComponent<IEnergy>().ArmorPiersing + " AP");
+                        Debug.Log(owner.transform.name + " take " + damage + " damage by energy with " + collision.gameObject.GetComponent<IEnergy>().ArmorPiersing + " AP");
                         break;
                     }
                 case "Unit":
@@ -75,7 +75,7 @@ namespace SpaceCommander.Test
                             normalSum += x.normal;
                         Vector3 kick = Vector3.Project(uncknown.Velocity - owner.Velocity, normalSum.normalized);
                         float damage = kick.magnitude;
-                        Debug.Log("Take " + damage + " damage by collision");
+                        Debug.Log(owner.transform.name + " take " + damage + " damage by collision");
                         break;
                     }
                 case "Terrain":
@@ -85,7 +85,7 @@ namespace SpaceCommander.Test
                             normalSum += x.normal;
                         Vector3 kick = Vector3.Project(owner.Velocity, normalSum.normalized);
                         float damage = kick.magnitude;
-                        Debug.Log("Take " + damage + " damage by collision");
+                        Debug.Log(owner.transform.name + " take " + damage + " damage by collision");
                         break;
                     }
             }
@@ -102,14 +102,14 @@ namespace SpaceCommander.Test
                         multiplicator = difference / 2;
                         if (!owner.ShieldOwerheat) multiplicator = multiplicator * 0.3f;
                         float damage = collision.gameObject.GetComponent<IEnergy>().Damage * multiplicator * Time.deltaTime;
-                        Debug.Log("Take " + damage + " damage by energy with " + collision.gameObject.GetComponent<IEnergy>().ArmorPiersing + " AP");
+                        Debug.Log(owner.transform.name + " take " + damage + " damage by energy with " + collision.gameObject.GetComponent<IEnergy>().ArmorPiersing + " AP");
                         break;
                     }
                 case "Explosion":
                     {
                         multiplicator = (1f - BlastResist) * Mathf.Pow(((-Vector3.Distance(this.gameObject.transform.position, collision.gameObject.transform.position) + collision.gameObject.GetComponent<Explosion>().MaxRadius) * 0.01f), (1f / 3f));
                         float damage = collision.gameObject.GetComponent<Explosion>().Damage * multiplicator;
-                        Debug.Log("Take " + damage + " damage by explosion");
+                        Debug.Log(owner.transform.name + " take " + damage + " damage by explosion");
                         break;
                     }
             }
@@ -126,7 +126,7 @@ namespace SpaceCommander.Test
                         multiplicator = difference / 2;
                         if (!owner.ShieldOwerheat) multiplicator = multiplicator * 0.3f;
                         float damage = trigger.gameObject.GetComponent<IEnergy>().Damage * multiplicator * Time.deltaTime;
-                        Debug.Log("Take " + damage + " damage by energy with " + trigger.gameObject.GetComponent<IEnergy>().ArmorPiersing + " AP");
+                        Debug.Log(owner.transform.name + " take " + damage + " damage by energy with " + trigger.gameObject.GetComponent<IEnergy>().ArmorPiersing + " AP");
                         break;
                     }
                 case "Explosion":
@@ -142,7 +142,8 @@ namespace SpaceCommander.Test
                             if (multiplicator > 1) multiplicator = 1;
                             if (multiplicator < 0) multiplicator = 0;
                             float damage = trigger.gameObject.GetComponent<Explosion>().Damage * multiplicator;
-                            Debug.Log("Take " + damage + " damage by explosion");
+                            hitpoints -= damage;
+                            Debug.Log(owner.transform.name + " take " + damage + " damage by explosion");
                         }
                         break;
                     }

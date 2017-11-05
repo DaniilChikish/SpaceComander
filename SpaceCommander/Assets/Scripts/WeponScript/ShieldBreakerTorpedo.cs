@@ -18,8 +18,8 @@ namespace SpaceCommander.Weapons
                 if (Vector3.Distance(this.transform.position, x.transform.position) < 50 && x.ShieldForce > 1)
                     x.ShieldForce = -1;
             }
-            Instantiate(Global.EMIExplosionPrefab, this.transform.position, this.transform.rotation);
-            GameObject blast = Instantiate(FindObjectOfType<GlobalController>().ExplosiveBlast, this.transform.position, this.transform.rotation);
+            Instantiate(Global.Prefab.EMIExplosionPrefab, this.transform.position, this.transform.rotation);
+            GameObject blast = Instantiate(Global.Prefab.ExplosiveBlast, this.transform.position, this.transform.rotation);
             blast.GetComponent<Explosion>().StatUp(BlastType.Missile);
             Destroy(gameObject);
         }

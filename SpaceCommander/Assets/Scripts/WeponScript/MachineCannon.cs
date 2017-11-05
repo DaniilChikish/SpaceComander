@@ -91,7 +91,7 @@ namespace SpaceCommander.Weapons
             float localDisp = Dispersion + (Dispersion * heat / 1);
             Quaternion dispersionDelta = RandomDirectionNormal(localDisp);
 
-            GameObject shell = Instantiate(Global.UnitaryShell, gameObject.transform.position, this.transform.rotation * dispersionDelta);
+            GameObject shell = Instantiate(Global.Prefab.UnitaryShell, gameObject.transform.position, this.transform.rotation * dispersionDelta);
             if (shellPosition >= ShellLine.Length)
                 shellPosition = 0;
 
@@ -120,7 +120,7 @@ namespace SpaceCommander.Weapons
                         damage = 5f;
                         armorPiersing = 1;
                         mass = 0.2f;
-                        explosionPrefab = Global.ShellBlast;
+                        explosionPrefab = Global.Prefab.ShellBlast;
                         break;
                     }
                 case SmallShellType.BuckShot:

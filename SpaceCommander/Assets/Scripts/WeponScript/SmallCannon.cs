@@ -28,7 +28,7 @@ namespace SpaceCommander.Weapons
         {
             Quaternion dispersionDelta = RandomDirectionNormal(Dispersion);
 
-            GameObject shell = Instantiate(Global.UnitaryShell, gameObject.transform.position, this.transform.rotation * dispersionDelta);
+            GameObject shell = Instantiate(Global.Prefab.UnitaryShell, gameObject.transform.position, this.transform.rotation * dispersionDelta);
 
             float damage, armorPiersing, mass;
             bool canRicochet = false;
@@ -55,7 +55,7 @@ namespace SpaceCommander.Weapons
                         damage = 5f;
                         armorPiersing = 1;
                         mass = 0.9f;
-                        explosionPrefab = Global.ShellBlast;
+                        explosionPrefab = Global.Prefab.ShellBlast;
                         break;
                     }
                 case SmallShellType.BuckShot:

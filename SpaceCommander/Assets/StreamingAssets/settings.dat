@@ -1,7 +1,7 @@
 [SpaceCommander.GameSettings.Base]
 Localisation=1
 SoundLevel=1
-MusicLevel=1
+MusicLevel=0
 StaticProportion=True
 Users=
 [SpaceCommander.GameSettings.UI.Alies]

@@ -188,7 +188,7 @@ namespace SpaceCommander
                 else
                     direction.y = direction.z + (Convert.ToSingle(Global.RandomNormalPool[Convert.ToInt32(randomOffset[1])] - Convert.ToSingle(Global.RandomNormalAverage)) * -dispersion);
 
-                GameObject trap = GameObject.Instantiate(Global.MissileTrap, owner.transform.position, direction);
+                GameObject trap = GameObject.Instantiate(Global.Prefab.MissileTrap, owner.transform.position, direction);
 
 
                 SelfguidedMissile[] missiles = GameObject.FindObjectsOfType<SelfguidedMissile>();
@@ -891,15 +891,15 @@ namespace SpaceCommander
         public override void Enable()
         {
             base.Enable();
-            Weapon[] weapons = owner.transform.GetComponentsInChildren<Weapon>();
-            foreach (Weapon x in weapons)
+            WeaponBase[] weapons = owner.transform.GetComponentsInChildren<WeaponBase>();
+            foreach (WeaponBase x in weapons)
                 x.RoundspeedMultiplacator += 0.3f;
         }
 
         protected override void Disable()
         {
-            Weapon[] weapons = owner.transform.GetComponentsInChildren<Weapon>();
-            foreach (Weapon x in weapons)
+            WeaponBase[] weapons = owner.transform.GetComponentsInChildren<WeaponBase>();
+            foreach (WeaponBase x in weapons)
                 x.RoundspeedMultiplacator -= 0.3f;
         }
     }
@@ -912,8 +912,8 @@ namespace SpaceCommander
             coolingTime = 0;
             activeTime = 0;
             state = SpellModuleState.Cooldown;
-            Weapon[] weapons = owner.transform.GetComponentsInChildren<Weapon>();
-            foreach (Weapon x in weapons)
+            WeaponBase[] weapons = owner.transform.GetComponentsInChildren<WeaponBase>();
+            foreach (WeaponBase x in weapons)
                 x.RoundspeedMultiplacator += 0.1f;
         }
         public override void Enable()
@@ -975,7 +975,7 @@ namespace SpaceCommander
     public class Inspiration : SpellModule
     {
         Unit[] alies;
-        List<Weapon> weapons;
+        List<WeaponBase> weapons;
         public Inspiration(SpaceShip owner) : base(owner)
         {
             backCount = 0;
@@ -992,19 +992,19 @@ namespace SpaceCommander
         {
             base.Enable();
             alies = owner.GetAllies();
-            weapons = new List<Weapon>();
-            weapons.AddRange(owner.transform.GetComponentsInChildren<Weapon>());
+            weapons = new List<WeaponBase>();
+            weapons.AddRange(owner.transform.GetComponentsInChildren<WeaponBase>());
             owner.SpeedMultiplicator += 0.1f;
             owner.RotationSpeedMultiplicator += 0.2f;
             owner.ShieldRechargingMultiplacator += 0.5f;
             foreach (Unit x in alies)
             {
-                weapons.AddRange(x.transform.GetComponentsInChildren<Weapon>());
+                weapons.AddRange(x.transform.GetComponentsInChildren<WeaponBase>());
                 x.SpeedMultiplicator += 0.15f;
                 x.RotationSpeedMultiplicator += 0.2f;
                 x.ShieldRechargingMultiplacator += 0.5f;
             }
-            foreach (Weapon x in weapons)
+            foreach (WeaponBase x in weapons)
             {
                 x.DamageMultiplacator += 0.1f;
                 x.FirerateMultiplacator += 0.3f;
@@ -1013,19 +1013,19 @@ namespace SpaceCommander
 
         protected override void Disable()
         {
-            List<Weapon> weapons = new List<Weapon>();
-            weapons.AddRange(owner.transform.GetComponentsInChildren<Weapon>());
+            List<WeaponBase> weapons = new List<WeaponBase>();
+            weapons.AddRange(owner.transform.GetComponentsInChildren<WeaponBase>());
             owner.SpeedMultiplicator -= 0.1f;
             owner.RotationSpeedMultiplicator -= 0.2f;
             owner.ShieldRechargingMultiplacator -= 0.5f;
             foreach (Unit x in alies)
             {
-                weapons.AddRange(x.transform.GetComponentsInChildren<Weapon>());
+                weapons.AddRange(x.transform.GetComponentsInChildren<WeaponBase>());
                 x.SpeedMultiplicator -= 0.15f;
                 x.RotationSpeedMultiplicator -= 0.2f;
                 x.ShieldRechargingMultiplacator -= 0.5f;
             }
-            foreach (Weapon x in weapons)
+            foreach (WeaponBase x in weapons)
             {
                 x.DamageMultiplacator -= 0.1f;
                 x.FirerateMultiplacator -= 0.3f;
@@ -1035,7 +1035,7 @@ namespace SpaceCommander
     public class ForcedTargetDesignator : SpellModule
     {
         Unit[] alies;
-        List<Weapon> weapons;
+        List<WeaponBase> weapons;
         public ForcedTargetDesignator(SpaceShip owner) : base(owner)
         {
             backCount = 0;
@@ -1052,17 +1052,17 @@ namespace SpaceCommander
         {
             base.Enable();
             alies = owner.GetAllies();
-            weapons = new List<Weapon>();
-            weapons.AddRange(owner.transform.GetComponentsInChildren<Weapon>());
+            weapons = new List<WeaponBase>();
+            weapons.AddRange(owner.transform.GetComponentsInChildren<WeaponBase>());
             owner.RotationSpeedMultiplicator += 0.3f;
             foreach (Unit x in alies)
             {
-                weapons.AddRange(x.transform.GetComponentsInChildren<Weapon>());
+                weapons.AddRange(x.transform.GetComponentsInChildren<WeaponBase>());
                 x.RotationSpeedMultiplicator += 0.3f;
                 x.RadarRangeMultiplacator += 0.5f;
                 x.GetFireSupport(owner.CurrentTarget);
             }
-            foreach (Weapon x in weapons)
+            foreach (WeaponBase x in weapons)
             {
                 x.RangeMultiplacator += 0.3f;
                 x.DispersionMultiplicator += (-0.5f);
@@ -1078,7 +1078,7 @@ namespace SpaceCommander
                 x.RotationSpeedMultiplicator -= 0.3f;
                 x.RadarRangeMultiplacator -= 0.5f;
             }
-            foreach (Weapon x in weapons)
+            foreach (WeaponBase x in weapons)
             {
                 x.RangeMultiplacator -= 0.3f;
                 x.DispersionMultiplicator -= (-0.5f);
@@ -1124,7 +1124,7 @@ namespace SpaceCommander
                     {
                         torpedo[i].GetComponent<Missile>().Explode();
                         GameObject beam;
-                        beam = GameObject.Instantiate(Global.greenBeam);
+                        beam = GameObject.Instantiate(Global.Prefab.greenBeam);
                         Vector3.Distance(owner.transform.position, torpedo[i].transform.position);
                         beam.transform.localScale = new Vector3(1, 1, dist);
                         beam.transform.position = owner.transform.position + (torpedo[i].transform.position - owner.transform.position).normalized * dist / 2;
@@ -1174,7 +1174,7 @@ namespace SpaceCommander
                     {
                         shells[i].GetComponent<Round>().Destroy();
                         GameObject beam;
-                        beam = GameObject.Instantiate(Global.greenBeam);
+                        beam = GameObject.Instantiate(Global.Prefab.greenBeam);
                         Vector3.Distance(owner.transform.position, shells[i].transform.position);
                         beam.transform.localScale = new Vector3(1, 1, dist);
                         beam.transform.position = owner.transform.position + dir.normalized * dist / 2;
@@ -1186,81 +1186,35 @@ namespace SpaceCommander
             owner.ShieldForce -= owner.ShieldRecharging * Time.deltaTime * 0.7f;
         }
     }
-
-    //public class ForsageImpact : IImpact
-    //{
-    //    public string Name { get { return "WarpImpact"; } }
-    //    float ttl;
-    //    SpaceShip owner;
-    //    private float ownerSpeedPrev;
-    //    public ForsageImpact(SpaceShip owner)
-    //    {
-    //        this.owner = owner;
-    //        ownerSpeedPrev = owner.Speed;
-    //        if (owner.HaveImpact(this.Name))
-    //            ttl = 0;
-    //        else
-    //        {
-    //            if (owner.HaveImpact("TrusterInhibitorImpact"))
-    //                ttl = 0;
-    //            else
-    //            {
-    //                ttl = 15;
-    //                owner.Speed = owner.Speed * 2;
-    //            }
-    //        }
-    //    }
-    //    public void ActImpact()
-    //    {
-    //        if (ttl > 0)
-    //            ttl -= Time.deltaTime;
-    //        else CompleteImpact();
-    //    }
-
-    //    public void CompleteImpact()
-    //    {
-    //        owner.Speed = ownerSpeedPrev;
-    //        owner.RemoveImpact(this);
-    //    }
-    //}
-    //public class ShieldBoosterImpact : IImpact
-    //{
-    //    public string Name { get { return "ShieldBoosterImpact"; } }
-    //    float ttl;
-    //    SpaceShip owner;
-    //    private float ownerShieldMaxPowerPrew;
-    //    private float ownerShieldRechargingPrew;
-    //    public ShieldBoosterImpact(SpaceShip owner, float time)
-    //    {
-    //        this.owner = owner;
-    //        ownerShieldMaxPowerPrew = owner.ShieldCampacity;
-    //        ownerShieldRechargingPrew = owner.ShieldRecharging;
-    //        if (owner.HaveImpact(this.Name))
-    //            ttl = 0;
-    //        else
-    //        {
-    //            if (owner.HaveImpact("ShieldInhibitorImpact"))
-    //                ttl = 0;
-    //            else
-    //            {
-    //                ttl = time;
-    //                owner.ShieldCampacity = owner.ShieldCampacity * 4;
-    //                owner.ShieldRecharging = owner.ShieldRecharging * 2;
-    //            }
-    //        }
-    //    }
-    //    public void ActImpact()
-    //    {
-    //        if (ttl > 0)
-    //            ttl -= Time.deltaTime;
-    //        else CompleteImpact();
-    //    }
-
-    //    public void CompleteImpact()
-    //    {
-    //        owner.ShieldCampacity = ownerShieldMaxPowerPrew;
-    //        owner.ShieldRecharging = ownerShieldRechargingPrew;
-    //        owner.RemoveImpact(this);
-    //    }
-    //}
+    public class NukeTorpedoLauncher : SpellModule
+    {
+        public NukeTorpedoLauncher(SpaceShip owner) : base(owner)
+        {
+            backCount = 0;
+            type = SpellType.Activated;
+            state = SpellModuleState.Ready;
+            function.Add(SpellFunction.Enemy);
+            function.Add(SpellFunction.Attack);
+        }
+        public override void EnableIfReady()
+        {
+            if (state == SpellModuleState.Ready)
+            {
+                if (owner.CurrentTarget != null && Vector3.Distance(owner.transform.position, owner.CurrentTarget.transform.position) > 1000)
+                    Enable();
+            }
+        }
+        public override void Enable()
+        {
+            base.Enable();
+            Vector3 position = owner.transform.position + (-owner.transform.up + owner.transform.forward) * 10;
+            GameObject missile = GameObject.Instantiate(Global.Prefab.Torpedo, position, owner.transform.rotation);
+            missile.AddComponent<Weapons.NukeTorpedo>().SetTarget(owner.CurrentTarget.transform);
+            missile.GetComponent<Missile>().SetTeam(owner.Team);
+            missile.GetComponent<Rigidbody>().AddForce(owner.Velocity, ForceMode.VelocityChange);
+        }
+        protected override void Disable()
+        {
+        }
+    }
 }

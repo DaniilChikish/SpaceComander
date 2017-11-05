@@ -42,7 +42,7 @@ namespace SpaceCommander.Units
         }
         protected override void Explosion()
         {
-            GameObject blast = Instantiate(Global.ShipDieBlast, gameObject.transform.position, gameObject.transform.rotation);
+            GameObject blast = Instantiate(Global.Prefab.ShipDieBlast, gameObject.transform.position, gameObject.transform.rotation);
             blast.GetComponent<Explosion>().StatUp(BlastType.SmallShip);
         }
         protected override void DecrementLocalCounters()

@@ -54,6 +54,7 @@ namespace SpaceCommander
             {
                 case "Shell":
                     {
+                        //Global.Sound.InstantHit(collision.contacts[0].point, Global.Settings.SoundLevel);
                         float difference = Mathf.Clamp(collision.gameObject.GetComponent<IShell>().ArmorPiersing - ShellResist + 3, 0, 4f);
                         multiplicator = difference / 3;
                         if (!owner.ShieldOwerheat) multiplicator = multiplicator * (1 - owner.ShieldForce / owner.ShieldCampacity);

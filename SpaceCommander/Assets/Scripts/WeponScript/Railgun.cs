@@ -30,7 +30,7 @@ namespace SpaceCommander.Weapons
             accumulate = 1;
 
             Quaternion dispersionDelta = RandomDirectionNormal(Dispersion);
-            GameObject shell = Instantiate(Global.RailgunShell, gameObject.transform.position, this.transform.rotation * dispersionDelta);
+            GameObject shell = Instantiate(Global.Prefab.RailgunShell, gameObject.transform.position, this.transform.rotation * dispersionDelta);
 
             shell.GetComponent<IShell>().StatUp(owner.Velocity + (RoundSpeed * (dispersionDelta * this.transform.forward)), damage * (1 + DamageMultiplacator), armorPiersing * (1 + APMultiplacator), mass * (1 + ShellmassMultiplacator), true, null);
             ownerBody.AddForceAtPosition(-this.transform.forward * mass * RoundSpeed, this.transform.position, ForceMode.Impulse);
