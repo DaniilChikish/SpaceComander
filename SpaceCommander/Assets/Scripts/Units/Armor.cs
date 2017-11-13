@@ -18,7 +18,6 @@ namespace SpaceCommander
         private float blastResist;
         private float hitCount;
         private SpaceShip owner;
-        private GlobalController Global;
         public float Hitpoints { get { return hitpoints; } set { hitpoints = value; } }
         public float MaxHitpoints { get { return this.maxHitpoints; } }
         public float ShellResist { get { return this.shellResist; } }
@@ -27,7 +26,6 @@ namespace SpaceCommander
         private void Start()
         {
             owner = transform.GetComponentInParent<SpaceShip>();
-            Global = FindObjectOfType<GlobalController>();
         }
         public void StatUp(float hitpoints, float maxHitpoints, float shellResist, float energyResist, float blastResist)
         {

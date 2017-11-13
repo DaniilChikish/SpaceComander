@@ -13,13 +13,11 @@
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Unity Full v3.5</TargetFrameworkProfile>
-    <CompilerResponseFile>
-    </CompilerResponseFile>
+    <CompilerResponseFile></CompilerResponseFile>
     <UnityProjectType>Game:1</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows:5</UnityBuildTarget>
     <UnityVersion>5.5.4p4</UnityVersion>
-    <RootNamespace>
-    </RootNamespace>
+    <RootNamespace></RootNamespace>
     <LangVersion>4</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -91,6 +89,13 @@
     <Compile Include="Assets\Scripts\GUI\SpaceShipGUIObserver.cs" />
     <Compile Include="Assets\Scripts\Scenarios\Mission1.cs" />
     <Compile Include="Assets\Scripts\Scenarios\Mission2.cs" />
+    <Compile Include="Assets\Scripts\Scenarios\Order Asserts\ColliderOrderAssert.cs" />
+    <Compile Include="Assets\Scripts\Scenarios\Order Asserts\ObjectiveOrderAssert.cs" />
+    <Compile Include="Assets\Scripts\Scenarios\Order Asserts\OnDestroyAllOfOrderAssert.cs" />
+    <Compile Include="Assets\Scripts\Scenarios\Order Asserts\OnDestroyOneOfOrderAssert.cs" />
+    <Compile Include="Assets\Scripts\Scenarios\Order Asserts\OnDestroyOrderAssert.cs" />
+    <Compile Include="Assets\Scripts\Scenarios\Order Asserts\OrderAssert.cs" />
+    <Compile Include="Assets\Scripts\Scenarios\Order Asserts\TimerOrderAssert.cs" />
     <Compile Include="Assets\Scripts\Scenarios\Scenario.cs" />
     <Compile Include="Assets\Scripts\Scenarios\TraningScenario.cs" />
     <Compile Include="Assets\Scripts\Service\CameraMovementScript.cs" />
@@ -216,17 +221,11 @@
     <None Include="Assets\SpaceD\readme.txt" />
     <None Include="Assets\Standard Assets\Cameras\CameraGuidelines.txt" />
     <None Include="Assets\Standard Assets\CrossPlatformInput\CrossPlatformInputGuidelines.txt" />
-    <None Include="Assets\StreamingAssets\local\eng\base_eng.xml" />
-    <None Include="Assets\StreamingAssets\local\eng\eng.xml" />
-    <None Include="Assets\StreamingAssets\local\eng\mission1_brief_eng.xml" />
-    <None Include="Assets\StreamingAssets\local\eng\mission2_brief_eng.xml" />
-    <None Include="Assets\StreamingAssets\local\eng\training_brief_eng.xml" />
-    <None Include="Assets\StreamingAssets\local\rus\base_rus.xml" />
-    <None Include="Assets\StreamingAssets\local\rus\mission1_brief_rus.xml" />
-    <None Include="Assets\StreamingAssets\local\rus\mission2_brief_rus.xml" />
-    <None Include="Assets\StreamingAssets\local\rus\rus.xml" />
-    <None Include="Assets\StreamingAssets\local\rus\training_brief_rus.xml" />
-    <None Include="Assets\StreamingAssets\local\temp.xml" />
+    <None Include="Assets\StreamingAssets\missions\mission1_brief_eng.xml" />
+    <None Include="Assets\StreamingAssets\missions\mission1_brief_rus.xml" />
+    <None Include="Assets\StreamingAssets\missions\mission2_brief_eng.xml" />
+    <None Include="Assets\StreamingAssets\missions\mission2_brief_rus.xml" />
+    <None Include="Assets\StreamingAssets\missions\temp.xml" />
     <None Include="Assets\UnityTestTools\LICENSE.txt" />
     <None Include="Assets\UnityTestTools\changelog.txt" />
     <None Include="Assets\mission1.txt" />

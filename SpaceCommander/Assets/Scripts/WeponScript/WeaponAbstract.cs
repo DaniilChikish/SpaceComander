@@ -48,7 +48,7 @@ namespace SpaceCommander
         }
         protected void Start()
         {
-            Global = FindObjectOfType<GlobalController>();
+            Global = GlobalController.GetInstance();
             owner = this.transform.GetComponentInParent<Unit>();
             ownerBody = owner.GetComponent<Rigidbody>();
 
@@ -67,6 +67,7 @@ namespace SpaceCommander
             audio.clip = Global.Sound.GetShot(this.type);
             audio.playOnAwake = false;
             audio.spatialBlend = 1;
+            audio.priority = 120;
             audio.minDistance = 10;
             audio.maxDistance = 2000;
             audio.rolloffMode = AudioRolloffMode.Logarithmic;
@@ -144,24 +145,25 @@ namespace SpaceCommander
             return true;
         }
         protected abstract void Shoot(Transform target);
-        protected Quaternion RandomDirection(float dispersion)
+        public static Quaternion RandomDirection(float dispersion)
         {
             Vector3 direction = Vector3.zero;
             direction.x += dispersion * UnityEngine.Random.Range(-1, 1);
             direction.y += dispersion * UnityEngine.Random.Range(-1, 1);
             return Quaternion.Euler(direction);
         }
-        protected Quaternion RandomDirectionNormal(float dispersion)
+        //public static Quaternion RandomDirectionNormal(float dispersion, GlobalController Global)
+        //{
+        //    float vertComp = UnityEngine.Random.Range(-(Global.RandomNormalPool.Length - 2), Global.RandomNormalPool.Length - 2);
+        //    float horComp = UnityEngine.Random.Range(-(Global.RandomNormalPool.Length - 2), Global.RandomNormalPool.Length - 2);
+        //    Vector3 direction = Vector3.zero;
+        //    direction.x += (Convert.ToSingle(Global.RandomNormalPool[Convert.ToInt32(Mathf.Abs(vertComp))]) - Convert.ToSingle(Global.RandomNormalAverage)) * dispersion * Mathf.Sign(vertComp);
+        //    direction.y += (Convert.ToSingle(Global.RandomNormalPool[Convert.ToInt32(Mathf.Abs(horComp))]) - Convert.ToSingle(Global.RandomNormalAverage)) * dispersion * Mathf.Sign(horComp);
+        //    return Quaternion.Euler(direction);
+        //}
+        public static Quaternion RandomDirectionNormal(float dispersion)
         {
-            float vertComp = UnityEngine.Random.Range(-(Global.RandomNormalPool.Length - 2), Global.RandomNormalPool.Length - 2);
-            float horComp = UnityEngine.Random.Range(-(Global.RandomNormalPool.Length - 2), Global.RandomNormalPool.Length - 2);
-            Vector3 direction = Vector3.zero;
-            direction.x += (Convert.ToSingle(Global.RandomNormalPool[Convert.ToInt32(Mathf.Abs(vertComp))]) - Convert.ToSingle(Global.RandomNormalAverage)) * dispersion * Mathf.Sign(vertComp);
-            direction.y += (Convert.ToSingle(Global.RandomNormalPool[Convert.ToInt32(Mathf.Abs(horComp))]) - Convert.ToSingle(Global.RandomNormalAverage)) * dispersion * Mathf.Sign(horComp);
-            return Quaternion.Euler(direction);
-        }
-        public static Quaternion RandomDirectionNormal(float dispersion, GlobalController Global)
-        {
+            GlobalController Global = GlobalController.GetInstance();
             float vertComp = UnityEngine.Random.Range(-(Global.RandomNormalPool.Length - 2), Global.RandomNormalPool.Length - 2);
             float horComp = UnityEngine.Random.Range(-(Global.RandomNormalPool.Length - 2), Global.RandomNormalPool.Length - 2);
             Vector3 direction = Vector3.zero;
@@ -438,7 +440,7 @@ namespace SpaceCommander
 
         protected virtual void Start()
         {
-            Global = FindObjectOfType<GlobalController>();
+            Global = GlobalController.GetInstance();
             body = gameObject.GetComponent<Rigidbody>();
             acceleration = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "acceleration"));
             dropImpulse = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "dropImpulse"));

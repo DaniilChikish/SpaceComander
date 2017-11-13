@@ -15,7 +15,7 @@ namespace SpaceCommander
         GlobalController Global;
         private void Start()
         {
-            Global = FindObjectOfType<GlobalController>();
+            Global = GlobalController.GetInstance();
         }
         void Update()
         {
@@ -133,8 +133,8 @@ namespace SpaceCommander
         private void SendTo(Vector3 destination)
         {
             //Debug.Log("SendTo...");
-            if (FindObjectsOfType<GlobalController>()[0].selectedList.Count > 0)
-                foreach (SpaceShip x in FindObjectsOfType<GlobalController>()[0].selectedList)
+            if (Global.selectedList.Count > 0)
+                foreach (SpaceShip x in Global.selectedList)
                 {
                     if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
                         x.SendToQueue(destination);

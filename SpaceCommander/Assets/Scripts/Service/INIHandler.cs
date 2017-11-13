@@ -33,7 +33,7 @@ namespace SpaceCommander
         }
         public string ReadINI(string Section, string Key, int Size)
         {
-            return ReadINI(Section, Key, "", 255);
+            return ReadINI(Section, Key, "", Size);
         }
         public string ReadINI(string Section, string Key, string Default, int Size)
         {

@@ -31,11 +31,14 @@ namespace SpaceCommander
         private SpaceShipGUIObserver observer;
         private bool langChanged;
         private GameSettings settingsLocal;
+        private int victory;
+        private float checkVictoryCount;
+        private const float checkVictoryRate = 1;
         // Use this for initialization
         void Start()
         {
             //Debug.Log("HUD started");
-            Global = FindObjectOfType<GlobalController>();
+            Global = GlobalController.GetInstance();
             Loader = FindObjectOfType<LoadManager>();
             observer = FindObjectOfType<SpaceShipGUIObserver>();
             VictoryBannerSize.x = 1784f / 2f;
@@ -83,6 +86,14 @@ namespace SpaceCommander
             Windows[2].rect = UIUtil.GetRect(new Vector2(800, 600), PositionAnchor.Center, mainRect.size);//options
             Windows[3].rect = UIUtil.GetRect(new Vector2(600, 200), PositionAnchor.Center, mainRect.size, new Vector2(0, 120));//victory
 
+            if (checkVictoryCount <= 0)
+            {
+                victory = Global.CheckVictory();
+                checkVictoryCount = checkVictoryRate;
+            }
+            else
+                checkVictoryCount -= Time.deltaTime;
+
             if (Input.GetKeyDown(KeyCode.Escape))
             {
                 if (Pause)
@@ -96,7 +107,6 @@ namespace SpaceCommander
             GUI.skin = Skin;
             if (Global.Settings.StaticProportion && scale != 1)
                 GUI.matrix = Matrix4x4.Scale(Vector3.one * scale);
-            int victory = Global.CheckVictory();
             if (victory == 1)
                 Victory();
             else if (victory == -1)
@@ -449,7 +459,7 @@ namespace SpaceCommander
         }
         private void ClickSound()
         {
-            Global.Sound.InstantUI(Service.SoundStorage.UISoundType.Click, Camera.main.transform.position, Global.Settings.SoundLevel);
+            Global.Sound.InstantUI(Service.SoundStorage.UISoundType.InClick, Camera.main.transform.position, Global.Settings.SoundLevel);
         }
         private void HoverSound()
         {
@@ -461,7 +471,7 @@ namespace SpaceCommander
         }
         private void DeniedSound()
         {
-            Global.Sound.InstantUI(Service.SoundStorage.UISoundType.Denied, Camera.main.transform.position, Global.Settings.SoundLevel);
+            Global.Sound.InstantUI(Service.SoundStorage.UISoundType.OutClick, Camera.main.transform.position, Global.Settings.SoundLevel);
         }
     }
 }//

@@ -88,7 +88,7 @@ namespace SpaceCommander
             sound = this.gameObject.GetComponent<AudioSource>();
             sound.minDistance = maxRadius;
             sound.maxDistance = maxRadius * 100f;
-            sound.volume = FindObjectOfType<GlobalController>().Settings.SoundLevel * volumeScale;
+            sound.volume = GlobalController.GetInstance().Settings.SoundLevel * volumeScale;
             soundDelay = (Vector3.Distance(this.transform.position, Camera.main.transform.position) / soundSpeed);
             sound.PlayDelayed(soundDelay);
         }

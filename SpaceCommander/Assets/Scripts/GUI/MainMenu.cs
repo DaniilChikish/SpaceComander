@@ -27,7 +27,7 @@ namespace SpaceCommander
         private GameSettings settingsLocal;
         void Start()
         {
-            Global = FindObjectOfType<GlobalController>();
+            Global = GlobalController.GetInstance();
             Loader = FindObjectOfType<LoadManager>();
             Time.timeScale = 1;
             CurWin = MenuWindow.Main;

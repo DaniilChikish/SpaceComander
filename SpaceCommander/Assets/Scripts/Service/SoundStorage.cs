@@ -8,18 +8,18 @@ namespace SpaceCommander.Service
 {
     public class SoundStorage : MonoBehaviour
     {
-        public enum UISoundType { Click, Hover, Confirm, Denied}
+        public enum UISoundType { InClick, OutClick, Hover, Confirm, Denied}
         public enum SpecialSoundType { Hit}
         [Space]
         [Header("UI Sound")]
         [SerializeField]
-        private AudioClip UIButtonClick;
+        private AudioClip UIButtonInClick;
         [SerializeField]
         private AudioClip UIButtonHover;
         [SerializeField]
         private AudioClip UIButtonConfirm;
         [SerializeField]
-        private AudioClip UIButtonDenied;
+        private AudioClip UIButtonOutClick;
 
         [Space]
         [Header("Weapon Sound")]
@@ -72,11 +72,11 @@ namespace SpaceCommander.Service
                     return UIButtonHover;
                 case UISoundType.Confirm:
                     return UIButtonConfirm;
-                case UISoundType.Denied:
-                    return UIButtonDenied;
-                case UISoundType.Click:
+                case UISoundType.OutClick:
+                    return UIButtonOutClick;
+                case UISoundType.InClick:
                 default:
-                    return UIButtonClick;
+                    return UIButtonInClick;
             }
         }
         public void InstantModule(Type type, SpellModuleState state, Vector3 position, float volume)

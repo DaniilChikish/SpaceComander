@@ -60,7 +60,6 @@ namespace SpaceCommander
         [Header("Data")]
         private ISpaceShipObservable observable;
         private HUDBase hud;
-        private GlobalController Global;
         private GUIStyle localStyle;
         private float statusPosition;
         private Vector3 statusOpenedPosition;
@@ -94,7 +93,6 @@ namespace SpaceCommander
         {
             maincam = FindObjectOfType<OrbitalCamera>();
             hud = FindObjectOfType<HUDBase>();
-            Global = FindObjectOfType<GlobalController>();
             canvas = GameObject.Find("Canvas");
             status = GameObject.Find("StatusPanel");
             statusOpenedPosition = status.transform.position;
@@ -324,6 +322,7 @@ namespace SpaceCommander
         }
         private void CheckMode()
         {
+            GlobalController Global = GlobalController.GetInstance();
             if (Global.selectedList.Count == 1)
             {
                 if ((object)observable != Global.selectedList[0])

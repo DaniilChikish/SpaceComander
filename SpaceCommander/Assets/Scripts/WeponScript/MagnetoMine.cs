@@ -16,12 +16,10 @@ namespace SpaceCommander.Weapons
         public float ttl;
         public float lt;
         public float explosionRange;
-        private GlobalController Global;
         private float pingCount;
 
         private void Start()
         {
-            Global = FindObjectOfType<GlobalController>();
         }
         private void Update()
         {
@@ -38,7 +36,7 @@ namespace SpaceCommander.Weapons
             else if (pingCount <= 0)
             {
                 pingCount = 0.1f;
-                foreach (SpaceShip x in Global.unitList)
+                foreach (SpaceShip x in GlobalController.GetInstance().unitList)
                 {
                     if (x.Team != team && Vector3.Distance(x.transform.position, this.transform.position) < explosionRange)
                     {
@@ -57,7 +55,7 @@ namespace SpaceCommander.Weapons
         {
             if (!isArmed && other.gameObject.tag == "Unit")
             {
-                Debug.Log("triggered");
+                //Debug.Log("triggered");
                 if (other.gameObject.transform.GetComponent<Unit>().Team != this.team)
                     Arm(other.gameObject.transform);
             }
@@ -71,7 +69,7 @@ namespace SpaceCommander.Weapons
         {
             if (this.target == null && lt > 2.5)
             {
-                Debug.Log("armed");
+                //Debug.Log("armed");
                 this.target = target;
                 detonateTimer = 0.5f;
                 isArmed = true;
@@ -80,7 +78,7 @@ namespace SpaceCommander.Weapons
 
         public void Explode()
         {
-            GameObject blast = Instantiate(FindObjectOfType<GlobalController>().Prefab.ExplosiveBlast, this.transform.position, this.transform.rotation);
+            GameObject blast = Instantiate(GlobalController.GetInstance().Prefab.ExplosiveBlast, this.transform.position, this.transform.rotation);
             blast.GetComponent<Explosion>().StatUp(BlastType.UnitaryTorpedo);
             Destroy(gameObject);
         }

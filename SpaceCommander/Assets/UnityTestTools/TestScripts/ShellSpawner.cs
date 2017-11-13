@@ -19,10 +19,8 @@ namespace SpaceCommander.Test
         public float RoundspeedMultiplacator;
         public float APMultiplacator;
         public float ShellmassMultiplacator;
-        private GlobalController Global;
         private void Start()
         {
-            Global = FindObjectOfType<GlobalController>();
         }
         private void Update()
         {
@@ -31,7 +29,7 @@ namespace SpaceCommander.Test
             else
             {
                 backCount = 60f / firerate;
-                GameObject shell = Instantiate(Global.Prefab.UnitaryShell, gameObject.transform.position, transform.rotation);
+                GameObject shell = Instantiate(GlobalController.GetInstance().Prefab.UnitaryShell, gameObject.transform.position, transform.rotation);
                 shell.transform.localScale = shell.transform.localScale * scale;
                 shell.GetComponent<IShell>().StatUp((speed * (1 + RoundspeedMultiplacator) * this.transform.forward), damage * (1 + DamageMultiplacator), armorPiersing * (1 + APMultiplacator), mass * (1 + ShellmassMultiplacator), canRicochet, explosionPrefab);
             }

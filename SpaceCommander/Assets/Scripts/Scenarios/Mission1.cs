@@ -15,27 +15,7 @@ namespace SpaceCommander.Scenarios
         public GameObject WarpGate3;
         protected override void Start()
         {
-            //File.WriteAllText("mission1.brif", "Kill them all!");
-            Global = FindObjectOfType<GlobalController>();
-            //Debug.Log("Scenario started");
-            Name = Global.Texts("Mision1_name");
-            string path = Application.streamingAssetsPath + "\\local";
-            switch (Global.Settings.Localisation)
-            {
-                case Languages.Russian:
-                    {
-                        path += "\\rus\\mission1_brief_rus.xml";
-                        break;
-                    }
-                case Languages.English:
-                default:
-                    {
-                        path += "\\eng\\mission1_brief_eng.xml";
-
-                        break;
-                    }
-            }
-            Brief = File.ReadAllText(path);
+            base.Start();
         }
         protected override void Update()
         {
@@ -43,22 +23,13 @@ namespace SpaceCommander.Scenarios
         }
         public override int CheckVictory()
         {
-            int alies = 0;
-            int enemy = 0;
-            foreach (Unit x in Global.unitList)
-            {
-                if (x.Team == Global.playerArmy)
-                    alies++;
-                else enemy++;
-            }
-            if (enemy == 0)
-                return 1;
-            else if (alies == 0)
+            if (Scenario.DefaultOrder() == -1)
             {
                 GetHelp();
                 return 0;
             }
-            else return 0;
+            else
+                return base.CheckVictory();
         }
 
         private void GetHelp()

@@ -18,7 +18,6 @@ namespace SpaceCommander.Test
         public float blastResist;
         private float hitCount;
         private SpaceShip owner;
-        private GlobalController Global;
         public float Hitpoints { get { return hitpoints; } set { hitpoints = value; } }
         public float MaxHitpoints { get { return this.maxHitpoints; } }
         public float ShellResist { get { return this.shellResist * (1 + owner.ResistMultiplacator); } }
@@ -29,7 +28,6 @@ namespace SpaceCommander.Test
         void Start()
         {
             owner = transform.GetComponentInParent<SpaceShip>();
-            Global = FindObjectOfType<GlobalController>();
         }
 
         // Update is called once per frame

@@ -553,7 +553,7 @@ namespace SpaceCommander
         private KeyCode switchCompensator = KeyCode.C;
         private void OnEnable()
         {
-            Global = FindObjectOfType<GlobalController>();
+            Global = GlobalController.GetInstance();
             hud = FindObjectOfType<HUDBase>();
             ///owner.gameObject.GetComponent<NavMeshAgent>().enabled = false;
             owner.SendTo(owner.transform.position);

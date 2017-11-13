@@ -201,7 +201,7 @@ namespace SpaceCommander
         //base interface
         protected void Start()//_______________________Start
         {
-            Global = FindObjectOfType<GlobalController>();
+            Global = GlobalController.GetInstance();
             movementAiEnabled = true;
             combatAIEnabled = true;
             selfDefenceModuleEnabled = true;

@@ -12,11 +12,38 @@ using UnityEngine.SceneManagement;
 using DeusUtility.Random;
 using DeusUtility.UI;
 using SpaceCommander.Service;
+using SpaceCommander.Scenarios;
 
 namespace SpaceCommander
 {
     public class GlobalController : MonoBehaviour
     {
+        private static GlobalController instance;
+        public void OnEnable()
+        {
+            Initialise();
+            instance = this;
+        }
+        public static GlobalController GetInstance()
+        {
+            if (instance == null)
+            {
+                GameObject newGlobal = new GameObject();
+                instance = newGlobal.AddComponent<GlobalController>();
+                instance.Initialise();
+            }
+            return instance;
+        }
+        //private void Start()
+        //{
+        //    Initialise();
+        //}
+        public void Initialise()
+        {
+            if (!handlersInitialised)
+                InitialiseHandlers();
+            InitialiseReference();            
+        }
         public List<SpaceShip> unitList; // список 
         public List<SpaceShip> selectedList; // спиков выделенных объектов
         public Army playerArmy;
@@ -26,17 +53,19 @@ namespace SpaceCommander
         //public double[] RandomExponentPool;
         private float randomPoolBackCoount;
         //settings
-        private GameSettings settings;
+        private static bool handlersInitialised;
+        private static GameSettings settings;
         public GameSettings Settings { get { return settings; } set { settings = value; }}
-        public SoundStorage Sound { get; private set; }
-        public PrefabStorage Prefab { get; private set; }
-        public SpecINIHandler SpecINI { get; private set; }
+        private static SpecINIHandler specIni;
+        public SpecINIHandler SpecINI { get { return specIni; } private set { specIni = value; } }
         //texts
-        private TextINIHandler localTexts;
+        private static TextINIHandler localTexts;
         public string Texts(string key)
         {
             return localTexts.GetText("Text." + Settings.Localisation.ToString(), key);
         }
+        public SoundStorage Sound { get; private set; }
+        public PrefabStorage Prefab { get; private set; }
         private Scenario Mission;
         public string MissionName
         {
@@ -58,11 +87,15 @@ namespace SpaceCommander
         }
         private ShipManualController manualController;
         public ShipManualController ManualController { get { return manualController; } }
-        private void OnEnable()
+        private void InitialiseHandlers()
         {
             LoadSettings();
             LoadTexts();
             LoadSpec();
+            handlersInitialised = true;
+        }
+        private void InitialiseReference()
+        {
             Sound = FindObjectOfType<SoundStorage>();
             Prefab = FindObjectOfType<PrefabStorage>();
             Mission = FindObjectOfType<Scenario>();
@@ -77,13 +110,9 @@ namespace SpaceCommander
         {
             SpecINI = new SpecINIHandler(Application.streamingAssetsPath + "\\spec.ini");
         }
-        private void Start()
-        {
-
-        }
         public void LoadTexts()
         {
-            this.localTexts = new TextINIHandler(Application.streamingAssetsPath + "\\localisation_base.ini");
+            GlobalController.localTexts = new TextINIHandler(Application.streamingAssetsPath + "\\localisation_base.ini");
         }
 
         public void Update()
@@ -102,124 +131,7 @@ namespace SpaceCommander
             if (Mission != null)
                 return Mission.CheckVictory();
             else
-            {
-                int alies = 0;
-                int enemy = 0;
-                foreach (Unit x in unitList)
-                {
-                    if (x.Team == this.playerArmy)
-                        alies++;
-                    else enemy++;
-                }
-                if (enemy == 0)
-                    return 1;
-                else if (alies == 0)
-                    return -1;
-                else return 0;
-            }
-        }
-    }
-    /**
-     * Deprecated
-     * **/
-    public class NavmeshMovementController// : IDriver
-    {
-        private DriverStatus status;
-        private SpaceShip walker;
-        private Transform walkerTransform;
-        private NavMeshAgent walkerAgent;
-        private Queue<Vector3> path; //очередь путевых точек
-        public Vector3 Velocity { get { return walkerAgent.velocity; } }
-        public int PathPoints
-        {
-            get
-            {
-                if ((walkerAgent.pathEndPosition - walkerTransform.position).magnitude < 1)
-                    return path.Count;
-                else return path.Count + 1;
-            }
-        }
-        public DriverStatus Status { get { return status; } }
-        public Vector3 NextPoint { get { if (PathPoints > 1) return walkerAgent.pathEndPosition; else return Vector3.zero; } }
-        //public float backCount; //время обновления пути.
-        public NavmeshMovementController(GameObject walker)
-        {
-            this.walkerTransform = walker.transform;
-            path = new Queue<Vector3>();
-            walkerAgent = walker.GetComponent<NavMeshAgent>();
-            walkerAgent.SetDestination(walker.transform.position);
-            this.walker = walker.GetComponent<SpaceShip>();
-            UpdateSpeed();
-            //Debug.Log("Driver online");
-        }
-        public void Update()
-        {
-            UpdateSpeed();
-            if ((walkerAgent.pathEndPosition - walkerTransform.position).magnitude < 10)
-            {
-                if (path.Count > 1)
-                {
-                    //Debug.Log("1");
-                    //backCount = Vector3.Distance(walker.transform.position, path.Peek()) / (walker.GetComponent<NavMeshAgent>().speed*0.9f);
-                    walkerAgent.SetDestination(path.Dequeue());
-                }
-                if (path.Count == 1 && (walkerAgent.pathEndPosition - walkerTransform.position).magnitude < 1)
-                {
-                    //backCount = Vector3.Distance(walker.transform.position, path.Peek()) / (walker.GetComponent<NavMeshAgent>().speed * 0.9f);
-                    walkerAgent.SetDestination(path.Dequeue());
-                }
-            }
-            //else backCount -= Time.deltaTime;
-        }
-        public void UpdateSpeed()
-        {
-            float distance = Vector3.Distance(walkerAgent.destination, walkerTransform.position);
-            //Debug.Log(distance +" - "+ walker.gameObject.name);
-            if (distance > 250)
-                walkerAgent.speed = walker.Speed * 2.5f;
-            else if (distance > 150)
-                walkerAgent.speed = walker.Speed * 2f;
-            else if (distance > 70)
-                walkerAgent.speed = walker.Speed * 1.5f;
-            else
-                walkerAgent.speed = walker.Speed;
-            walkerAgent.acceleration = walker.Speed * 1.6f;
-            if (walker.CurrentTarget == null)
-                walkerAgent.angularSpeed = walker.Speed * 3.3f;
-            else
-                walkerAgent.angularSpeed = walker.Speed * 0.05f;
-        }
-        public bool MoveTo(Vector3 destination)
-        {
-            ClearQueue();
-            return MoveToQueue(destination);
-        }
-        public bool MoveToQueue(Vector3 destination)
-        {
-            if (path.Count < 10)
-            {
-                UpdateSpeed();
-                path.Enqueue(destination);
-                //backCount = Vector3.Distance(walker.transform.position, destination) / (walker.GetComponent<NavMeshAgent>().speed - 2);
-                return true;
-            }
-            else return false;
-        }
-        public void ClearQueue()
-        {
-            walker.GetComponent<NavMeshAgent>().ResetPath();
-            //backCount = 0;
-            path.Clear();
-        }
-
-        public void BuildPathArrows()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void FixedUpdate()
-        {
-            throw new NotImplementedException();
+                return Scenario.DefaultOrder();
         }
     }
     public class ShootController : IGunner

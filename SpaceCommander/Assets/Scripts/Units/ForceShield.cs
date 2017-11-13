@@ -28,7 +28,6 @@ namespace SpaceCommander
         MeshRenderer secondField;
         ParticleSystem shildCollaps;
         private SpaceShip owner;
-        private GlobalController Global;
 
         public float Force { get { return force; } set { force = value; } }
         public float MaxCampacity { get { return maxCampacity; } set { maxCampacity = value; } }
@@ -41,7 +40,6 @@ namespace SpaceCommander
             shildCollaps = this.transform.FindChild("FirstField").GetComponentInChildren<ParticleSystem>();
             secondField = this.transform.FindChild("SecondField").GetComponent<MeshRenderer>();
             owner = transform.GetComponentInParent<SpaceShip>();
-            Global = FindObjectOfType<GlobalController>();
         }
 
         // Update is called once per frame
