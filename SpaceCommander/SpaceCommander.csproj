@@ -13,11 +13,13 @@
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Unity Full v3.5</TargetFrameworkProfile>
-    <CompilerResponseFile></CompilerResponseFile>
+    <CompilerResponseFile>
+    </CompilerResponseFile>
     <UnityProjectType>Game:1</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows:5</UnityBuildTarget>
     <UnityVersion>5.5.4p4</UnityVersion>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <LangVersion>4</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -123,7 +125,10 @@
     <Compile Include="Assets\Scripts\Units\Recon.cs" />
     <Compile Include="Assets\Scripts\Units\Scout.cs" />
     <Compile Include="Assets\Scripts\Units\ShipManualController.cs" />
+    <Compile Include="Assets\Scripts\Units\ShootController.cs" />
     <Compile Include="Assets\Scripts\Units\SpaceMovementController.cs" />
+    <Compile Include="Assets\Scripts\Units\BattleDrone.cs" />
+    <Compile Include="Assets\Scripts\Units\SpaceTurret.cs" />
     <Compile Include="Assets\Scripts\Units\SpellModule.cs" />
     <Compile Include="Assets\Scripts\Units\Support_Corvette.cs" />
     <Compile Include="Assets\Scripts\Units\UnitAbstract.cs" />

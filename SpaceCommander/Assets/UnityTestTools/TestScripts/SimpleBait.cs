@@ -28,5 +28,10 @@ namespace SpaceCommander.Test
         protected override void DecrementLocalCounters()
         {
         }
+        public override void MakeDamage(float damage)
+        {
+            Debug.Log("Take " + damage + " damage");
+            this.Hull = this.Hull - damage;
+        }
     }
 }

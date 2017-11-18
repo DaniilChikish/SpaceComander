@@ -22,8 +22,8 @@ namespace SpaceCommander.Weapons
             missile[3] = Instantiate(Global.Prefab.Missile, gameObject.transform.position - transform.up * a / 2 + transform.right * h, Quaternion.Euler(gameObject.transform.eulerAngles.x, gameObject.transform.eulerAngles.y, 60));
             missile[4] = Instantiate(Global.Prefab.Missile, gameObject.transform.position + transform.up * a / 2 - transform.right * h, Quaternion.Euler(gameObject.transform.eulerAngles.x, gameObject.transform.eulerAngles.y, -130));
             missile[5] = Instantiate(Global.Prefab.Missile, gameObject.transform.position - transform.up * a / 2 - transform.right * h, Quaternion.Euler(gameObject.transform.eulerAngles.x, gameObject.transform.eulerAngles.y, -60));
-            List<SpaceShip> enemys = new List<SpaceShip>();
-            foreach (SpaceShip x in Global.unitList)
+            List<Unit> enemys = new List<Unit>();
+            foreach (Unit x in Global.unitList)
             {
                 float distance = Vector3.Distance(this.gameObject.transform.position, x.transform.position);
                 if (distance < explosionRange * 3)

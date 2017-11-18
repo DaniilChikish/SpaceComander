@@ -14,7 +14,9 @@ namespace SpaceCommander
     public abstract class Unit : MonoBehaviour
     {
         protected UnitClass type;
+        public Army team;
         protected string unitName;
+        public float cooldownDetected;
         public UnitClass Type { get { return type; } }
         public string UnitName { get { return unitName; } }
         public abstract Army Team { get; }
@@ -29,6 +31,7 @@ namespace SpaceCommander
         public float ShiftSpeedMultiplicator { set; get; }
         public abstract float Hull { set; get; }
         public abstract float MaxHull { get; }
+        public abstract void ArmorCriticalAlarm();
         public float MaxHullMultiplacator { set; get; }
         public abstract float ShellResist { get; }
         public abstract float EnergyResist { get; }
@@ -39,63 +42,82 @@ namespace SpaceCommander
         public float ShieldRechargingMultiplacator { set; get; }
         public abstract float ShieldCampacity { get; }
         public float ShieldCampacityMultiplacator { set; get; }
+        public abstract bool ShieldOwerheat { get; }
+        public abstract void ShieldCriticalAlarm();
         public abstract float RadarRange { get; }
         public float RadarRangeMultiplacator { set; get; }
+        public abstract float Stealthness { get; }
+        public float StealthnessMultiplacator { set; get; }
+
         public abstract Vector3 Velocity { get; }
         public abstract void MakeImpact(IImpact impact);
         public abstract bool HaveImpact(string impactName);
         public abstract void RemoveImpact(IImpact impact);
         public abstract void MakeDamage(float damage);
         public abstract void Die();
+        public int SortEnemysBase(Unit x, Unit y)
+        {
+            if (Vector3.Distance(this.transform.position, x.transform.position) > Vector3.Distance(this.transform.position, y.transform.position))
+                return 1;
+            else return -1;
+        }
         public abstract void ResetTarget();
-        protected Dictionary<Unit, Vector3> followers;
-        private const float followingDistance = 50;
-        public Dictionary<Unit, Vector3> Followers { get { return followers; } }
-        public void AddFollower(Unit follower, Vector3 point)
+        public virtual bool Allies(Army army)
         {
-            followers.Add(follower, point);
-        }
-        public virtual Vector3 AddFollower(Unit follower)
-        {
-            Vector3[] defaultFollowingPoints =
+            if (army == GlobalController.GetInstance().playerArmy)
             {
-                (Vector3.right * followingDistance + -Vector3.forward * followingDistance/2f),
-                (-Vector3.right * followingDistance + -Vector3.forward * followingDistance/2f),
-                (Vector3.up * followingDistance + -Vector3.forward * followingDistance/2+ Vector3.right * followingDistance * Mathf.Sqrt(3f)/2f),
-                (Vector3.up * followingDistance + -Vector3.forward * followingDistance/2+ -Vector3.right * followingDistance * Mathf.Sqrt(3f)/2f),
-                (-Vector3.up * followingDistance + -Vector3.forward * followingDistance/2+ Vector3.right * followingDistance * Mathf.Sqrt(3f)/2f),
-                (-Vector3.up * followingDistance + -Vector3.forward * followingDistance/2+ -Vector3.right * followingDistance * Mathf.Sqrt(3f)/2f),
-            };
-            foreach (Vector3 p in defaultFollowingPoints)
-                if (!followers.ContainsValue(p))
-                {
-                    followers.Add(follower, p);
-                    return p;
-                }
-            foreach (var u in followers.Keys)
-                if (u.Followers.Keys.Count < defaultFollowingPoints.Length)
-                   return u.AddFollower(follower);
-            return Vector3.zero;
+                cooldownDetected = 1;
+                this.gameObject.transform.FindChild("MinimapPict").FindChild("EnemyMinimapPict").GetComponent<Renderer>().enabled = true;
+            }
+            return (team == army);
         }
-        public Vector3 GetFollowPoint(Unit follower)
-        {
-            return followers[follower];
-        }
-        public void RemoveFollower(Unit follower)
-        {
-            followers.Remove(follower);
-        }
+        //protected Dictionary<IUseDriver, Vector3> followers;
+        //private const float followingDistance = 50;
+        //public Dictionary<IUseDriver, Vector3> Followers { get { return followers; } }
+        //public void AddFollower(IUseDriver follower, Vector3 point)
+        //{
+        //    followers.Add(follower, point);
+        //}
+        //public virtual Vector3 AddFollower(IUseDriver follower)
+        //{
+            //Vector3[] defaultFollowingPoints =
+            //{
+            //    (Vector3.right * followingDistance + -Vector3.forward * followingDistance/2f),
+            //    (-Vector3.right * followingDistance + -Vector3.forward * followingDistance/2f),
+            //    (Vector3.up * followingDistance + -Vector3.forward * followingDistance/2+ Vector3.right * followingDistance * Mathf.Sqrt(3f)/2f),
+            //    (Vector3.up * followingDistance + -Vector3.forward * followingDistance/2+ -Vector3.right * followingDistance * Mathf.Sqrt(3f)/2f),
+            //    (-Vector3.up * followingDistance + -Vector3.forward * followingDistance/2+ Vector3.right * followingDistance * Mathf.Sqrt(3f)/2f),
+            //    (-Vector3.up * followingDistance + -Vector3.forward * followingDistance/2+ -Vector3.right * followingDistance * Mathf.Sqrt(3f)/2f),
+            //};
+            //foreach (Vector3 p in defaultFollowingPoints)
+            //    if (!followers.ContainsValue(p))
+            //    {
+            //        followers.Add(follower, p);
+            //        return p;
+            //    }
+            //foreach (IUseDriver u in followers.Keys)
+            //    if (u.Followers.Keys.Count < defaultFollowingPoints.Length)
+            //       return u.AddFollower(follower);
+        //    return Vector3.zero;
+        //}
+        //public Vector3 GetFollowPoint(Unit follower)
+        //{
+        //    return followers[follower];
+        //}
+        //public void RemoveFollower(Unit follower)
+        //{
+        //    followers.Remove(follower);
+        //}
         public abstract void GetFireSupport(Unit Target);
     }
     public delegate int SortUnit(Unit x, Unit y);
-    public abstract class SpaceShip : Unit, ISpaceShipObservable
+    public abstract class SpaceShip : Unit, IEngine, ISpaceShipObservable
     {
         public const float AIUpdateRate = 20f; //per second
         //base varibles
         protected UnitStateType aiStatus;
         protected TargetStateType targetStatus;
         protected TacticSituation situation;
-        public Army team;
         public bool isSelected;
         public Vector3 Anchor;
         //GUI
@@ -152,14 +174,14 @@ namespace SpaceCommander
         public override float ShieldForce { get { return shield.Force; } set { shield.Force = value; } }
         public override float ShieldRecharging { get { return shield.Recharging * (1 + ShieldRechargingMultiplacator); } }
         public override float ShieldCampacity { get { return shield.MaxCampacity * (1 + ShieldCampacityMultiplacator); } }
+        public override bool ShieldOwerheat { get { return shield.IsOverheat; } }
         public override Unit CurrentTarget { get { return Gunner.Target; } }
         public override float ShellResist { get { return armor.ShellResist * (1 + ResistMultiplacator); } }
         public override float EnergyResist { get { return armor.EnergyResist * (1 + ResistMultiplacator); } }
         public override float BlastResist { get { return armor.BlastResist * (1 + ResistMultiplacator); } }
+        public override float Stealthness { get { return stealthness * (1 + StealthnessMultiplacator); } }
 
         //own properties
-        public bool ShieldOwerheat { get { return shield.IsOverheat; } }
-        public float Stealthness { get { return stealthness; } set { stealthness = value; } }
         public IShield GetShieldRef { get { return shield; } }
         public SpellModule[] Module { get { return module; } }
 
@@ -176,7 +198,6 @@ namespace SpaceCommander
         public bool selfDefenceModuleEnabled;  // default true
         protected float stealthness; //set in child
         protected bool detected;
-        public float cooldownDetected;
         //controllers
         public bool ManualControl { set; get; }
         public IDriver Driver;
@@ -221,7 +242,7 @@ namespace SpaceCommander
             //
             StatsUp();
             //
-            gunner = new ShootController(this);
+            gunner = new Units.SpaceShipShootController(this);
             //Driver = new NavmeshMovementController(this.gameObject);
             Driver = new SpaceMovementController(this.gameObject);
             capByTarget = new List<Unit>();
@@ -569,9 +590,12 @@ namespace SpaceCommander
         {
             shield.Owerheat();
             Explosion();
-            Global.selectedList.Remove(this);
-            Global.unitList.Remove(this);
             Destroy(this.gameObject);
+        }
+        private void OnDestroy()
+        {
+            Global.selectedList.Remove(this);
+            Global.unitList.Remove(this);            
         }
         protected virtual void Explosion()
         {
@@ -847,7 +871,7 @@ namespace SpaceCommander
         {
             enemys.RemoveAll(x => x == null);
             allies.RemoveAll(x => x == null);
-            foreach (SpaceShip unknown in Global.unitList)
+            foreach (Unit unknown in Global.unitList)
                 if (unknown != this)
                 {
                     float distance = Vector3.Distance(this.gameObject.transform.position, unknown.transform.position);
@@ -910,18 +934,12 @@ namespace SpaceCommander
             capByTarget.Sort(delegate (Unit x, Unit y) { return EnemySortDelegate(x, y); });
             return capByTarget.Count;
         }
-        private int SortEnemysBase(Unit x, Unit y)
-        {
-            if (Vector3.Distance(this.transform.position, x.transform.position) > Vector3.Distance(this.transform.position, y.transform.position))
-                return 1;
-            else return -1;
-        }
-        public void ArmorCriticalAlarm()
+        public override void ArmorCriticalAlarm()
         {
             UseModule(new SpellFunction[] { SpellFunction.Emergency, SpellFunction.Hull });
             situation = TacticSituation.ExitTheBattle;
         }
-        public void ShieldCriticalAlarm()
+        public override void ShieldCriticalAlarm()
         {
             UseModule(new SpellFunction[] { SpellFunction.Emergency, SpellFunction.Shield });
             situation = TacticSituation.Retreat;
@@ -1025,15 +1043,6 @@ namespace SpaceCommander
             }
         }
         //group interaction
-        public virtual bool Allies(Army army)
-        {
-            if (army == Global.playerArmy)
-            {
-                cooldownDetected = 1;
-                this.gameObject.transform.FindChild("MinimapPict").FindChild("EnemyMinimapPict").GetComponent<Renderer>().enabled = true;
-            }
-            return (team == army);
-        }
         protected List<Unit> RequestScout()
         {
             List<Unit> enemys = new List<Unit>();
@@ -1150,7 +1159,7 @@ namespace SpaceCommander
             return null;
         }
         // sort functions
-        protected int EMCSortEnemys(Unit x, Unit y)
+        public  int EMCSortEnemys(Unit x, Unit y)
         {
             int xPriority;
             int yPriority;
@@ -1225,7 +1234,7 @@ namespace SpaceCommander
                 return -1;
             else return 1;
         }
-        protected int ScoutSortEnemys(Unit x, Unit y)
+        public  int ScoutSortEnemys(Unit x, Unit y)
         {
             int xPriority;
             int yPriority;
@@ -1300,7 +1309,7 @@ namespace SpaceCommander
                 return -1;
             else return 1;
         }
-        protected int ReconSortEnemys(Unit x, Unit y)
+        public  int ReconSortEnemys(Unit x, Unit y)
         {
             int xPriority;
             int yPriority;
@@ -1375,7 +1384,7 @@ namespace SpaceCommander
                 return -1;
             else return 1;
         }
-        protected int FigtherSortEnemys(Unit x, Unit y)
+        public  int FigtherSortEnemys(Unit x, Unit y)
         {
             int xPriority;
             int yPriority;
@@ -1450,7 +1459,7 @@ namespace SpaceCommander
                 return -1;
             else return 1;
         }
-        protected int BomberSortEnemys(Unit x, Unit y)
+        public  int BomberSortEnemys(Unit x, Unit y)
         {
             int xPriority;
             int yPriority;
@@ -1555,7 +1564,7 @@ namespace SpaceCommander
                 return -1;
             else return 1;
         }
-        protected int LRCorvetteSortEnemys(Unit x, Unit y)
+        public  int LRCorvetteSortEnemys(Unit x, Unit y)
         {
             int xPriority;
             int yPriority;
@@ -1640,7 +1649,7 @@ namespace SpaceCommander
                 return -1;
             else return 1;
         }
-        protected int GuardCorvetteSortEnemys(Unit x, Unit y)
+        public  int GuardCorvetteSortEnemys(Unit x, Unit y)
         {
             int xPriority;
             int yPriority;
@@ -1725,7 +1734,7 @@ namespace SpaceCommander
                 return -1;
             else return 1;
         }
-        protected int SupportCorvetteSortEnemys(Unit x, Unit y)
+        public  int SupportCorvetteSortEnemys(Unit x, Unit y)
         {
             int xPriority;
             int yPriority;
@@ -1810,7 +1819,7 @@ namespace SpaceCommander
                 return -1;
             else return 1;
         }
-        protected int CommandSortEnemys(Unit x, Unit y)
+        public  int CommandSortEnemys(Unit x, Unit y)
         {
             int xPriority;
             int yPriority;

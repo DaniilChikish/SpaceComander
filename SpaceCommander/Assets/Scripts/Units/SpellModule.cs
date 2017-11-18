@@ -7,9 +7,9 @@ using UnityEngine;
 
 namespace SpaceCommander
 {
-    public enum SpellModuleState { Ready, Active, Cooldown};
+    public enum SpellModuleState { Ready, Active, Cooldown };
     public enum SpellType { Passive, Activated, LongAction }
-    public enum SpellFunction { Self, Enemy, Allies, Shield, Hull, Buff, Debuff, Attack, Support, Defence, Emergency}
+    public enum SpellFunction { Self, Enemy, Allies, Shield, Hull, Buff, Debuff, Attack, Support, Defence, Emergency }
     public abstract class SpellModule
     {
         protected float backCount;
@@ -22,7 +22,7 @@ namespace SpaceCommander
         protected GlobalController Global;
 
         public SpellModuleState State { get { return state; } }
-        public float BackCount {  get { return backCount; } }
+        public float BackCount { get { return backCount; } }
         public float CoolingTime { get { return coolingTime; } }
         public float ActiveTime { get { return activeTime; } }
         public SpellType Type { get { return type; } }
@@ -92,7 +92,6 @@ namespace SpaceCommander
     }
     public class Jammer : SpellModule
     {
-        private float ownerStealthnessBefore;
         public Jammer(SpaceShip owner) : base(owner)
         {
             backCount = 0;
@@ -107,15 +106,14 @@ namespace SpaceCommander
 
         protected override void Disable()
         {
-            owner.Stealthness = ownerStealthnessBefore;
+            owner.StealthnessMultiplacator -= 2f;
         }
 
         public override void Enable()
         {
             base.Enable();
-            ownerStealthnessBefore = owner.Stealthness;
-            owner.Stealthness = owner.Stealthness * 3.5f;
-            foreach (SpaceShip x in Global.unitList)
+            owner.StealthnessMultiplacator += 2f;
+            foreach (Unit x in Global.unitList)
             {
                 if ((Vector3.Distance(x.transform.position, owner.transform.position) < owner.RadarRange / 2) && (x.CurrentTarget != null && x.CurrentTarget.transform == owner.transform))
                 {
@@ -342,9 +340,9 @@ namespace SpaceCommander
         {
             base.Enable();
             owner.MakeImpact(new RadarBoosterImpact(owner, activeTime));
-            foreach (SpaceShip x in Global.unitList)
+            foreach (Unit x in Global.unitList)
             {
-                if (x.Allies(owner.Team) && (Vector3.Distance(x.transform.position, owner.transform.position) < owner.RadarRange / 4f))
+                if (x.GetType() == typeof(SpaceShip) && x.Allies(owner.Team) && (Vector3.Distance(x.transform.position, owner.transform.position) < owner.RadarRange / 4f))
                 {
                     x.MakeImpact(new RadarBoosterImpact(owner, activeTime));
                 }
@@ -370,7 +368,7 @@ namespace SpaceCommander
                 {
                     Act = true;
                     ttl = time;
-                    owner.RadarRangeMultiplacator +=  1;
+                    owner.RadarRangeMultiplacator += 1;
                 }
             }
         }
@@ -1164,25 +1162,25 @@ namespace SpaceCommander
         protected override void Act()
         {
             GameObject[] shells = GameObject.FindGameObjectsWithTag("Shell");
-                float dist;
-                Vector3 dir;
-                for (int i = 0; i < shells.Length; i++)
+            float dist;
+            Vector3 dir;
+            for (int i = 0; i < shells.Length; i++)
+            {
+                dist = Vector3.Distance(shells[i].transform.position, owner.transform.position);
+                dir = (shells[i].transform.position - owner.transform.position);
+                if (dist < 100 && Vector3.Angle(dir, owner.transform.forward) < 45 && Vector3.Angle(shells[i].GetComponent<Rigidbody>().velocity, -owner.transform.forward) < 45)
                 {
-                    dist = Vector3.Distance(shells[i].transform.position, owner.transform.position);
-                    dir = (shells[i].transform.position - owner.transform.position);
-                    if (dist < 100 && Vector3.Angle(dir, owner.transform.forward) < 45 && Vector3.Angle(shells[i].GetComponent<Rigidbody>().velocity, -owner.transform.forward) < 45)
-                    {
-                        shells[i].GetComponent<Round>().Destroy();
-                        GameObject beam;
-                        beam = GameObject.Instantiate(Global.Prefab.greenBeam);
-                        Vector3.Distance(owner.transform.position, shells[i].transform.position);
-                        beam.transform.localScale = new Vector3(1, 1, dist);
-                        beam.transform.position = owner.transform.position + dir.normalized * dist / 2;
-                        beam.transform.rotation = Quaternion.LookRotation(dir, new Vector3(0, 1, 0));
-                        beam.AddComponent<Service.SelfDestructor>().ttl = 0.8f;
-                        return;
-                    }
+                    shells[i].GetComponent<Round>().Destroy();
+                    GameObject beam;
+                    beam = GameObject.Instantiate(Global.Prefab.greenBeam);
+                    Vector3.Distance(owner.transform.position, shells[i].transform.position);
+                    beam.transform.localScale = new Vector3(1, 1, dist);
+                    beam.transform.position = owner.transform.position + dir.normalized * dist / 2;
+                    beam.transform.rotation = Quaternion.LookRotation(dir, new Vector3(0, 1, 0));
+                    beam.AddComponent<Service.SelfDestructor>().ttl = 0.8f;
+                    return;
                 }
+            }
             owner.ShieldForce -= owner.ShieldRecharging * Time.deltaTime * 0.7f;
         }
     }
@@ -1212,6 +1210,68 @@ namespace SpaceCommander
             missile.AddComponent<Weapons.NukeTorpedo>().SetTarget(owner.CurrentTarget.transform);
             missile.GetComponent<Missile>().SetTeam(owner.Team);
             missile.GetComponent<Rigidbody>().AddForce(owner.Velocity, ForceMode.VelocityChange);
+        }
+        protected override void Disable()
+        {
+        }
+    }
+    public class TurretPlant : SpellModule
+    {
+        public TurretPlant(SpaceShip owner) : base(owner)
+        {
+            backCount = 0;
+            type = SpellType.Activated;
+            state = SpellModuleState.Ready;
+            function.Add(SpellFunction.Allies);
+            function.Add(SpellFunction.Self);
+            function.Add(SpellFunction.Defence);
+        }
+        public override void EnableIfReady()
+        {
+            if (state == SpellModuleState.Ready)
+            {
+                if (owner.GetEnemys().Length >= 2)
+                    Enable();
+            }
+        }
+        public override void Enable()
+        {
+            base.Enable();
+            Vector3 position = owner.transform.position + (owner.transform.forward) * 50;
+            GameObject turret = GameObject.Instantiate(Global.Prefab.LaserTurret, position, owner.transform.rotation);
+            turret.AddComponent<Service.SelfDestructor>().ttl = CoolingTime * 3;
+            turret.GetComponent<Units.SpaceTurret>().SetTeam(owner.Team);
+        }
+        protected override void Disable()
+        {
+        }
+    }
+    public class BattleDroneLauncher : SpellModule
+    {
+        public BattleDroneLauncher(SpaceShip owner) : base(owner)
+        {
+            backCount = 0;
+            type = SpellType.Activated;
+            state = SpellModuleState.Ready;
+            function.Add(SpellFunction.Self);
+            function.Add(SpellFunction.Defence);
+        }
+        public override void EnableIfReady()
+        {
+            if (state == SpellModuleState.Ready)
+            {
+                if (owner.CurrentTarget != null)
+                    Enable();
+            }
+        }
+        public override void Enable()
+        {
+            base.Enable();
+            Vector3 position = owner.transform.position + (owner.transform.forward) * 50;
+            GameObject drone = GameObject.Instantiate(Global.Prefab.BattleDrone, position, owner.transform.rotation);
+            drone.AddComponent<Service.SelfDestructor>().ttl = CoolingTime * 3;
+            drone.GetComponent<Units.BattleDrone>().SetTeam(owner.Team);
+            drone.GetComponent<Units.BattleDrone>().owner = this.owner;
         }
         protected override void Disable()
         {

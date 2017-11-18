@@ -13,9 +13,11 @@ namespace SpaceCommander.Units
             type = UnitClass.Support_Corvette;
             EnemySortDelegate = SupportCorvetteSortEnemys;
             AlliesSortDelegate = SupportCorvetteSortEnemys;
-            module = new SpellModule[2];
+            module = new SpellModule[4];
             module[0] = new EmergencySelfRapairing(this);
             module[1] = new EmergencyShieldRecharging(this);
+            module[2] = new TurretPlant(this);
+            module[3] = new BattleDroneLauncher(this);
         }
         protected override void Explosion()
         {

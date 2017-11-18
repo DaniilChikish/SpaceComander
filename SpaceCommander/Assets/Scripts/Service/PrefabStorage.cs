@@ -22,6 +22,8 @@ namespace SpaceCommander.Service
         public GameObject Missile;
         public GameObject MissileTrap;
         public GameObject Torpedo;
+        public GameObject LaserTurret;
+        public GameObject BattleDrone;
         public GameObject MagMine;
         public GameObject MagnetoShell;
         public GameObject ExplosiveBlast;

@@ -46,7 +46,7 @@ namespace SpaceCommander.Weapons
                         {
                             float difference = Mathf.Clamp(this.ArmorPiersing - enemy.EnergyResist + 2, 0, 4f);
                             float multiplicator = difference / 2;
-                            enemy.MakeDamage(Damage * multiplicator * (dist / Range) * Time.deltaTime);
+                            enemy.MakeDamage(Damage * multiplicator * (1 - (dist / Range)) * Time.deltaTime);
                         }
                         //break;
                     }

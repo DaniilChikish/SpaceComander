@@ -127,7 +127,7 @@ namespace SpaceCommander.Units
         }
         protected void DeepScan()
         {
-            foreach (SpaceShip unknown in Global.unitList)
+            foreach (Unit unknown in Global.unitList)
                 if (unknown != this)
                 {
                     float distance = Vector3.Distance(this.gameObject.transform.position, unknown.transform.position);

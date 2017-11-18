@@ -40,6 +40,16 @@ namespace SpaceCommander
         void Reload();
         void Blink(float blink);
     }
+    public interface IEngine
+    {
+        Transform transform { get; }
+        IGunner Gunner { get; }
+        float Speed { get; }
+        float Acceleration { get; }
+        float ShiftSpeed { get; }
+        float RotationSpeed { get; }
+        Vector3 ScaleJetream { set; get; }
+    }
     public interface IDriver
     {
         Vector3 Velocity { get; }
@@ -48,7 +58,7 @@ namespace SpaceCommander
         bool MoveTo(Vector3 destination);
         bool MoveToQueue(Vector3 destination);
         bool MoveToQueue(Vector3[] path);
-        bool Follow(Unit target);
+        bool Follow(IEngine target);
         bool ExecetePointManeuver(PointManeuverType type, Vector3 point, Vector3 direction);
         bool ExeceteTargetManeuver(TatgetManeuverType type, Transform target);
         void BuildPathArrows();
@@ -71,6 +81,7 @@ namespace SpaceCommander
         bool AimOnTarget();
         bool CanShoot(int slot);
         bool TargetInRange(int slot);
+        bool NeedAim();
     }
     public interface IWeapon
     {

@@ -308,6 +308,10 @@ namespace SpaceCommander
                 return MissileEliminatorSpellIcon;
             else if (type == typeof(NukeTorpedoLauncher))
                 return NukeTorpedoSpellIcon;
+            else if (type == typeof(TurretPlant))
+                return TurretSpellIcon;
+            else if (type == typeof(BattleDroneLauncher))
+                return DroneSpellIcon;
             //    else if (type == typeof(type))
             //        return SpellIcon;
             else return DefaultSpellIcon;

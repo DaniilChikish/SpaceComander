@@ -17,7 +17,7 @@ namespace SpaceCommander
         [SerializeField]
         private float blastResist;
         private float hitCount;
-        private SpaceShip owner;
+        private Unit owner;
         public float Hitpoints { get { return hitpoints; } set { hitpoints = value; } }
         public float MaxHitpoints { get { return this.maxHitpoints; } }
         public float ShellResist { get { return this.shellResist; } }
@@ -25,7 +25,7 @@ namespace SpaceCommander
         public float BlastResist { get { return this.blastResist; } }
         private void Start()
         {
-            owner = transform.GetComponentInParent<SpaceShip>();
+            owner = transform.GetComponentInParent<Unit>();
         }
         public void StatUp(float hitpoints, float maxHitpoints, float shellResist, float energyResist, float blastResist)
         {

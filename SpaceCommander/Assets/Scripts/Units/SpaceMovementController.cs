@@ -732,7 +732,7 @@ namespace SpaceCommander
         private const float thrustDeah = 0.3f;
         private const float speedSigma = 0.1f;
 
-        private SpaceShip walker;
+        private IEngine walker;
         private Transform walkerTransform;
         private Rigidbody walkerBody;
         private GlobalController Global;
@@ -765,7 +765,7 @@ namespace SpaceCommander
         {
             this.walkerTransform = walker.transform;
             path = new Queue<Vector3>();
-            this.walker = walker.GetComponent<SpaceShip>();
+            this.walker = walker.GetComponent<IEngine>();
             walkerTransform = walker.GetComponent<Transform>();
             walkerBody = walker.GetComponent<Rigidbody>();
             Global = GlobalController.GetInstance();
@@ -834,7 +834,7 @@ namespace SpaceCommander
                 default:
                     {
                         //Move();
-                        if (!walker.ManualControl && walker.Gunner.Target == null)
+                        if (walker.GetType() == typeof(SpaceShip) && !((SpaceShip)walker).ManualControl && ((SpaceShip)walker).Gunner.Target == null)
                             Stabilisation();
                         break;
                     }
@@ -877,17 +877,17 @@ namespace SpaceCommander
             }
             else return false;
         }
-        public bool Follow(Unit target)
+        public bool Follow(IEngine target)
         {
-            Vector3 followPoint = target.AddFollower(walker);
-            if (followPoint!= Vector3.zero)
-            {
-                followTarget = target.transform;
-                followPointRelative = followPoint;
-                UpdateFollowPoint();
-                status = DriverStatus.Following;
-                return true;
-            }
+            //Vector3 followPoint = target.AddFollower(walker);
+            //if (followPoint!= Vector3.zero)
+            //{
+            //    followTarget = target.transform;
+            //    followPointRelative = followPoint;
+            //    UpdateFollowPoint();
+            //    status = DriverStatus.Following;
+            //    return true;
+            //}
             return false;
         }
         private void UpdateFollowPoint()
@@ -896,7 +896,7 @@ namespace SpaceCommander
         }
         public void BuildPathArrows()
         {
-            if (walker.isSelected && path.Count > 0)
+            if (walker.GetType() == typeof(SpaceShip) && ((SpaceShip)walker).isSelected && path.Count > 0)
             {
                 Vector3[] pathLocal = path.ToArray();
                 GameObject arrow;
@@ -1365,7 +1365,7 @@ namespace SpaceCommander
         private void Rotate()
         {
             Vector3 targetDirection = walkerTransform.forward;
-            if (aimLock <= 0 && walker.Gunner.SeeTarget() && ((walker.Gunner.TargetInRange(0) && walker.Gunner.CanShoot(0)) || (walker.Gunner.TargetInRange(1) && walker.Gunner.CanShoot(1))))
+            if (aimLock <= 0 && walker.Gunner.SeeTarget() && walker.Gunner.NeedAim())
                 targetDirection = walker.Gunner.Target.transform.position - walker.transform.position;
             else if (path.Count>0)
                 targetDirection = path.Peek() - walker.transform.position;
@@ -1395,11 +1395,10 @@ namespace SpaceCommander
         }
         private void ScaleJetream(float scale)
         {
-            walker.ScaleJetream = new Vector3(Mathf.Clamp01(scale), 0, 1);
+                walker.ScaleJetream = new Vector3(Mathf.Clamp01(scale), 0, 1);
         }
         public bool ExecetePointManeuver(PointManeuverType type, Vector3 point, Vector3 direction)
         {
-            Debug.Log(walker.name + " execute " + type.ToString());
             aimLock = 2;
             switch (type)
             {
@@ -1416,25 +1415,24 @@ namespace SpaceCommander
         }
         public bool ExeceteTargetManeuver(TatgetManeuverType type, Transform target)
         {
-            Debug.Log(walker.name + " execute " + type.ToString());
             switch (type)
             {
                 case TatgetManeuverType.Evasion:
-                        return Evasion(target);
+                        return Evasion(target, 0);
                 case TatgetManeuverType.Flank:
-                        return Evasion(target);
+                        return Evasion(target, 2);
                 case TatgetManeuverType.BoomZoom:
-                        return Evasion(target);
+                        return Evasion(target, 2);
                 case TatgetManeuverType.IncreaseDistance:
-                        return Evasion(target);
+                        return Evasion(target, 0);
                 case TatgetManeuverType.DecreaseDistance:
-                        return Evasion(target);
+                        return Evasion(target, 0);
                 case TatgetManeuverType.SternFollow:
-                        return Evasion(target);
+                        return Evasion(target, 2);
                 case TatgetManeuverType.SideFollow:
-                        return Evasion(target);
+                        return Evasion(target, 2);
                 case TatgetManeuverType.ToSternDethZone:
-                        return Evasion(target);
+                        return Evasion(target, 2);
             }
             return false;
         }
@@ -1471,14 +1469,14 @@ namespace SpaceCommander
             path[4] = point;
             return MoveToQueue(path);
         }
-        protected bool Evasion(Transform hazard)
+        protected bool Evasion(Transform hazard, float aimLock)
         {
             float randomDistanceRight = UnityEngine.Random.Range(30f, 50f);
             float randomDistanceUp = UnityEngine.Random.Range(30f, 50f);
             float randomRight = UnityEngine.Random.Range(-1f, 1f);
             float randomUp = UnityEngine.Random.Range(-1f, 1f);
-            Vector3 point = walker.transform.position + Vector3.right * randomDistanceRight * Mathf.Sign(randomRight) + Vector3.right * randomDistanceRight * Mathf.Sign(randomRight);
-            aimLock = 2; //locked by seconds
+            Vector3 point = walker.transform.position + Vector3.right * randomDistanceRight * Mathf.Sign(randomRight) + Vector3.up * randomDistanceUp * Mathf.Sign(randomUp);
+            this.aimLock = aimLock; //locked by seconds
             return MoveTo(point);
         }
         public static float MotionToStop(float V, float A)
