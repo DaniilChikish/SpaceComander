@@ -232,12 +232,12 @@ namespace SpaceCommander
 
             manualController = FindObjectOfType<ShipManualController>();
 
-            this.gameObject.transform.FindChild("MinimapPict").FindChild("AlliesMinimapPict").GetComponent<Renderer>().enabled = false;
-            this.gameObject.transform.FindChild("MinimapPict").FindChild("EnemyMinimapPict").GetComponent<Renderer>().enabled = false;
-            this.gameObject.transform.FindChild("MinimapPict").FindChild("SelectedMinimapPict").GetComponent<Renderer>().enabled = false;
+            this.gameObject.transform.Find("MinimapPict").Find("AlliesMinimapPict").GetComponent<Renderer>().enabled = false;
+            this.gameObject.transform.Find("MinimapPict").Find("EnemyMinimapPict").GetComponent<Renderer>().enabled = false;
+            this.gameObject.transform.Find("MinimapPict").Find("SelectedMinimapPict").GetComponent<Renderer>().enabled = false;
 
             if (team == Global.playerArmy)
-                this.gameObject.transform.FindChild("MinimapPict").FindChild("AlliesMinimapPict").GetComponent<Renderer>().enabled = true;
+                this.gameObject.transform.Find("MinimapPict").Find("AlliesMinimapPict").GetComponent<Renderer>().enabled = true;
 
             Debug.Log("Unit " + this.gameObject.name + " started");
         }
@@ -385,17 +385,17 @@ namespace SpaceCommander
             else if (isSelected)
             {
                 cooldownDetected = 0.1f;
-                this.gameObject.transform.FindChild("MinimapPict").FindChild("SelectedMinimapPict").GetComponent<Renderer>().enabled = true;
+                this.gameObject.transform.Find("MinimapPict").Find("SelectedMinimapPict").GetComponent<Renderer>().enabled = true;
             }
             else
             {
-                this.gameObject.transform.FindChild("MinimapPict").FindChild("SelectedMinimapPict").GetComponent<Renderer>().enabled = false;
+                this.gameObject.transform.Find("MinimapPict").Find("SelectedMinimapPict").GetComponent<Renderer>().enabled = false;
             }
             if (cooldownDetected < 0)
             {
-                this.gameObject.transform.FindChild("MinimapPict").FindChild("SelectedMinimapPict").GetComponent<Renderer>().enabled = false;
+                this.gameObject.transform.Find("MinimapPict").Find("SelectedMinimapPict").GetComponent<Renderer>().enabled = false;
                 //this.gameObject.transform.FindChild("AlliesMinimapPict").GetComponent<Renderer>().enabled = false;
-                this.gameObject.transform.FindChild("MinimapPict").FindChild("EnemyMinimapPict").GetComponent<Renderer>().enabled = false;
+                this.gameObject.transform.Find("MinimapPict").Find("EnemyMinimapPict").GetComponent<Renderer>().enabled = false;
             }
             if (module != null && module.Length > 0)
             {
@@ -1030,7 +1030,7 @@ namespace SpaceCommander
             if (army == Global.playerArmy)
             {
                 cooldownDetected = 1;
-                this.gameObject.transform.FindChild("MinimapPict").FindChild("EnemyMinimapPict").GetComponent<Renderer>().enabled = true;
+                this.gameObject.transform.Find("MinimapPict").Find("EnemyMinimapPict").GetComponent<Renderer>().enabled = true;
             }
             return (team == army);
         }

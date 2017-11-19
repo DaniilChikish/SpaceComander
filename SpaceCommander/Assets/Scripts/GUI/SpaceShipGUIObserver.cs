@@ -143,9 +143,9 @@ namespace SpaceCommander
                     newTexture = IconOf(observable.PrimaryWeapon[i].Type);
 
                     newChild.GetComponent<RawImage>().enabled = true;
-                    newChild.transform.FindChild("Icon").GetComponent<RawImage>().texture = newTexture;
-                    newChild.transform.FindChild("Icon").GetComponent<RawImage>().enabled = true;
-                    newChild.transform.FindChild("Overlay").GetComponent<RawImage>().enabled = true;
+                    newChild.transform.Find("Icon").GetComponent<RawImage>().texture = newTexture;
+                    newChild.transform.Find("Icon").GetComponent<RawImage>().enabled = true;
+                    newChild.transform.Find("Overlay").GetComponent<RawImage>().enabled = true;
                     PrimaryCooldown[i] = newChild.GetComponentInChildren<Image>();
                     newChild.GetComponentInChildren<Image>().enabled = true;
                     PrimaryCounters[i] = newChild.GetComponentInChildren<Text>();
@@ -169,9 +169,9 @@ namespace SpaceCommander
                         newTexture = IconOf(observable.SecondaryWeapon[i].Type);
 
                         newChild.GetComponent<RawImage>().enabled = true;
-                        newChild.transform.FindChild("Icon").GetComponent<RawImage>().texture = newTexture;
-                        newChild.transform.FindChild("Icon").GetComponent<RawImage>().enabled = true;
-                        newChild.transform.FindChild("Overlay").GetComponent<RawImage>().enabled = true;
+                        newChild.transform.Find("Icon").GetComponent<RawImage>().texture = newTexture;
+                        newChild.transform.Find("Icon").GetComponent<RawImage>().enabled = true;
+                        newChild.transform.Find("Overlay").GetComponent<RawImage>().enabled = true;
                         SecondaryCooldown[i] = newChild.GetComponentInChildren<Image>();
                         newChild.GetComponentInChildren<Image>().enabled = true;
                         SecondaryCounters[i] = newChild.GetComponentInChildren<Text>();
@@ -205,8 +205,8 @@ namespace SpaceCommander
                     newTexture = IconOf(observable.Module[i].GetType());
 
                     newChild.GetComponent<Image>().enabled = true;
-                    newChild.transform.FindChild("Icon").GetComponent<RawImage>().texture = newTexture;
-                    newChild.transform.FindChild("Icon").GetComponent<RawImage>().enabled = true;
+                    newChild.transform.Find("Icon").GetComponent<RawImage>().texture = newTexture;
+                    newChild.transform.Find("Icon").GetComponent<RawImage>().enabled = true;
 
                     newChild.GetComponent<Button>().enabled = true;
                     newChild.GetComponent<Button>().onClick.RemoveAllListeners();
@@ -214,9 +214,9 @@ namespace SpaceCommander
                     //UnityEngine.Events.UnityAction action = () => { this.ActiveModule((int)i); };
                     //newChild.GetComponent<Button>().onClick.AddListener(action);
 
-                    moduleActive[i] = newChild.transform.FindChild("ActiveOverlay").GetComponent<Image>();
+                    moduleActive[i] = newChild.transform.Find("ActiveOverlay").GetComponent<Image>();
                     moduleActive[i].enabled = true;
-                    moduleCooldown[i] = newChild.transform.FindChild("CooldownOverlay").GetComponent<Image>();
+                    moduleCooldown[i] = newChild.transform.Find("CooldownOverlay").GetComponent<Image>();
                     moduleCooldown[i].enabled = true;
                 }
             }

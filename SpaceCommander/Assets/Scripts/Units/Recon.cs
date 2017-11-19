@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using DeusUtility.Random;
 /**
-  * Перехватчик-диверсант (Recon)
-  * Физические параметры: (по образу самолета малой авиации)
-  *      Масса = 2000кг
-  *      Длина ~ 6м
+  * пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ-пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ (Recon)
+  * пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ: (пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
+  *      пїЅпїЅпїЅпїЅпїЅ = 2000пїЅпїЅ
+  *      пїЅпїЅпїЅпїЅпїЅ ~ 6пїЅ
   * **/
 namespace SpaceCommander.Units
 {
@@ -81,7 +81,7 @@ namespace SpaceCommander.Units
                 if (army == Global.playerArmy)
                 {
                     cooldownDetected = 1;
-                    this.gameObject.transform.FindChild("MinimapPict").FindChild("EnemyMinimapPict").GetComponent<Renderer>().enabled = true;
+                    this.gameObject.transform.Find("MinimapPict").Find("EnemyMinimapPict").GetComponent<Renderer>().enabled = true;
                 }
                 return (team == army);
             }

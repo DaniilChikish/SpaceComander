@@ -16,7 +16,7 @@ namespace SpaceCommander
         void Start()
         {
             player = this.gameObject;
-            mapCam = this.transform.FindChild("MapCam");
+            mapCam = this.transform.Find("MapCam");
             //Vector3 rotSpeedRight = new Vector3(0, rotSpeed, 0);
             //Vector3 rotSpeedLeft = new Vector3(0, rotSpeed * (-1), 0);
         }
