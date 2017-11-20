@@ -19,7 +19,7 @@ namespace SpaceCommander.Scenarios
             get
             {
                 StringBuilder outp = new StringBuilder();
-                GlobalController Global = GlobalController.GetInstance();
+                GlobalController Global = GlobalController.Instance;
                 outp.Append(missionBrief);
                 outp.Append("\n\r" + Global.Texts("Orders") + ":");
                 for (int i = 0; i < orders.Length; i++)
@@ -45,7 +45,7 @@ namespace SpaceCommander.Scenarios
             orders = FindObjectsOfType<OrderAssert>();
             Array.Sort(orders);
             {
-                GlobalController Global = GlobalController.GetInstance();
+                GlobalController Global = GlobalController.Instance;
                 //Debug.Log("Scenario started");
                 Name = Global.Texts(MissionID);
                 string path = Application.streamingAssetsPath + "/missions/" + MissionID + ".dat";
@@ -90,9 +90,9 @@ namespace SpaceCommander.Scenarios
         {
             int alies = 0;
             int enemy = 0;
-            foreach (Unit x in GlobalController.GetInstance().unitList)
+            foreach (Unit x in GlobalController.Instance.unitList)
             {
-                if (x.Team == GlobalController.GetInstance().playerArmy)
+                if (x.Team == GlobalController.Instance.playerArmy)
                     alies++;
                 else enemy++;
             }

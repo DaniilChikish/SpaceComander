@@ -76,7 +76,7 @@ namespace SpaceCommander.Units
         protected void Start()//_______________________Start
         {
             type = UnitClass.Turret;
-            Global = GlobalController.GetInstance();
+            Global = GlobalController.Instance;
             EnemySortDelegate = SortEnemysBase;
             radarPover = 1;
             cooldownDetected = 0;

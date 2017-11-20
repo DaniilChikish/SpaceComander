@@ -11,12 +11,7 @@ namespace SpaceCommander
     public enum ObserverMode { None, Half, Full }
     public class SpaceShipGUIObserver : MonoBehaviour
     {
-        private const float MovDuratuon = 0.8f;
-        private Image ShieldBar;
-        private Text ShieldCount;
-        private Image HealthBar;
-        private Text HealthCount;
-
+        #region Weapon
         [Header("Wapon")]
         public Texture CanonIcon;
         public Texture AutocannonIcon;
@@ -28,7 +23,8 @@ namespace SpaceCommander
         public Texture MagnetoIcon;
         public Texture MissileIcon;
         public Texture TorpedoIcon;
-
+        #endregion
+        #region Module
         [Space]
         [Header("Module")]
         public Texture DefaultSpellIcon;
@@ -55,9 +51,15 @@ namespace SpaceCommander
         public Texture TurretSpellIcon;
         public Texture DroneSpellIcon;
         public Texture GravityStrikeSpellIcon;
-
+        #endregion
+        #region Data
         [Space]
         [Header("Data")]
+        private const float MovDuratuon = 0.8f;
+        private Image ShieldBar;
+        private Text ShieldCount;
+        private Image HealthBar;
+        private Text HealthCount;
         private ISpaceShipObservable observable;
         private HUDBase hud;
         private GUIStyle localStyle;
@@ -87,8 +89,9 @@ namespace SpaceCommander
         private ObserverMode mode;
         public ObserverMode Mode {  get { return mode; } }
         private OrbitalCamera maincam;
+        #endregion
 
-
+        #region Enable Functions
         private void OnEnable()
         {
             maincam = FindObjectOfType<OrbitalCamera>();
@@ -316,7 +319,8 @@ namespace SpaceCommander
             //        return SpellIcon;
             else return DefaultSpellIcon;
         }
-
+        #endregion
+        #region Update Functions
         private void Update()
         {
             CheckMode();
@@ -326,7 +330,7 @@ namespace SpaceCommander
         }
         private void CheckMode()
         {
-            GlobalController Global = GlobalController.GetInstance();
+            GlobalController Global = GlobalController.Instance;
             if (Global.selectedList.Count == 1)
             {
                 if ((object)observable != Global.selectedList[0])
@@ -422,7 +426,6 @@ namespace SpaceCommander
             }
 
         }
-
         private void UpdateWeapons()
         {
             for (int i = 0; i < observable.PrimaryWeapon.Length; i++)
@@ -468,7 +471,6 @@ namespace SpaceCommander
                 SecondaryCounters[i].text = Mathf.RoundToInt(observable.SecondaryWeapon[i].ShootCounter).ToString();
             }
         }
-
         private void UpdateHull()
         {
             ShieldBar.fillAmount = observable.ShieldForce / observable.ShieldCampacity;
@@ -484,7 +486,6 @@ namespace SpaceCommander
             //}
             //GUI.EndGroup();
         }
-
         private void UpdateModules()
         {
             if (observable.Module != null && observable.Module.Length > 0)
@@ -520,7 +521,6 @@ namespace SpaceCommander
                 }
             }
         }
-
         public void ActiveModule(int index)
         {
             if (observable != null && index < observable.Module.Length && observable.Module[index].State == SpellModuleState.Ready)
@@ -614,5 +614,6 @@ namespace SpaceCommander
             GameObject.Find("HandControlButton").transform.GetChild(0).GetComponent<Text>().text = "ON";
             GameObject.Find("HandControlButton").transform.GetChild(0).GetComponent<Text>().color = new Color(0, 255, 75, 255);
         }
+        #endregion
     }
 }

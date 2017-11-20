@@ -19,7 +19,7 @@ namespace SpaceCommander
         public float Speed;// скорость ракеты
         private void Start()
         {
-            Global = GlobalController.GetInstance();
+            Global = GlobalController.Instance;
             ancor = this.gameObject.transform.position;
             Sleep();
         }

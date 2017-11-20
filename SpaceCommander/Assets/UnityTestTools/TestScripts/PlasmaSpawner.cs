@@ -22,7 +22,7 @@ namespace SpaceCommander.Test
             else
             {
                 backCount = 60f / firerate;
-                GameObject sphere = Instantiate(GlobalController.GetInstance().Prefab.PlasmaSphere, gameObject.transform.position, transform.rotation);
+                GameObject sphere = Instantiate(GlobalController.Instance.Prefab.PlasmaSphere, gameObject.transform.position, transform.rotation);
                 sphere.GetComponent<PlazmaSphere>().StatUp(EnergyType.Plazma);
             }
         }

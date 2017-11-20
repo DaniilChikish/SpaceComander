@@ -15,7 +15,7 @@ namespace SpaceCommander
         GlobalController Global;
         private void Start()
         {
-            Global = GlobalController.GetInstance();
+            Global = GlobalController.Instance;
         }
         void Update()
         {

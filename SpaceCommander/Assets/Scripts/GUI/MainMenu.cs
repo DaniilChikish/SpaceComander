@@ -27,7 +27,7 @@ namespace SpaceCommander
         private GameSettings settingsLocal;
         void Start()
         {
-            Global = GlobalController.GetInstance();
+            Global = GlobalController.Instance;
             Loader = FindObjectOfType<LoadManager>();
             Time.timeScale = 1;
             CurWin = MenuWindow.Main;
@@ -168,14 +168,20 @@ namespace SpaceCommander
             UIUtil.Label(new Rect(120, 0, 100, 20), Global.Texts("Sound"));
             fBuffer = GUI.HorizontalSlider(new Rect(0, 40, 340, 13), settingsLocal.SoundLevel, 0.0f, 1f);
             if (settingsLocal.SoundLevel != fBuffer)
+            {
+                Global.Settings.SoundLevel = fBuffer;
                 settingsLocal.SoundLevel = fBuffer;
+            }
             GUI.EndGroup();
 
             GUI.BeginGroup(UIUtil.GetRect(new Vector2(340, 55), PositionAnchor.Up, Windows[windowID].rect.size, new Vector2(0, 165)));
             UIUtil.Label(new Rect(120, 0, 100, 20), Global.Texts("Music"));
             fBuffer = GUI.HorizontalSlider(new Rect(0, 40, 340, 13), settingsLocal.MusicLevel, 0.0f, 1f);
             if (settingsLocal.MusicLevel != fBuffer)
+            {
+                Global.Settings.MusicLevel = fBuffer;
                 settingsLocal.MusicLevel = fBuffer;
+            }
             GUI.EndGroup();
 
             GUI.BeginGroup(UIUtil.GetRect(new Vector2(500, 180), PositionAnchor.Up, Windows[windowID].rect.size, new Vector2(0, 210)));

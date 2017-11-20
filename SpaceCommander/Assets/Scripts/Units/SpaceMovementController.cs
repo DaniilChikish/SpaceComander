@@ -768,7 +768,7 @@ namespace SpaceCommander
             this.walker = walker.GetComponent<IEngine>();
             walkerTransform = walker.GetComponent<Transform>();
             walkerBody = walker.GetComponent<Rigidbody>();
-            Global = GlobalController.GetInstance();
+            Global = GlobalController.Instance;
             Debug.Log("Driver online");
         }
         public void Update()

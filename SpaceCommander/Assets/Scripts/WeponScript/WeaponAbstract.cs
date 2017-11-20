@@ -48,7 +48,7 @@ namespace SpaceCommander
         }
         protected void Start()
         {
-            Global = GlobalController.GetInstance();
+            Global = GlobalController.Instance;
             owner = this.transform.GetComponentInParent<Unit>();
             ownerBody = owner.GetComponent<Rigidbody>();
 
@@ -163,7 +163,7 @@ namespace SpaceCommander
         //}
         public static Quaternion RandomDirectionNormal(float dispersion)
         {
-            GlobalController Global = GlobalController.GetInstance();
+            GlobalController Global = GlobalController.Instance;
             float vertComp = UnityEngine.Random.Range(-(Global.RandomNormalPool.Length - 2), Global.RandomNormalPool.Length - 2);
             float horComp = UnityEngine.Random.Range(-(Global.RandomNormalPool.Length - 2), Global.RandomNormalPool.Length - 2);
             Vector3 direction = Vector3.zero;
@@ -440,7 +440,7 @@ namespace SpaceCommander
 
         protected virtual void Start()
         {
-            Global = GlobalController.GetInstance();
+            Global = GlobalController.Instance;
             body = gameObject.GetComponent<Rigidbody>();
             acceleration = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "acceleration"));
             dropImpulse = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "dropImpulse"));

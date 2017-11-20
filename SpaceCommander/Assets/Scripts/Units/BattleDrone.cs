@@ -94,7 +94,7 @@ namespace SpaceCommander.Units
         //base interface
         protected void Start()//_______________________Start
         {
-            Global = GlobalController.GetInstance();
+            Global = GlobalController.Instance;
             type = UnitClass.Drone;
             cooldownDetected = 0;
             aiStatus = UnitStateType.Waiting;

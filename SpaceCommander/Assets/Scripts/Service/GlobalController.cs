@@ -24,15 +24,18 @@ namespace SpaceCommander
             Initialise();
             instance = this;
         }
-        public static GlobalController GetInstance()
+        public static GlobalController Instance
         {
-            if (instance == null)
+            get
             {
-                GameObject newGlobal = new GameObject();
-                instance = newGlobal.AddComponent<GlobalController>();
-                instance.Initialise();
+                if (instance == null)
+                {
+                    GameObject newGlobal = new GameObject();
+                    instance = newGlobal.AddComponent<GlobalController>();
+                    instance.Initialise();
+                }
+                return instance;
             }
-            return instance;
         }
         //private void Start()
         //{

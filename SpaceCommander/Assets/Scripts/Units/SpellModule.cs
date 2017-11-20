@@ -43,7 +43,7 @@ namespace SpaceCommander
         public SpellModule(SpaceShip owner)
         {
             this.owner = owner;
-            Global = GlobalController.GetInstance();
+            Global = GlobalController.Instance;
             activeTime = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "activeTime"));
             coolingTime = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "coolingTime"));
             this.function = new List<SpellFunction>();

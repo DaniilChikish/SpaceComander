@@ -15,7 +15,7 @@ namespace SpaceCommander.Weapons
         }
         public override void Explode()
         {
-            GameObject blast = Instantiate(GlobalController.GetInstance().Prefab.NukeBlast, this.transform.position, this.transform.rotation);
+            GameObject blast = Instantiate(GlobalController.Instance.Prefab.NukeBlast, this.transform.position, this.transform.rotation);
             blast.GetComponent<Explosion>().StatUp(BlastType.NukeTorpedo);
             Destroy(gameObject);
         }

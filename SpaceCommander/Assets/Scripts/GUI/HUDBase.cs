@@ -38,7 +38,7 @@ namespace SpaceCommander
         void Start()
         {
             //Debug.Log("HUD started");
-            Global = GlobalController.GetInstance();
+            Global = GlobalController.Instance;
             Loader = FindObjectOfType<LoadManager>();
             observer = FindObjectOfType<SpaceShipGUIObserver>();
             VictoryBannerSize.x = 1784f / 2f;
@@ -275,16 +275,22 @@ namespace SpaceCommander
 
             GUI.BeginGroup(UIUtil.GetRect(new Vector2(340, 55), PositionAnchor.Up, Windows[windowID].rect.size, new Vector2(0, 100)));
             UIUtil.Label(new Rect(120, 0, 100, 20), Global.Texts("Sound"));
-            fBuffer = GUI.HorizontalSlider(new Rect(0, 40, 340, 13), settingsLocal.SoundLevel, 0.0f, 1f);
-            if (settingsLocal.SoundLevel != fBuffer)
+            fBuffer = GUI.HorizontalSlider(new Rect(0, 40, 340, 13), Global.Settings.SoundLevel, 0.0f, 1f);
+            if (Global.Settings.SoundLevel != fBuffer)
+            {
+                Global.Settings.SoundLevel = fBuffer;
                 settingsLocal.SoundLevel = fBuffer;
+            }
             GUI.EndGroup();
 
             GUI.BeginGroup(UIUtil.GetRect(new Vector2(340, 55), PositionAnchor.Up, Windows[windowID].rect.size, new Vector2(0, 165)));
             UIUtil.Label(new Rect(120, 0, 100, 20), Global.Texts("Music"));
-            fBuffer = GUI.HorizontalSlider(new Rect(0, 40, 340, 13), settingsLocal.MusicLevel, 0.0f, 1f);
-            if (settingsLocal.MusicLevel != fBuffer)
+            fBuffer = GUI.HorizontalSlider(new Rect(0, 40, 340, 13), Global.Settings.MusicLevel, 0.0f, 1f);
+            if (Global.Settings.MusicLevel != fBuffer)
+            {
+                Global.Settings.MusicLevel = fBuffer;
                 settingsLocal.MusicLevel = fBuffer;
+            }
             GUI.EndGroup();
 
             GUI.BeginGroup(UIUtil.GetRect(new Vector2(500, 180), PositionAnchor.Up, Windows[windowID].rect.size, new Vector2(0, 210)));

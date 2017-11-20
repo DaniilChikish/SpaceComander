@@ -17,8 +17,11 @@ namespace SpaceCommander
         public Army team;
         protected string unitName;
         public float cooldownDetected;
+        #region Public properties
         public UnitClass Type { get { return type; } }
         public string UnitName { get { return unitName; } }
+        #endregion
+        #region Abstract properties
         public abstract Army Team { get; }
         public abstract Unit CurrentTarget { get; }
         public abstract float Speed { get; }
@@ -48,13 +51,15 @@ namespace SpaceCommander
         public float RadarRangeMultiplacator { set; get; }
         public abstract float Stealthness { get; }
         public float StealthnessMultiplacator { set; get; }
-
         public abstract Vector3 Velocity { get; }
+        #endregion
+        #region Abstract functions
         public abstract void MakeImpact(IImpact impact);
         public abstract bool HaveImpact(string impactName);
         public abstract void RemoveImpact(IImpact impact);
         public abstract void MakeDamage(float damage);
         public abstract void Die();
+        #endregion
         public int SortEnemysBase(Unit x, Unit y)
         {
             if (Vector3.Distance(this.transform.position, x.transform.position) > Vector3.Distance(this.transform.position, y.transform.position))
@@ -64,7 +69,7 @@ namespace SpaceCommander
         public abstract void ResetTarget();
         public virtual bool Allies(Army army)
         {
-            if (army == GlobalController.GetInstance().playerArmy)
+            if (army == GlobalController.Instance.playerArmy)
             {
                 cooldownDetected = 1;
                 this.gameObject.transform.FindChild("MinimapPict").FindChild("EnemyMinimapPict").GetComponent<Renderer>().enabled = true;
@@ -113,30 +118,35 @@ namespace SpaceCommander
     public delegate int SortUnit(Unit x, Unit y);
     public abstract class SpaceShip : Unit, IEngine, ISpaceShipObservable
     {
+        #region Class-constants
         public const float AIUpdateRate = 20f; //per second
-        //base varibles
+        #endregion
+        #region Base varibles
         protected UnitStateType aiStatus;
         protected TargetStateType targetStatus;
         protected TacticSituation situation;
         public bool isSelected;
         public Vector3 Anchor;
-        //GUI
+        #endregion
+        #region GUI
         public HUDBase hud;
         private ShipManualController manualController;
         public Texture enemyIcon;
         public Texture aliesIcon;
         public Texture selectedIcon;
-        //depend varibles
+        #endregion
+        #region Depend varibles
         protected float radiolink;
-
-        //constants
+        #endregion
+        #region Object-constants
         protected float radarRange; //set in child
         protected float radarPover; // default 1
         protected float speedThrust; //set in child
         protected float acceleration;
         protected float speedRotation;
         protected float speedShift;
-        //override properties
+        #endregion
+        #region Override properties
         public override float Hull { set { armor.Hitpoints = value; } get { return armor.Hitpoints; } }
         public override float MaxHull { get { return armor.MaxHitpoints * (1 + MaxHullMultiplacator); } }
         public override Army Team { get { return team; } }
@@ -180,25 +190,27 @@ namespace SpaceCommander
         public override float EnergyResist { get { return armor.EnergyResist * (1 + ResistMultiplacator); } }
         public override float BlastResist { get { return armor.BlastResist * (1 + ResistMultiplacator); } }
         public override float Stealthness { get { return stealthness * (1 + StealthnessMultiplacator); } }
-
-        //own properties
+        #endregion
+        #region Own properties
         public IShield GetShieldRef { get { return shield; } }
         public SpellModule[] Module { get { return module; } }
-
-        //interface
+        #endregion
+        #region Interface
         public IWeapon[] PrimaryWeapon { get { return Gunner.Weapon[0]; } }
         public IWeapon[] SecondaryWeapon { get { return Gunner.Weapon[1]; } }
         public Transform GetTransform()
         {
             return this.gameObject.transform;
         }
-        //modules
+        #endregion
+        #region Modules
         public bool movementAiEnabled; // default true
         public bool combatAIEnabled;  // default true
         public bool selfDefenceModuleEnabled;  // default true
         protected float stealthness; //set in child
         protected bool detected;
-        //controllers
+        #endregion
+        #region Controllers
         public bool ManualControl { set; get; }
         public IDriver Driver;
         protected IGunner gunner;
@@ -219,10 +231,11 @@ namespace SpaceCommander
         protected SquadStatus unitSquadStatus;
         protected SpaceShip[] Squad;
         public string[] ImpactList;
-        //base interface
+        #endregion
+        #region Base interface
         protected void Start()//_______________________Start
         {
-            Global = GlobalController.GetInstance();
+            Global = GlobalController.Instance;
             movementAiEnabled = true;
             combatAIEnabled = true;
             selfDefenceModuleEnabled = true;
@@ -602,8 +615,9 @@ namespace SpaceCommander
             GameObject blast = Instantiate(Global.Prefab.ShipDieBlast, gameObject.transform.position, gameObject.transform.rotation);
             blast.GetComponent<Explosion>().StatUp(BlastType.SmallShip);
         }
+        #endregion
 
-        //AI logick
+        #region AI logick
         protected bool CombatManeuverFunction()
         {
             switch (situation)
@@ -836,8 +850,9 @@ namespace SpaceCommander
                     if (m.FunctionsIs(functions))
                         m.EnableIfReady();
         }
-        //sevice function
-        //base maneuvers
+        #endregion
+        #region Sevice functions
+        #region Base maneuvers
 
         protected bool ToPrimaryDistance()
         {
@@ -866,7 +881,8 @@ namespace SpaceCommander
         {
             return BackToAncour();
         }
-        //sensors
+        #endregion
+        #region Sensors
         protected void Scan() //___________Scan
         {
             enemys.RemoveAll(x => x == null);
@@ -944,8 +960,8 @@ namespace SpaceCommander
             UseModule(new SpellFunction[] { SpellFunction.Emergency, SpellFunction.Shield });
             situation = TacticSituation.Retreat;
         }
-
-        //combat
+        #endregion
+        #region Combat
         protected Unit GetNearest()
         {
             return enemys[0];
@@ -1042,7 +1058,8 @@ namespace SpaceCommander
                 Driver.ExeceteTargetManeuver(TatgetManeuverType.Evasion, hazard.transform);
             }
         }
-        //group interaction
+        #endregion
+        #region Group interaction
         protected List<Unit> RequestScout()
         {
             List<Unit> enemys = new List<Unit>();
@@ -1087,7 +1104,8 @@ namespace SpaceCommander
             if (Target.transform != this.transform)
                 Gunner.SetAim(Target, true, 20);
         }
-        //
+        #endregion
+        #region Squad
         protected void FormSquad()
         {
             int inSquadCount = 0;
@@ -1158,8 +1176,9 @@ namespace SpaceCommander
             }
             return null;
         }
-        // sort functions
-        public  int EMCSortEnemys(Unit x, Unit y)
+        #endregion
+        #region Sort functions
+        public int EMCSortEnemys(Unit x, Unit y)
         {
             int xPriority;
             int yPriority;
@@ -1914,7 +1933,9 @@ namespace SpaceCommander
                 return -1;
             else return 1;
         }
-        //remote control
+        #endregion
+        #endregion
+        #region Remote control
         public virtual void SendTo(Vector3 destination)
         {
             //Debug.Log("Send To " + destination);
@@ -1944,5 +1965,6 @@ namespace SpaceCommander
                 Gunner.SetAim(target, true, 64);
             }
         }
+        #endregion
     }
 }
