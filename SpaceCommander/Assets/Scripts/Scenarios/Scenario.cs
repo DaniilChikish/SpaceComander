@@ -1,4 +1,7 @@
-﻿using System;
+﻿using SpaceCommander.General;
+using SpaceCommander.Mechanics;
+using SpaceCommander.Service;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;

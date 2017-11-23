@@ -1,19 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using UnityEngine;
 using DeusUtility.UI;
-using DeusUtility;
+using SpaceCommander.AI;
+using SpaceCommander.General;
 
-namespace SpaceCommander.Units
+namespace SpaceCommander.Mechanics.Units
 {
     public class SpaceTurret : Unit
     {
         public const float AIUpdateRate = 20f; //per second
         //base varibles
         //GUI
-        public HUDBase hud;
+        public UI.HUDBase hud;
         public Texture enemyIcon;
         public Texture aliesIcon;
         //public Texture selectedIcon;
@@ -25,7 +24,6 @@ namespace SpaceCommander.Units
         //override properties
         public override float Hull { set { armor.Hitpoints = value; } get { return armor.Hitpoints; } }
         public override float MaxHull { get { return armor.MaxHitpoints * (1 + MaxHullMultiplacator); } }
-        public override Army Team { get { return team; } }
         public override Vector3 Velocity
         {
             get
@@ -82,7 +80,7 @@ namespace SpaceCommander.Units
             cooldownDetected = 0;
             unitName = type.ToString();
             Global.unitList.Add(this);
-            hud = FindObjectOfType<HUDBase>();
+            hud = FindObjectOfType<UI.HUDBase>();
             //
             armor = this.gameObject.GetComponent<IArmor>();
             //
@@ -95,7 +93,7 @@ namespace SpaceCommander.Units
             this.gameObject.transform.FindChild("MinimapPict").FindChild("AlliesMinimapPict").GetComponent<Renderer>().enabled = false;
             this.gameObject.transform.FindChild("MinimapPict").FindChild("EnemyMinimapPict").GetComponent<Renderer>().enabled = false;
 
-            if (team == Global.playerArmy)
+            if (Team == Global.playerArmy)
                 this.gameObject.transform.FindChild("MinimapPict").FindChild("AlliesMinimapPict").GetComponent<Renderer>().enabled = true;
 
             Debug.Log("Unit " + this.gameObject.name + " started");
@@ -135,7 +133,7 @@ namespace SpaceCommander.Units
         protected void DecrementBaseCounters()
         {
             synchAction -= Time.deltaTime;
-            if (this.team != Global.playerArmy)
+            if (this.Team != Global.playerArmy)
                 cooldownDetected -= Time.deltaTime;
             if (cooldownDetected < 0)
             {
@@ -193,7 +191,7 @@ namespace SpaceCommander.Units
                 Texture frameToDraw = null;
                 Texture iconToDraw = null;
                 bool drawStatBars = false;
-                if (team == Global.playerArmy)
+                if (Team == Global.playerArmy)
                 {
                         style.normal.textColor = Color.green;
                         if (Global.Settings.AliesUI.ShowUnitFrame)
@@ -312,7 +310,7 @@ namespace SpaceCommander.Units
                     {
                         float multiplicator = Mathf.Pow(((-distance + RadarRange) * 0.02f), (1f / 5f)) * ((2f / (distance + 0.1f)) + 1);
                         if (radarPover * multiplicator > unknown.Stealthness)
-                            if (!unknown.Allies(team))
+                            if (CheckRelationship(unknown.Team)==RelationshipType.Enemys)
                             {
                                 if (!enemys.Contains(unknown))
                                     enemys.Add(unknown);
@@ -357,7 +355,7 @@ namespace SpaceCommander.Units
 
         public void SetTeam(Army team)
         {
-            this.team = team;
+            this.Team = team;
         }
     }
 }

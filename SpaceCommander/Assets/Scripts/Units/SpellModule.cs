@@ -1,11 +1,12 @@
 ﻿using DeusUtility.Random;
+using SpaceCommander.General;
+using SpaceCommander.AI;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using UnityEngine;
+using SpaceCommander.Mechanics.Weapons;
 
-namespace SpaceCommander
+namespace SpaceCommander.Mechanics
 {
     public enum SpellModuleState { Ready, Active, Cooldown };
     public enum SpellType { Passive, Activated, LongAction }
@@ -90,6 +91,9 @@ namespace SpaceCommander
         protected virtual void Act() { }
         protected abstract void Disable();
     }
+}
+namespace SpaceCommander.Mechanics.Modules
+{
     public class Jammer : SpellModule
     {
         public Jammer(SpaceShip owner) : base(owner)
@@ -342,7 +346,7 @@ namespace SpaceCommander
             owner.MakeImpact(new RadarBoosterImpact(owner, activeTime));
             foreach (Unit x in Global.unitList)
             {
-                if (x.GetType() == typeof(SpaceShip) && x.Allies(owner.Team) && (Vector3.Distance(x.transform.position, owner.transform.position) < owner.RadarRange / 4f))
+                if (x.GetType() == typeof(SpaceShip) && (owner.CheckRelationship(x.Team)==RelationshipType.Allies) && (Vector3.Distance(x.transform.position, owner.transform.position) < owner.RadarRange / 4f))
                 {
                     x.MakeImpact(new RadarBoosterImpact(owner, activeTime));
                 }
@@ -1207,7 +1211,7 @@ namespace SpaceCommander
             base.Enable();
             Vector3 position = owner.transform.position + (-owner.transform.up + owner.transform.forward) * 10;
             GameObject missile = GameObject.Instantiate(Global.Prefab.Torpedo, position, owner.transform.rotation);
-            missile.AddComponent<Weapons.NukeTorpedo>().SetTarget(owner.CurrentTarget.transform);
+            missile.AddComponent<NukeTorpedo>().SetTarget(owner.CurrentTarget.transform);
             missile.GetComponent<Missile>().SetTeam(owner.Team);
             missile.GetComponent<Rigidbody>().AddForce(owner.Velocity, ForceMode.VelocityChange);
         }

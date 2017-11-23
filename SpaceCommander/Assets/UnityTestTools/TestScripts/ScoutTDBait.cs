@@ -1,8 +1,9 @@
 ﻿using DeusUtility.Random;
-using SpaceCommander.Units;
+using SpaceCommander.AI;
+using SpaceCommander.Mechanics;
+using SpaceCommander.Mechanics.Modules;
+using SpaceCommander.Mechanics.Units;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace SpaceCommander.Test

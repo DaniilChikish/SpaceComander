@@ -670,8 +670,8 @@ namespace SpaceCommander.Service
             }
             else
             {
-                if (GlobalController.Instance != null)
-                    volume = GlobalController.Instance.Settings.MusicLevel;
+                if (General.GlobalController.Instance != null)
+                    volume = General.GlobalController.Instance.Settings.MusicLevel;
                 audioSource.volume = volume;
             }
 

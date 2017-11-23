@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using SpaceCommander.AI;
+using SpaceCommander.Mechanics;
+using System;
 using UnityEngine;
-namespace SpaceCommander.Weapons
+namespace SpaceCommander.Mechanics.Weapons
 {
     public class Laser : EnergyWeapon
     {

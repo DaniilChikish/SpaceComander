@@ -1,8 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using SpaceCommander.Mechanics;
 using UnityEngine;
 
-namespace SpaceCommander.Weapons
+namespace SpaceCommander.Mechanics.Weapons
 {
     class BombardierMissile : Missile
     {

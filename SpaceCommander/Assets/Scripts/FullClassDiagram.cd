@@ -1,0 +1,1237 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="SpaceCommander.AI.Unit" Collapsed="true">
+    <Position X="12.5" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIhDAAMNAAAACAw4AgDQEAABQQkRAKAAEQCEEgAFQIw=</HashCode>
+      <FileName>Assets\Scripts\Units\UnitAbstract.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.AI.SpaceShip" Collapsed="true">
+    <Position X="10.25" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>FtRxMQsaQmskSt8rBmDQExOf+VFqo4QwkA2kWhYtXAo=</HashCode>
+      <FileName>Assets\Scripts\Units\UnitAbstract.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SpaceCommander.AI.ShootController" Collapsed="true">
+    <Position X="9.5" Y="18.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAABABADAUQIQIAAAACgAAAAAAAgACAgAEAEAAAI=</HashCode>
+      <FileName>Assets\Scripts\Units\ShootController.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SpaceCommander.AI.SpaceShipShootController" Collapsed="true">
+    <Position X="8.25" Y="19.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAEAABAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Units\ShootController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.AI.TurretShootController" Collapsed="true">
+    <Position X="10.5" Y="19.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAABAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Units\ShootController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.AI.SpaceMovementController" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="64.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAYqgACMCoOERhCESAECAAbQUBlIUgAQyGAgJggFEkE=</HashCode>
+      <FileName>Assets\Scripts\Units\SpaceMovementController.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SpaceCommander.AI.PathNode" Collapsed="true">
+    <Position X="61" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAACAAAAAAAkAAAAAAAgAgAAAIAAAAAEAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Units\SpaceMovementController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.General.GlobalController" Collapsed="true">
+    <Position X="62.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAQQCUlAAACAAcBgAgRAAAABAADEAQIAxAQAAACBCAA=</HashCode>
+      <FileName>Assets\Scripts\Service\GlobalController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Armor" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="52.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACRAAAQIACAAiBAAAAAAAAAEAAQAAAAcABAAEAAQQAA=</HashCode>
+      <FileName>Assets\Scripts\Units\Armor.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.ShipManualController" Collapsed="true">
+    <Position X="57.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAYSwCgKQoWEgjgIiiBgBgClEQAUAAAJCBDgJBEBCCA=</HashCode>
+      <FileName>Assets\Scripts\Units\ShipManualController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.MoveTarget" Collapsed="true">
+    <Position X="55.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQEAAAAACAAAAAAAAAAACAAAAAAAAAEgACAAAAEAAA=</HashCode>
+      <FileName>Assets\Scripts\GUI\MoveTarget.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.CameraMovementScript" Collapsed="true">
+    <Position X="54" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAABAAACAAAAAAAAAAAAAAgAAIAQABAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Service\CameraMovementScript.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.OrbitalCamera" Collapsed="true">
+    <Position X="59.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EBCQoAAAYqAAghiIMIAEBgCENAIIAECBAEDAABARAIA=</HashCode>
+      <FileName>Assets\Scripts\Service\OrbitalCamera.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.WarpArrive" Collapsed="true">
+    <Position X="54" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAYAAAgAASAAAQAABAAAAAABAAAAAAAAAECAAAAhAAA=</HashCode>
+      <FileName>Assets\Scripts\Units\WarpArrive.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Explosion" Collapsed="true">
+    <Position X="55.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CAQAAAiAECAAgAAAAAAAIAAEAAABAAAEAEAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\WeponScript\Explosion.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.SelfguidedMissile" Collapsed="true">
+    <Position X="11.25" Y="13" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAUAAAAAACAAAAAAIAAAAAAAAAAAgAAAAAAAAAAACAI=</HashCode>
+      <FileName>Assets\Scripts\WeponScript\WeaponAbstract.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Missile" Collapsed="true">
+    <Position X="10" Y="11.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAACAAQRAAAAEAAAgAAQBAAYQIEACAAAABAAA=</HashCode>
+      <FileName>Assets\Scripts\WeponScript\WeaponAbstract.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Round" Collapsed="true">
+    <Position X="18.75" Y="15.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAACAAAAAgAAAAAAAAAgBAABIAQAMAQAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\WeponScript\WeaponAbstract.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.EnergyWeapon" Collapsed="true">
+    <Position X="4" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gARAAIAAABAABIAAAAAAAIAEAAAEAAAACIAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\WeponScript\WeaponAbstract.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.ShellWeapon" Collapsed="true">
+    <Position X="10.75" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACQAAAAEAAAABIAEAAABAAAEAAgEAAAACIAAEAAgAEA=</HashCode>
+      <FileName>Assets\Scripts\WeponScript\WeaponAbstract.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.WeaponBase" Collapsed="true">
+    <Position X="17.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABUMAQBICCAAjIAAYBgAyCgVADJFABAWSYAABAARCAA=</HashCode>
+      <FileName>Assets\Scripts\WeponScript\WeaponAbstract.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.MagWeapon" Collapsed="true">
+    <Position X="24.25" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACQAAAAEAAAABIAEAAABAAAEAAAEAAAACIAAEAAgAEA=</HashCode>
+      <FileName>Assets\Scripts\WeponScript\WeaponAbstract.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.ForceShield" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="57.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gCwABAAAEGAggBAAAAAQAAIAQAAIAABASAgAQIAIAEA=</HashCode>
+      <FileName>Assets\Scripts\Units\ForceShield.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.SpellModule" Collapsed="true">
+    <Position X="26.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAgAIAgAAgAgAADAAAAAQBQAAEAQAgBgABAEA=</HashCode>
+      <FileName>Assets\Scripts\Units\SpellModule.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Units.Support_Corvette" Collapsed="true">
+    <Position X="10.25" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAAAAAAAAEAAAAAAAAAEAAAAAAAQAAAAAAAIAAA=</HashCode>
+      <FileName>Assets\Scripts\Units\Support_Corvette.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Units.SpaceTurret" Collapsed="true">
+    <Position X="23.75" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EoRhAAoIQGAECFwqBgHQEAIdYQFAAIgQEACEEhQFQAo=</HashCode>
+      <FileName>Assets\Scripts\Units\SpaceTurret.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Units.Scout" Collapsed="true">
+    <Position X="12.5" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAoAAAQAAAAEgAAAAAAACEEAAAAAAQAAUAAAAIAAA=</HashCode>
+      <FileName>Assets\Scripts\Units\Scout.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Units.Recon" Collapsed="true">
+    <Position X="14.75" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAABAAAAAAAAEEAAAAIAQAAAAAAAIAAA=</HashCode>
+      <FileName>Assets\Scripts\Units\Recon.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Units.LR_Corvette" Collapsed="true">
+    <Position X="17" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAAAAAAAAEAAAAAAAAAEEAAAAAAQAAAAAAAIAAA=</HashCode>
+      <FileName>Assets\Scripts\Units\LR_Corvette.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Units.Guard_Corvette" Collapsed="true">
+    <Position X="19.25" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAAAAAAAAEAAAAAAAAAEAAAAAAAQAAAAAAAIAAA=</HashCode>
+      <FileName>Assets\Scripts\Units\Guard_Corvette.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Units.Fighter" Collapsed="true">
+    <Position X="1.25" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAAAAIAAAEAAAAAAAAAEEAAAAAAQAAAAAAAIAAA=</HashCode>
+      <FileName>Assets\Scripts\Units\Fighter.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Units.ECM" Collapsed="true">
+    <Position X="3.5" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAEAAAAAAAAAAAAEEAAAAAAQAAAABAAMAAA=</HashCode>
+      <FileName>Assets\Scripts\Units\ECM.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Units.Command" Collapsed="true">
+    <Position X="5.75" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAQAAAAAAAIAAA=</HashCode>
+      <FileName>Assets\Scripts\Units\Command.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Units.Bomber" Collapsed="true">
+    <Position X="8" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAEEAAAAAAQgAAAAAAIAAA=</HashCode>
+      <FileName>Assets\Scripts\Units\Bomber.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Units.BattleDrone" Collapsed="true">
+    <Position X="21.5" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EoRBIQoYQmkkyBwqBgHQEgIdWQFAgIQwEAiEUhYFQCg=</HashCode>
+      <FileName>Assets\Scripts\Units\BattleDrone.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Modules.Jammer" Collapsed="true">
+    <Position X="9.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Units\SpellModule.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Modules.Transponder" Collapsed="true">
+    <Position X="13.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Units\SpellModule.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Modules.MissileTrapLauncher" Collapsed="true">
+    <Position X="18.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAgIAAAAEA=</HashCode>
+      <FileName>Assets\Scripts\Units\SpellModule.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Modules.Warp" Collapsed="true">
+    <Position X="22.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAAAAACAAAgQQAAEAAAAAgAAIAAEA=</HashCode>
+      <FileName>Assets\Scripts\Units\SpellModule.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Modules.RadarBooster" Collapsed="true">
+    <Position X="27.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAQAAAAAAAAAAAAACAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Units\SpellModule.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Modules.RadarBoosterImpact" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="54" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAAAAAAAAQQAAAAAAIEAAAAAAAAAEA=</HashCode>
+      <FileName>Assets\Scripts\Units\SpellModule.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Modules.ShieldStunner" Collapsed="true">
+    <Position X="34" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAgAAAAAAAAAAACAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Units\SpellModule.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Modules.ShildStunImpact" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="55.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAEAAAAAAQQAAAAAAIUAAAAAAAAAEA=</HashCode>
+      <FileName>Assets\Scripts\Units\SpellModule.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Modules.TrusterStunner" Collapsed="true">
+    <Position X="40.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAgAAAAAAAAAAACAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Units\SpellModule.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Modules.TrusterStunImpact" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="62.75" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAEAAAAAAQQAAAAAAIEAAAAAAAAAEA=</HashCode>
+      <FileName>Assets\Scripts\Units\SpellModule.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Modules.RadarInhibitor" Collapsed="true">
+    <Position X="47.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Units\SpellModule.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Modules.RadarInhibitorImpact" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="55.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAAAAAAAAQQACAAAAIEAAAAAAAAAEA=</HashCode>
+      <FileName>Assets\Scripts\Units\SpellModule.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Modules.EmergencySelfRapairing" Collapsed="true">
+    <Position X="4.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAgAAAAAAAAAAACAAAAgAAAAAAAAAgAAAAAEA=</HashCode>
+      <FileName>Assets\Scripts\Units\SpellModule.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Modules.EmergencyShieldRecharging" Collapsed="true">
+    <Position X="7" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAgAAAAAAAAAABCAAAAAAAAAAAAAAgAAAAAEA=</HashCode>
+      <FileName>Assets\Scripts\Units\SpellModule.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Modules.RepairingImpact" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="59.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAEAAAAAAQQAgAAAAIEAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Units\SpellModule.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Modules.FullRepairing" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="59.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAEAAAAAAQQAgAAAAIEAAAAAAAgAAA=</HashCode>
+      <FileName>Assets\Scripts\Units\SpellModule.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Modules.ShieldsBraker" Collapsed="true">
+    <Position X="11.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Units\SpellModule.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Modules.AcceleratingCoils" Collapsed="true">
+    <Position X="16" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Units\SpellModule.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Modules.AcceleratingCoilsPassive" Collapsed="true">
+    <Position X="20.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Units\SpellModule.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Modules.RechargeAcceleratorPassive" Collapsed="true">
+    <Position X="25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Units\SpellModule.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Modules.ExtendedAmmoPack" Collapsed="true">
+    <Position X="29.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Units\SpellModule.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Modules.Inspiration" Collapsed="true">
+    <Position X="31.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAAAAAAAAAAAAAAACAAAAAAAAAAAAAAgEAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Units\SpellModule.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Modules.ForcedTargetDesignator" Collapsed="true">
+    <Position X="36.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAAAAAAAAAAAAAAACAAAAAAAAAAAAAAgEAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Units\SpellModule.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Modules.MissileEliminator" Collapsed="true">
+    <Position X="38.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAACAQAAAAAAAAAAAAgAAAAAEA=</HashCode>
+      <FileName>Assets\Scripts\Units\SpellModule.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Modules.ProtectionMatrix" Collapsed="true">
+    <Position X="43" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAACAQAAAAAAAAAAAAgAAAAAEA=</HashCode>
+      <FileName>Assets\Scripts\Units\SpellModule.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Modules.NukeTorpedoLauncher" Collapsed="true">
+    <Position X="45.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAgAAAAAAAAAAACAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Units\SpellModule.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Modules.TurretPlant" Collapsed="true">
+    <Position X="49.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAgAAAAAAAAAAACAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Units\SpellModule.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Modules.BattleDroneLauncher" Collapsed="true">
+    <Position X="2.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAgAAAAAAAAAAACAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Units\SpellModule.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Weapons.UnitaryTorpedo" Collapsed="true">
+    <Position X="5.5" Y="14.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\WeponScript\UnitaryTorpedo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Weapons.TorpedoLauncher" Collapsed="true">
+    <Position X="8.5" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAABAAAABAAAAAAAAAAEAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\WeponScript\TorpedoLauncher.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Weapons.ThunderbolthHeavyRocket" Collapsed="true">
+    <Position X="7.75" Y="14.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QBABAAAAACAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\WeponScript\ThunderbolthHeavyRocket.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Weapons.SpruteTorpedo" Collapsed="true">
+    <Position X="10" Y="14.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\WeponScript\SpruteTorpedo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Weapons.SmallCannon" Collapsed="true">
+    <Position X="17.5" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAABAAAABAAAAAAAAAAEAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\WeponScript\SmallCannon.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Weapons.ShieldBreakerTorpedo" Collapsed="true">
+    <Position X="12.25" Y="14.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\WeponScript\ShieldBreakerTorpedo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Weapons.RocketLauncher" Collapsed="true">
+    <Position X="10.75" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAABAAAABAAAAAAAAAAEAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\WeponScript\RocketLauncher.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Weapons.Railmortar" Collapsed="true">
+    <Position X="19.75" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAABAAAAAAAAAAEAAAAAAAAAAEAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\WeponScript\Railmortar.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Weapons.RailgunShell" Collapsed="true">
+    <Position X="17.75" Y="17" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAAAAEAQBAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\WeponScript\RailgunShell.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Weapons.Railgun" Collapsed="true">
+    <Position X="13" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAABAAAAAAAAAAEAABAAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\WeponScript\Railgun.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Weapons.PlazmaSphere" Collapsed="true">
+    <Position X="22.25" Y="17" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAQAACAAQJAAIAAAAAAEAQBAAAAIRAAEAAAAAAI=</HashCode>
+      <FileName>Assets\Scripts\WeponScript\PlazmaSphere.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Weapons.PlazmaCannon" Collapsed="true">
+    <Position X="6.25" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAABAAAAAAAAAAEAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\WeponScript\PlazmaCannon.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Weapons.NukeTorpedo" Collapsed="true">
+    <Position X="19" Y="14.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\WeponScript\NukeTorpedo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Weapons.MissileTrap" Collapsed="true">
+    <Position X="54" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAACAAAAAAAAAAAAAAAAAAAAAMAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\WeponScript\MissileTrap.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Weapons.MediumCannon" Collapsed="true">
+    <Position X="33.25" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAABAAAABAAAAAAAAAAEAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\WeponScript\MediumCannon.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Weapons.MetheorMissile" Collapsed="true">
+    <Position X="3.25" Y="14.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\WeponScript\MetheorMissile.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Weapons.MagnetoShell" Collapsed="true">
+    <Position X="15.5" Y="17" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAAAAEAQBAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\WeponScript\MagnetoShell.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Weapons.MagnetoMine" Collapsed="true">
+    <Position X="64.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAACAAAACAIAAAAAgAAAAQAYAMRAAAAAAAGAA=</HashCode>
+      <FileName>Assets\Scripts\WeponScript\MagnetoMine.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Weapons.MagnetohydrodynamicCannon" Collapsed="true">
+    <Position X="1.75" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAABAAAAAAAAAAEAABAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\WeponScript\MagnetohydrodynamicCannon.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Weapons.MachineCannon" Collapsed="true">
+    <Position X="15.25" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIAFAAAABAAAAAAAAAAEAEBAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\WeponScript\MachineCannon.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Weapons.LaserImpulse" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="59.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAACAACAAgAAAAAAAAAgFAAAJAAAABAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\WeponScript\LaserImpulse.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Weapons.Laser" Collapsed="true">
+    <Position X="4" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAACBAAAAhAAAAABAAIgEAARIAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\WeponScript\Laser.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Weapons.InterceptorMissile" Collapsed="true">
+    <Position X="14.5" Y="14.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\WeponScript\InterceptorMissile.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Weapons.HunterMissile" Collapsed="true">
+    <Position X="16.75" Y="14.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\WeponScript\HunterMissile.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Weapons.FirestormLauncher" Collapsed="true">
+    <Position X="22" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAABAAAABAAAAAAAAAAEAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\WeponScript\FirestormLauncher.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Weapons.Chaingun" Collapsed="true">
+    <Position X="24.25" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAFAAAABAAAAAAAAAAEgEBAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\WeponScript\Chaingun.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Weapons.CannonShell" Collapsed="true">
+    <Position X="20" Y="17" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAIAEAABAAAAIAAAAAIAAAAA=</HashCode>
+      <FileName>Assets\Scripts\WeponScript\CannonShell.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Weapons.BuckshotCannon" Collapsed="true">
+    <Position X="26.5" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAABAAAAAAAAAAEAAAAAAAAAAABAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\WeponScript\BuckshotCannon.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Weapons.BombardierMissile" Collapsed="true">
+    <Position X="1" Y="13" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\WeponScript\BombardierMissile.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Weapons.BigCannon" Collapsed="true">
+    <Position X="28.75" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAABAAAABAAAAAAAAAAEAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\WeponScript\BigCannon.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Weapons.AutoBuckshotCannon" Collapsed="true">
+    <Position X="31" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAABAAAAAAAAAAEAAAAAAAAAAABAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\WeponScript\AutoBuckshotCannon.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Scenarios.Mission1" Collapsed="true">
+    <Position X="0.5" Y="20" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAACAAAAAAAAQAAAAAAAAAEAAAAAAAAAAACAA=</HashCode>
+      <FileName>Assets\Scripts\Scenarios\Mission1.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Scenarios.Mission2" Collapsed="true">
+    <Position X="2.75" Y="20" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAIAAAACAAAAAAAAQAAAgAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Scenarios\Mission2.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Scenarios.Scenario" Collapsed="true">
+    <Position X="2.75" Y="18.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AASAAACBACBAgAAAACSAAAQAAAACAAAAAAgAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Scenarios\Scenario.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Scenarios.TraningScenario" Collapsed="true">
+    <Position X="5" Y="20" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAIAAAACAAAAAAAAQAAAgAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Scenarios\TraningScenario.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Scenarios.ColliderOrderAssert" Collapsed="true">
+    <Position X="0.75" Y="17" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAAASAAABAEBAQAEAAAAAAAECAgIAMQAAgQAgAAAA=</HashCode>
+      <FileName>Assets\Scripts\Scenarios\Order Asserts\ColliderOrderAssert.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Scenarios.ObjectiveOrderAssert" Collapsed="true">
+    <Position X="3" Y="17" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAIEAAAAEAAAAAAAAQAgAAIAAAAAAAACAA=</HashCode>
+      <FileName>Assets\Scripts\Scenarios\Order Asserts\ObjectiveOrderAssert.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Scenarios.OnDestroyAllOfOrderAssert" Collapsed="true">
+    <Position X="5.25" Y="17" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAEAAIAAACAAAgAAAAAgAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Scenarios\Order Asserts\OnDestroyAllOfOrderAssert.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Scenarios.OnDestroyOneOfOrderAssert" Collapsed="true">
+    <Position X="7.5" Y="17" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAEAAIAAACAAAgAAAAAgAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Scenarios\Order Asserts\OnDestroyOneOfOrderAssert.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Scenarios.OnDestroyOrderAssert" Collapsed="true">
+    <Position X="9.75" Y="17" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAEAAIAAAAAAQgAAAAAgAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Scenarios\Order Asserts\OnDestroyOrderAssert.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Scenarios.OrderAssert" Collapsed="true">
+    <Position X="6.25" Y="15.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CAAAAAIAAAACAAAEAAAAAAAAAgAAAAAEAAAABAgAAAA=</HashCode>
+      <FileName>Assets\Scripts\Scenarios\Order Asserts\OrderAssert.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SpaceCommander.Scenarios.TimerOrderAssert" Collapsed="true">
+    <Position X="12" Y="17" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAEAAIAAAAQAAgCEAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Scenarios\Order Asserts\TimerOrderAssert.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Service.INIHandler" Collapsed="true">
+    <Position X="57.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAAAAAAEAAQgAACAAAAAACgAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>Assets\Scripts\Service\INIHandler.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Service.LoadManager" Collapsed="true">
+    <Position X="61" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQCAAAoACEAAAAQAAEAiIhaABAAAAQAQKDEAAQABAA=</HashCode>
+      <FileName>Assets\Scripts\Service\LoadManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Service.LookOnCam" Collapsed="true">
+    <Position X="62.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQABAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Service\LookOnCam.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Service.MusicManager" Collapsed="true">
+    <Position X="57.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>JgwkgARIACIECoAgjACCJBKMEBfEGgOO6AJgJEBDEmA=</HashCode>
+      <FileName>Assets\Scripts\Service\MusicManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Service.PrefabStorage" Collapsed="true">
+    <Position X="64.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAQhAIAgAQAAAAAEAAAQAMAAAQEAAKCAEAACBAAEAI=</HashCode>
+      <FileName>Assets\Scripts\Service\PrefabStorage.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Service.SerializeData&lt;TKey, TValue&gt;" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="52.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAEAIAAAAAAAAAAAAAABAADAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Service\SerializeData.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SpaceCommander.Service.GameSettings" Collapsed="true">
+    <Position X="61" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IgGAgIIAAAAEEgAAwBEAAUAAAgEAAAAwAABQAAAAgEE=</HashCode>
+      <FileName>Assets\Scripts\Service\SerializeData.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Service.UserProfile" Collapsed="true">
+    <Position X="52.25" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Service\SerializeData.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Service.TextINIHandler" Collapsed="true">
+    <Position X="61" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAQAAAAAAAAEIAIAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Service\SerializeData.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Service.SpecINIHandler" Collapsed="true">
+    <Position X="54" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAQAAIAAAAAEAAIAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Service\SerializeData.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Service.SelfDestructor" Collapsed="true">
+    <Position X="64.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Service\SelfDestructor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Service.SoundStorage" Collapsed="true">
+    <Position X="61" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>JAAAEAghgIIoAAAAMABAABQAwAIAAAQAIAACEAAAABA=</HashCode>
+      <FileName>Assets\Scripts\Service\SoundStorage.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Service.UnitSelectionComponent" Collapsed="true">
+    <Position X="64.5" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAQBAQGAAAAAAAAAAAACAAAAAAAAAAACAAAARAAQ=</HashCode>
+      <FileName>Assets\Scripts\Service\UnitSelectionComponent.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Service.ZeroLoader" Collapsed="true">
+    <Position X="55.75" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AARCEAAgACIAAAAQAAAAAAACEABAACAAAACAABQAAAA=</HashCode>
+      <FileName>Assets\Scripts\Service\ZeroLoader.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Service.SelectionUtils" Collapsed="true">
+    <Position X="62.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAEAAAAAAAAAAAABAAAAEAAgAAAAAAAAAAAAAAAAQ=</HashCode>
+      <FileName>Assets\Scripts\Utils\Utils.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Test.GunMachine" Collapsed="true">
+    <Position X="64.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAIAAA=</HashCode>
+      <FileName>Assets\UnityTestTools\TestScripts\GunMachine.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Test.PlasmaSpawner" Collapsed="true">
+    <Position X="62.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAACAAAAAAAAAAAAAAAAIAAAAEAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\UnityTestTools\TestScripts\PlasmaSpawner.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Test.ProtectionModuleBait" Collapsed="true">
+    <Position X="52.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAIAAA=</HashCode>
+      <FileName>Assets\UnityTestTools\TestScripts\ProtectionModuleBait.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Test.Rangefinder" Collapsed="true">
+    <Position X="57.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAACAAgAAAAAAAAAAAAEAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\UnityTestTools\TestScripts\Rangefinder.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Test.ScoutTDBait" Collapsed="true">
+    <Position X="61" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAAAQIAAAEAAAAAAAAAEEAAAAAAQAAQAAAAIAAA=</HashCode>
+      <FileName>Assets\UnityTestTools\TestScripts\ScoutTDBait.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Test.ShellSpawner" Collapsed="true">
+    <Position X="54" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIQAAQAAACAAgAAAQAAAQAgCAAIAAQAEAQAAEIAAAAA=</HashCode>
+      <FileName>Assets\UnityTestTools\TestScripts\ShellSpawner.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Test.SimpleBait" Collapsed="true">
+    <Position X="59.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAQAAAAAAAIAAA=</HashCode>
+      <FileName>Assets\UnityTestTools\TestScripts\SimpleBait.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Test.SoundTestWeapon" Collapsed="true">
+    <Position X="62.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAABAAAABAAAAAAAAAAEAAAEAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\UnityTestTools\TestScripts\SoundTestWeapon.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Test.Speedometer" Collapsed="true">
+    <Position X="55.75" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAACAAAAAACAAAAAAAQQAAAAAAAAQAAAAABAA=</HashCode>
+      <FileName>Assets\UnityTestTools\TestScripts\Speedometer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Test.TestArmor" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="57.5" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACRAAAQIACAAiBAAAAAAAAAEAAQAAAAcABAAEAAQQAA=</HashCode>
+      <FileName>Assets\UnityTestTools\TestScripts\TestArmor.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SpaceCommander.Test.TestShield" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="59.25" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gCwABAAAEGAggBAAAAAQAAIAQAAIAABASAgAQIAIAEA=</HashCode>
+      <FileName>Assets\UnityTestTools\TestScripts\TestShield.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SpaceCommander.UI.HUDBase" Collapsed="true">
+    <Position X="52.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IEWqCQAAEOMACCIAAEIJCAAHgIAAACgUJBGIEARBACI=</HashCode>
+      <FileName>Assets\Scripts\GUI\HUDBase.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.UI.HUDMiniMap" Collapsed="true">
+    <Position X="54" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AASAAAAAADAAgAAgAAAAAABAEAAAAAAAAACgAAQBAAQ=</HashCode>
+      <FileName>Assets\Scripts\GUI\HUDMiniMap.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.UI.HUDUnitPrew" Collapsed="true">
+    <Position X="55.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAACAAgIAgAAAAAABAAAAAAAAAAACgAAQAAAA=</HashCode>
+      <FileName>Assets\Scripts\GUI\HUDUnitPrew.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.UI.MainMenu" Collapsed="true">
+    <Position X="52.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQSACACACMACEAAABAAAAgGgAAAQAAAABCAAA1BACA=</HashCode>
+      <FileName>Assets\Scripts\GUI\MainMenu.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.UI.SpaceShipGUIObserver" Collapsed="true">
+    <Position X="52.25" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABYUACgSmJAFgBCChJMTBQgaBjJyDCswEhLVGSMRGzA=</HashCode>
+      <FileName>Assets\Scripts\GUI\SpaceShipGUIObserver.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="SpaceCommander.Service.UISettings" Collapsed="true">
+    <Position X="52.25" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAgQAAAAIABgAAAAAAQAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Service\SerializeData.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Interface Name="SpaceCommander.General.ISpaceShipObservable" Collapsed="true">
+    <Position X="52.25" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAIAIAAAAAAAwAAABAEAAACAAAAAAAAQAASAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Service\Interfaces.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SpaceCommander.General.IArmor" Collapsed="true">
+    <Position X="52.25" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABAAAAAAAAACAAAAAAAAAAEAAQAAAAAAAAAEAAQAAA=</HashCode>
+      <FileName>Assets\Scripts\Service\Interfaces.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SpaceCommander.General.IShield" Collapsed="true">
+    <Position X="64.5" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAAAAAAAAAABAAAAAAAAIAAAAAAABACAAAAIAIAAA=</HashCode>
+      <FileName>Assets\Scripts\Service\Interfaces.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SpaceCommander.General.IEngine" Collapsed="true">
+    <Position X="57.5" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAEACAAAAAAAAAABAAAEAAAAAAAEAAAAQAA=</HashCode>
+      <FileName>Assets\Scripts\Service\Interfaces.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SpaceCommander.General.IDriver" Collapsed="true">
+    <Position X="54" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAACEAgAEAAAAAAAAAAAAQAAIEgAAACAAAAgEAAE=</HashCode>
+      <FileName>Assets\Scripts\Service\Interfaces.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SpaceCommander.General.IGunner" Collapsed="true">
+    <Position X="59.25" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAABACAEQAQAAAAACAAAAAAAAgACAgAAAEAAAI=</HashCode>
+      <FileName>Assets\Scripts\Service\Interfaces.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SpaceCommander.General.IWeapon" Collapsed="true">
+    <Position X="54" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAADIAAABAAACgAACAEAAASCYAAAAAQAAA=</HashCode>
+      <FileName>Assets\Scripts\Service\Interfaces.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SpaceCommander.General.IShell" Collapsed="true">
+    <Position X="62.75" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAACAAAAAAAAAAAAAAAAFAAAIAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Service\Interfaces.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SpaceCommander.General.IEnergy" Collapsed="true">
+    <Position X="55.75" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAACAAAAAAAAAAAAAAAAFAAAIAAAABAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Service\Interfaces.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SpaceCommander.General.IImpact" Collapsed="true">
+    <Position X="61" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEAAAAAAQQAAAAAAIAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Service\Interfaces.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="SpaceCommander.AI.DriverStatus" Collapsed="true">
+    <Position X="57.5" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAQEAAACA=</HashCode>
+      <FileName>Assets\Scripts\Units\SpaceMovementController.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SpaceCommander.AI.PointManeuverType" Collapsed="true">
+    <Position X="57.5" Y="11.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAEAAEA=</HashCode>
+      <FileName>Assets\Scripts\Units\SpaceMovementController.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SpaceCommander.AI.TatgetManeuverType" Collapsed="true">
+    <Position X="59.25" Y="12.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAAAAAAAAQAAAADBAAAAAAEAAAAAASAAAA=</HashCode>
+      <FileName>Assets\Scripts\Units\SpaceMovementController.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SpaceCommander.General.Languages" Collapsed="true">
+    <Position X="61" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAACAAAAAAAAAAAAABAAAAACAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Service\Enums.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SpaceCommander.Mechanics.UnitClass" Collapsed="true">
+    <Position X="62.75" Y="12.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAEAAAAAAABAABBAEAAAIEAIACCAAACQAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Service\Enums.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SpaceCommander.Mechanics.UnitStateType" Collapsed="true">
+    <Position X="64.5" Y="12.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAABEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Service\Enums.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SpaceCommander.Mechanics.SquadStatus" Collapsed="true">
+    <Position X="54" Y="12.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAACAAAI=</HashCode>
+      <FileName>Assets\Scripts\Service\Enums.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SpaceCommander.Mechanics.TacticSituation" Collapsed="true">
+    <Position X="55.75" Y="12.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAABAAAAAAAAAAAAIAAAAAAAAIAAiAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Service\Enums.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SpaceCommander.Mechanics.TargetStateType" Collapsed="true">
+    <Position X="57.5" Y="12.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAQAAAAAAAAQAAQAAAAAAEAAAAAACAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Service\Enums.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SpaceCommander.Mechanics.WeaponType" Collapsed="true">
+    <Position X="52.25" Y="13" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IBAAAAAAgAAQAAAAAAAAAAAAAAAAAAiGIAAAAAAQACA=</HashCode>
+      <FileName>Assets\Scripts\Service\Enums.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SpaceCommander.Mechanics.SmallShellType" Collapsed="true">
+    <Position X="61" Y="11.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAEAAAAAAAAAAgAAAAAAQAAAAgIAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Service\Enums.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SpaceCommander.Mechanics.MediumShellType" Collapsed="true">
+    <Position X="62.75" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAgAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Service\Enums.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SpaceCommander.Mechanics.BigShellType" Collapsed="true">
+    <Position X="54" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAEAAAAAAAAAAAAAAAAAAAQAAAAAAQAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Service\Enums.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SpaceCommander.Mechanics.ShellLineType" Collapsed="true">
+    <Position X="59.25" Y="11.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAAAAAAAAAEAAAAAAAAAAAAAAAgIAAAAAAQAAAA=</HashCode>
+      <FileName>Assets\Scripts\Service\Enums.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SpaceCommander.Mechanics.EnergyType" Collapsed="true">
+    <Position X="59.25" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAQAAAAAAAAAAAAAAEAAAAAAAAAAAAAAQCA=</HashCode>
+      <FileName>Assets\Scripts\Service\Enums.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SpaceCommander.Mechanics.MissileType" Collapsed="true">
+    <Position X="64.5" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAgAIAAAAAAAAAAAAAAAAAAEAEAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Service\Enums.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SpaceCommander.Mechanics.TorpedoType" Collapsed="true">
+    <Position X="61" Y="12.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAIAAAAAAAAAAZAAAAAABAAAAQAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Service\Enums.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SpaceCommander.Mechanics.BlastType" Collapsed="true">
+    <Position X="55.75" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAwIAAAAgAAgAAAAAAAAAAAAEAAAAIAEAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Service\Enums.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SpaceCommander.Mechanics.Army" Collapsed="true">
+    <Position X="52.25" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAABAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Service\Enums.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SpaceCommander.Mechanics.OrbitalCamMode" Collapsed="true">
+    <Position X="54" Y="11.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAIAAAI=</HashCode>
+      <FileName>Assets\Scripts\Service\OrbitalCamera.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SpaceCommander.Mechanics.SpellModuleState" Collapsed="true">
+    <Position X="64.5" Y="11.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAgAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Units\SpellModule.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SpaceCommander.Mechanics.SpellType" Collapsed="true">
+    <Position X="52.25" Y="12.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAABAAAAAEAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Units\SpellModule.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SpaceCommander.Mechanics.SpellFunction" Collapsed="true">
+    <Position X="62.75" Y="11.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AMAAAgAAAAEAgAAAAAABAAAAAIAAAIgAAAAAAwAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Units\SpellModule.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SpaceCommander.Scenarios.OrderAccertState" Collapsed="true">
+    <Position X="55.75" Y="11.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAIAAAAAAAgAAAAAAAAAAAAAABAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Scenarios\Scenario.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SpaceCommander.UI.ObserverMode" Collapsed="true">
+    <Position X="52.25" Y="11.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAgAAAAEAAAA=</HashCode>
+      <FileName>Assets\Scripts\GUI\SpaceShipGUIObserver.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Delegate Name="SpaceCommander.AI.SortUnit" Collapsed="true">
+    <Position X="52.25" Y="14" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Units\UnitAbstract.cs</FileName>
+    </TypeIdentifier>
+  </Delegate>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

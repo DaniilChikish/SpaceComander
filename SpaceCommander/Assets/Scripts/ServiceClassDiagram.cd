@@ -1,0 +1,117 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="SpaceCommander.Service.INIHandler" Collapsed="true">
+    <Position X="2.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAAAAAAEAAQgAACAAAAAACgAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>Assets\Scripts\Service\INIHandler.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Service.LoadManager" Collapsed="true">
+    <Position X="4" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQCAAAoACEAAAAQAAEAiIhaABAAAAQAQKDEAAQABAA=</HashCode>
+      <FileName>Assets\Scripts\Service\LoadManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Service.LookOnCam" Collapsed="true">
+    <Position X="5.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQABAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Service\LookOnCam.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Service.MusicManager" Collapsed="true">
+    <Position X="0.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>JgwkgARIACIECoAgjACCJBKMEBfEGgOO6AJgJEBDEmA=</HashCode>
+      <FileName>Assets\Scripts\Service\MusicManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Service.PrefabStorage" Collapsed="true">
+    <Position X="2.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAQhAIAgAQAAAAAEAAAQAMAAAQEAAKCAEAACBAAEAI=</HashCode>
+      <FileName>Assets\Scripts\Service\PrefabStorage.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Service.SerializeData&lt;TKey, TValue&gt;" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="0.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAEAIAAAAAAAAAAAAAABAADAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Service\SerializeData.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="SpaceCommander.Service.GameSettings" Collapsed="true">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IgGAgIIAAAAEEgAAwBEAAUAAAgEAAAAwAABQAAAAgEE=</HashCode>
+      <FileName>Assets\Scripts\Service\SerializeData.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Service.UserProfile" Collapsed="true">
+    <Position X="2.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Service\SerializeData.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Service.TextINIHandler" Collapsed="true">
+    <Position X="5.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAQAAAAAAAAEIAIAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Service\SerializeData.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Service.SpecINIHandler" Collapsed="true">
+    <Position X="4" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAQAAIAAAAAEAAIAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Service\SerializeData.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Service.SelfDestructor" Collapsed="true">
+    <Position X="5.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Service\SelfDestructor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Service.SoundStorage" Collapsed="true">
+    <Position X="2.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>JAAAEAghgIIoAAAAMABAABQAwAIAAAQAIAACEAAAABA=</HashCode>
+      <FileName>Assets\Scripts\Service\SoundStorage.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Service.UnitSelectionComponent" Collapsed="true">
+    <Position X="0.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAQBAQGAAAAAAAAAAAACAAAAAAAAAAACAAAARAAQ=</HashCode>
+      <FileName>Assets\Scripts\Service\UnitSelectionComponent.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Service.ZeroLoader" Collapsed="true">
+    <Position X="4" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AARCEAAgACIAAAAQAAAAAAACEABAACAAAACAABQAAAA=</HashCode>
+      <FileName>Assets\Scripts\Service\ZeroLoader.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Service.SelectionUtils" Collapsed="true">
+    <Position X="4" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAEAAAAAAAAAAAABAAAAEAAgAAAAAAAAAAAAAAAAQ=</HashCode>
+      <FileName>Assets\Scripts\Utils\Utils.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="SpaceCommander.Service.UISettings" Collapsed="true">
+    <Position X="0.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAgQAAAAIABgAAAAAAQAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Service\SerializeData.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

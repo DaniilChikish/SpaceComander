@@ -3,10 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DeusUtility.UI;
+using SpaceCommander.General;
+using SpaceCommander.Service;
 
-namespace SpaceCommander
+namespace SpaceCommander.UI
 {
-
     public class MainMenu : MonoBehaviour
     {
         protected enum MenuWindow { Main, Levels, Options, About, Quit }

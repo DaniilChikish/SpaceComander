@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace SpaceCommander.Weapons
+namespace SpaceCommander.Mechanics.Weapons
 {
     class MagnetoMine : MonoBehaviour
     {
-        public Army team;
+        public Mechanics.Army team;
         public Transform target;
         public float speed;
         protected float detonateTimer;
@@ -36,7 +32,7 @@ namespace SpaceCommander.Weapons
             else if (pingCount <= 0)
             {
                 pingCount = 0.1f;
-                foreach (SpaceShip x in GlobalController.Instance.unitList)
+                foreach (AI.SpaceShip x in General.GlobalController.Instance.unitList)
                 {
                     if (x.Team != team && Vector3.Distance(x.transform.position, this.transform.position) < explosionRange)
                     {
@@ -78,7 +74,7 @@ namespace SpaceCommander.Weapons
 
         public void Explode()
         {
-            GameObject blast = Instantiate(GlobalController.Instance.Prefab.ExplosiveBlast, this.transform.position, this.transform.rotation);
+            GameObject blast = Instantiate(General.GlobalController.Instance.Prefab.ExplosiveBlast, this.transform.position, this.transform.rotation);
             blast.GetComponent<Explosion>().StatUp(BlastType.UnitaryTorpedo);
             Destroy(gameObject);
         }

@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="SpaceCommander.AI.Unit" Collapsed="true">
+    <Position X="0.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIhDAAMNAAAACAw4AgDQEAABQQkRAKAAEQCEEgAFQIw=</HashCode>
+      <FileName>Assets\Scripts\Units\UnitAbstract.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.AI.SpaceShip" Collapsed="true">
+    <Position X="0.75" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>FtRxMQsaQmskSt8rBmDQExOf+VFqo4QwkA2kWhYtXAo=</HashCode>
+      <FileName>Assets\Scripts\Units\UnitAbstract.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SpaceCommander.AI.ShootController" Collapsed="true">
+    <Position X="2" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAABABADAUQIQIAAAACgAAAAAAAgACAgAEAEAAAI=</HashCode>
+      <FileName>Assets\Scripts\Units\ShootController.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SpaceCommander.AI.SpaceShipShootController" Collapsed="true">
+    <Position X="0.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAEAABAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Units\ShootController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.AI.TurretShootController" Collapsed="true">
+    <Position X="3" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAABAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Units\ShootController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.AI.SpaceMovementController" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="7.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAYqgACMCoOERhCESAECAAbQUBlIUgAQyGAgJggFEkE=</HashCode>
+      <FileName>Assets\Scripts\Units\SpaceMovementController.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SpaceCommander.AI.PathNode" Collapsed="true">
+    <Position X="5.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAACAAAAAAAkAAAAAAAgAgAAAIAAAAAEAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Units\SpaceMovementController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="SpaceCommander.AI.DriverStatus" Collapsed="true">
+    <Position X="5.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAQEAAACA=</HashCode>
+      <FileName>Assets\Scripts\Units\SpaceMovementController.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SpaceCommander.AI.PointManeuverType" Collapsed="true">
+    <Position X="7.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAEAAEA=</HashCode>
+      <FileName>Assets\Scripts\Units\SpaceMovementController.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SpaceCommander.AI.TatgetManeuverType" Collapsed="true">
+    <Position X="5.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAAAAAAAAQAAAADBAAAAAAEAAAAAASAAAA=</HashCode>
+      <FileName>Assets\Scripts\Units\SpaceMovementController.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Delegate Name="SpaceCommander.AI.SortUnit" Collapsed="true">
+    <Position X="5.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Units\UnitAbstract.cs</FileName>
+    </TypeIdentifier>
+  </Delegate>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

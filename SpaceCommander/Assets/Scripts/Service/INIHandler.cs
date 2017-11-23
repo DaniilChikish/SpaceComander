@@ -4,7 +4,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace SpaceCommander
+namespace SpaceCommander.Service
 {
     public class INIHandler
     {

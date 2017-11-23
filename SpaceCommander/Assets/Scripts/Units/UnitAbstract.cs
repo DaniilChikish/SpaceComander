@@ -1,28 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
-using System.Text;
-using SpaceCommander;
-using UnityEngine.AI;
-using DeusUtility.Random;
 using DeusUtility.UI;
 using DeusUtility;
-
-namespace SpaceCommander
+using SpaceCommander.General;
+using SpaceCommander.UI;
+using SpaceCommander.Mechanics;
+namespace SpaceCommander.Mechanics
 {
     public abstract class Unit : MonoBehaviour
     {
         protected UnitClass type;
-        public Army team;
+        [SerializeField]
+        private Army team;
+        public Dictionary<Army, bool> Relationship { get; protected set;}
         protected string unitName;
         public float cooldownDetected;
         #region Public properties
         public UnitClass Type { get { return type; } }
         public string UnitName { get { return unitName; } }
+        public virtual Army Team { get { return team; } protected set { team = value; } }
+
         #endregion
         #region Abstract properties
-        public abstract Army Team { get; }
         public abstract Unit CurrentTarget { get; }
         public abstract float Speed { get; }
         public float SpeedMultiplicator { set; get; }
@@ -67,14 +67,18 @@ namespace SpaceCommander
             else return -1;
         }
         public abstract void ResetTarget();
-        public virtual bool Allies(Army army)
+        public RelationshipType CheckRelationship(Army army)
         {
             if (army == GlobalController.Instance.playerArmy)
             {
                 cooldownDetected = 1;
                 this.gameObject.transform.FindChild("MinimapPict").FindChild("EnemyMinimapPict").GetComponent<Renderer>().enabled = true;
             }
-            return (team == army);
+            if (Relationship.ContainsKey(army))
+                if (Relationship[army])
+                    return RelationshipType.Allies;
+                else return RelationshipType.Enemys;
+            else return RelationshipType.Neutral;
         }
         //protected Dictionary<IUseDriver, Vector3> followers;
         //private const float followingDistance = 50;
@@ -116,6 +120,9 @@ namespace SpaceCommander
         public abstract void GetFireSupport(Unit Target);
     }
     public delegate int SortUnit(Unit x, Unit y);
+}
+namespace SpaceCommander.AI
+{
     public abstract class SpaceShip : Unit, IEngine, ISpaceShipObservable
     {
         #region Class-constants
@@ -149,7 +156,7 @@ namespace SpaceCommander
         #region Override properties
         public override float Hull { set { armor.Hitpoints = value; } get { return armor.Hitpoints; } }
         public override float MaxHull { get { return armor.MaxHitpoints * (1 + MaxHullMultiplacator); } }
-        public override Army Team { get { return team; } }
+        //public override Army Team { get { return base.Team; } }
         public override Vector3 Velocity
         {
             get
@@ -255,8 +262,8 @@ namespace SpaceCommander
             //
             StatsUp();
             //
-            gunner = new Units.SpaceShipShootController(this);
-            //Driver = new NavmeshMovementController(this.gameObject);
+            Relationship = Global.GetRalationship(Team);
+            gunner = new SpaceShipShootController(this);
             Driver = new SpaceMovementController(this.gameObject);
             capByTarget = new List<Unit>();
             Squad = new SpaceShip[3];
@@ -270,7 +277,7 @@ namespace SpaceCommander
             this.gameObject.transform.FindChild("MinimapPict").FindChild("EnemyMinimapPict").GetComponent<Renderer>().enabled = false;
             this.gameObject.transform.FindChild("MinimapPict").FindChild("SelectedMinimapPict").GetComponent<Renderer>().enabled = false;
 
-            if (team == Global.playerArmy)
+            if (Team == Global.playerArmy)
                 this.gameObject.transform.FindChild("MinimapPict").FindChild("AlliesMinimapPict").GetComponent<Renderer>().enabled = true;
 
             Debug.Log("Unit " + this.gameObject.name + " started");
@@ -414,7 +421,7 @@ namespace SpaceCommander
             if (Driver.Status == DriverStatus.Waiting && movementAIDelay > 0)
                 movementAIDelay -= Time.deltaTime;
             //waitingBackCount = Driver.backCount;//синхронизация счетчиков
-            if (this.team != Global.playerArmy)
+            if (this.Team != Global.playerArmy)
                 cooldownDetected -= Time.deltaTime;
             else if (isSelected)
             {
@@ -505,7 +512,7 @@ namespace SpaceCommander
                 Texture frameToDraw = null;
                 Texture iconToDraw = null;
                 bool drawStatBars = false;
-                if (team == Global.playerArmy)
+                if (Team == Global.playerArmy)
                 {
                     if (isSelected)
                     {
@@ -895,15 +902,20 @@ namespace SpaceCommander
                     {
                         float multiplicator = Mathf.Pow(((-distance + RadarRange) * 0.02f), (1f / 5f)) * ((2f / (distance + 0.1f)) + 1);
                         if (radarPover * multiplicator > unknown.Stealthness)
-                            if (!unknown.Allies(team))
+                            switch (CheckRelationship(unknown.Team))
                             {
-                                if (!enemys.Contains(unknown))
-                                    enemys.Add(unknown);
-                            }
-                            else
-                            {
-                                if (!allies.Contains(unknown))// if ((distance < this.RadarRange * this.radiolink) && (distance < unknown.RadarRange * unknown.radiolink))
-                                    allies.Add(unknown);
+                                case RelationshipType.Enemys:
+                                    {
+                                        if (!enemys.Contains(unknown))
+                                            enemys.Add(unknown);
+                                        break;
+                                    }
+                                case RelationshipType.Allies:
+                                    {
+                                        if (!allies.Contains(unknown))// if ((distance < this.RadarRange * this.radiolink) && (distance < unknown.RadarRange * unknown.radiolink))
+                                            allies.Add(unknown);
+                                        break;
+                                    }
                             }
                     }
                     else
@@ -923,7 +935,7 @@ namespace SpaceCommander
             hazard.AddRange(GameObject.FindGameObjectsWithTag("Torpedo"));
             foreach (GameObject x in hazard)
             {
-                if (Vector3.Distance(x.transform.position, this.transform.position) < radarRange * 0.5 && !x.GetComponent<Missile>().Allies(team))
+                if (Vector3.Distance(x.transform.position, this.transform.position) < radarRange * 0.5 && !x.GetComponent<Missile>().Allies(Team))
                     return x;
             }
             return null;
@@ -934,7 +946,7 @@ namespace SpaceCommander
             hazard.AddRange(GameObject.FindGameObjectsWithTag("Missile"));
             foreach (GameObject x in hazard)
             {
-                if (Vector3.Distance(x.transform.position, this.transform.position) < radarRange * 0.3 && !x.GetComponent<Missile>().Allies(team))
+                if (Vector3.Distance(x.transform.position, this.transform.position) < radarRange * 0.3 && !x.GetComponent<Missile>().Allies(Team))
                         return x;
             }
             return null;
@@ -1010,7 +1022,7 @@ namespace SpaceCommander
                 {
                     foreach (SpellModule m in module)
                     {
-                        if (m.GetType() == typeof(MissileTrapLauncher))
+                        if (m.GetType() == typeof(Mechanics.Modules.MissileTrapLauncher))
                         {
                             m.EnableIfReady();
                             break;
@@ -1031,7 +1043,7 @@ namespace SpaceCommander
                 {
                     foreach (SpellModule m in module)
                     {
-                        if (m.GetType() == typeof(MissileEliminator))
+                        if (m.GetType() == typeof(Mechanics.Modules.MissileEliminator))
                         {
                             m.EnableIfReady();
                             break;

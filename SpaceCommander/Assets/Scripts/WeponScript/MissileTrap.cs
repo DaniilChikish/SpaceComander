@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-namespace SpaceCommander.Weapons
+﻿using UnityEngine;
+namespace SpaceCommander.Mechanics.Weapons
 {
     class MissileTrap : MonoBehaviour
     {

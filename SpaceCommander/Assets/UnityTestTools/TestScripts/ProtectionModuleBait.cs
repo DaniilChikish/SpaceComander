@@ -4,11 +4,11 @@ using UnityEngine;
 
 namespace SpaceCommander.Test
 {
-    public class ProtectionModuleBait : SpaceShip
+    public class ProtectionModuleBait : AI.SpaceShip
     {
         protected override void StatsUp()
         {
-            type = UnitClass.Scout;
+            type = Mechanics.UnitClass.Scout;
             radarRange = 3000; //set in child
             radarPover = 10;
             speedThrust = 12; //set in child
@@ -19,8 +19,8 @@ namespace SpaceCommander.Test
             movementAiEnabled = false;
             combatAIEnabled = false;
             selfDefenceModuleEnabled = true;
-            module = new SpellModule[1];
-            module[0] = new ProtectionMatrix(this);
+            module = new Mechanics.SpellModule[1];
+            module[0] = new Mechanics.Modules.ProtectionMatrix(this);
         }
 
         protected override void DecrementLocalCounters()

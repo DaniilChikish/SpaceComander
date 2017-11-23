@@ -1,5 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using SpaceCommander.AI;
+using SpaceCommander.Mechanics.Modules;
 using UnityEngine;
 /**
  * Торпедоносец/бомбардировщик (Bomber)
@@ -7,7 +7,7 @@ using UnityEngine;
  *      Масса = 20000кг
  *      Длина ~ 14м
  * **/
-namespace SpaceCommander.Units
+namespace SpaceCommander.Mechanics.Units
 {
     public class Bomber : SpaceShip
     {

@@ -1,8 +1,10 @@
-﻿using System.Collections;
+﻿using SpaceCommander.AI;
+using SpaceCommander.Mechanics;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace SpaceCommander.Weapons
+namespace SpaceCommander.Mechanics.Weapons
 {
     class SpruteTorpedo : SelfguidedMissile
     {
@@ -28,7 +30,7 @@ namespace SpaceCommander.Weapons
                 float distance = Vector3.Distance(this.gameObject.transform.position, x.transform.position);
                 if (distance < explosionRange * 3)
                 {
-                    if (!x.Allies(this.Team))
+                    if (this.Team!=x.Team)
                         enemys.Add(x);
                 }
             }

@@ -1,9 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using DeusUtility.Random;
+﻿using SpaceCommander.AI;
+using SpaceCommander.Mechanics.Modules;
 
-namespace SpaceCommander.Units
+namespace SpaceCommander.Mechanics.Units
 {
     public class Command : SpaceShip
     {

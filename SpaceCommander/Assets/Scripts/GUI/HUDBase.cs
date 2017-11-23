@@ -4,8 +4,10 @@ using System.Collections.Generic;
 using UnityEngine;
 //using UnityEngine.SceneManagement;
 using DeusUtility.UI;
+using SpaceCommander.General;
+using SpaceCommander.Service;
 
-namespace SpaceCommander
+namespace SpaceCommander.UI
 {
     public class HUDBase : MonoBehaviour
     {

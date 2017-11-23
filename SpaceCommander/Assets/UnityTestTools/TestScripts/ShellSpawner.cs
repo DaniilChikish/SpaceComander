@@ -1,6 +1,4 @@
-﻿using SpaceCommander;
-using SpaceCommander.Weapons;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace SpaceCommander.Test
 {
@@ -29,9 +27,9 @@ namespace SpaceCommander.Test
             else
             {
                 backCount = 60f / firerate;
-                GameObject shell = Instantiate(GlobalController.Instance.Prefab.UnitaryShell, gameObject.transform.position, transform.rotation);
+                GameObject shell = Instantiate(General.GlobalController.Instance.Prefab.UnitaryShell, gameObject.transform.position, transform.rotation);
                 shell.transform.localScale = shell.transform.localScale * scale;
-                shell.GetComponent<IShell>().StatUp((speed * (1 + RoundspeedMultiplacator) * this.transform.forward), damage * (1 + DamageMultiplacator), armorPiersing * (1 + APMultiplacator), mass * (1 + ShellmassMultiplacator), canRicochet, explosionPrefab);
+                shell.GetComponent<General.IShell>().StatUp((speed * (1 + RoundspeedMultiplacator) * this.transform.forward), damage * (1 + DamageMultiplacator), armorPiersing * (1 + APMultiplacator), mass * (1 + ShellmassMultiplacator), canRicochet, explosionPrefab);
             }
         }
     }

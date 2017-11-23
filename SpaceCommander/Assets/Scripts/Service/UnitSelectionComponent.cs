@@ -1,10 +1,11 @@
 ﻿using UnityEngine;
-using System;
-using System.Linq;
-using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-namespace SpaceCommander
+using SpaceCommander.General;
+using SpaceCommander.AI;
+using SpaceCommander.Mechanics;
+
+namespace SpaceCommander.Service
 {
     public class UnitSelectionComponent : MonoBehaviour
     {

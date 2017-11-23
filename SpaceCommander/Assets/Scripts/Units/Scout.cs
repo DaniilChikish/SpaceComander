@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using SpaceCommander.AI;
+using SpaceCommander.Mechanics.Modules;
 using UnityEngine;
-using UnityEngine.AI;
-using DeusUtility.Random;
 /**
   * Перехватчик-разведчик (Scout)
   * Физические параметры: (по образу самолета малой авиации)
   *      Масса = 2000кг
   *      Длина ~ 6м
   * **/
-namespace SpaceCommander.Units
+namespace SpaceCommander.Mechanics.Units
 {
     public class Scout : SpaceShip
     {

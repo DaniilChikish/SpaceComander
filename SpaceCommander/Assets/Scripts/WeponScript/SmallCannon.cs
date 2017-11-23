@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+﻿using SpaceCommander.Mechanics;
 using UnityEngine;
-using DeusUtility.Random;
 /**
 * Автоматическая пушка
 * Физические параметры: (по образу НС-37)
@@ -12,7 +8,7 @@ using DeusUtility.Random;
 *      Боезапас ~ 30
 *      Масса снаряда ~ 0.8кг
 * **/
-namespace SpaceCommander.Weapons
+namespace SpaceCommander.Mechanics.Weapons
 {
     public class SmallCannon : MagWeapon
     {
@@ -77,7 +73,7 @@ namespace SpaceCommander.Weapons
                     }
             }
 
-            shell.GetComponent<IShell>().StatUp(owner.Velocity + (RoundSpeed * (dispersionDelta * this.transform.forward)), damage * (1 + DamageMultiplacator), armorPiersing * (1 + APMultiplacator), mass * (1 + ShellmassMultiplacator), canRicochet, explosionPrefab);
+            shell.GetComponent<General.IShell>().StatUp(owner.Velocity + (RoundSpeed * (dispersionDelta * this.transform.forward)), damage * (1 + DamageMultiplacator), armorPiersing * (1 + APMultiplacator), mass * (1 + ShellmassMultiplacator), canRicochet, explosionPrefab);
             ownerBody.AddForceAtPosition(-this.transform.forward * mass * RoundSpeed, this.transform.position, ForceMode.Impulse);
         }
     }

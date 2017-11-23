@@ -1,15 +1,10 @@
-﻿using SpaceCommander;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace SpaceCommander.Test
+﻿namespace SpaceCommander.Test
 {
-    public class GunMachine : SpaceShip
+    public class GunMachine : AI.SpaceShip
     {
         protected override void StatsUp()
         {
-            type = UnitClass.LR_Corvette;
+            type = Mechanics.UnitClass.LR_Corvette;
             radarRange = 2500; //set in child
             radarPover = 10;
             speedThrust = 10; //set in child

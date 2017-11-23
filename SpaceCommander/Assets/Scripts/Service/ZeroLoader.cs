@@ -1,14 +1,10 @@
 ﻿using DeusUtility.UI;
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-namespace SpaceCommander
+namespace SpaceCommander.Service
 {
     class ZeroLoader : MonoBehaviour
     {

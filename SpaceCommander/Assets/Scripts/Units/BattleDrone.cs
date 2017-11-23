@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using UnityEngine;
 using DeusUtility.UI;
 using DeusUtility;
+using SpaceCommander.AI;
+using SpaceCommander.UI;
+using SpaceCommander.General;
 
-namespace SpaceCommander.Units
+namespace SpaceCommander.Mechanics.Units
 {
     public class BattleDrone: Unit, IEngine
     {
@@ -28,7 +29,6 @@ namespace SpaceCommander.Units
         //override properties
         public override float Hull { set { armor.Hitpoints = value; } get { return armor.Hitpoints; } }
         public override float MaxHull { get { return armor.MaxHitpoints * (1 + MaxHullMultiplacator); } }
-        public override Army Team { get { return team; } }
         public override Vector3 Velocity
         {
             get
@@ -80,7 +80,6 @@ namespace SpaceCommander.Units
         protected float stealthness; //set in child
         protected bool detected;
         //controllers
-        public bool ManualControl { set; get; }
         public IDriver Driver;
         protected IGunner gunner;
         public IGunner Gunner { get { return gunner; } }
@@ -116,7 +115,7 @@ namespace SpaceCommander.Units
             this.gameObject.transform.FindChild("MinimapPict").FindChild("AlliesMinimapPict").GetComponent<Renderer>().enabled = false;
             this.gameObject.transform.FindChild("MinimapPict").FindChild("EnemyMinimapPict").GetComponent<Renderer>().enabled = false;
 
-            if (team == Global.playerArmy)
+            if (Team == Global.playerArmy)
                 this.gameObject.transform.FindChild("MinimapPict").FindChild("AlliesMinimapPict").GetComponent<Renderer>().enabled = true;
 
             Debug.Log("Unit " + this.gameObject.name + " started");
@@ -183,7 +182,6 @@ namespace SpaceCommander.Units
         }
         protected void FixedUpdate()
         {
-            if (!ManualControl)
                 Driver.FixedUpdate();
         }
         protected void DecrementBaseCounters()
@@ -192,7 +190,7 @@ namespace SpaceCommander.Units
             if (Driver.Status == DriverStatus.Waiting && movementAIDelay > 0)
                 movementAIDelay -= Time.deltaTime;
             //waitingBackCount = Driver.backCount;//синхронизация счетчиков
-            if (this.team != Global.playerArmy)
+            if (this.Team != Global.playerArmy)
                 cooldownDetected -= Time.deltaTime;
             if (cooldownDetected < 0)
             {
@@ -217,7 +215,7 @@ namespace SpaceCommander.Units
         }
         protected void OnGUI()
         {
-            if (hud != null && !ManualControl)
+            if (hud != null)
             {
                 //GUI.skin = hud.Skin;
                 //if (Global.StaticProportion && hud.scale != 1)
@@ -266,7 +264,7 @@ namespace SpaceCommander.Units
                 Texture frameToDraw = null;
                 Texture iconToDraw = null;
                 bool drawStatBars = false;
-                if (team == Global.playerArmy)
+                if (Team == Global.playerArmy)
                 {
                     style.normal.textColor = Color.green;
                     if (Global.Settings.AliesUI.ShowUnitFrame)
@@ -402,7 +400,7 @@ namespace SpaceCommander.Units
             hazard.AddRange(GameObject.FindGameObjectsWithTag("Missile"));
             foreach (GameObject x in hazard)
             {
-                if (Vector3.Distance(x.transform.position, this.transform.position) < 300 && !x.GetComponent<Missile>().Allies(team))
+                if (Vector3.Distance(x.transform.position, this.transform.position) < 300 && !x.GetComponent<Missile>().Allies(Team))
                     return x;
             }
             return null;
@@ -455,7 +453,7 @@ namespace SpaceCommander.Units
         public override void GetFireSupport(Unit Target)        {       }
         public void SetTeam(Army team)
         {
-            this.team = team;
+            this.Team = team;
         }
     }
 }

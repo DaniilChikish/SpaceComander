@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
-namespace SpaceCommander
+namespace SpaceCommander.General
 {
     public enum Languages { English, Russian, temp };
-    public enum UnitClass { Scout, Recon, ECM, Figther, Bomber, Command, LR_Corvette, Guard_Corvette, Support_Corvette, Turret, Drone, Torpedo };
-    public enum Army { Green, Red, Blue };
+}
+namespace SpaceCommander.Mechanics
+{
+    public enum Army { Green, Red, Blue, Civil };
+    public enum RelationshipType { Allies, Enemys, Neutral};
+    public enum UnitClass { Scout, Recon, ECM, Figther, Bomber, Command, LR_Corvette, Guard_Corvette, Support_Corvette, Turret, Drone, Torpedo, Civil };
     public enum UnitStateType { MoveAI, UnderControl, Waiting };
     public enum SquadStatus { Free, InSquad, SquadMaster }
     public enum TacticSituation { SectorСlear, Attack, Defense, Retreat, ExitTheBattle }

@@ -1,7 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-namespace SpaceCommander
+﻿using UnityEngine;
+namespace SpaceCommander.Mechanics
 {
     public class Explosion : MonoBehaviour
     {
@@ -88,7 +86,7 @@ namespace SpaceCommander
             sound = this.gameObject.GetComponent<AudioSource>();
             sound.minDistance = maxRadius;
             sound.maxDistance = maxRadius * 100f;
-            sound.volume = GlobalController.Instance.Settings.SoundLevel * volumeScale;
+            sound.volume = General.GlobalController.Instance.Settings.SoundLevel * volumeScale;
             soundDelay = (Vector3.Distance(this.transform.position, Camera.main.transform.position) / soundSpeed);
             sound.PlayDelayed(soundDelay);
         }

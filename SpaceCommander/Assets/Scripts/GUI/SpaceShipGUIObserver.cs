@@ -1,12 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
-using DeusUtility.UI;
+using SpaceCommander.General;
+using SpaceCommander.Mechanics;
+using SpaceCommander.Service;
+using SpaceCommander.Mechanics.Modules;
 
-namespace SpaceCommander
+namespace SpaceCommander.UI
 {
     public enum ObserverMode { None, Half, Full }
     public class SpaceShipGUIObserver : MonoBehaviour
@@ -354,7 +354,7 @@ namespace SpaceCommander
                 else
                 {
                     FindObjectOfType<UnitSelectionComponent>().enabled = true;
-                    FindObjectOfType<ShipManualController>().enabled = false;
+                    Global.ManualController.enabled = false;
                     maincam.TargetFollow = observable.GetTransform();
                     maincam.mode = OrbitalCamMode.Folloving;
                     mode = ObserverMode.Half;
@@ -377,7 +377,7 @@ namespace SpaceCommander
                 }
                 maincam.TargetFollow = null;
                 observable = null;
-                FindObjectOfType<ShipManualController>().enabled = false;
+                Global.ManualController.enabled = false;
                 maincam.mode = OrbitalCamMode.Free;
                 FindObjectOfType<UnitSelectionComponent>().enabled = true;
                 mode = ObserverMode.None;
@@ -578,8 +578,8 @@ namespace SpaceCommander
                             break;
                     }
                     maincam.TargetFollow = observable.GetTransform();
-                    FindObjectOfType<ShipManualController>().owner = observable.GetTransform().GetComponent<SpaceShip>();
-                    FindObjectOfType<ShipManualController>().enabled = true;
+                    GlobalController.Instance.ManualController.owner = observable.GetTransform().GetComponent<AI.SpaceShip>();
+                    GlobalController.Instance.ManualController.enabled = true;
                 }
                 FindObjectOfType<UnitSelectionComponent>().enabled = false;
                 mode = ObserverMode.Full;

@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
-using DeusUtility.Random;
+﻿using UnityEngine;
+using SpaceCommander.Mechanics;
+using SpaceCommander.General;
 
-namespace SpaceCommander.Weapons
+namespace SpaceCommander.Mechanics.Weapons
 {
     public class BigCannon : MagWeapon
     {

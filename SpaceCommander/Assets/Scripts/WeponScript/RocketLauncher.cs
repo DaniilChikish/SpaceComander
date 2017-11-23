@@ -1,7 +1,8 @@
-﻿using System.Collections;
+﻿using SpaceCommander.Mechanics;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-namespace SpaceCommander.Weapons
+namespace SpaceCommander.Mechanics.Weapons
 {
     public class RocketLauncher : ShellWeapon
     {

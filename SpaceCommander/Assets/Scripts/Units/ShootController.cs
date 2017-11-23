@@ -1,11 +1,9 @@
-﻿using SpaceCommander;
-using System;
+﻿using SpaceCommander.General;
+using SpaceCommander.Mechanics;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using UnityEngine;
 
-namespace SpaceCommander.Units
+namespace SpaceCommander.AI
 {
     public class ShootController : IGunner
     {
@@ -214,7 +212,7 @@ namespace SpaceCommander.Units
     public class TurretShootController : ShootController
     {
         private float rotationSpeed;
-        public TurretShootController(SpaceCommander.Units.SpaceTurret body) : base(body.GetTransform())
+        public TurretShootController(Mechanics.Units.SpaceTurret body) : base(body.GetTransform())
         {
             rotationSpeed = body.RotationSpeed;
         }

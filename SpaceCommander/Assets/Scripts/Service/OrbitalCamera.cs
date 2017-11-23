@@ -1,7 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-namespace SpaceCommander
+﻿using UnityEngine;
+namespace SpaceCommander.Mechanics
 {
     public enum OrbitalCamMode { Free, Folloving, ThirthPerson }
     class OrbitalCamera : MonoBehaviour

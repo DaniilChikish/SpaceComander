@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 using DeusUtility.Random;
+using SpaceCommander.Mechanics;
+using SpaceCommander.General;
 /**
 * Автоматическая пушка
 * Физические параметры: (по образу M61 Vulcan)
@@ -13,7 +15,7 @@ using DeusUtility.Random;
 *      Масса снаряда ~ 0.2кг
 * **/
 
-namespace SpaceCommander.Weapons
+namespace SpaceCommander.Mechanics.Weapons
 {
     public class Chaingun : MagWeapon
     {

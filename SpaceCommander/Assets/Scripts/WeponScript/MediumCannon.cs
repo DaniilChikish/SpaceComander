@@ -4,15 +4,17 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using DeusUtility.Random;
-    /**
- * Средняя пушка
- * Физические параметры: (по образу Bordkanone 7,5)
- *      Скорострельность = 30 в/м
- *      Начальная скорость ~ 800 м/с
- *      Боезапас = 30
- *      Масса снаряда ~ 6кг
- * **/
-namespace SpaceCommander.Weapons
+using SpaceCommander.Mechanics.Weapons;
+
+/**
+* Средняя пушка
+* Физические параметры: (по образу Bordkanone 7,5)
+*      Скорострельность = 30 в/м
+*      Начальная скорость ~ 800 м/с
+*      Боезапас = 30
+*      Масса снаряда ~ 6кг
+* **/
+namespace SpaceCommander.Mechanics.Weapons
 { 
     public class MediumCannon : MagWeapon
     {
@@ -62,7 +64,7 @@ namespace SpaceCommander.Weapons
                     }
             }
 
-            shell.GetComponent<IShell>().StatUp(owner.Velocity + (RoundSpeed * ( dispersionDelta *this.transform.forward)), damage * (1 + DamageMultiplacator), armorPiersing * (1 + APMultiplacator), mass * (1 + ShellmassMultiplacator), canRicochet, explosionPrefab);
+            shell.GetComponent<General.IShell>().StatUp(owner.Velocity + (RoundSpeed * ( dispersionDelta *this.transform.forward)), damage * (1 + DamageMultiplacator), armorPiersing * (1 + APMultiplacator), mass * (1 + ShellmassMultiplacator), canRicochet, explosionPrefab);
             ownerBody.AddForceAtPosition(-this.transform.forward * mass * RoundSpeed, this.transform.position, ForceMode.Impulse);
         }
     }

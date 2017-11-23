@@ -1,0 +1,81 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="SpaceCommander.UI.HUDBase" Collapsed="true">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IEWqCQAAEOMACCIAAEIJCAAHgIAAACgUJBGIEARBACI=</HashCode>
+      <FileName>Assets\Scripts\GUI\HUDBase.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.UI.HUDMiniMap" Collapsed="true">
+    <Position X="2.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AASAAAAAADAAgAAgAAAAAABAEAAAAAAAAACgAAQBAAQ=</HashCode>
+      <FileName>Assets\Scripts\GUI\HUDMiniMap.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.UI.HUDUnitPrew" Collapsed="true">
+    <Position X="4" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAACAAgIAgAAAAAABAAAAAAAAAAACgAAQAAAA=</HashCode>
+      <FileName>Assets\Scripts\GUI\HUDUnitPrew.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.UI.MainMenu" Collapsed="true">
+    <Position X="0.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQSACACACMACEAAABAAAAgGgAAAQAAAABCAAA1BACA=</HashCode>
+      <FileName>Assets\Scripts\GUI\MainMenu.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.UI.SpaceShipGUIObserver" Collapsed="true">
+    <Position X="2.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABYUACgSmJAFgBCChJMTBQgaBjJyDCswEhLVGSMRGzA=</HashCode>
+      <FileName>Assets\Scripts\GUI\SpaceShipGUIObserver.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DeusUtility.UI.UIWindowInfo" Collapsed="true">
+    <Position X="9.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAGAAQIAADAAAEABAAABAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Utils\DeusUIUtility.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DeusUtility.UI.UIUtil" Collapsed="true">
+    <Position X="7.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>oEAAIgBCkAACAACAiAIAAAADAAAoCBIAAQAAARIAAAA=</HashCode>
+      <FileName>Assets\Scripts\Utils\DeusUIUtility.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DeusUtility.UI.ValidString" Collapsed="true">
+    <Position X="7.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAIggAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Utils\DeusUIUtility.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="SpaceCommander.UI.ObserverMode" Collapsed="true">
+    <Position X="0.5" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAgAAAAEAAAA=</HashCode>
+      <FileName>Assets\Scripts\GUI\SpaceShipGUIObserver.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="DeusUtility.UI.ScreenOrientation" Collapsed="true">
+    <Position X="9.25" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAgA=</HashCode>
+      <FileName>Assets\Scripts\Utils\DeusUIUtility.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="DeusUtility.UI.PositionAnchor" Collapsed="true">
+    <Position X="7.5" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAACAIAAABAAAAAAAAAAAAAAAAAAAAAGACAAAAIAAI=</HashCode>
+      <FileName>Assets\Scripts\Utils\DeusUIUtility.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

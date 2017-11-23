@@ -1,9 +1,5 @@
-﻿using SpaceCommander;
-using SpaceCommander.Weapons;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using SpaceCommander.Mechanics;
+using SpaceCommander.Mechanics.Weapons;
 using UnityEngine;
 
 namespace SpaceCommander.Test
@@ -22,7 +18,7 @@ namespace SpaceCommander.Test
             else
             {
                 backCount = 60f / firerate;
-                GameObject sphere = Instantiate(GlobalController.Instance.Prefab.PlasmaSphere, gameObject.transform.position, transform.rotation);
+                GameObject sphere = Instantiate(General.GlobalController.Instance.Prefab.PlasmaSphere, gameObject.transform.position, transform.rotation);
                 sphere.GetComponent<PlazmaSphere>().StatUp(EnergyType.Plazma);
             }
         }

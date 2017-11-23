@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+﻿using SpaceCommander.Mechanics;
 using UnityEngine;
-using DeusUtility.Random;
 
-namespace SpaceCommander.Weapons
+namespace SpaceCommander.Mechanics.Weapons
 {
     public class PlazmaCannon : EnergyWeapon
     {

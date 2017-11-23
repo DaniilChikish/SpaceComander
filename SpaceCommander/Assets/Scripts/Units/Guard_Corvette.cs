@@ -1,8 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using SpaceCommander.AI;
+using SpaceCommander.Mechanics.Modules;
 using UnityEngine;
 
-namespace SpaceCommander.Units
+namespace SpaceCommander.Mechanics.Units
 {
     public class Guard_Corvette : SpaceShip
     {

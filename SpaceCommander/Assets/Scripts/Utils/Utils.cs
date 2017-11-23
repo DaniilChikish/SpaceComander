@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using UnityEngine;
-namespace SpaceCommander
+﻿using UnityEngine;
+namespace SpaceCommander.Service
 {
     public static class SelectionUtils
     {

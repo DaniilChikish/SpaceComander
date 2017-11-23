@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using SpaceCommander.AI;
+using SpaceCommander.Mechanics;
 using UnityEngine;
 //using SpaceCommander.Units;
 
-namespace SpaceCommander
+namespace SpaceCommander.General
 {
     public interface ISpaceShipObservable
     {

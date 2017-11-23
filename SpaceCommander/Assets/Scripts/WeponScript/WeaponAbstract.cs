@@ -1,10 +1,12 @@
-﻿using System;
+﻿using SpaceCommander.AI;
+using SpaceCommander.General;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
 
-namespace SpaceCommander
+namespace SpaceCommander.Mechanics
 {
     public abstract class WeaponBase : MonoBehaviour, IWeapon
     {

@@ -5,6 +5,7 @@ using System.Text;
 using System.Collections;
 using UnityEngine;
 using System.IO;
+using SpaceCommander.Mechanics;
 
 namespace SpaceCommander.Scenarios
 {

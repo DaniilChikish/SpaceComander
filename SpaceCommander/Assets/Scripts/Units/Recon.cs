@@ -1,15 +1,13 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using DeusUtility.Random;
+using SpaceCommander.AI;
+using SpaceCommander.Mechanics.Modules;
 /**
-  * Перехватчик-диверсант (Recon)
-  * Физические параметры: (по образу самолета малой авиации)
-  *      Масса = 2000кг
-  *      Длина ~ 6м
-  * **/
-namespace SpaceCommander.Units
+* Перехватчик-диверсант (Recon)
+* Физические параметры: (по образу самолета малой авиации)
+*      Масса = 2000кг
+*      Длина ~ 6м
+* **/
+namespace SpaceCommander.Mechanics.Units
 {
     public class Recon : SpaceShip
     {
@@ -73,20 +71,15 @@ namespace SpaceCommander.Units
                     return false;
             }
         }
-
-        public override bool Allies(Army army)
+        public override Army Team
         {
-            if (!transpond)
+            get
             {
-                if (army == Global.playerArmy)
-                {
-                    cooldownDetected = 1;
-                    this.gameObject.transform.FindChild("MinimapPict").FindChild("EnemyMinimapPict").GetComponent<Renderer>().enabled = true;
-                }
-                return (team == army);
+                if (transpond)
+                    return Army.Civil;
+                else
+                    return base.Team;
             }
-            else
-                return true;
         }
     }
 }

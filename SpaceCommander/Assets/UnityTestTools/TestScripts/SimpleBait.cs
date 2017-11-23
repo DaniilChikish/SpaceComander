@@ -1,8 +1,7 @@
-﻿using SpaceCommander;
-using System.Collections;
-using System.Collections.Generic;
+﻿using SpaceCommander.AI;
+using SpaceCommander.Mechanics;
+using SpaceCommander.Mechanics.Modules;
 using UnityEngine;
-using System;
 
 namespace SpaceCommander.Test
 {

@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-namespace SpaceCommander
+namespace SpaceCommander.UI
 {
     public class HUDMiniMap : MonoBehaviour
     {

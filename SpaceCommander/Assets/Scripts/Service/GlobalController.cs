@@ -1,20 +1,14 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Xml;
-using System.Xml.Serialization;
 using UnityEngine;
-using UnityEngine.AI;
 using UnityEngine.SceneManagement;
-//using SpaceCommander.Units;
 using DeusUtility.Random;
-using DeusUtility.UI;
 using SpaceCommander.Service;
 using SpaceCommander.Scenarios;
+using SpaceCommander.AI;
+using SpaceCommander.Mechanics;
 
-namespace SpaceCommander
+namespace SpaceCommander.General
 {
     public class GlobalController : MonoBehaviour
     {
@@ -135,6 +129,26 @@ namespace SpaceCommander
                 return Mission.CheckVictory();
             else
                 return Scenario.DefaultOrder();
+        }
+        public Dictionary<Army, bool> GetRalationship(Army team)
+        {
+            Dictionary<Army, bool> outp = new Dictionary<Army, bool>();
+            outp.Add(team, true);
+            switch (team)
+            {
+                case Army.Blue:
+                    {
+                        outp.Add(Army.Red, false);
+                        return outp;
+                    }
+                case Army.Red:
+                    {
+                        outp.Add(Army.Blue, false);
+                        return outp;
+                    }
+                default:
+                    return outp;
+            }
         }
     }
 }

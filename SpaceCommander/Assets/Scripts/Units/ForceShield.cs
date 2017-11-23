@@ -1,9 +1,11 @@
-﻿using System;
+﻿using SpaceCommander.AI;
+using SpaceCommander.General;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace SpaceCommander
+namespace SpaceCommander.Mechanics
 {
     public class ForceShield : MonoBehaviour, IShield
     {

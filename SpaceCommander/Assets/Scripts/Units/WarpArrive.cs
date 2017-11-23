@@ -1,25 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using DeusUtility.UI;
+﻿using UnityEngine;
+using SpaceCommander.General;
 
-
-namespace SpaceCommander
+namespace SpaceCommander.Mechanics
 {
     class WarpArrive : MonoBehaviour
     {
         public GameObject ArriveUnit;
         private GlobalController Global;
+        private UI.HUDBase hud;
         public bool isArrive;
         public Vector3 ancor;
         public float Speed;// скорость ракеты
         private void Start()
         {
             Global = GlobalController.Instance;
+            hud = FindObjectOfType<UI.HUDBase>();
             ancor = this.gameObject.transform.position;
             Sleep();
         }
@@ -37,7 +32,7 @@ namespace SpaceCommander
         {
             if (isArrive)
             {
-                FindObjectOfType<HUDBase>().ShowExclamation(Global.Texts("Reinforcements arrive!"));
+                hud.ShowExclamation(Global.Texts("Reinforcements arrive!"));
             }
         }
 

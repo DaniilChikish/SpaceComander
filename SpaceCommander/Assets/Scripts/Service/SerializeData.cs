@@ -1,12 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using System.IO;
 using System.Xml.Serialization;
 using System;
 using System.Text;
+using SpaceCommander.General;
 
-namespace SpaceCommander
+namespace SpaceCommander.Service
 {
     [Serializable]
     public class SerializeData<TKey, TValue>: ISerializationCallbackReceiver 
