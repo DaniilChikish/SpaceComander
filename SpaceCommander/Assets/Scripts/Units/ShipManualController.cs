@@ -316,7 +316,7 @@ namespace SpaceCommander.Mechanics
                 for (int i = 0; i < owner.Gunner.Weapon.Length; i++)
                     for (int j = 0; j < owner.Gunner.Weapon[i].Length; j++)
                     {
-                        if (Physics.Raycast(owner.Gunner.Weapon[i][j].transform.position, owner.Gunner.Weapon[i][j].transform.forward, out hit, owner.Gunner.Weapon[i][j].Range, (1 << 0 | 1 << 8)))
+                        if (Physics.Raycast(owner.Gunner.Weapon[i][j].transform.position, owner.Gunner.Weapon[i][j].transform.forward, out hit, owner.Gunner.Weapon[i][j].Range, (1 << 0 | 1 << 9)))
                             aim = hit.point;
                         else
                             aim = owner.Gunner.Weapon[i][j].transform.position + owner.Gunner.Weapon[i][j].transform.forward * owner.Gunner.Weapon[i][j].Range;

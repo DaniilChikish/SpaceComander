@@ -107,6 +107,7 @@ namespace SpaceCommander.UI
         private void OnGUI()
         {
             GUI.skin = Skin;
+            GUI.depth = -1;
             if (Global.Settings.StaticProportion && scale != 1)
                 GUI.matrix = Matrix4x4.Scale(Vector3.one * scale);
             if (victory == 1)

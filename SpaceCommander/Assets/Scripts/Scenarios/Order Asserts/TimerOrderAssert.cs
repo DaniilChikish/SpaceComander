@@ -8,14 +8,6 @@ namespace SpaceCommander.Scenarios
 {
     class TimerOrderAssert : OrderAssert
     {
-        public enum Method
-        {
-            Pass,  //не провалить дольше указанного срока
-            Fail   //выполнить быстрее указанного срока
-        }
-        [SerializeField]
-        private Method methodToCall;
-
         public OrderAssert dependOn;
 
         [SerializeField]

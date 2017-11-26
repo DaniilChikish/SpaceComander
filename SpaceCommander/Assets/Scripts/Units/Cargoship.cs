@@ -333,9 +333,9 @@ namespace SpaceCommander.Mechanics.Units
         //base maneuvers
         protected virtual bool IdleManeuverFunction()
         {
-            if (Vector3.Distance(this.transform.position, Anchor) > 5000)
+            if (Vector3.Distance(this.transform.position, Anchor) > 100)
                 return BackToAncour();
-            return Driver.ExecetePointManeuver(PointManeuverType.PatroolLine, this.transform.position, this.transform.forward * 50);
+            return false;// Driver.ExecetePointManeuver(PointManeuverType.PatroolLine, this.transform.position, this.transform.forward * 50);
         }
         protected bool BackToAncour()
         {

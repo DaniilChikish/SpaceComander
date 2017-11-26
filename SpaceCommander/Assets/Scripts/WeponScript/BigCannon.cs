@@ -11,8 +11,8 @@ namespace SpaceCommander.Mechanics.Weapons
         {
             base.StatUp();
             type = WeaponType.Cannon;
-            audio.minDistance = 10*2;
-            audio.maxDistance = 2000*2;
+            audio.minDistance = 30;
+            audio.maxDistance = 3000;
         }
         protected override void Shoot(Transform target)
         {

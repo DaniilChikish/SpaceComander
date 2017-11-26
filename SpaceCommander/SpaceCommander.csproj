@@ -88,10 +88,12 @@
     <Compile Include="Assets\Scripts\GUI\HUDMiniMap.cs" />
     <Compile Include="Assets\Scripts\GUI\HUDUnitPrew.cs" />
     <Compile Include="Assets\Scripts\GUI\MainMenu.cs" />
-    <Compile Include="Assets\Scripts\GUI\MoveTarget.cs" />
+    <Compile Include="Assets\Scripts\GUI\GUITextureEmmiter.cs" />
+    <Compile Include="Assets\Scripts\Scenarios\Order Asserts\OnKeyDownOrderAssert.cs" />
     <Compile Include="Assets\Scripts\GUI\SpaceShipGUIObserver.cs" />
-    <Compile Include="Assets\Scripts\Scenarios\Mission1.cs" />
-    <Compile Include="Assets\Scripts\Scenarios\Mission2.cs" />
+    <Compile Include="Assets\Scripts\Scenarios\Mission3.cs" />
+    <Compile Include="Assets\Scripts\Scenarios\Mission4.cs" />
+    <Compile Include="Assets\Scripts\Scenarios\Order Asserts\ColliderAssertMarker.cs" />
     <Compile Include="Assets\Scripts\Scenarios\Order Asserts\ColliderOrderAssert.cs" />
     <Compile Include="Assets\Scripts\Scenarios\Order Asserts\ObjectiveOrderAssert.cs" />
     <Compile Include="Assets\Scripts\Scenarios\Order Asserts\OnDestroyAllOfOrderAssert.cs" />
@@ -127,6 +129,7 @@
     <Compile Include="Assets\Scripts\Units\Guard_Corvette.cs" />
     <Compile Include="Assets\Scripts\Units\LR_Corvette.cs" />
     <Compile Include="Assets\Scripts\Units\Recon.cs" />
+    <Compile Include="Assets\Scripts\Units\TraningIntersceptor.cs" />
     <Compile Include="Assets\Scripts\Units\Scout.cs" />
     <Compile Include="Assets\Scripts\Units\ShipManualController.cs" />
     <Compile Include="Assets\Scripts\Units\ShootController.cs" />

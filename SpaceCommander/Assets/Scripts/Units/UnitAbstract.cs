@@ -69,11 +69,11 @@ namespace SpaceCommander.Mechanics
         public abstract void ResetTarget();
         public RelationshipType CheckRelationship(Army army)
         {
-            if (army == GlobalController.Instance.playerArmy)
-            {
-                cooldownDetected = 1;
-                this.gameObject.transform.FindChild("MinimapPict").FindChild("EnemyMinimapPict").GetComponent<Renderer>().enabled = true;
-            }
+            //if (army == GlobalController.Instance.playerArmy)
+            //{
+            //    cooldownDetected = 1;
+            //    this.gameObject.transform.FindChild("MinimapPict").FindChild("EnemyMinimapPict").GetComponent<Renderer>().enabled = true;
+            //}
             if (Relationship.ContainsKey(army))
                 if (Relationship[army])
                     return RelationshipType.Allies;
@@ -141,6 +141,9 @@ namespace SpaceCommander.AI
         public Texture enemyIcon;
         public Texture aliesIcon;
         public Texture selectedIcon;
+        private Renderer enemyMap;
+        private Renderer aliesMap;
+        private Renderer selectedMap;
         #endregion
         #region Depend varibles
         protected float radiolink;
@@ -273,9 +276,12 @@ namespace SpaceCommander.AI
 
             manualController = FindObjectOfType<ShipManualController>();
 
-            this.gameObject.transform.FindChild("MinimapPict").FindChild("AlliesMinimapPict").GetComponent<Renderer>().enabled = false;
-            this.gameObject.transform.FindChild("MinimapPict").FindChild("EnemyMinimapPict").GetComponent<Renderer>().enabled = false;
-            this.gameObject.transform.FindChild("MinimapPict").FindChild("SelectedMinimapPict").GetComponent<Renderer>().enabled = false;
+            aliesMap = this.gameObject.transform.FindChild("MinimapPict").FindChild("AlliesMinimapPict").GetComponent<Renderer>();
+            aliesMap.enabled = false;
+            enemyMap = this.gameObject.transform.FindChild("MinimapPict").FindChild("EnemyMinimapPict").GetComponent<Renderer>();
+            enemyMap.enabled = false;
+            selectedMap = this.gameObject.transform.FindChild("MinimapPict").FindChild("SelectedMinimapPict").GetComponent<Renderer>();
+            selectedMap.enabled = false;
 
             if (Team == Global.playerArmy)
                 this.gameObject.transform.FindChild("MinimapPict").FindChild("AlliesMinimapPict").GetComponent<Renderer>().enabled = true;
@@ -426,18 +432,20 @@ namespace SpaceCommander.AI
             else if (isSelected)
             {
                 cooldownDetected = 0.1f;
-                this.gameObject.transform.FindChild("MinimapPict").FindChild("SelectedMinimapPict").GetComponent<Renderer>().enabled = true;
+                selectedMap.enabled = true;
             }
             else
             {
-                this.gameObject.transform.FindChild("MinimapPict").FindChild("SelectedMinimapPict").GetComponent<Renderer>().enabled = false;
+                selectedMap.enabled = false;
             }
             if (cooldownDetected < 0)
             {
-                this.gameObject.transform.FindChild("MinimapPict").FindChild("SelectedMinimapPict").GetComponent<Renderer>().enabled = false;
+                selectedMap.enabled = false;
                 //this.gameObject.transform.FindChild("AlliesMinimapPict").GetComponent<Renderer>().enabled = false;
-                this.gameObject.transform.FindChild("MinimapPict").FindChild("EnemyMinimapPict").GetComponent<Renderer>().enabled = false;
+                enemyMap.enabled = false;
             }
+            else
+                enemyMap.enabled = true;
             if (module != null && module.Length > 0)
             {
                 for (int i = 0; i < module.Length; i++)
@@ -902,6 +910,8 @@ namespace SpaceCommander.AI
                     {
                         float multiplicator = Mathf.Pow(((-distance + RadarRange) * 0.02f), (1f / 5f)) * ((2f / (distance + 0.1f)) + 1);
                         if (radarPover * multiplicator > unknown.Stealthness)
+                        {
+                            unknown.cooldownDetected = 1;
                             switch (CheckRelationship(unknown.Team))
                             {
                                 case RelationshipType.Enemys:
@@ -917,6 +927,7 @@ namespace SpaceCommander.AI
                                         break;
                                     }
                             }
+                        }
                     }
                     else
                     {

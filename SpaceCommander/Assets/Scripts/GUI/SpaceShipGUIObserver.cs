@@ -92,22 +92,23 @@ namespace SpaceCommander.UI
         #endregion
 
         #region Enable Functions
-        private void OnEnable()
+        private void Start()
         {
             maincam = FindObjectOfType<OrbitalCamera>();
             hud = FindObjectOfType<HUDBase>();
+            float scale = Screen.width / (1280f / 1f);
             canvas = GameObject.Find("Canvas");
             status = GameObject.Find("StatusPanel");
             statusOpenedPosition = status.transform.position;
-            statusClosedPosition = status.transform.position + (Vector3.up * status.GetComponent<RectTransform>().rect.height * -1.5f);
+            statusClosedPosition = status.transform.position + (Vector3.up * status.GetComponent<RectTransform>().rect.height * -1.5f * scale);
             statusPosition = 0;
             statusIsOpen = false;
             weaponPanel = GameObject.Find("WeaponPanel");
             weaponPanelOpenedPosition = weaponPanel.transform.position;
-            weaponPanelClosedPosition = weaponPanel.transform.position + (Vector3.right * weaponPanel.GetComponent<RectTransform>().rect.width * -1.15f);
+            weaponPanelClosedPosition = weaponPanel.transform.position + (Vector3.right * weaponPanel.GetComponent<RectTransform>().rect.width * -1.15f * scale);
             previev = GameObject.Find("UnitPreviewPanel");
             previevOpenedPosition = previev.transform.position;
-            previevClosedPosition = previev.transform.position + (Vector3.right * previev.GetComponent<RectTransform>().rect.width * 1.5f);
+            previevClosedPosition = previev.transform.position + (Vector3.right * previev.GetComponent<RectTransform>().rect.width * 1.5f * scale);
             previevPosition = 0;
             previevIsOpen = false;
             primaryWeaponSlot = weaponPanel.transform.Find("PrimarySlot").gameObject;
@@ -474,9 +475,9 @@ namespace SpaceCommander.UI
         private void UpdateHull()
         {
             ShieldBar.fillAmount = observable.ShieldForce / observable.ShieldCampacity;
-            ShieldCount.text = Mathf.Round(observable.ShieldForce).ToString();
+            ShieldCount.text = Mathf.Round((observable.ShieldForce / observable.ShieldCampacity) * 100).ToString() + "%";
             HealthBar.fillAmount = observable.Hull / observable.MaxHull;
-            HealthCount.text = Mathf.Round(observable.Hull).ToString();
+            HealthCount.text = Mathf.Round((observable.Hull / observable.MaxHull) * 100).ToString() + "%";
             //Rect panelRect = UIUtil.GetRect(new Vector2(healthPanel.width, healthPanel.height), PositionAnchor.LeftDown, hud.mainRect.size, new Vector2(10, -10));
             //GUI.BeginGroup(panelRect, healthPanel);
             //{

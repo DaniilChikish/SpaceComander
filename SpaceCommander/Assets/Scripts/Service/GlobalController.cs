@@ -150,5 +150,9 @@ namespace SpaceCommander.General
                     return outp;
             }
         }
+        private void OnDestroy()
+        {
+            Settings.Save();
+        }
     }
 }

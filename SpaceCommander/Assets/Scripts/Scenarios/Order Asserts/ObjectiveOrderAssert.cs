@@ -15,15 +15,8 @@ namespace SpaceCommander.Scenarios
             OnBecameInvisible,
             OnBecameVisible,
         }
-        public enum Method
-        {
-            Pass,
-            Fail
-        }
         [SerializeField]
         private Functions callOnMethod;
-        [SerializeField]
-        private Method methodToCall;
         private void TryToCallOrder(Functions invokingMethod)
         {
             if (invokingMethod == callOnMethod)

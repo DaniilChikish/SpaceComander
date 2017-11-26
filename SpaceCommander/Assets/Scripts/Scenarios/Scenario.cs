@@ -10,7 +10,7 @@ using UnityEngine;
 namespace SpaceCommander.Scenarios
 {
     public enum OrderAccertState { InProgress, Complete, Fail }
-    public abstract class Scenario : MonoBehaviour
+    public class Scenario : MonoBehaviour
     {
         [SerializeField]
         private string missionID;
@@ -25,9 +25,11 @@ namespace SpaceCommander.Scenarios
                 GlobalController Global = GlobalController.Instance;
                 outp.Append(missionBrief);
                 outp.Append("\n\r" + Global.Texts("Orders") + ":");
+                if (useDefault)
+                    outp.Append("\n\r 0. " + orderBrief[0]);
                 for (int i = 0; i < orders.Length; i++)
                 {
-                    outp.Append("\n\r" + (i+1) + ". " + orderBrief[i]);
+                    outp.Append("\n\r" + (i + 1) + ". " + orderBrief[i + 1]);
                     if (orders[i].GetType() == typeof(TimerOrderAssert) && orders[i].State == OrderAccertState.InProgress)
                         outp.Append("(" + Math.Round(((TimerOrderAssert)orders[i]).Counter / 60, 2) + "min. left)");
                     else
@@ -46,7 +48,7 @@ namespace SpaceCommander.Scenarios
         {
             MissionID = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
             orders = FindObjectsOfType<OrderAssert>();
-            Array.Sort(orders);
+            Array.Sort(orders, OrderSort);
             {
                 GlobalController Global = GlobalController.Instance;
                 //Debug.Log("Scenario started");
@@ -55,14 +57,12 @@ namespace SpaceCommander.Scenarios
                 INIHandler reader = new INIHandler(path);
                 missionBrief = reader.ReadINI("Text." + Global.Settings.Localisation.ToString(), "missionBrief", 1024);
                 missionBrief = missionBrief.Replace("\\r\\n", ((char)13).ToString() + ((char)10).ToString());
-                orderBrief = new string[orders.Length];
-                for (int i = 0; i < orders.Length; i++)
-                    orderBrief[i] = reader.ReadINI("Text." + Global.Settings.Localisation.ToString(), ("order_" + orders[i].OrderNumber), 1024);
+                orderBrief = new string[orders.Length + 1];
+                orderBrief[0] = reader.ReadINI("Text." + Global.Settings.Localisation.ToString(), "order_0", 1024);
+                for (int i = 1; i < orders.Length + 1; i++)
+                    orderBrief[i] = reader.ReadINI("Text." + Global.Settings.Localisation.ToString(), ("order_" + i), 1024);
             }
         }
-
-        // Update is called once per frame
-        protected abstract void Update();
         public virtual int CheckVictory()
         {
             if (useDefault && defaultHavePriority || (orders.Length == 0))
@@ -104,6 +104,10 @@ namespace SpaceCommander.Scenarios
             else if (alies == 0)
                 return -1;
             else return 0;
+        }
+        private static int OrderSort(OrderAssert x, OrderAssert y)
+        {
+            return x.Priority - y.Priority;
         }
     }
 }

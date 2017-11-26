@@ -8,14 +8,7 @@ namespace SpaceCommander.Scenarios
 {
     class OnDestroyOrderAssert : OrderAssert
     {
-        public enum Method
-        {
-            Pass,
-            Fail
-        }
         public GameObject accertionObject;
-        [SerializeField]
-        private Method methodToCall;
 
         private void TryToCallOrder()
         {

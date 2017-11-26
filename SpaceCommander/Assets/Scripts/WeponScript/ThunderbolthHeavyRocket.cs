@@ -28,7 +28,7 @@ namespace SpaceCommander.Mechanics.Weapons
             for (int i = 0; i < fragRate; i++)
             {
                 dispersionDelta = WeaponBase.RandomDirectionNormal(dispersion);
-                GameObject shell = Instantiate(GlobalController.Instance.Prefab.UnitaryShell, gameObject.transform.position, this.transform.rotation * dispersionDelta);
+                GameObject shell = Instantiate(GlobalController.Instance.Prefab.Buckshot, gameObject.transform.position, this.transform.rotation * dispersionDelta);
                 shell.GetComponent<IShell>().StatUp(body.velocity + (fragSpeed * (dispersionDelta * this.transform.forward)), damage, armorPiersing, mass, canRicochet, explosionPrefab);
             }
             Destroy(gameObject);

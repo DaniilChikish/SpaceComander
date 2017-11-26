@@ -19,27 +19,25 @@ namespace SpaceCommander.Scenarios
             OnCollisionEnter,
             OnCollisionExit,
             OnCollisionStay,
-            OnTriggerEnter2D,
-            OnTriggerExit2D,
-            OnTriggerStay2D,
-            OnCollisionEnter2D,
-            OnCollisionExit2D,
-            OnCollisionStay2D,
+            //OnTriggerEnter2D,
+            //OnTriggerExit2D,
+            //OnTriggerStay2D,
+            //OnCollisionEnter2D,
+            //OnCollisionExit2D,
+            //OnCollisionStay2D,
         }
-        public enum Method
-        {
-            Pass,
-            Fail
-        }
-
+        public OrderAssert previous;
         [SerializeField]
         private Functions callOnMethod;
-        [SerializeField]
-        private Method methodToCall;
 
+        [SerializeField]
+        private float triggetRange;
+        private const float checkRate = 1f;
+        private ColliderAssertMarker[] markers;
+        private float backCount;
         private void TryToCallOrder(Functions invokingMethod)
         {
-            if (invokingMethod == callOnMethod)
+            if (invokingMethod == callOnMethod && (previous == null || (previous != null && previous.State == OrderAccertState.Complete)))
             {
                 if (methodToCall == Method.Pass)
                     State = OrderAccertState.Complete;
@@ -47,7 +45,37 @@ namespace SpaceCommander.Scenarios
                     State = OrderAccertState.Fail;
             }
         }
-
+        private void Start()
+        {
+            if (callOnMethod == Functions.OnTriggerEnter || callOnMethod == Functions.OnTriggerStay)
+            {
+                ColliderAssertMarker[] bufferA = FindObjectsOfType<ColliderAssertMarker>();
+                List<ColliderAssertMarker> bufferB = new List<ColliderAssertMarker>();
+                foreach (var x in bufferA)
+                {
+                    if (x.dependence.Priority == this.Priority)
+                        bufferB.Add(x);
+                }
+                markers = bufferB.ToArray();
+                backCount = checkRate;
+            }
+        }
+        private void Update()
+        {
+            if ((callOnMethod == Functions.OnTriggerEnter || callOnMethod == Functions.OnTriggerStay) && backCount <= 0)
+            {
+                foreach (var x in markers)
+                {
+                    if (Vector3.Distance(x.gameObject.transform.position, this.gameObject.transform.position) <= triggetRange)
+                    {
+                        TryToCallOrder(Functions.OnTriggerStay);
+                        return;
+                    }
+                }
+                backCount = checkRate;
+            }
+            else backCount -= Time.deltaTime;
+        }
         public void OnControllerColliderHit()
         {
             TryToCallOrder(Functions.OnControllerColliderHit);
@@ -60,53 +88,59 @@ namespace SpaceCommander.Scenarios
         {
             TryToCallOrder(Functions.OnJointBreak);
         }
-        public void OnTriggerEnter()
+        private void OnTriggerEnter(Collider other)
         {
-            TryToCallOrder(Functions.OnTriggerEnter);
+            if (other.GetComponent<ColliderAssertMarker>() != null && other.GetComponent<ColliderAssertMarker>().dependence == this)
+                TryToCallOrder(Functions.OnTriggerEnter);
         }
-        public void OnTriggerExit()
+        private void OnTriggerExit(Collider other)
         {
-            TryToCallOrder(Functions.OnTriggerExit);
+            if (other.GetComponent<ColliderAssertMarker>() != null && other.GetComponent<ColliderAssertMarker>().dependence == this)
+                TryToCallOrder(Functions.OnTriggerExit);
         }
-        public void OnTriggerStay()
+        private void OnTriggerStay(Collider other)
         {
-            TryToCallOrder(Functions.OnTriggerStay);
+            if (other.GetComponent<ColliderAssertMarker>() != null && other.GetComponent<ColliderAssertMarker>().dependence == this)
+                TryToCallOrder(Functions.OnTriggerStay);
         }
-        public void OnCollisionEnter()
+        private void OnCollisionEnter(Collision collision)
         {
-            TryToCallOrder(Functions.OnCollisionEnter);
+            if (collision.gameObject.GetComponent<ColliderAssertMarker>() != null && collision.gameObject.GetComponent<ColliderAssertMarker>().dependence == this)
+                TryToCallOrder(Functions.OnCollisionEnter);
         }
-        public void OnCollisionExit()
+        private void OnCollisionExit(Collision collision)
         {
-            TryToCallOrder(Functions.OnCollisionExit);
+            if (collision.gameObject.GetComponent<ColliderAssertMarker>() != null && collision.gameObject.GetComponent<ColliderAssertMarker>().dependence == this)
+                TryToCallOrder(Functions.OnCollisionExit);
         }
-        public void OnCollisionStay()
+        private void OnCollisionStay(Collision collision)
         {
-            TryToCallOrder(Functions.OnCollisionStay);
+            if (collision.gameObject.GetComponent<ColliderAssertMarker>() != null && collision.gameObject.GetComponent<ColliderAssertMarker>().dependence == this)
+                TryToCallOrder(Functions.OnCollisionStay);
         }
-        public void OnTriggerEnter2D()
-        {
-            TryToCallOrder(Functions.OnTriggerEnter2D);
-        }
-        public void OnTriggerExit2D()
-        {
-            TryToCallOrder(Functions.OnTriggerExit2D);
-        }
-        public void OnTriggerStay2D()
-        {
-            TryToCallOrder(Functions.OnTriggerStay2D);
-        }
-        public void OnCollisionEnter2D()
-        {
-            TryToCallOrder(Functions.OnCollisionEnter2D);
-        }
-        public void OnCollisionExit2D()
-        {
-            TryToCallOrder(Functions.OnCollisionExit2D);
-        }
-        public void OnCollisionStay2D()
-        {
-            TryToCallOrder(Functions.OnCollisionStay2D);
-        }
+        //public void OnTriggerEnter2D()
+        //{
+        //    TryToCallOrder(Functions.OnTriggerEnter2D);
+        //}
+        //public void OnTriggerExit2D()
+        //{
+        //    TryToCallOrder(Functions.OnTriggerExit2D);
+        //}
+        //public void OnTriggerStay2D()
+        //{
+        //    TryToCallOrder(Functions.OnTriggerStay2D);
+        //}
+        //public void OnCollisionEnter2D()
+        //{
+        //    TryToCallOrder(Functions.OnCollisionEnter2D);
+        //}
+        //public void OnCollisionExit2D()
+        //{
+        //    TryToCallOrder(Functions.OnCollisionExit2D);
+        //}
+        //public void OnCollisionStay2D()
+        //{
+        //    TryToCallOrder(Functions.OnCollisionStay2D);
+        //}
     }
 }

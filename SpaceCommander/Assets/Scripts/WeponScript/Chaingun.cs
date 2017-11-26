@@ -105,7 +105,7 @@ namespace SpaceCommander.Mechanics.Weapons
             this.rotSpeed += 0.75f - (0.75f * rotSpeed / 5) + Time.deltaTime;
             float localDisp = Dispersion + (Dispersion * this.rotSpeed / 2);
             Quaternion dispersionDelta = RandomDirectionNormal(localDisp);
-            GameObject shell = Instantiate(Global.Prefab.UnitaryShell, gameObject.transform.position, this.transform.rotation * dispersionDelta);
+            GameObject shell = Instantiate(Global.Prefab.Buckshot, gameObject.transform.position, this.transform.rotation * dispersionDelta);
             if (shellPosition >= ShellLine.Length)
                 shellPosition = 0;
 

@@ -12,6 +12,7 @@ namespace SpaceCommander.Service
         public Texture AlliesOutscreenPoint;
         public Texture EnemyOutscreenPoint;
         public GameObject UnitaryShell;
+        public GameObject Buckshot;
         public GameObject ShellBlast;
         public GameObject RailgunShell;
         public GameObject LaserBeam;

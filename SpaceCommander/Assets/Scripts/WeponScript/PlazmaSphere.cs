@@ -22,7 +22,7 @@ namespace SpaceCommander.Mechanics.Weapons
             body = this.gameObject.GetComponent<Rigidbody>();
             damage = 10f; // + 10 along second
             maxDamage = damage;
-            speed = 100;
+            speed = 200;
             ttl = 8f;
             liveTime = ttl;
             armorPiersing = 2;
