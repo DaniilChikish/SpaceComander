@@ -6,9 +6,17 @@ ModelImporter:
   serializedVersion: 19
   fileIDToRecycleName:
     100000: //RootNode
+    100002: Camera
+    100004: Lamp
+    100006: TorpedoLauncher
     400000: //RootNode
+    400002: Camera
+    400004: Lamp
+    400006: TorpedoLauncher
     2300000: //RootNode
+    2300002: TorpedoLauncher
     3300000: //RootNode
+    3300002: TorpedoLauncher
     4300000: TorpedoLauncher
   materials:
     importMaterials: 1

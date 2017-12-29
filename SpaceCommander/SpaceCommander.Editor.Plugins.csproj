@@ -143,8 +143,10 @@
     <None Include="Assets\Scripts\FullClassDiagram.cd" />
     <None Include="Assets\Scripts\GeneralClassDiagram.cd" />
     <None Include="Assets\Scripts\MechanicsClassDiagram.cd" />
+    <None Include="Assets\Scripts\ScenariosClassDiagram.cd" />
     <None Include="Assets\Scripts\ServiceClassDiagram.cd" />
     <None Include="Assets\Scripts\UIClassDiagram.cd" />
+    <None Include="Assets\SkyBox\sor_borg\readme.txt" />
     <None Include="Assets\SpaceD\readme.txt" />
     <None Include="Assets\Standard Assets\Cameras\CameraGuidelines.txt" />
     <None Include="Assets\Standard Assets\CrossPlatformInput\CrossPlatformInputGuidelines.txt" />

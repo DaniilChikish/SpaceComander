@@ -692,7 +692,7 @@ namespace SpaceCommander.AI
         }
         public bool ExecetePointManeuver(PointManeuverType type, Vector3 point, Vector3 direction)
         {
-            aimLock = 2;
+            aimLock = 0;
             switch (type)
             {
                 case PointManeuverType.PatroolLine:
@@ -711,21 +711,21 @@ namespace SpaceCommander.AI
             switch (type)
             {
                 case TatgetManeuverType.Evasion:
-                        return Evasion(target, 0);
+                    return Evasion(target, 0);
                 case TatgetManeuverType.Flank:
-                        return Evasion(target, 2);
+                    return Evasion(target, 2);
                 case TatgetManeuverType.BoomZoom:
-                        return Evasion(target, 2);
+                    return Evasion(target, 2);
                 case TatgetManeuverType.IncreaseDistance:
-                        return Evasion(target, 0);
+                    return ChangeDistance(target, 30, 0);
                 case TatgetManeuverType.DecreaseDistance:
-                        return Evasion(target, 0);
+                    return ChangeDistance(target, -30, 0);
                 case TatgetManeuverType.SternFollow:
-                        return Evasion(target, 2);
+                    return Evasion(target, 2);
                 case TatgetManeuverType.SideFollow:
-                        return Evasion(target, 2);
+                    return Evasion(target, 2);
                 case TatgetManeuverType.ToSternDethZone:
-                        return Evasion(target, 2);
+                    return Evasion(target, 2);
             }
             return false;
         }
@@ -769,6 +769,12 @@ namespace SpaceCommander.AI
             float randomRight = UnityEngine.Random.Range(-1f, 1f);
             float randomUp = UnityEngine.Random.Range(-1f, 1f);
             Vector3 point = walker.transform.position + Vector3.right * randomDistanceRight * Mathf.Sign(randomRight) + Vector3.up * randomDistanceUp * Mathf.Sign(randomUp);
+            this.aimLock = aimLock; //locked by seconds
+            return MoveTo(point);
+        }
+        protected bool ChangeDistance(Transform hazard, float changes, float aimLock)
+        {
+            Vector3 point = walker.transform.position + (walker.transform.position - hazard.position).normalized * changes;
             this.aimLock = aimLock; //locked by seconds
             return MoveTo(point);
         }

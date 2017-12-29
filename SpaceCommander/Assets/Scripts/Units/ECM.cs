@@ -72,7 +72,7 @@ namespace SpaceCommander.Mechanics.Units
                     {
                         UseModule(new SpellFunction[] { SpellFunction.Attack });
                         UseModule(new SpellFunction[] { SpellFunction.Self, SpellFunction.Buff });
-                        return Driver.ExeceteTargetManeuver(TatgetManeuverType.IncreaseDistance, Gunner.Target.transform);
+                        return Driver.ExeceteTargetManeuver(TatgetManeuverType.Evasion, Gunner.Target.transform);
                     }
                 case TargetStateType.InSecondaryRange:
                     {
@@ -86,6 +86,10 @@ namespace SpaceCommander.Mechanics.Units
                 default:
                     return false;
             }
+        }
+        protected override bool DefenseManeuver()
+        {
+            return base.AttackManeuver();
         }
         protected override int RadarWarningResiever()
         {

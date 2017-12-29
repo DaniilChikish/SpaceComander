@@ -1,7 +1,7 @@
-﻿namespace SpaceCommander.Scenarios
+﻿namespace SpaceCommander.Mechanics
 {
     class ColliderAssertMarker : UnityEngine.MonoBehaviour
     {
-        public ColliderOrderAssert dependence;
+        public string signature;
     }
 }

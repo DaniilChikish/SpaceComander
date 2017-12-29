@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace SpaceCommander.Mechanics.Units
 {
-    class Cargoship : Unit, IEngine
+   public class Cargoship : Unit, IEngine
     {
         public const float AIUpdateRate = 20f; //per second
         //GUI

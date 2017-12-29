@@ -1,296 +1,200 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Class Name="PracticeProject.GlobalController" Collapsed="true">
-    <Position X="0.5" Y="0.5" Width="1.5" />
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="FullSignature">
+  <Class Name="SpaceCommander.Mechanics.Armor" Collapsed="true">
+    <Position X="11" Y="4.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>EgSQCElAgCSCAoBgEARAQEEAggSkAAKSAEQABBAACAI=</HashCode>
-      <FileName>Assets\Scripts\GlobalController.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="PracticeProject.SpaceShip" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="0.5" Y="4.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>HNRxmQEaQisEWNkrFiDQEQul9BBzq4AwkQWwAhYpDIo=</HashCode>
-      <FileName>Assets\Scripts\GlobalController.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" Collapsed="true" />
-  </Class>
-  <Class Name="PracticeProject.MovementController" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="0.5" Y="6.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAQAAACAAAAAAAAEAAADAAQAAAAIEgEAACAAAAAAAAA=</HashCode>
-      <FileName>Assets\Scripts\GlobalController.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" Collapsed="true" />
-  </Class>
-  <Class Name="PracticeProject.ShootController" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="2.25" Y="6.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAUAAAAAAABAkQIRAAAAAAgAAAAIAAAAAAgAEAAAAAA=</HashCode>
-      <FileName>Assets\Scripts\GlobalController.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" Collapsed="true" />
-  </Class>
-  <Class Name="PracticeProject.Weapon" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="4" Y="6.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>ADQIAAAIBCAADAAAAAAADAAEACQEAAAwAAAAAAAxABA=</HashCode>
-      <FileName>Assets\Scripts\GlobalController.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" Collapsed="true" />
-  </Class>
-  <Class Name="PracticeProject.Round" Collapsed="true">
-    <Position X="4" Y="7.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAQAAACAAAAAgAAAAAAAAAgBAAAIAQAMAAAAAAAAAAA=</HashCode>
-      <FileName>Assets\Scripts\GlobalController.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="PracticeProject.SelfguidedMissile" Collapsed="true">
-    <Position X="6.75" Y="7.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAQAAAAAACAAAQCAIAAAAAgBAAABAIAIBIEAAAABAAI=</HashCode>
-      <FileName>Assets\Scripts\GlobalController.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="PracticeProject.Torpedo" Collapsed="true">
-    <Position X="8.5" Y="7.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAQAAAAAACAAAAAAIAEAAAgBAAAAAIAIFAEAAAABCAI=</HashCode>
-      <FileName>Assets\Scripts\GlobalController.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="PracticeProject.Randomizer" Collapsed="true">
-    <Position X="2.5" Y="0.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AACAAAAAQAAAAAAAAAAAACgAEAAIAAgQAAAAAAAAggA=</HashCode>
-      <FileName>Assets\Scripts\GlobalController.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="PracticeProject.Scenario" Collapsed="true">
-    <Position X="0.5" Y="1.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AASAAAAAACAAAAAAAAQAAAQAAAAAAAAAAAAAAAABAAA=</HashCode>
-      <FileName>Assets\Scripts\Scenarios\Scenario.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="PracticeProject.CameraMovementScript" Collapsed="true">
-    <Position X="7.5" Y="2.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAQAABAAACAAAAAAAAAAAAAAgAAIAQABAAAAAAAAAAA=</HashCode>
-      <FileName>Assets\Scripts\CameraMovementScript.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="PracticeProject.SerializeData&lt;TKey, TValue&gt;" Collapsed="true">
-    <Position X="4.25" Y="0.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAEAIAAAAAAAAAAAAAABAADAAAAAAAAAAAAA=</HashCode>
-      <FileName>Assets\Scripts\SerializeData.cs</FileName>
+      <HashCode>ACRAAAQIACAAiBAAAAAAAAAEAAQAAAAcABAAEAAQQAA=</HashCode>
+      <FileName>Assets\Scripts\Units\Armor.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="PracticeProject.SerializeSettings" Collapsed="true">
-    <Position X="6" Y="0.5" Width="1.5" />
+  <Class Name="SpaceCommander.Mechanics.Round" Collapsed="true">
+    <Position X="6.5" Y="6.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAIAAAAAAIACQAAAAAAAAAAAAAAAAAAAAAAAgAA=</HashCode>
-      <FileName>Assets\Scripts\SerializeData.cs</FileName>
+      <HashCode>AAQAAACAAAAAgAAAAAAAAAgBAABIAQAMAQAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\WeponScript\WeaponAbstract.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="PracticeProject.MainMenu" Collapsed="true">
-    <Position X="2.25" Y="2.75" Width="1.5" />
+  <Class Name="SpaceCommander.Mechanics.Unit" Collapsed="true">
+    <Position X="2.25" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAQAAAAAACIACEAAAAAAAAgEAAAAAAAAABCAAA1BAAA=</HashCode>
-      <FileName>Assets\GUI\MainMenu.cs</FileName>
+      <HashCode>AIhDAAMNAAAACAw4AgDQEAABQQkRAKAAEQCFEgAlQIw=</HashCode>
+      <FileName>Assets\Scripts\Units\UnitAbstract.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="PracticeProject.HUDBase" Collapsed="true">
-    <Position X="0.5" Y="2.75" Width="1.5" />
+  <Class Name="SpaceCommander.Mechanics.WeaponBase" Collapsed="true">
+    <Position X="7.5" Y="4.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>IEWgCAAAEKIAAAAAAAIJAAAEAAAAACgEJBGAAAxBAAI=</HashCode>
-      <FileName>Assets\GUI\HUDBase.cs</FileName>
+      <HashCode>ABUMAQBICCAAjIAAYBgAyCgVADJFABAWSYAABAARCAA=</HashCode>
+      <FileName>Assets\Scripts\WeponScript\WeaponAbstract.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.ShellWeapon" Collapsed="true">
+    <Position X="5.75" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACQAAAAEAAAABIAEAAABAAAEAAgEAAAACIAAEAAgAEA=</HashCode>
+      <FileName>Assets\Scripts\WeponScript\WeaponAbstract.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="PracticeProject.UIWindowInfo" Collapsed="true">
-    <Position X="5.75" Y="2.75" Width="1.5" />
+  <Class Name="SpaceCommander.Mechanics.MagWeapon" Collapsed="true">
+    <Position X="7.5" Y="5.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAGAAQIAADAAAEABAAABAAAAAAAAA=</HashCode>
-      <FileName>Assets\GUI\UIUtility.cs</FileName>
+      <HashCode>ACQAAAAEAAAABIAEAAABAAAEAAAEAAAACIAAEAAgAEA=</HashCode>
+      <FileName>Assets\Scripts\WeponScript\WeaponAbstract.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="PracticeProject.UIUtil" Collapsed="true">
-    <Position X="4" Y="2.75" Width="1.5" />
+  <Class Name="SpaceCommander.Mechanics.ForceShield" Collapsed="true">
+    <Position X="12.75" Y="4.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>gEAAAgACEAAAAACAAAIAAAADAAAoABAAAQAAAAKAAAA=</HashCode>
-      <FileName>Assets\GUI\UIUtility.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="PracticeProject.Armor" Collapsed="true">
-    <Position X="5.75" Y="6.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>ACQAAAQIACAAgBAAAAAAAAAAAAAAAAAcABAAAAAAQAA=</HashCode>
-      <FileName>Assets\Scripts\Units\Armor.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="PracticeProject.ForceShield" Collapsed="true">
-    <Position X="7.5" Y="6.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>gCwABAAAECAgABAAAAAgAAIAQAAIAAAACAgAQAAAAEA=</HashCode>
+      <HashCode>gCwABAAAEGAggBAAAAAQAAIAQAAIAABASAgAQIAIAEA=</HashCode>
       <FileName>Assets\Scripts\Units\ForceShield.cs</FileName>
     </TypeIdentifier>
+    <Lollipop Position="0.2" />
   </Class>
-  <Interface Name="PracticeProject.IUnit" Collapsed="true">
-    <Position X="0.5" Y="4" Width="1.5" />
+  <Class Name="SpaceCommander.Mechanics.EnergyWeapon" Collapsed="true">
+    <Position X="9.25" Y="5.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAgAAAAAAAgQAAAAAAAEQAAAAAAAAA=</HashCode>
-      <FileName>Assets\Scripts\GlobalController.cs</FileName>
+      <HashCode>gARAAIAAABAABIAAAAAAAIAEAAAEAAAACIAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\WeponScript\WeaponAbstract.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Units.BattleDrone" Collapsed="true">
+    <Position X="2.25" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EoRBIQoYQmkkyBwqBgHQEgIdWQFAgIQwEAiEEhYFQCg=</HashCode>
+      <FileName>Assets\Scripts\Units\BattleDrone.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Units.SpaceTurret" Collapsed="true">
+    <Position X="4" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EoRhAAoIQGAECFwqBgHQEAIdYQFAAIgQEACEEhQFQAo=</HashCode>
+      <FileName>Assets\Scripts\Units\SpaceTurret.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.AI.SpaceShip" Collapsed="true">
+    <Position X="0.5" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>FtRxMQsaRmskTt8rBmDQExOf+VFqo4QwkA2kWhYtXAo=</HashCode>
+      <FileName>Assets\Scripts\Units\UnitAbstract.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.Missile" Collapsed="true">
+    <Position X="8.5" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAACAAQRAAAAEAAAgAAQBAAYQIEACAAAABAAA=</HashCode>
+      <FileName>Assets\Scripts\WeponScript\WeaponAbstract.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Mechanics.SelfguidedMissile" Collapsed="true">
+    <Position X="8.5" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAUAAAAAACAAAAAAIAAAAAAAAAAAgAAAAAAAAAAACAI=</HashCode>
+      <FileName>Assets\Scripts\WeponScript\WeaponAbstract.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.AI.SpaceShipShootController" Collapsed="true">
+    <Position X="2.25" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAEAABAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Units\ShootController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.AI.ShootController" Collapsed="true">
+    <Position X="4" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAABABADAUQIQIAAAACgAAAAAAAgACAgAEAEAAAI=</HashCode>
+      <FileName>Assets\Scripts\Units\ShootController.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="SpaceCommander.AI.TurretShootController" Collapsed="true">
+    <Position X="4" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAABAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Units\ShootController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.AI.SpaceMovementController" Collapsed="true">
+    <Position X="0.5" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAYqgACMCoOERhCESAECAAbQUBlIUgAQyGAgJggFEkE=</HashCode>
+      <FileName>Assets\Scripts\Units\SpaceMovementController.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Interface Name="SpaceCommander.General.IArmor" Collapsed="true">
+    <Position X="11" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABAAAAAAAAACAAAAAAAAAAEAAQAAAAAAAAAEAAQAAA=</HashCode>
+      <FileName>Assets\Scripts\Service\Interfaces.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="PracticeProject.IDriver" Collapsed="true">
-    <Position X="0.5" Y="5.75" Width="1.5" />
+  <Interface Name="SpaceCommander.General.IDriver" Collapsed="true">
+    <Position X="0.5" Y="3.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAQAAACAAAAAAAAAAAABAAAAAAAIEgAAACAAAAAAAAA=</HashCode>
-      <FileName>Assets\Scripts\GlobalController.cs</FileName>
+      <HashCode>AAQAAACEAgAEAAAAAAAAAAAAQAAIEgAAACAAAAgEAAE=</HashCode>
+      <FileName>Assets\Scripts\Service\Interfaces.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="PracticeProject.IGunner" Collapsed="true">
-    <Position X="2.25" Y="5.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAQAAAAAAAAAEQAQAAAAAAgAAAAAAAAAAAgAAAAAAAA=</HashCode>
-      <FileName>Assets\Scripts\GlobalController.cs</FileName>
-    </TypeIdentifier>
-  </Interface>
-  <Interface Name="PracticeProject.IWeapon" Collapsed="true">
-    <Position X="4" Y="5.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>ACAAAAAAAAAADAAAAAAABAAEACAEAAAwAAAAAAAQABA=</HashCode>
-      <FileName>Assets\Scripts\GlobalController.cs</FileName>
-    </TypeIdentifier>
-  </Interface>
-  <Interface Name="PracticeProject.IShell" Collapsed="true">
-    <Position X="3" Y="8.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAACAAAAAAAAAAAAAAAAFAAAIAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Assets\Scripts\GlobalController.cs</FileName>
-    </TypeIdentifier>
-  </Interface>
-  <Interface Name="PracticeProject.IEnergy" Collapsed="true">
-    <Position X="5" Y="8.5" Width="1.5" />
+  <Interface Name="SpaceCommander.General.IEnergy" Collapsed="true">
+    <Position X="6.5" Y="7.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAACAAAAAAAAAAAAAAAAFAAAIAAAABAAAAAAAAAA=</HashCode>
-      <FileName>Assets\Scripts\GlobalController.cs</FileName>
+      <FileName>Assets\Scripts\Service\Interfaces.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="PracticeProject.IImpact" Collapsed="true">
-    <Position X="4" Y="4.75" Width="1.5" />
+  <Interface Name="SpaceCommander.General.IEngine" Collapsed="true">
+    <Position X="5.75" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAEACAAAAAAAAAABAAAEAAAAAAAEAAAAQAA=</HashCode>
+      <FileName>Assets\Scripts\Service\Interfaces.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SpaceCommander.General.IGunner" Collapsed="true">
+    <Position X="4" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAABACAEQAQAAAAACAAAAAAAAgACAgAAAEAAAI=</HashCode>
+      <FileName>Assets\Scripts\Service\Interfaces.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="SpaceCommander.General.IImpact" Collapsed="true">
+    <Position X="7.5" Y="2" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAEAAAAAAQQAAAAAAIAAAAAAAAAAAA=</HashCode>
-      <FileName>Assets\Scripts\GlobalController.cs</FileName>
+      <FileName>Assets\Scripts\Service\Interfaces.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Enum Name="PracticeProject.Languages" Collapsed="true">
-    <Position X="7.5" Y="9.75" Width="1.5" />
+  <Interface Name="SpaceCommander.General.IShell" Collapsed="true">
+    <Position X="6.5" Y="8" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAACAAAAAAAAAAAAABAAAAACAAAAAAAAAAAA=</HashCode>
-      <FileName>Assets\Scripts\GlobalController.cs</FileName>
+      <HashCode>AAAAAACAAAAAAAAAAAAAAAAFAAAIAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Service\Interfaces.cs</FileName>
     </TypeIdentifier>
-  </Enum>
-  <Enum Name="PracticeProject.UnitClass">
-    <Position X="0.5" Y="9.75" Width="1.5" />
+  </Interface>
+  <Interface Name="SpaceCommander.General.IShield" Collapsed="true">
+    <Position X="12.75" Y="3.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAEAAAAAAABAABBAEAAAIEAAAACAAACQAAAAA=</HashCode>
-      <FileName>Assets\Scripts\GlobalController.cs</FileName>
+      <HashCode>ACAAAAAAAAAAABAAAAAAAAIAAAAAAABACAAAAIAIAAA=</HashCode>
+      <FileName>Assets\Scripts\Service\Interfaces.cs</FileName>
     </TypeIdentifier>
-  </Enum>
-  <Enum Name="PracticeProject.UnitStateType" Collapsed="true">
-    <Position X="7.5" Y="11.25" Width="1.5" />
+  </Interface>
+  <Interface Name="SpaceCommander.General.ISpaceShipObservable" Collapsed="true">
+    <Position X="5.75" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAABEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAA=</HashCode>
-      <FileName>Assets\Scripts\GlobalController.cs</FileName>
+      <HashCode>AIAAIAIAAAAAAAwAAABAEAAACAAAAAAAAQAASAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Service\Interfaces.cs</FileName>
     </TypeIdentifier>
-  </Enum>
-  <Enum Name="PracticeProject.SquadStatus" Collapsed="true">
-    <Position X="7.5" Y="12.75" Width="1.5" />
+  </Interface>
+  <Interface Name="SpaceCommander.General.IWeapon" Collapsed="true">
+    <Position X="7.5" Y="3.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAACAAAI=</HashCode>
-      <FileName>Assets\Scripts\GlobalController.cs</FileName>
+      <HashCode>AAAAAAAAAAAADIAAABAAACgAACAEAAASCYAAAAAQAAA=</HashCode>
+      <FileName>Assets\Scripts\Service\Interfaces.cs</FileName>
     </TypeIdentifier>
-  </Enum>
-  <Enum Name="PracticeProject.TacticSituation" Collapsed="true">
-    <Position X="7.5" Y="10.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAABAAAAAAAAAAAAIAAAAAAAAIAAiAAAAA=</HashCode>
-      <FileName>Assets\Scripts\GlobalController.cs</FileName>
-    </TypeIdentifier>
-  </Enum>
-  <Enum Name="PracticeProject.TargetStateType" Collapsed="true">
-    <Position X="7.5" Y="12" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAQAAAAAAAAQAAQAAAAAAEAAAAAACAAAAAAAAAAA=</HashCode>
-      <FileName>Assets\Scripts\GlobalController.cs</FileName>
-    </TypeIdentifier>
-  </Enum>
-  <Enum Name="PracticeProject.Army" Collapsed="true">
-    <Position X="7.5" Y="13.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAACAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAABAAAAA=</HashCode>
-      <FileName>Assets\Scripts\GlobalController.cs</FileName>
-    </TypeIdentifier>
-  </Enum>
-  <Enum Name="PracticeProject.WeaponType">
-    <Position X="0.5" Y="12.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAgAAAAAAAAAAAAAAAAAAAAACGAAAAAAAAACA=</HashCode>
-      <FileName>Assets\Scripts\GlobalController.cs</FileName>
-    </TypeIdentifier>
-  </Enum>
-  <Enum Name="PracticeProject.ShellType">
-    <Position X="2.25" Y="9.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAgAAAAAAgQACAgAAAIAEIAhABAAABIAAIAAAAAAAA=</HashCode>
-      <FileName>Assets\Scripts\GlobalController.cs</FileName>
-    </TypeIdentifier>
-  </Enum>
-  <Enum Name="PracticeProject.ShellLineType">
-    <Position X="4" Y="9.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AQAAAAAAgAAAAAEAgAAAAAAAAAAAAAAIAAAAAAQBAAA=</HashCode>
-      <FileName>Assets\Scripts\GlobalController.cs</FileName>
-    </TypeIdentifier>
-  </Enum>
-  <Enum Name="PracticeProject.EnergyType">
-    <Position X="4" Y="12" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAQAAAAAAAAAAAAAAEAAAAAAAAAAAAAAQCA=</HashCode>
-      <FileName>Assets\Scripts\GlobalController.cs</FileName>
-    </TypeIdentifier>
-  </Enum>
-  <Enum Name="PracticeProject.MissileType">
-    <Position X="5.75" Y="9.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAgAIAAAAAAAAAAAAAAAAAAEAEAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Assets\Scripts\GlobalController.cs</FileName>
-    </TypeIdentifier>
-  </Enum>
-  <Enum Name="PracticeProject.TorpedoType">
-    <Position X="5.75" Y="11.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAABAAAAQAAAAA=</HashCode>
-      <FileName>Assets\Scripts\GlobalController.cs</FileName>
-    </TypeIdentifier>
-  </Enum>
-  <Enum Name="PracticeProject.BlastType">
-    <Position X="5.75" Y="13" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAwIAAAAgAAgAAAAAAAAAAAAEAAAAIAEAAAAA=</HashCode>
-      <FileName>Assets\Scripts\GlobalController.cs</FileName>
-    </TypeIdentifier>
-  </Enum>
-  <Delegate Name="PracticeProject.SortSpaceShip" Collapsed="true">
-    <Position X="0.5" Y="7.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAgAAAAAAA=</HashCode>
-      <FileName>Assets\Scripts\GlobalController.cs</FileName>
-    </TypeIdentifier>
-  </Delegate>
+  </Interface>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>

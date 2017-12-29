@@ -30,8 +30,13 @@ namespace SpaceCommander.Scenarios
                 for (int i = 0; i < orders.Length; i++)
                 {
                     outp.Append("\n\r" + (i + 1) + ". " + orderBrief[i + 1]);
-                    if (orders[i].GetType() == typeof(TimerOrderAssert) && orders[i].State == OrderAccertState.InProgress)
-                        outp.Append("(" + Math.Round(((TimerOrderAssert)orders[i]).Counter / 60, 2) + "min. left)");
+                    if (orders[i].State == OrderAccertState.InProgress)
+                    {
+                        if (orders[i].passIf!=null && orders[i].passIf.GetType() == typeof(TimerEventChecker))
+                            outp.Append("(" + Math.Round(((TimerEventChecker)orders[i].passIf).Counter / 60, 2) + "min. left)");
+                        else if (orders[i].failIf != null && orders[i].failIf.GetType() == typeof(TimerEventChecker))
+                            outp.Append("(" + Math.Round(((TimerEventChecker)orders[i].failIf).Counter / 60, 2) + "min. left)");
+                    }
                     else
                         outp.Append("(" + Global.Texts(orders[i].State.ToString()) + ")");
                     if (!orders[i].IsNecessary)

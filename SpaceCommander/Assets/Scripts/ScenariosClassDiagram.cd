@@ -1,0 +1,125 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="FullSignature">
+  <Class Name="SpaceCommander.Scenarios.Mission3" Collapsed="true">
+    <Position X="0.5" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAQAAAAAAAAAEAAAAAAAAAAACAA=</HashCode>
+      <FileName>Assets\Scripts\Scenarios\Mission3.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Scenarios.Mission4" Collapsed="true">
+    <Position X="2.75" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAAAACAAAAAAAAQAAAgAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Scenarios\Mission4.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Scenarios.ColliderAssertMarker" Collapsed="true">
+    <Position X="7.25" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Scenarios\Order Asserts\ColliderAssertMarker.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Scenarios.ColliderOrderAssert" Collapsed="true">
+    <Position X="7.25" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAQCQAACAAEBAAAEIAAAAIAACAAIAMQAAAQAgAAAA=</HashCode>
+      <FileName>Assets\Scripts\Scenarios\Order Asserts\ColliderOrderAssert.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Scenarios.ObjectiveOrderAssert" Collapsed="true">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <InheritanceLine Type="SpaceCommander.Scenarios.OrderAssert" ManuallyRouted="true" FixedFromPoint="true">
+      <Path>
+        <Point X="5.75" Y="1.191" />
+        <Point X="5.75" Y="1.625" />
+        <Point X="1.25" Y="1.625" />
+        <Point X="1.25" Y="1.191" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAIEAAAAEAAAAAAAAQAAAAIAAAAAAAACAA=</HashCode>
+      <FileName>Assets\Scripts\Scenarios\Order Asserts\ObjectiveOrderAssert.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Scenarios.OnDestroyAllOfOrderAssert" Collapsed="true">
+    <Position X="2.75" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAEAAIAAACAAAAAAAAAgAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Scenarios\Order Asserts\OnDestroyAllOfOrderAssert.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Scenarios.OnDestroyOneOfOrderAssert" Collapsed="true">
+    <Position X="5" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAEAAIAAACAAAAAAAAAgAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Scenarios\Order Asserts\OnDestroyOneOfOrderAssert.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Scenarios.OnDestroyOrderAssert" Collapsed="true">
+    <Position X="9.5" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAEAAIAAAAAAQAAAAAAgAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Scenarios\Order Asserts\OnDestroyOrderAssert.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Scenarios.OnKeyDownOrderAssert" Collapsed="true">
+    <Position X="0.5" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAIEAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Scenarios\Order Asserts\OnKeyDownOrderAssert.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Scenarios.OrderAssert" Collapsed="true">
+    <Position X="5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CAAAAAAAAAQAAAAEAAAAAAAAAAAAgAAEAAAABAgAAAA=</HashCode>
+      <FileName>Assets\Scripts\Scenarios\Order Asserts\OrderAssert.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Scenarios.TimerOrderAssert" Collapsed="true">
+    <Position X="9.5" Y="0.5" Width="1.5" />
+    <InheritanceLine Type="SpaceCommander.Scenarios.OrderAssert" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="5.75" Y="1.191" />
+        <Point X="5.75" Y="1.625" />
+        <Point X="10.25" Y="1.625" />
+        <Point X="10.25" Y="1.191" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAEAAIAAAAQAAACEAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Scenarios\Order Asserts\TimerOrderAssert.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Scenarios.Scenario" Collapsed="true">
+    <Position X="2.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAACBACBAgAAAACSAAAQAAAACIAAAAAgAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Scenarios\Scenario.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpaceCommander.Scenarios.TraningScenario" Collapsed="true">
+    <Position X="5" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAAAACAAAAAAAAQAAAgAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Scenarios\TraningScenario.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="SpaceCommander.Scenarios.Method" Collapsed="true">
+    <Position X="7.25" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAQAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Scenarios\Order Asserts\OrderAssert.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SpaceCommander.Scenarios.OrderAccertState" Collapsed="true">
+    <Position X="9" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAIAAAAAAAgAAAAAAAAAAAAAABAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Scenarios\Scenario.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

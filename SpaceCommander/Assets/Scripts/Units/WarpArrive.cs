@@ -3,7 +3,7 @@ using SpaceCommander.General;
 
 namespace SpaceCommander.Mechanics
 {
-    class WarpArrive : MonoBehaviour
+    public class WarpArrive : MonoBehaviour
     {
         public GameObject ArriveUnit;
         private GlobalController Global;
@@ -11,6 +11,7 @@ namespace SpaceCommander.Mechanics
         public bool isArrive;
         public Vector3 ancor;
         public float Speed;// скорость ракеты
+        public bool showExclamation;
         private void Start()
         {
             Global = GlobalController.Instance;
@@ -30,9 +31,9 @@ namespace SpaceCommander.Mechanics
         }
         private void OnGUI()
         {
-            if (isArrive)
+            if (showExclamation&&isArrive)
             {
-                hud.ShowExclamation(Global.Texts("Reinforcements arrive!"));
+                hud.ShowExclamation(Global.Texts("Warp arrival detected!"));
             }
         }
 
