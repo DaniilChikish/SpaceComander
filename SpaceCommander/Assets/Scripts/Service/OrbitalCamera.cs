@@ -61,7 +61,7 @@ namespace SpaceCommander.Mechanics
         void Start()
         {
             owner = this.gameObject;
-            mainCam = this.transform.FindChild("Main Camera");
+            mainCam = this.transform.Find("Main Camera");
         }
 
         private void FixedUpdate()

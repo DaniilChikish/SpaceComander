@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using SpaceCommander.Mechanics.Weapons;
+using System.Globalization;
 
 namespace SpaceCommander.Mechanics
 {
@@ -45,8 +46,8 @@ namespace SpaceCommander.Mechanics
         {
             this.owner = owner;
             Global = GlobalController.Instance;
-            activeTime = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "activeTime"));
-            coolingTime = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "coolingTime"));
+            activeTime = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "activeTime"), CultureInfo.InvariantCulture);
+            coolingTime = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "coolingTime"), CultureInfo.InvariantCulture);
             this.function = new List<SpellFunction>();
         }
         public virtual void Enable()

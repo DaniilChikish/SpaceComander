@@ -4,6 +4,7 @@ using SpaceCommander.Mechanics;
 using SpaceCommander.Mechanics.Modules;
 using SpaceCommander.Mechanics.Units;
 using System;
+using System.Globalization;
 using UnityEngine;
 
 namespace SpaceCommander.Test
@@ -16,13 +17,13 @@ namespace SpaceCommander.Test
         {
             type = UnitClass.Scout;
 
-            speedThrust = Convert.ToSingle(Global.SpecINI.GetValue(typeof(Scout).ToString(), "speedThrust"));
-            speedRotation = Convert.ToSingle(Global.SpecINI.GetValue(typeof(Scout).ToString(), "speedRotation"));
-            speedShift = Convert.ToSingle(Global.SpecINI.GetValue(typeof(Scout).ToString(), "speedShift"));
-            radarRange = Convert.ToSingle(Global.SpecINI.GetValue(typeof(Scout).ToString(), "radarRange"));
-            radarPover = Convert.ToSingle(Global.SpecINI.GetValue(typeof(Scout).ToString(), "radarPover"));
-            stealthness = Convert.ToSingle(Global.SpecINI.GetValue(typeof(Scout).ToString(), "stealthness"));
-            radiolink = Convert.ToSingle(Global.SpecINI.GetValue(typeof(Scout).ToString(), "radiolink"));
+            speedThrust = Convert.ToSingle(Global.SpecINI.GetValue(typeof(Scout).ToString(), "speedThrust"), CultureInfo.InvariantCulture);
+            speedRotation = Convert.ToSingle(Global.SpecINI.GetValue(typeof(Scout).ToString(), "speedRotation"), CultureInfo.InvariantCulture);
+            speedShift = Convert.ToSingle(Global.SpecINI.GetValue(typeof(Scout).ToString(), "speedShift"), CultureInfo.InvariantCulture);
+            radarRange = Convert.ToSingle(Global.SpecINI.GetValue(typeof(Scout).ToString(), "radarRange"), CultureInfo.InvariantCulture);
+            radarPover = Convert.ToSingle(Global.SpecINI.GetValue(typeof(Scout).ToString(), "radarPover"), CultureInfo.InvariantCulture);
+            stealthness = Convert.ToSingle(Global.SpecINI.GetValue(typeof(Scout).ToString(), "stealthness"), CultureInfo.InvariantCulture);
+            radiolink = Convert.ToSingle(Global.SpecINI.GetValue(typeof(Scout).ToString(), "radiolink"), CultureInfo.InvariantCulture);
 
             //armor.maxHitpoints = Convert.ToSingle(Global.SpecINI.ReadINI(typeof(Scout).ToString(), "maxHitpoints"));
             //armor.hitpoints = armor.maxHitpoints;

@@ -6,6 +6,7 @@ using DeusUtility;
 using SpaceCommander.AI;
 using SpaceCommander.UI;
 using SpaceCommander.General;
+using System.Globalization;
 
 namespace SpaceCommander.Mechanics.Units
 {
@@ -112,11 +113,11 @@ namespace SpaceCommander.Mechanics.Units
 
             impacts = new List<IImpact>();
 
-            this.gameObject.transform.FindChild("MinimapPict").FindChild("AlliesMinimapPict").GetComponent<Renderer>().enabled = false;
-            this.gameObject.transform.FindChild("MinimapPict").FindChild("EnemyMinimapPict").GetComponent<Renderer>().enabled = false;
+            this.gameObject.transform.Find("MinimapPict").Find("AlliesMinimapPict").GetComponent<Renderer>().enabled = false;
+            this.gameObject.transform.Find("MinimapPict").Find("EnemyMinimapPict").GetComponent<Renderer>().enabled = false;
 
             if (Team == Global.playerArmy)
-                this.gameObject.transform.FindChild("MinimapPict").FindChild("AlliesMinimapPict").GetComponent<Renderer>().enabled = true;
+                this.gameObject.transform.Find("MinimapPict").Find("AlliesMinimapPict").GetComponent<Renderer>().enabled = true;
 
             Debug.Log("Unit " + this.gameObject.name + " started");
         }
@@ -126,16 +127,16 @@ namespace SpaceCommander.Mechanics.Units
         }
         protected virtual void StatsUp()
         {
-            acceleration = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "acceleration"));
-            speedThrust = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "speedThrust"));
-            speedRotation = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "speedRotation"));
-            speedShift = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "speedShift"));
-            stealthness = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "stealthness"));
+            acceleration = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "acceleration"), CultureInfo.InvariantCulture);
+            speedThrust = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "speedThrust"), CultureInfo.InvariantCulture);
+            speedRotation = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "speedRotation"), CultureInfo.InvariantCulture);
+            speedShift = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "speedShift"), CultureInfo.InvariantCulture);
+            stealthness = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "stealthness"), CultureInfo.InvariantCulture);
 
-            float maxHitpoints = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "maxHitpoints"));
-            float shellResist = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "shellResist"));
-            float energyResist = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "energyResist"));
-            float blastResist = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "blastResist"));
+            float maxHitpoints = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "maxHitpoints"), CultureInfo.InvariantCulture);
+            float shellResist = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "shellResist"), CultureInfo.InvariantCulture);
+            float energyResist = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "energyResist"), CultureInfo.InvariantCulture);
+            float blastResist = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "blastResist"), CultureInfo.InvariantCulture);
             armor.StatUp(maxHitpoints, maxHitpoints, shellResist, energyResist, blastResist);
         }
         protected void Update()//______________________Update
@@ -194,7 +195,7 @@ namespace SpaceCommander.Mechanics.Units
                 cooldownDetected -= Time.deltaTime;
             if (cooldownDetected < 0)
             {
-                this.gameObject.transform.FindChild("MinimapPict").FindChild("EnemyMinimapPict").GetComponent<Renderer>().enabled = false;
+                this.gameObject.transform.Find("MinimapPict").Find("EnemyMinimapPict").GetComponent<Renderer>().enabled = false;
             }
             if (impacts.Count > 0)
             {

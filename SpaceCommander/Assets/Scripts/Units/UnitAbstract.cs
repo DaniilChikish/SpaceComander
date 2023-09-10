@@ -6,6 +6,8 @@ using DeusUtility;
 using SpaceCommander.General;
 using SpaceCommander.UI;
 using SpaceCommander.Mechanics;
+using System.Globalization;
+
 namespace SpaceCommander.Mechanics
 {
     public abstract class Unit : MonoBehaviour
@@ -276,15 +278,15 @@ namespace SpaceCommander.AI
 
             manualController = FindObjectOfType<ShipManualController>();
 
-            aliesMap = this.gameObject.transform.FindChild("MinimapPict").FindChild("AlliesMinimapPict").GetComponent<Renderer>();
+            aliesMap = this.gameObject.transform.Find("MinimapPict").Find("AlliesMinimapPict").GetComponent<Renderer>();
             aliesMap.enabled = false;
-            enemyMap = this.gameObject.transform.FindChild("MinimapPict").FindChild("EnemyMinimapPict").GetComponent<Renderer>();
+            enemyMap = this.gameObject.transform.Find("MinimapPict").Find("EnemyMinimapPict").GetComponent<Renderer>();
             enemyMap.enabled = false;
-            selectedMap = this.gameObject.transform.FindChild("MinimapPict").FindChild("SelectedMinimapPict").GetComponent<Renderer>();
+            selectedMap = this.gameObject.transform.Find("MinimapPict").Find("SelectedMinimapPict").GetComponent<Renderer>();
             selectedMap.enabled = false;
 
             if (Team == Global.playerArmy)
-                this.gameObject.transform.FindChild("MinimapPict").FindChild("AlliesMinimapPict").GetComponent<Renderer>().enabled = true;
+                this.gameObject.transform.Find("MinimapPict").Find("AlliesMinimapPict").GetComponent<Renderer>().enabled = true;
 
             Debug.Log("Unit " + this.gameObject.name + " started");
         }
@@ -294,24 +296,24 @@ namespace SpaceCommander.AI
         }
         protected virtual void StatsUp()
         {
-            acceleration = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "acceleration"));
-            speedThrust = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "speedThrust"));
-            speedRotation = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "speedRotation"));
-            speedShift = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "speedShift"));
-            radarRange = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "radarRange"));
-            radarPover = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "radarPover"));
-            stealthness = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "stealthness"));
-            radiolink = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "radiolink"));
+            acceleration = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "acceleration"), CultureInfo.InvariantCulture);
+            speedThrust = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "speedThrust"), CultureInfo.InvariantCulture);
+            speedRotation = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "speedRotation"), CultureInfo.InvariantCulture);
+            speedShift = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "speedShift"), CultureInfo.InvariantCulture);
+            radarRange = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "radarRange"), CultureInfo.InvariantCulture);
+            radarPover = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "radarPover"), CultureInfo.InvariantCulture);
+            stealthness = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "stealthness"), CultureInfo.InvariantCulture);
+            radiolink = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "radiolink"), CultureInfo.InvariantCulture);
 
-            float maxHitpoints = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "maxHitpoints"));
-            float shellResist = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "shellResist"));
-            float energyResist = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "energyResist"));
-            float blastResist = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "blastResist"));
+            float maxHitpoints = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "maxHitpoints"), CultureInfo.InvariantCulture);
+            float shellResist = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "shellResist"), CultureInfo.InvariantCulture);
+            float energyResist = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "energyResist"), CultureInfo.InvariantCulture);
+            float blastResist = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "blastResist"), CultureInfo.InvariantCulture);
             armor.StatUp(maxHitpoints, maxHitpoints, shellResist, energyResist, blastResist);
 
-            shield.MaxCampacity = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "maxCampacity"));
+            shield.MaxCampacity = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "maxCampacity"), CultureInfo.InvariantCulture);
             shield.Force = shield.MaxCampacity;
-            shield.Recharging = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "recharging"));
+            shield.Recharging = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "recharging"), CultureInfo.InvariantCulture);
         }
         protected void Update()//______________________Update
         {

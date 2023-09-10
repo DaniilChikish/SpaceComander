@@ -2,6 +2,7 @@
 using SpaceCommander.General;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using UnityEngine;
@@ -197,16 +198,16 @@ namespace SpaceCommander.Mechanics
             //Global.SpecINI.Write(this.GetType().ToString(), "PreAiming", PreAiming.ToString());
             //Global.SpecINI.Write(this.GetType().ToString(), "roundSpeed", roundSpeed.ToString());
 
-            float dispersion = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "dispersion"));
-            float shildBlinkTime = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "shildBlinkTime"));
-            float firerate = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "firerate"));
-            float roundSpeed = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "roundSpeed"));
-            float range = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "range"));
+            float dispersion = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "dispersion"), CultureInfo.InvariantCulture);
+            float shildBlinkTime = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "shildBlinkTime"), CultureInfo.InvariantCulture);
+            float firerate = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "firerate"), CultureInfo.InvariantCulture);
+            float roundSpeed = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "roundSpeed"), CultureInfo.InvariantCulture);
+            float range = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "range"), CultureInfo.InvariantCulture);
             base.StatUp(dispersion, shildBlinkTime, roundSpeed, firerate, range);
 
-            ammoCampacity = Convert.ToInt32(Global.SpecINI.GetValue(this.GetType().ToString(), "ammoCampacity"));
-            reloadingTime = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "reloadingTime"));
-            PreAiming = Convert.ToBoolean(Global.SpecINI.GetValue(this.GetType().ToString(), "PreAiming"));
+            ammoCampacity = Convert.ToInt32(Global.SpecINI.GetValue(this.GetType().ToString(), "ammoCampacity"), CultureInfo.InvariantCulture);
+            reloadingTime = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "reloadingTime"), CultureInfo.InvariantCulture);
+            PreAiming = Convert.ToBoolean(Global.SpecINI.GetValue(this.GetType().ToString(), "PreAiming"), CultureInfo.InvariantCulture);
 
             ammo = AmmoCampacity;
         }
@@ -272,16 +273,16 @@ namespace SpaceCommander.Mechanics
             //Global.SpecINI.Write(this.GetType().ToString(), "PreAiming", PreAiming.ToString());
             //Global.SpecINI.Write(this.GetType().ToString(), "roundSpeed", roundSpeed.ToString());
 
-            float dispersion = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "dispersion"));
-            float shildBlinkTime = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "shildBlinkTime"));
-            float firerate = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "firerate"));
-            float roundSpeed = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "roundSpeed"));
-            float range = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "range"));
+            float dispersion = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "dispersion"), CultureInfo.InvariantCulture);
+            float shildBlinkTime = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "shildBlinkTime"), CultureInfo.InvariantCulture);
+            float firerate = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "firerate"), CultureInfo.InvariantCulture);
+            float roundSpeed = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "roundSpeed"), CultureInfo.InvariantCulture);
+            float range = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "range"), CultureInfo.InvariantCulture);
             base.StatUp(dispersion, shildBlinkTime, roundSpeed, firerate, range);
 
-            ammoCampacity = Convert.ToInt32(Global.SpecINI.GetValue(this.GetType().ToString(), "ammoCampacity"));
-            reloadingTime = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "reloadingTime"));
-            PreAiming = Convert.ToBoolean(Global.SpecINI.GetValue(this.GetType().ToString(), "PreAiming"));
+            ammoCampacity = Convert.ToInt32(Global.SpecINI.GetValue(this.GetType().ToString(), "ammoCampacity"), CultureInfo.InvariantCulture);
+            reloadingTime = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "reloadingTime"), CultureInfo.InvariantCulture);
+            PreAiming = Convert.ToBoolean(Global.SpecINI.GetValue(this.GetType().ToString(), "PreAiming"), CultureInfo.InvariantCulture);
 
             ammo = AmmoCampacity;
         }
@@ -345,15 +346,15 @@ namespace SpaceCommander.Mechanics
             //Global.SpecINI.Write(this.GetType().ToString(), "PreAiming", PreAiming.ToString());
             //Global.SpecINI.Write(this.GetType().ToString(), "roundSpeed", roundSpeed.ToString());
 
-            float dispersion = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "dispersion"));
-            float shildBlinkTime = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "shildBlinkTime"));
-            float firerate = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "firerate"));
-            float roundSpeed = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "roundSpeed"));
-            float range = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "range"));
+            float dispersion = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "dispersion"), CultureInfo.InvariantCulture);
+            float shildBlinkTime = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "shildBlinkTime"), CultureInfo.InvariantCulture);
+            float firerate = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "firerate"), CultureInfo.InvariantCulture);
+            float roundSpeed = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "roundSpeed"), CultureInfo.InvariantCulture);
+            float range = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "range"), CultureInfo.InvariantCulture);
             base.StatUp(dispersion, shildBlinkTime, roundSpeed, firerate, range);
 
-            maxHeat = Convert.ToInt32(Global.SpecINI.GetValue(this.GetType().ToString(), "maxHeat"));
-            PreAiming = Convert.ToBoolean(Global.SpecINI.GetValue(this.GetType().ToString(), "PreAiming"));
+            maxHeat = Convert.ToInt32(Global.SpecINI.GetValue(this.GetType().ToString(), "maxHeat"), CultureInfo.InvariantCulture);
+            PreAiming = Convert.ToBoolean(Global.SpecINI.GetValue(this.GetType().ToString(), "PreAiming"), CultureInfo.InvariantCulture);
         }
         public override bool Fire()
         {
@@ -444,9 +445,9 @@ namespace SpaceCommander.Mechanics
         {
             Global = GlobalController.Instance;
             body = gameObject.GetComponent<Rigidbody>();
-            acceleration = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "acceleration"));
-            dropImpulse = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "dropImpulse"));
-            explosionTime = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "explosionTime"));
+            acceleration = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "acceleration"), CultureInfo.InvariantCulture);
+            dropImpulse = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "dropImpulse"), CultureInfo.InvariantCulture);
+            explosionTime = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "explosionTime"), CultureInfo.InvariantCulture);
             GetComponent<AudioSource>().volume = Global.Settings.SoundLevel;
         }
         protected virtual void Update()
@@ -564,9 +565,9 @@ namespace SpaceCommander.Mechanics
         {
             base.Start();
 
-            turnSpeed = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "turnSpeed"));
-            aimCone = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "aimCone"));
-            explosionRange = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "explosionRange"));
+            turnSpeed = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "turnSpeed"), CultureInfo.InvariantCulture);
+            aimCone = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "aimCone"), CultureInfo.InvariantCulture);
+            explosionRange = Convert.ToSingle(Global.SpecINI.GetValue(this.GetType().ToString(), "explosionRange"), CultureInfo.InvariantCulture);
         }
         protected override void Update()
         {

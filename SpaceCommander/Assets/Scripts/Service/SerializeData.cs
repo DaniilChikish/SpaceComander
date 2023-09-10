@@ -4,6 +4,7 @@ using System.Xml.Serialization;
 using System;
 using System.Text;
 using SpaceCommander.General;
+using System.Globalization;
 
 namespace SpaceCommander.Service
 {
@@ -74,10 +75,10 @@ namespace SpaceCommander.Service
         {
             INIHandler settingsINI = new INIHandler(Application.streamingAssetsPath + "\\settings.dat");
 
-            Localisation = (Languages)Convert.ToInt32(settingsINI.ReadINI(this.GetType().ToString() + ".Base", "Localisation", "0"));
-            SoundLevel = Convert.ToSingle(settingsINI.ReadINI(this.GetType().ToString() + ".Base", "SoundLevel", "100"));
-            MusicLevel = Convert.ToSingle(settingsINI.ReadINI(this.GetType().ToString() + ".Base", "MusicLevel", "100"));
-            StaticProportion = Convert.ToBoolean(settingsINI.ReadINI(this.GetType().ToString() + ".Base", "StaticProportion", "True"));
+            Localisation = (Languages)Convert.ToInt32(settingsINI.ReadINI(this.GetType().ToString() + ".Base", "Localisation", "0"), CultureInfo.InvariantCulture);
+            SoundLevel = Convert.ToSingle(settingsINI.ReadINI(this.GetType().ToString() + ".Base", "SoundLevel", "100"), CultureInfo.InvariantCulture);
+            MusicLevel = Convert.ToSingle(settingsINI.ReadINI(this.GetType().ToString() + ".Base", "MusicLevel", "100"), CultureInfo.InvariantCulture);
+            StaticProportion = Convert.ToBoolean(settingsINI.ReadINI(this.GetType().ToString() + ".Base", "StaticProportion", "True"), CultureInfo.InvariantCulture);
 
             string buffer;
             buffer = settingsINI.ReadINI(this.GetType().ToString() + ".Base", "Users");

@@ -21,7 +21,7 @@ ShowUnitName=False
 ShowUnitStatus=True
 [SpaceCommander.Service.GameSettings.Base]
 Localisation=0
-SoundLevel=0.5048631
+SoundLevel=100
 MusicLevel=100
 StaticProportion=True
 Users=
@@ -39,4 +39,4 @@ ShowUnitStatus=True
 ShowUnitFrame=True
 ShowUnitIcon=True
 ShowUnitName=False
-ShowUnitStatus=True
+ShowUnitStatus=False

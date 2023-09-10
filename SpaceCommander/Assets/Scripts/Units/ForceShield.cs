@@ -37,10 +37,10 @@ namespace SpaceCommander.Mechanics
         public bool IsOverheat { get { return isOverheat; } }
         void Start()
         {
-            firstFieldRend = this.transform.FindChild("FirstField").GetComponent<MeshRenderer>();
-            firstFieldColl = this.transform.FindChild("FirstField").GetComponent<Collider>();
-            shildCollaps = this.transform.FindChild("FirstField").GetComponentInChildren<ParticleSystem>();
-            secondField = this.transform.FindChild("SecondField").GetComponent<MeshRenderer>();
+            firstFieldRend = this.transform.Find("FirstField").GetComponent<MeshRenderer>();
+            firstFieldColl = this.transform.Find("FirstField").GetComponent<Collider>();
+            shildCollaps = this.transform.Find("FirstField").GetComponentInChildren<ParticleSystem>();
+            secondField = this.transform.Find("SecondField").GetComponent<MeshRenderer>();
             owner = transform.GetComponentInParent<SpaceShip>();
         }
 
